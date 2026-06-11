@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Support - QR Legends</title>
+    <style>
+        body {font-family: Arial, sans-serif margin: 20px background-color: #f5f5f5}
+        .container {max-width: 1200px margin: 0 auto background: white padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+        .header {text-align: center margin-bottom: 30px padding: 20px background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; border-radius: 10px}
+        .card {background: white border-radius: 8px padding: 20px margin: 10px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #9b59b6}
+        .btn {padding: 10px 20px margin: 5px border: none border-radius: 5px; cursor: pointer; background: #9b59b6; color: white}
+        .btn:hover {background: #8e44ad}
+        .grid {display: grid grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) gap: 20px}
+        .urgent {background: #e74c3c}
+        .urgent:hover {background: #c0392b}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛠️ Technical Support</h1>
+            <p>Get help with QR Legends WMS technical issues</p>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h3>🚨 Submit Support Ticket</h3>
+                <p>Report technical issues or request assistance</p>
+                <button class="btn urgent" onclick="createUrgentTicket()">Create Urgent Ticket</button>
+                <button class="btn" onclick="createStandardTicket()">Create Standard Ticket</button>
+            </div>
+
+            <div class="card">
+                <h3>📞 Contact Information</h3>
+                <p><strong>Support Phone:</strong> 1-800-QR-HELP</p>
+                <p><strong>Email:</strong> support@qrlegends.com</p>
+                <p><strong>Hours:</strong> 24/7 Support Available</p>
+                <button class="btn" onclick="scheduleCallBack()">Schedule Call Back</button>
+            </div>
+
+            <div class="card">
+                <h3>💬 Live Chat</h3>
+                <p>Chat with a technical support specialist</p>
+                <button class="btn" onclick="startLiveChat()">Start Live Chat</button>
+            </div>
+
+            <div class="card">
+                <h3>📚 Knowledge Base</h3>
+                <p>Search common solutions and troubleshooting guides</p>
+                <button class="btn" onclick="browseArticles()">Browse Articles</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>🎯 Recent Tickets</h3>
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                <strong>Ticket #12345:</strong> Scanner calibration issue - <span style="color: #27ae60;">Resolved</span>
+            </div>
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                <strong>Ticket #12346:</strong> Login authentication problem - <span style="color: #f39c12;">In Progress</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {console.log('Technical Support page loaded')});
+
+        function createUrgentTicket() {const modal = document.createElement('div')
+            modal.innerHTML = `
+                <div style="position: fixed top: 0 left: 0 width: 100% height: 100% background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+                    <div style="background: white; padding: 30px; border-radius: 15px; max-width: 500px; width: 90%;">
+                        <h2 style="color: #dc3545; margin-bottom: 20px;">🚨 Create Urgent Support Ticket</h2>
+                        <form id="urgentTicketForm">
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Issue Type:</label>
+                                <select style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" required>
+                                    <option value="">Select issue type...</option>
+                                    <option value="system_down">System Down/Outage</option>
+                                    <option value="data_loss">Data Loss/Corruption</option>
+                                    <option value="security_breach">Security Breach</option>
+                                    <option value="scanner_failure">Scanner Hardware Failure</option>
+                                    <option value="login_issues">Critical Login Issues</option>
+                                    <option value="integration_failure">ERP Integration Failure</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Priority Level:</label>
+                                <select style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" required>
+                                    <option value="critical">Critical - Operations Stopped</option>
+                                    <option value="high">High - Major Impact</option>
+                                    <option value="urgent">Urgent - Time Sensitive</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Contact Phone:</label>
+                                <input type="tel" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" placeholder="Emergency contact number" required>
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Issue Description:</label>
+                                <textarea style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; height: 100px;" placeholder="Describe the urgent issue in detail..." required></textarea>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button type="submit" style="flex: 1; background: #dc3545; color: white; padding: 12px; border: none; border-radius: 5px; font-weight: bold;">🚨 Submit Urgent Ticket</button>
+                                <button type="button" onclick="this.closest('div').parentElement.remove()" style="flex: 1; background: #6c757d; color: white; padding: 12px; border: none; border-radius: 5px;">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            modal.querySelector('#urgentTicketForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('🚨 URGENT TICKET CREATED!\n\nTicket #URG-' + Date.now() + '\n\nOur emergency response team has been notified and will contact you within 15 minutes.\n\nFor immediate assistance, call: 1-800-QR-HELP');
+                modal.remove()});
+        }
+
+        function createStandardTicket() {const modal = document.createElement('div')
+            modal.innerHTML = `
+                <div style="position: fixed top: 0 left: 0 width: 100% height: 100% background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+                    <div style="background: white; padding: 30px; border-radius: 15px; max-width: 500px; width: 90%;">
+                        <h2 style="color: #667eea; margin-bottom: 20px;">📋 Create Standard Support Ticket</h2>
+                        <form id="standardTicketForm">
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Category:</label>
+                                <select style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" required>
+                                    <option value="">Select category...</option>
+                                    <option value="training">Training Request</option>
+                                    <option value="feature_request">Feature Request</option>
+                                    <option value="bug_report">Bug Report</option>
+                                    <option value="configuration">Configuration Help</option>
+                                    <option value="integration">Integration Support</option>
+                                    <option value="general">General Question</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Department:</label>
+                                <select style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                                    <option value="">Select department...</option>
+                                    <option value="receiving">Receiving</option>
+                                    <option value="inventory">Inventory Management</option>
+                                    <option value="shipping">Shipping/Outbound</option>
+                                    <option value="admin">Administration</option>
+                                    <option value="it">IT/Technical</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Subject:</label>
+                                <input type="text" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" placeholder="Brief description of the issue" required>
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Detailed Description:</label>
+                                <textarea style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; height: 120px;" placeholder="Please provide as much detail as possible..." required></textarea>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button type="submit" style="flex: 1; background: #667eea; color: white; padding: 12px; border: none; border-radius: 5px; font-weight: bold;">📋 Create Ticket</button>
+                                <button type="button" onclick="this.closest('div').parentElement.remove()" style="flex: 1; background: #6c757d; color: white; padding: 12px; border: none; border-radius: 5px;">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            modal.querySelector('#standardTicketForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('✅ SUPPORT TICKET CREATED!\n\nTicket #STD-' + Date.now() + '\n\nYour ticket has been submitted successfully. You can expect a response within 24 hours.\n\nYou will receive email updates at your registered email address.');
+                modal.remove();});
+        }
+
+        function scheduleCallBack() {const modal = document.createElement('div')
+            modal.innerHTML = `
+                <div style="position: fixed top: 0 left: 0 width: 100% height: 100% background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+                    <div style="background: white; padding: 30px; border-radius: 15px; max-width: 500px; width: 90%;">
+                        <h2 style="color: #667eea; margin-bottom: 20px;">📞 Schedule Call Back</h2>
+                        <form id="callBackForm">
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Preferred Phone Number:</label>
+                                <input type="tel" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" placeholder="Phone number for callback" required>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Preferred Date:</label>
+                                <input type="date" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" min="${new Date().toISOString().split('T')[0]}" required>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Preferred Time:</label>
+                                <select style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" required>
+                                    <option value="">Select time slot...</option>
+                                    <option value="9am">9:00 AM - 10:00 AM</option>
+                                    <option value="10am">10:00 AM - 11:00 AM</option>
+                                    <option value="11am">11:00 AM - 12:00 PM</option>
+                                    <option value="1pm">1:00 PM - 2:00 PM</option>
+                                    <option value="2pm">2:00 PM - 3:00 PM</option>
+                                    <option value="3pm">3:00 PM - 4:00 PM</option>
+                                    <option value="4pm">4:00 PM - 5:00 PM</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Timezone:</label>
+                                <select style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" required>
+                                    <option value="EST">Eastern Time (EST)</option>
+                                    <option value="CST">Central Time (CST)</option>
+                                    <option value="MST">Mountain Time (MST)</option>
+                                    <option value="PST">Pacific Time (PST)</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Reason for Call:</label>
+                                <textarea style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; height: 80px;" placeholder="Brief description of what you'd like to discuss..." required></textarea>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button type="submit" style="flex: 1; background: #667eea; color: white; padding: 12px; border: none; border-radius: 5px; font-weight: bold;">📞 Schedule Call</button>
+                                <button type="button" onclick="this.closest('div').parentElement.remove()" style="flex: 1; background: #6c757d; color: white; padding: 12px; border: none; border-radius: 5px;">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            modal.querySelector('#callBackForm').addEventListener('submit', function(e) {e.preventDefault()
+                const date = modal.querySelector('input[type="date"]').value
+                const time = modal.querySelector('select').value
+                alert('📞 CALL BACK SCHEDULED!\n\nConfirmation #CB-' + Date.now() + '\n\nYour call back has been scheduled for ' + date + ' at ' + time + '.\n\nYou will receive a confirmation email shortly with calendar invite and dial-in details.');
+                modal.remove();});
+        }
+
+        function startLiveChat() {const modal = document.createElement('div')
+            modal.innerHTML = `
+                <div style="position: fixed top: 0 left: 0 width: 100% height: 100% background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+                    <div style="background: white; padding: 0; border-radius: 15px; max-width: 600px; width: 90%; height: 500px; display: flex; flex-direction: column;">
+                        <div style="background: #667eea; color: white; padding: 15px; border-radius: 15px 15px 0 0; display: flex; justify-content: space-between; align-items: center;">
+                            <h3 style="margin: 0;">💬 Live Chat Support</h3>
+                            <button onclick="this.closest('div').parentElement.remove()" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;">×</button>
+                        </div>
+                        <div id="chatMessages" style="flex: 1; padding: 15px; overflow-y: auto; background: #f8f9fa;">
+                            <div style="background: #e9ecef; padding: 10px; border-radius: 10px; margin-bottom: 10px;">
+                                <strong>Support Agent:</strong> Hello! I'm Sarah from QR Legends technical support. How can I help you today?
+                            </div>
+                        </div>
+                        <div style="padding: 15px; border-top: 1px solid #ddd;">
+                            <div style="display: flex; gap: 10px;">
+                                <input type="text" id="chatInput" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" placeholder="Type your message...">
+                                <button onclick="sendChatMessage()" style="background: #667eea; color: white; padding: 10px 20px; border: none; border-radius: 5px;">Send</button>
+                            </div>
+                            <div style="margin-top: 10px; font-size: 12px; color: #6c757d;">
+                                Average response time: 2-3 minutes | Agent: Sarah (Online)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            // Focus on input
+            modal.querySelector('#chatInput').focus();
+
+            // Handle enter key
+            modal.querySelector('#chatInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendChatMessage();}
+            });
+        }
+
+        function sendChatMessage() {const input = document.getElementById('chatInput')
+            const messages = document.getElementById('chatMessages')
+            const message = input.value.trim()
+
+            if (message) {
+                // Add user message
+                const userDiv = document.createElement('div');
+                userDiv.style.cssText = 'background: #667eea; color: white; padding: 10px; border-radius: 10px; margin-bottom: 10px; margin-left: 50px; text-align: right;';
+                userDiv.innerHTML = '<strong>You:</strong> ' + message;
+                messages.appendChild(userDiv);
+
+                // Clear input
+                input.value = '';
+
+                // Simulate agent response
+                setTimeout(() => {
+                    const agentDiv = document.createElement('div');
+                    agentDiv.style.cssText = 'background: #e9ecef; padding: 10px; border-radius: 10px; margin-bottom: 10px; margin-right: 50px;';
+
+                    const responses = [
+                        "I understand your concern. Let me check that for you.",
+                        "That's a great question! Let me pull up your account details.",
+                        "I can definitely help you with that. One moment please.",
+                        "Thanks for providing that information. I'm looking into this now.",
+                        "I see the issue. Let me walk you through the solution."
+                    ];
+
+                    agentDiv.innerHTML = '<strong>Support Agent: </strong> ' + responses[Math.floor(Math.random() * responses.length)];
+                    messages.appendChild(agentDiv);
+                    messages.scrollTop = messages.scrollHeight}, 1500);
+
+                messages.scrollTop = messages.scrollHeight;
+            }
+        }
+
+        function browseArticles() {const modal = document.createElement('div')
+            modal.innerHTML = `
+                <div style="position: fixed top: 0 left: 0 width: 100% height: 100% background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+                    <div style="background: white; padding: 30px; border-radius: 15px; max-width: 700px; width: 90%; max-height: 80%; overflow-y: auto;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h2 style="color: #667eea; margin: 0;">📚 Knowledge Base</h2>
+                            <button onclick="this.closest('div').parentElement.remove()" style="background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <input type="text" placeholder="Search articles..." style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px;">
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
+                            <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px;">
+                                <h4 style="color: #667eea; margin-top: 0;">🎯 Getting Started</h4>
+                                <ul style="margin: 0; padding-left: 20px;">
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">First Time Setup Guide</a></li>
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">Creating Your First QR Code</a></li>
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">User Roles and Permissions</a></li>
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">Basic Navigation</a></li>
+                                </ul>
+                            </div>
+
+                            <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px;">
+                                <h4 style="color: #667eea; margin-top: 0;">📦 Inventory Management</h4>
+                                <ul style="margin: 0; padding-left: 20px;">
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">Adding Inventory Items</a></li>
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">Cycle Counting Best Practices</a></li>
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">Location Management</a></li>
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">Transfer Procedures</a></li>
+                                </ul>
+                            </div>
+
+                            <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px;">
+                                <h4 style="color: #667eea; margin-top: 0;">📱 Mobile Scanner</h4>
+                                <ul style="margin: 0; padding-left: 20px;">
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">Camera Permissions Setup</a></li>
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">Troubleshooting Scan Issues</a></li>
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">Scanner Calibration</a></li>
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">Offline Mode Usage</a></li>
+                                </ul>
+                            </div>
+
+                            <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px;">
+                                <h4 style="color: #667eea; margin-top: 0;">🔧 Technical Issues</h4>
+                                <ul style="margin: 0; padding-left: 20px;">
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">Login Problems</a></li>
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">Browser Compatibility</a></li>
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">Network Connectivity</a></li>
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">Data Sync Issues</a></li>
+                                </ul>
+                            </div>
+
+                            <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px;">
+                                <h4 style="color: #667eea; margin-top: 0;">⚙️ Advanced Features</h4>
+                                <ul style="margin: 0; padding-left: 20px;">
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">ERP Integration Setup</a></li>
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">Custom Reports</a></li>
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">API Documentation</a></li>
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">Backup Procedures</a></li>
+                                </ul>
+                            </div>
+
+                            <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px;">
+                                <h4 style="color: #667eea; margin-top: 0;">❓ FAQs</h4>
+                                <ul style="margin: 0; padding-left: 20px;">
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">Billing Questions</a></li>
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">User Limits</a></li>
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">Data Security</a></li>
+                                    <li><a href="#" style="color: #667eea; text-decoration: none;">Feature Requests</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; text-align: center;">
+                            <p style="margin: 0; color: #6c757d;">Can't find what you're looking for?</p>
+                            <button onclick="this.closest('div').parentElement.remove(); createStandardTicket();" style="margin-top: 10px; background: #667eea; color: white; padding: 10px 20px; border: none; border-radius: 5px;">Create Support Ticket</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal)}
+    </script>
+</body>
+</html>

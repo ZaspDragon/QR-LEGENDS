@@ -1,0 +1,271 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Management - QR Legends ERP</title>
+    <style>
+        * {box-sizing: border-box}
+        body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+            margin: 0
+            padding: 20px
+            background: #f4f4f5;
+            color: #18181b}
+        .container {max-width: 1400px
+            margin: 0 auto
+            background: white
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);}
+        .header {display: flex
+            justify-content: space-between
+            align-items: center
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e4e4e7}
+        h1 {margin: 0 color: #18181b}
+        .btn {padding: 10px 20px
+            border: 1px solid #e4e4e7
+            border-radius: 8px
+            background: #007BFF;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            margin-right: 10px}
+        .stats-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr))
+            gap: 20px
+            margin-bottom: 30px}
+        .stat-card {background: #f8f9fa
+            padding: 20px
+            border-radius: 12px
+            border: 1px solid #e4e4e7}
+        .stat-value {font-size: 2rem font-weight: bold color: #007BFF}
+        .stat-label {color: #6c757d margin-top: 8px}
+        .sales-table {width: 100%
+            border-collapse: collapse
+            margin-top: 20px}
+        .sales-table th, .sales-table td {padding: 12px
+            text-align: left
+            border-bottom: 1px solid #e4e4e7}
+        .sales-table th {background: #f4f4f5
+            font-weight: 600}
+        .sales-table tbody tr:hover {background: #f9f9f9}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💼 Sales Management</h1>
+            <div>
+                <a href="/erp_dashboard" class="btn" style="background: #6c757d;">← Back to ERP</a>
+                <button class="btn" onclick="createNewQuote()">+ New Quote</button>
+                <button class="btn" style="background: #28a745;" onclick="createNewOrder()">+ New Order</button>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">$248k</div>
+                <div class="stat-label">Monthly Sales</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">42</div>
+                <div class="stat-label">Open Quotes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">156</div>
+                <div class="stat-label">Active Orders</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">94%</div>
+                <div class="stat-label">Order Fill Rate</div>
+            </div>
+        </div>
+        
+        <h3>Recent Sales Orders</h3>
+        <table class="sales-table">
+            <thead>
+                <tr>
+                    <th>Order #</th>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>SO-001</td>
+                    <td>Acme Corporation</td>
+                    <td>2025-01-18</td>
+                    <td>$12,450</td>
+                    <td><span style="color: #28a745;">Shipped</span></td>
+                    <td>
+                        <button class="btn" style="background: #f59e0b; padding: 5px 10px;">Edit</button>
+                        <button class="btn" style="background: #dc2626; padding: 5px 10px;">View</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>SO-002</td>
+                    <td>Global Industries</td>
+                    <td>2025-01-17</td>
+                    <td>$8,920</td>
+                    <td><span style="color: #007BFF;">Processing</span></td>
+                    <td>
+                        <button class="btn" style="background: #f59e0b; padding: 5px 10px;">Edit</button>
+                        <button class="btn" style="background: #dc2626; padding: 5px 10px;">View</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function createNewQuote() {window.open('/salespad_new_quote', '_blank')}
+
+        function createNewOrder() {window.open('/salespad_new_order', '_blank')}
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP Sales - QR Legends</title>
+    <style>
+        * {margin: 0
+            padding: 0
+            box-sizing: border-box}
+
+        body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+            background: #f5f5f5
+            min-height: 100vh}
+
+        .container {max-width: 1200px
+            margin: 0 auto
+            padding: 20px}
+
+        .header {background: white
+            border-radius: 12px
+            padding: 20px
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+
+        .page-title {font-size: 2rem
+            color: #333
+            margin-bottom: 10px}
+
+        .content-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
+            gap: 20px}
+
+        .card {background: white
+            border-radius: 12px
+            padding: 20px
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+
+        .card-title {font-size: 1.3rem
+            color: #333
+            margin-bottom: 15px}
+
+        .btn {padding: 10px 20px
+            border: none
+            border-radius: 6px
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: all 0.3s}
+
+        .btn-primary {background: #007bff
+            color: white}
+
+        .btn-primary:hover {background: #0056b3}
+
+        .back-btn {background: #6c757d
+            color: white
+            text-decoration: none
+            display: inline-block;
+            margin-bottom: 20px}
+
+        .stats-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
+            gap: 15px
+            margin: 20px 0}
+
+        .stat-card {background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            color: white
+            padding: 20px
+            border-radius: 10px;
+            text-align: center}
+
+        .stat-value {font-size: 2rem
+            font-weight: bold}
+
+        .stat-label {font-size: 0.9rem
+            opacity: 0.9}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/erp_dashboard" class="btn back-btn">← Back to ERP Dashboard</a>
+        
+        <div class="header">
+            <h1 class="page-title">💼 Sales Management</h1>
+            <p>Manage sales orders, quotes, and customer relationships</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">152</div>
+                <div class="stat-label">Open Orders</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">$48k</div>
+                <div class="stat-label">Monthly Revenue</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">23</div>
+                <div class="stat-label">Pending Quotes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">94%</div>
+                <div class="stat-label">Fill Rate</div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <div class="card">
+                <h3 class="card-title">Sales Orders</h3>
+                <p>Create, manage and track sales orders</p>
+                <button class="btn btn-primary" onclick="alert('Sales order management coming soon')">Manage Orders</button>
+                <button class="btn btn-primary" onclick="alert('Create new sales order')">New Order</button>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Quotes & Proposals</h3>
+                <p>Generate quotes and track conversions</p>
+                <button class="btn btn-primary" onclick="alert('Quote management coming soon')">Manage Quotes</button>
+                <button class="btn btn-primary" onclick="alert('Create new quote')">New Quote</button>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Customer Management</h3>
+                <p>Manage customer information and history</p>
+                <button class="btn btn-primary" onclick="window.location.href='/erp_customers'">View Customers</button>
+                <button class="btn btn-primary" onclick="alert('Add new customer')">Add Customer</button>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Sales Analytics</h3>
+                <p>Track sales performance and trends</p>
+                <button class="btn btn-primary" onclick="alert('Sales analytics coming soon')">View Reports</button>
+                <button class="btn btn-primary" onclick="alert('Export sales data')">Export Data</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

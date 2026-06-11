@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Legends - Company Login</title>
+    <link rel="icon" type="image/png" href="/static/qr_legends_logo.png">
+    <script src="copyright_notice.js"></script>
+    <script src="auto_theme_injector.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f0f4ff;
+        }
+
+        .login-container {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 48px 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 420px;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .logo h1 {
+            font-size: 36px;
+            font-weight: 800;
+            color: #93c5fd;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo p {
+            color: #cbd5e1;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #e0e7ff;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid rgba(148, 163, 184, 0.3);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(15, 23, 42, 0.6);
+            color: #f0f4ff;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin: 24px 0;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            margin-top: 4px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-container label {
+            color: #cbd5e1;
+            font-size: 13px;
+            line-height: 1.5;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        .checkbox-container a {
+            color: #93c5fd;
+            text-decoration: none;
+        }
+
+        .checkbox-container a:hover {
+            text-decoration: underline;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 12px;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn.demo {
+            background: linear-gradient(135deg, #10b981, #047857);
+        }
+
+        .btn.demo:hover:not(:disabled) {
+            box-shadow: 0 12px 24px rgba(16, 185, 129, 0.3);
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .forgot-password a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+            color: #93c5fd;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 28px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background: rgba(148, 163, 184, 0.3);
+        }
+
+        .divider span {
+            background: rgba(30, 41, 59, 0.95);
+            padding: 0 16px;
+            position: relative;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .bottom-links {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .bottom-links p {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .bottom-links a {
+            color: #93c5fd;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .bottom-links a:hover {
+            background: rgba(147, 197, 253, 0.1);
+            color: #60a5fa;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success-message {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 20px;
+                padding: 36px 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>🟦 QR Legends</h1>
+            <p>Warehouse Management Platform</p>
+        </div>
+
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email or Username</label>
+                <input type="text" id="email" name="email" class="form-control" placeholder="your@email.com" required autocomplete="username">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required autocomplete="current-password">
+            </div>
+
+            <div class="checkbox-container">
+                <input type="checkbox" id="termsAccepted" name="termsAccepted" required>
+                <label for="termsAccepted">
+                    I agree to the <a href="/terms" target="_blank">Terms of Service</a> and <a href="/privacy" target="_blank">Privacy Policy</a>. I understand this software is licensed, not sold.
+                </label>
+            </div>
+
+            <button type="submit" class="btn" id="loginBtn">Sign In</button>
+
+            <button type="button" class="btn demo" onclick="useDemoAccount()">
+                Try Demo (Explore Features Instantly)
+            </button>
+
+            <div class="forgot-password">
+                <a href="/forgot_password">Forgot password?</a>
+            </div>
+        </form>
+
+        <div class="divider"><span>or</span></div>
+
+        <div class="bottom-links">
+            <p>Don't have an account? <a href="/company_signup" style="font-size: 13px; padding: 4px 8px;">Create one free</a></p>
+            <p style="margin-top: 16px;">Already an employee?</p>
+            <a href="/employee_login">Employee Sign In</a>
+        </div>
+    </div>
+
+    <script>
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function useDemoAccount() {
+            document.getElementById('email').value = 'qrlegends22@gmail.com';
+            document.getElementById('password').value = 'demo123';
+            document.getElementById('termsAccepted').checked = true;
+            document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const termsAccepted = document.getElementById('termsAccepted').checked;
+            const loginBtn = document.getElementById('loginBtn');
+
+            if (!termsAccepted) {
+                showError('You must accept the Terms of Service and Privacy Policy to continue');
+                return;
+            }
+
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Logging in...';
+
+            try {
+                const response = await fetch('/api/auth/company/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password, termsAccepted })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    showSuccess('Login successful! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = data.redirect_url || '/main_dashboard';
+                    }, 500);
+                } else {
+                    showError(data.error || 'Login failed. Please check your credentials.');
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Sign In';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('An error occurred. Please try again.');
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Sign In';
+            }
+        });
+
+        console.log('Company login page loaded successfully');
+    </script>
+</body>
+</html>

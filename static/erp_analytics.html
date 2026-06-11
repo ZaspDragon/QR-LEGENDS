@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - QR Legends ERP</title>
+    <style>
+        * {box-sizing: border-box}
+        body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+            margin: 0
+            padding: 20px
+            background: #f4f4f5;
+            color: #18181b}
+        .container {max-width: 1400px
+            margin: 0 auto
+            background: white
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);}
+        .header {display: flex
+            justify-content: space-between
+            align-items: center
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e4e4e7}
+        h1 {margin: 0 color: #18181b}
+        .btn {padding: 10px 20px
+            border: 1px solid #e4e4e7
+            border-radius: 8px
+            background: #007BFF;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            margin-right: 10px}
+        .analytics-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
+            gap: 20px
+            margin-bottom: 30px}
+        .analytics-card {background: #f8f9fa
+            padding: 20px
+            border-radius: 12px
+            border: 1px solid #e4e4e7;
+            cursor: pointer;
+            transition: all 0.3s ease}
+        .analytics-card:hover {transform: translateY(-2px)
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1)}
+        .card-icon {font-size: 2rem margin-bottom: 10px}
+        .card-title {font-weight: 600 margin-bottom: 5px}
+        .card-desc {color: #6c757d font-size: 0.9rem}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Analytics & Business Intelligence</h1>
+            <div>
+                <a href="/erp_dashboard" class="btn" style="background: #6c757d;">← Back to ERP</a>
+                <button class="btn" onclick="createCustomReport()">+ Custom Report</button>
+                <button class="btn" style="background: #28a745;" onclick="scheduleReport()">📅 Schedule Report</button>
+            </div>
+        </div>
+        
+        <h3>Business Intelligence Reports</h3>
+        <div class="analytics-grid">
+            <div class="analytics-card" onclick="window.open('/financial_reports', '_blank')">
+                <div class="card-icon">💰</div>
+                <div class="card-title">Financial Analytics</div>
+                <div class="card-desc">P&L, cash flow, profitability analysis</div>
+            </div>
+            <div class="analytics-card" onclick="window.open('/operational_kpis', '_blank')">
+                <div class="card-icon">⚡</div>
+                <div class="card-title">Operational KPIs</div>
+                <div class="card-desc">Efficiency, throughput, quality metrics</div>
+            </div>
+            <div class="analytics-card" onclick="window.open('/inventory_analysis', '_blank')">
+                <div class="card-icon">📦</div>
+                <div class="card-title">Inventory Analytics</div>
+                <div class="card-desc">ABC analysis, turns, slow movers</div>
+            </div>
+            <div class="analytics-card" onclick="window.open('/purchase_analytics', '_blank')">
+                <div class="card-icon">🛒</div>
+                <div class="card-title">Purchase Analytics</div>
+                <div class="card-desc">Supplier performance, spend analysis</div>
+            </div>
+            <div class="analytics-card" onclick="window.open('/custom_reports', '_blank')">
+                <div class="card-icon">📋</div>
+                <div class="card-title">Custom Reports</div>
+                <div class="card-desc">Build your own reports and dashboards</div>
+            </div>
+            <div class="analytics-card" onclick="window.open('/analytics_dashboard', '_blank')">
+                <div class="card-icon">📈</div>
+                <div class="card-title">Executive Dashboard</div>
+                <div class="card-desc">High-level business metrics</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function createCustomReport() {window.open('/custom_reports', '_blank')}
+
+        function scheduleReport() {alert('Report scheduling would open here')}
+    </script>
+</body>
+</html>

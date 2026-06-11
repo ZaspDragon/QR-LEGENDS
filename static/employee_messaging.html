@@ -1,0 +1,607 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Messaging - QR Legends</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            padding-top: 80px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            height: calc(100vh - 120px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin: 0;
+        }
+
+        .messaging-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: #f8f9fa;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .conversation-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .conversation-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .conversation-item:hover {
+            background: #e9ecef;
+        }
+
+        .conversation-item.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .conversation-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .conversation-preview {
+            font-size: 12px;
+            color: #666;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .conversation-item.active .conversation-preview {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            background: white;
+        }
+
+        .chat-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .chat-status {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .message.own {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+        }
+
+        .message-bubble.received {
+            background: white;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .message-bubble.sent {
+            background: #667eea;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-meta {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .message-input-area {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .message-input-container {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            resize: none;
+            min-height: 40px;
+            max-height: 120px;
+            font-family: inherit;
+        }
+
+        .send-button {
+            padding: 12px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        .send-button:hover {
+            background: #5a67d8;
+        }
+
+        .send-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .messaging-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: 200px;
+            }
+            
+            .container {
+                height: calc(100vh - 100px);
+            }
+        }
+    </style>
+<style>
+/* === QRLegends Unified Theme (Dark/Light) === */
+:root{
+  --ql-bg: #0b1724;
+  --ql-panel: #0f2340;
+  --ql-card: #102846;
+  --ql-text: #dbe8ff;
+  --ql-sub: #97a6c1;
+  --ql-primary: #3b82f6;
+  --ql-success: #22c55e;
+  --ql-warning: #f59e0b;
+  --ql-danger: #ef4444;
+  --ql-accent: #6366f1;
+  --ql-border: rgba(255,255,255,.12);
+  --ql-surface: rgba(255,255,255,.06);
+}
+/* Light mode overrides */
+body.light{
+  --ql-bg: #f2f6fb;
+  --ql-panel: #ffffff;
+  --ql-card: #ffffff;
+  --ql-text: #1d2840;
+  --ql-sub: #51607c;
+  --ql-primary: #2563eb;
+  --ql-success: #16a34a;
+  --ql-warning: #d97706;
+  --ql-danger: #dc2626;
+  --ql-accent: #4f46e5;
+  --ql-border: rgba(0,0,0,.12);
+  --ql-surface: rgba(15,23,42,.04);
+}
+
+html,body{height:100%;}
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed;
+  color: var(--ql-text);
+  font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+  line-height: 1.45;
+}
+body.light{
+  background: linear-gradient(180deg,#f7faff,#eef3fb);
+}
+
+.ql-header{
+  position: sticky; top:0; z-index:1000;
+  background: rgba(8,27,46,.7);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--ql-border);
+}
+body.light .ql-header{
+  background: rgba(255,255,255,.75);
+}
+.ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
+.ql-title{display:flex; align-items:center; gap:10px;}
+.ql-h1{font-size:1.25rem; margin:0; letter-spacing:.2px;}
+.ql-nav{display:flex; gap:8px; flex-wrap:wrap;}
+.ql-btn{
+  display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
+  background: var(--ql-surface); border: 1px solid var(--ql-border);
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+  transition: transform .08s ease, background .2s ease, border-color .2s ease;
+}
+.ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+body.light .ql-btn:hover{ background: rgba(15,23,42,.08); }
+.ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
+
+.ql-theme-toggle{
+  margin-left:12px; cursor:pointer; border:1px solid var(--ql-border);
+  background: var(--ql-surface); color: var(--ql-text);
+  border-radius:10px; padding:8px 10px; font-size:16px;
+}
+
+.ql-fab{ position: fixed; right: 18px; bottom: 18px; background: var(--ql-accent); color:white; border:none;
+  border-radius:999px; padding:10px 14px; font-weight:600; box-shadow: 0 14px 30px rgba(0,0,0,.35);}
+</style>
+<script>
+(function(){
+  try {
+    const saved = localStorage.getItem('ql-theme');
+    if(saved === 'light'){ document.addEventListener('DOMContentLoaded', ()=> document.body.classList.add('light')); }
+  } catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const btn = document.getElementById('ql-theme-toggle');
+    if(btn){
+      btn.addEventListener('click', function(){
+        document.body.classList.toggle('light');
+        const isLight = document.body.classList.contains('light');
+        btn.textContent = isLight ? '☀️' : '🌙';
+        try { localStorage.setItem('ql-theme', isLight ? 'light' : 'dark'); } catch(e){}
+      });
+      if(document.body.classList.contains('light')) btn.textContent = '☀️';
+    }
+  });
+})();
+</script>
+</head>
+<body>
+<!-- Unified QR Legends Header -->
+<header class="ql-header">
+  <div class="ql-header-inner">
+    <div class="ql-title">
+      <span class="ql-logo">🟦</span>
+      <h1 class="ql-h1">Employee Messaging - QR Legends</h1>
+    </div>
+    <nav class="ql-nav">
+      <a class="ql-btn ql-secondary" href="main_dashboard.html">🏠 Dashboard</a>
+      <a class="ql-btn ql-tertiary" href="employee_dashboard.html">👨‍💼 Employee</a>
+      <a class="ql-btn ql-tertiary" href="department_group_chat.html">👥 Groups</a>
+    </nav>
+    <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<div class="container">
+    <div class="header">
+        <h1>💬 Employee Messaging</h1>
+        <button class="send-button" onclick="showNewMessageModal()">+ New Message</button>
+    </div>
+
+    <div class="messaging-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <input type="text" class="search-box" placeholder="Search conversations..." id="searchBox">
+            </div>
+            <div class="conversation-list" id="conversationList">
+                <div class="conversation-item active" onclick="selectConversation('general')">
+                    <div class="conversation-name">General Chat</div>
+                    <div class="conversation-preview">Welcome to the team!</div>
+                </div>
+                <div class="conversation-item" onclick="selectConversation('warehouse')">
+                    <div class="conversation-name">Warehouse Team</div>
+                    <div class="conversation-preview">New shipment arriving at 3 PM</div>
+                </div>
+                <div class="conversation-item" onclick="selectConversation('john')">
+                    <div class="conversation-name">John Smith</div>
+                    <div class="conversation-preview">Can you help with the inventory count?</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-area">
+            <div class="chat-header">
+                <div class="chat-title" id="chatTitle">General Chat</div>
+                <div class="chat-status" id="chatStatus">3 members online</div>
+            </div>
+
+            <div class="messages-container" id="messagesContainer">
+                <div class="message">
+                    <div class="message-bubble received">
+                        <div>Welcome to QR Legends! Feel free to ask questions.</div>
+                        <div class="message-meta">Admin • 9:30 AM</div>
+                    </div>
+                </div>
+                <div class="message own">
+                    <div class="message-bubble sent">
+                        <div>Thanks! Excited to get started.</div>
+                        <div class="message-meta">You • 9:32 AM</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="message-input-area">
+                <div class="message-input-container">
+                    <textarea 
+                        class="message-input" 
+                        id="messageInput" 
+                        placeholder="Type your message..." 
+                        rows="1"
+                        onkeypress="handleKeyPress(event)"
+                    ></textarea>
+                    <button class="send-button" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentConversation = 'general';
+    let conversations = {
+        'general': {
+            title: 'General Chat',
+            status: '3 members online',
+            messages: [
+                {
+                    id: 1,
+                    sender: 'Admin',
+                    content: 'Welcome to QR Legends! Feel free to ask questions.',
+                    timestamp: '9:30 AM',
+                    isOwn: false
+                },
+                {
+                    id: 2,
+                    sender: 'You',
+                    content: 'Thanks! Excited to get started.',
+                    timestamp: '9:32 AM',
+                    isOwn: true
+                }
+            ]
+        },
+        'warehouse': {
+            title: 'Warehouse Team',
+            status: '5 members online',
+            messages: [
+                {
+                    id: 1,
+                    sender: 'Mike Johnson',
+                    content: 'New shipment arriving at 3 PM. Need help unloading.',
+                    timestamp: '10:15 AM',
+                    isOwn: false
+                }
+            ]
+        },
+        'john': {
+            title: 'John Smith',
+            status: 'Last seen 5 minutes ago',
+            messages: [
+                {
+                    id: 1,
+                    sender: 'John Smith',
+                    content: 'Can you help with the inventory count?',
+                    timestamp: '11:20 AM',
+                    isOwn: false
+                }
+            ]
+        }
+    };
+
+    function selectConversation(conversationId) {
+        currentConversation = conversationId;
+        
+        // Update active conversation in sidebar
+        document.querySelectorAll('.conversation-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        event.target.closest('.conversation-item').classList.add('active');
+        
+        // Update chat header
+        const conversation = conversations[conversationId];
+        document.getElementById('chatTitle').textContent = conversation.title;
+        document.getElementById('chatStatus').textContent = conversation.status;
+        
+        // Load messages
+        loadMessages(conversationId);
+    }
+
+    function loadMessages(conversationId) {
+        const conversation = conversations[conversationId];
+        const messagesContainer = document.getElementById('messagesContainer');
+        
+        messagesContainer.innerHTML = '';
+        
+        conversation.messages.forEach(message => {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message${message.isOwn ? ' own' : ''}`;
+            
+            messageDiv.innerHTML = `
+                <div class="message-bubble ${message.isOwn ? 'sent' : 'received'}">
+                    <div>${message.content}</div>
+                    <div class="message-meta">${message.sender} • ${message.timestamp}</div>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+        });
+        
+        // Scroll to bottom
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function sendMessage() {
+        const messageInput = document.getElementById('messageInput');
+        const content = messageInput.value.trim();
+        
+        if (!content) return;
+        
+        // Add message to current conversation
+        const conversation = conversations[currentConversation];
+        const newMessage = {
+            id: Date.now(),
+            sender: 'You',
+            content: content,
+            timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+            isOwn: true
+        };
+        
+        conversation.messages.push(newMessage);
+        
+        // Clear input
+        messageInput.value = '';
+        
+        // Reload messages
+        loadMessages(currentConversation);
+        
+        // Simulate response (in real app, this would be real-time)
+        setTimeout(() => {
+            simulateResponse();
+        }, 1000);
+    }
+
+    function simulateResponse() {
+        const responses = [
+            "Got it, thanks!",
+            "I'll take care of that.",
+            "Sounds good!",
+            "Let me check on that.",
+            "Sure, no problem."
+        ];
+        
+        const conversation = conversations[currentConversation];
+        const responseMessage = {
+            id: Date.now(),
+            sender: conversation.title === 'General Chat' ? 'Admin' : 'Team Member',
+            content: responses[Math.floor(Math.random() * responses.length)],
+            timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+            isOwn: false
+        };
+        
+        conversation.messages.push(responseMessage);
+        loadMessages(currentConversation);
+    }
+
+    function handleKeyPress(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            sendMessage();
+        }
+    }
+
+    function showNewMessageModal() {
+        const recipient = prompt('Enter recipient name or group:');
+        if (recipient) {
+            alert(`New conversation with ${recipient} would be created here.`);
+        }
+    }
+
+    // Search functionality
+    document.getElementById('searchBox').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const conversationItems = document.querySelectorAll('.conversation-item');
+        
+        conversationItems.forEach(item => {
+            const name = item.querySelector('.conversation-name').textContent.toLowerCase();
+            const preview = item.querySelector('.conversation-preview').textContent.toLowerCase();
+            
+            if (name.includes(searchTerm) || preview.includes(searchTerm)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+
+    // Auto-resize textarea
+    document.getElementById('messageInput').addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
+
+    // Load initial conversation
+    document.addEventListener('DOMContentLoaded', function() {
+        loadMessages(currentConversation);
+    });
+</script>
+
+<button class='ql-fab' onclick="location.href='employee_dashboard.html'">👨‍💼 Employee</button>
+</body>
+</html>

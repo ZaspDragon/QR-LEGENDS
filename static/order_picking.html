@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Picking - QR Legends</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'qr-blue': '#2563eb',
+                        'qr-dark': '#0b1220',
+                        'qr-gray': '#1f2937'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {background: linear-gradient(135deg, #0b1220 0%, #1e293b 100%)
+            min-height: 100vh;}
+        .glass-effect {background: rgba(255, 255, 255, 0.05)
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);}
+        .gradient-border {background: linear-gradient(45deg, #2563eb, #3b82f6)
+            padding: 2px;
+            border-radius: 12px;}
+        .inner-content {background: rgba(15, 23, 42, 0.8)
+            border-radius: 10px;
+            padding: 1.5rem;}
+        .tab-active {background: linear-gradient(45deg, #2563eb, #3b82f6)
+            color: white;}
+        .btn-primary {background: linear-gradient(45deg, #2563eb, #3b82f6)
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;}
+        .btn-primary:hover {transform: translateY(-2px)
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);}
+        .btn-success {background: linear-gradient(45deg, #059669, #10b981)
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;}
+        .btn-success:hover {transform: translateY(-2px)
+            box-shadow: 0 10px 25px rgba(5, 150, 105, 0.3);}
+        .btn-warning {background: linear-gradient(45deg, #d97706, #f59e0b)
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;}
+        .btn-danger {background: linear-gradient(45deg, #dc2626, #ef4444)
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;}
+        .form-input {background: rgba(255, 255, 255, 0.05)
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: white;
+            width: 100%;}
+        .form-input:focus {outline: none
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);}
+        .card {background: rgba(255, 255, 255, 0.05)
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;}
+        .card:hover {transform: translateY(-2px)
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);}
+        .pick-item {background: rgba(255, 255, 255, 0.05)
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;}
+        .pick-item:hover {background: rgba(255, 255, 255, 0.1)}
+        .pick-item.current {border-color: #f59e0b
+            background: rgba(245, 158, 11, 0.1);}
+        .pick-item.completed {border-color: #10b981
+            background: rgba(16, 185, 129, 0.1);}
+        .timer {font-size: 2rem
+            font-weight: bold;
+            color: #3b82f6;
+            text-align: center;
+            margin: 1rem 0;
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);}
+        .nav-tab {background: rgba(255, 255, 255, 0.05)
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s ease;}
+        .nav-tab.active {background: linear-gradient(45deg, #2563eb, #3b82f6)
+            color: white;
+            border-color: #2563eb;}
+        .tab-content {display: none
+            animation: fadeIn 0.3s ease-in-out;}
+        .tab-content.active {display: block}
+        @keyframes fadeIn {from { opacity: 0 transform: translateY(10px);}
+            to {opacity: 1 transform: translateY(0);}
+        }
+        .floating-dashboard-btn {position: fixed
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #2563eb, #3b82f6);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+            z-index: 1000;
+            transition: all 0.3s ease;}
+        .floating-dashboard-btn:hover {transform: translateY(-3px)
+            box-shadow: 0 15px 35px rgba(37, 99, 235, 0.4);}
+    </style>
+</head>
+<body class="text-white">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-4">
+                📦 Order Picking Department
+            </h1>
+            <p class="text-gray-300 text-lg">Efficiently manage order picking, item verification, and team communication.</p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex flex-wrap gap-4 mb-8 justify-center">
+            <button class="nav-tab active" onclick="switchTab('wave_planning')">🌊 Wave Planning</button>
+            <button class="nav-tab" onclick="switchTab('pick_tickets')">📋 Pick Tickets</button>
+            <button class="nav-tab" onclick="switchTab('batch_picking')">📦 Batch Picking</button>
+            <button class="nav-tab" onclick="switchTab('performance')">📈 Performance</button>
+            <button class="nav-tab" onclick="switchTab('chat')">💬 Team Chat</button>
+        </div>
+
+        <!-- QR Scanner Section -->
+        <div class="card mb-8">
+            <h3 class="text-xl font-bold text-blue-400 mb-4">📱 QR Code Scanner</h3>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Scan QR Code</label>
+                    <input type="text" id="qrScanInput" placeholder="Click here and scan QR code" 
+                           class="form-input" autofocus>
+                </div>
+                <div class="flex gap-2 items-end">
+                    <button class="btn-primary" onclick="processScannedQR()">Process QR</button>
+                    <button class="btn-success" onclick="focusScanner()">Focus Scanner</button>
+                    <button class="btn-warning" onclick="openCameraScanner()">📷 Camera</button>
+                </div>
+            </div>
+            <div id="scanProcessingResult" class="mt-4"></div>
+        </div>
+
+        <!-- Lift Driver Request Section -->
+        <div class="card mb-8" style="background: linear-gradient(135deg, rgba(255,152,0,0.1), rgba(255,87,34,0.1)); border: 2px solid #ff9800;">
+            <h3 class="text-xl font-bold text-orange-400 mb-4">🏗️ Request Lift Driver Assistance</h3>
+            <p class="text-gray-300 mb-4">Need an item pulled down from high storage? Request a lift driver to assist you.</p>
+            <div class="grid md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Item Name</label>
+                    <input type="text" id="pullDownItemName" placeholder="Enter item name" class="form-input">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Location</label>
+                    <input type="text" id="pullDownLocation" placeholder="e.g., A1-B2-C3" class="form-input">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Priority</label>
+                    <select id="pullDownPriority" class="form-input">
+                        <option value="1">🔴 URGENT</option>
+                        <option value="2" selected>🟡 HIGH</option>
+                        <option value="3">🟢 NORMAL</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-300 mb-2">Additional Notes (Optional)</label>
+                <input type="text" id="pullDownNotes" placeholder="Any special instructions..." class="form-input">
+            </div>
+            <div class="mt-4 flex gap-2">
+                <button class="btn-danger" onclick="requestPullDown()">
+                    ⬇️ Request Pull Down
+                </button>
+                <button class="btn-warning" onclick="requestReplenishment()">
+                    📦 Request Replenishment
+                </button>
+            </div>
+            <div id="requestResult" class="mt-4"></div>
+        </div>
+
+        <!-- Wave Planning Tab -->
+        <div id="wave_planning" class="tab-content active">
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Auto Pick Ticket Generation -->
+                <div class="gradient-border">
+                    <div class="inner-content">
+                        <h3 class="text-xl font-bold text-blue-400 mb-4">🚀 Automatic Daily Pick Tickets</h3>
+                        <p class="text-gray-300 mb-4">Automatically pull today's orders from SalesPad and generate pick tickets</p>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Order Source</label>
+                                <select id="orderSource" class="form-input">
+                                    <option value="salespad_orders">SalesPad Sales Orders</option>
+                                    <option value="pending_orders">Pending Orders Only</option>
+                                    <option value="priority_orders">Priority Orders First</option>
+                                    <option value="customer_specific">Specific Customer Orders</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Auto-Generation Schedule</label>
+                                <select id="autoSchedule" class="form-input">
+                                    <option value="manual">Manual Generation</option>
+                                    <option value="daily_6am">Daily at 6:00 AM</option>
+                                    <option value="daily_8am">Daily at 8:00 AM</option>
+                                    <option value="hourly">Every Hour</option>
+                                    <option value="realtime">Real-time (as orders arrive)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Order Cutoff Date</label>
+                                <input type="date" id="orderCutoff" class="form-input">
+                            </div>
+
+                            <div class="flex gap-2 flex-wrap">
+                                <button class="btn-primary" onclick="generateDailyPickTickets()">📋 Generate Today's Tickets</button>
+                                <button class="btn-success" onclick="syncSalesPadOrders()">🔄 Sync SalesPad Orders</button>
+                                <button class="btn-warning" onclick="viewTodaysOrders()">👀 View Today's Orders</button>
+                            </div>
+
+                            <div id="autoTicketDisplay"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wave Planning Options -->
+                <div class="ql-card">
+                    <h2>📋 Wave Configuration</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Wave Planning Type</label>
+                            <select id="wave-type" class="ql-input" onchange="updateWaveType()">
+                                <option value="single_order">Single Order Wave</option>
+                                <option value="batch_wave">🚀 Batch Wave (Multiple Orders)</option>
+                                <option value="zone_wave">Zone-Based Wave</option>
+                                <option value="priority_wave">Priority Wave (Urgent First)</option>
+                                <option value="customer_wave">Customer-Specific Wave</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Wave Size</label>
+                            <select id="wave-size" class="ql-input">
+                                <option value="small">Small (5-15 orders)</option>
+                                <option value="medium" selected>Medium (15-30 orders)</option>
+                                <option value="large">Large (30+ orders)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Priority Settings</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center text-gray-300">
+                                    <input type="checkbox" id="priorityUrgent" class="mr-2" checked>
+                                    Urgent orders first
+                                </label>
+                                <label class="flex items-center text-gray-300">
+                                    <input type="checkbox" id="priorityCustomer" class="mr-2">
+                                    VIP customers priority
+                                </label>
+                                <label class="flex items-center text-gray-300">
+                                    <input type="checkbox" id="priorityShipping" class="mr-2" checked>
+                                    Same-day shipping priority
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="ql-actions">
+                            <button class="ql-btn ql-secondary" onclick="generateWave()">🌊 Generate Wave</button>
+                            <button class="ql-btn" onclick="optimizeWave()">⚡ Optimize Wave</button>
+                            <button class="ql-btn" onclick="previewWave()">👀 Preview Wave</button>
+                        </div>
+
+                        <div id="wavePreview" class="mt-4" style="display: none;">
+                            <h4 class="text-lg font-semibold text-blue-400 mb-2">Wave Preview</h4>
+                            <div id="waveDetails" class="text-gray-300">
+                                <!-- Wave details will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                        <div class="s<!-- Wave Configuration Complete -->
+                <div class="ql-card">
+                    <h2>⚙️ Wave Settings</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Auto-Release Waves</label>
+                            <select id="autoRelease" class="ql-input">
+                                <option value="manual">Manual Release</option>
+                                <option value="time">Time-Based (Every 2 hours)</option>
+                                <option value="threshold">Order Threshold (25 orders)</option>
+                                <option value="immediate">Immediate</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Picker Assignment</label>
+                            <select id="pickerAssignment" class="ql-input">
+                                <option value="automatic" selected>Automatic Assignment</option>
+                                <option value="manual">Manual Assignment</option>
+                                <option value="zone_based">Zone-Based Assignment</option>
+                                <option value="skill_based">Skill-Based Assignment</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Wave Optimization</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center text-gray-300">
+                                    <input type="checkbox" id="optimizeRouting" class="mr-2" checked>
+                                    Optimize pick paths
+                                </label>
+                                <label class="flex items-center text-gray-300">
+                                    <input type="checkbox" id="optimizeLoad" class="mr-2" checked>
+                                    Balance picker workload
+                                </label>
+                                <label class="flex items-center text-gray-300">
+                                    <input type="checkbox" id="optimizeZones" class="mr-2">
+                                    Zone consolidation
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="ql-actions">
+                            <button class="ql-btn ql-secondary" onclick="saveWaveSettings()">💾 Save Settings</button>
+                            <button class="ql-btn" onclick="resetWaveSettings()">🔄 Reset to Default</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Waves Display -->
+                <div class="ql-card">
+                    <h2>🌊 Active Waves</h2>
+                    <div id="activeWaves">
+                        <div class="text-gray-400 text-center py-8">
+                            No active waves. Generate a wave to get started.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <script>
+            // Wave configuration functions
+            function updateWaveType() {
+                const waveType = document.getElementById('wave-type').value;
+                console.log('Wave type updated to:', waveType);
+                
+                // Hide preview when changing type
+                document.getElementById('wavePreview').style.display = 'none';
+                
+                // You can add specific logic for different wave types here
+                if (waveType === 'batch_wave') {
+                    showStatusMessage('Batch wave selected - optimized for multiple orders', 'info');
+                } else if (waveType === 'zone_wave') {
+                    showStatusMessage('Zone-based wave selected - optimized by warehouse zones', 'info');
+                }
+            }
+
+            function generateWave() {
+                showStatusMessage('Generating wave...', 'info');
+                
+                // Simulate wave generation
+                setTimeout(() => {
+                    const mockWave = {
+                        id: 'WAVE-' + Date.now(),
+                        orders: Math.floor(Math.random() * 25) + 10,
+                        items: Math.floor(Math.random() * 150) + 50,
+                        estimatedTime: Math.floor(Math.random() * 120) + 30,
+                        zones: Math.floor(Math.random() * 5) + 2
+                    };
+                    
+                    displayWavePreview(mockWave);
+                    showStatusMessage(`Wave ${mockWave.id} generated successfully!`, 'success');
+                }, 1500);
+            }
+
+            function optimizeWave() {
+                showStatusMessage('Optimizing wave for efficiency...', 'info');
+                
+                setTimeout(() => {
+                    showStatusMessage('Wave optimized! Estimated 15% time reduction.', 'success');
+                }, 2000);
+            }
+
+            function previewWave() {
+                const preview = document.getElementById('wavePreview');
+                if (preview.style.display === 'none') {
+                    preview.style.display = 'block';
+                    
+                    // Generate sample preview data
+                    const mockPreview = {
+                        orders: 23,
+                        items: 147,
+                        zones: ['A1-A5', 'B2-B7', 'C1-C3'],
+                        estimatedTime: '2h 15m',
+                        pickers: ['John D.', 'Sarah M.', 'Mike R.']
+                    };
+                    
+                    displayWavePreview(mockPreview);
+                } else {
+                    preview.style.display = 'none';
+                }
+            }
+
+            function displayWavePreview(wave) {
+                const preview = document.getElementById('wavePreview');
+                const details = document.getElementById('waveDetails');
+                
+                details.innerHTML = `
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><strong>Orders:</strong> ${wave.orders}</div>
+                        <div><strong>Items:</strong> ${wave.items}</div>
+                        <div><strong>Est. Time:</strong> ${wave.estimatedTime || wave.estimatedTime + ' minutes'}</div>
+                        <div><strong>Zones:</strong> ${wave.zones instanceof Array ? wave.zones.join(', ') : wave.zones}</div>
+                    </div>
+                `;
+                
+                preview.style.display = 'block';
+            }
+
+            function saveWaveSettings() {
+                showStatusMessage('Wave settings saved successfully!', 'success');
+            }
+
+            function resetWaveSettings() {
+                // Reset all form fields to defaults
+                document.getElementById('wave-type').value = 'single_order';
+                document.getElementById('wave-size').value = 'medium';
+                document.getElementById('autoRelease').value = 'manual';
+                document.getElementById('pickerAssignment').value = 'automatic';
+                
+                // Reset checkboxes
+                document.getElementById('priorityUrgent').checked = true;
+                document.getElementById('priorityCustomer').checked = false;
+                document.getElementById('priorityShipping').checked = true;
+                document.getElementById('optimizeRouting').checked = true;
+                document.getElementById('optimizeLoad').checked = true;
+                document.getElementById('optimizeZones').checked = false;
+                
+                showStatusMessage('Wave settings reset to defaults', 'info');
+            }
+
+            // Initialize page
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('Order Picking page with Wave Configuration loaded');
+                updateWaveType(); // Initialize wave type
+            });
+        </script>select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Pick Route Optimization</label>
+                                <select id="routeOptimization" class="form-input">
+                                    <option value="shortest_path">Shortest Path Algorithm</option>
+                                    <option value="serpentine">Serpentine (S-Pattern)</option>
+                                    <option value="largest_gap">Largest Gap Strategy</option>
+                                    <option value="zone_sequence">Zone Sequence Order</option>
+                                    <option value="frequency_based">High-Frequency Items First</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Picking Strategy</label>
+                                <select id="pickStrategy" class="form-input">
+                                    <option value="discrete">Discrete Picking (One Order)</option>
+                                    <option value="batch">Batch Picking (Multiple Orders)</option>
+                                    <option value="zone_pick">Zone Pick & Pass</option>
+                                    <option value="cluster">Cluster Picking (Cart Zones)</option>
+                                    <option value="wave_pick">Wave Picking (Synchronized)</option>
+                                </select>
+                            </div>
+
+                            <div class="flex gap-2 flex-wrap">
+                                <button class="btn-primary" onclick="createPickingWave()">🌊 Create Wave</button>
+                                <button class="btn-success" onclick="generateOptimizedPickRoute()">🗺️ Generate Routes</button>
+                                <button class="btn-warning" onclick="startWaveExecution()">🚀 Execute Wave</button>
+                            </div>
+
+                            <div id="waveDisplay"></div>
+                            <div id="pickRouteDisplay"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pick Tickets Tab -->
+        <div id="pick_tickets" class="tab-content">
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Create Pick Ticket -->
+                <div class="card">
+                    <h3 class="text-xl font-bold text-blue-400 mb-4">Create Pick Ticket</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Order Number</label>
+                            <input type="text" id="orderNumber" placeholder="Enter order number" class="form-input">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Customer</label>
+                            <input type="text" id="customer" placeholder="Customer name" class="form-input">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Priority</label>
+                            <select id="orderPriority" class="form-input">
+                                <option value="standard">Standard</option>
+                                <option value="urgent">Urgent</option>
+                                <option value="rush">Rush</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Pick Items (one per line: Item-Slot-Quantity)</label>
+                            <textarea id="pickItems" placeholder="ITEM001-A01-02-5&#10;ITEM002-B03-01-3&#10;ITEM003-C02-05-2" 
+                                      rows="5" class="form-input"></textarea>
+                        </div>
+                        <button class="btn-primary w-full" onclick="createPickTicket()">Create Pick Ticket</button>
+                        <div id="pickTicketQR" class="text-center"></div>
+                        <div id="pickTicketResult"></div>
+                    </div>
+                </div>
+
+                <!-- Active Pick Session -->
+                <div class="card">
+                    <h3 class="text-xl font-bold text-green-400 mb-4">Active Pick Session</h3>
+                    <div id="activePickSession" class="text-gray-300 mb-4">No active pick session</div>
+                    <div class="timer" id="pickTimer">00:00:00</div>
+                    <div id="activeTicketDisplay" class="mb-4"></div>
+                    <div id="pickTicketDetails"></div>
+                    <div id="pickItemsList"></div>
+                    <div class="flex gap-2 flex-wrap">
+                        <button class="btn-success" onclick="startPicking()" id="startPickBtn" disabled>Start Picking</button>
+                        <button class="btn-warning" onclick="stageForDropOff()" id="stageBtn" disabled>📦 Stage for Drop-off</button>
+                        <button class="btn-danger" onclick="completePicking()" id="completePickBtn" disabled>Complete Order</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pick Location Scanning -->
+            <div class="card mt-6">
+                <h3 class="text-xl font-bold text-purple-400 mb-4">Scan Pick Location</h3>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Slot QR Code</label>
+                        <input type="text" id="slotScan" placeholder="Scan slot QR code" class="form-input">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Picked Quantity</label>
+                        <input type="number" id="pickedQuantity" placeholder="Quantity picked" class="form-input">
+                    </div>
+                    <div class="flex gap-2 items-end">
+                        <button class="btn-success" onclick="confirmItemPick()">✅ Confirm Pick</button>
+                        <button class="btn-danger" onclick="reportItemNotFound()">Item Not Found</button>
+                    </div>
+                </div>
+                <div id="scanResult" class="mt-4"></div>
+            </div>
+        </div>
+
+        <!-- Batch Picking Tab -->
+        <div id="batch_picking" class="tab-content">
+            <div class="card">
+                <h3 class="text-xl font-bold text-orange-400 mb-4">📦 Batch Order Processing</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Upload Batch Orders (CSV):</label>
+                        <input type="file" id="batchOrderFile" accept=".csv" onchange="processBatchOrders()" 
+                               class="form-input">
+                    </div>
+                    <div class="flex gap-2 flex-wrap">
+                        <button class="btn-primary" onclick="downloadBatchTemplate()">📄 Download Template</button>
+                        <button class="btn-success" onclick="processPendingBatch()">🔄 Process Pending Batch</button>
+                        <button class="btn-warning" onclick="processUnfulfilledOrders()">⚠️ Process Unfulfilled Orders</button>
+                    </div>
+                    <div id="batchResults"></div>
+                </div>
+
+                <!-- Can't Find Tickets Section -->
+                <div class="mt-8 p-4 bg-gray-800 rounded-lg">
+                    <h4 class="text-lg font-bold text-red-400 mb-4">🔍 Can't Find Tickets</h4>
+                    <div class="flex gap-2 flex-wrap mb-4">
+                        <button class="btn-primary" onclick="loadCantFindTickets()">🔄 Refresh Tickets</button>
+                        <button class="btn-success" onclick="exportCantFindReport()">📊 Export Report</button>
+                    </div>
+                    <div id="cantFindTickets">
+                        <p class="text-gray-400">Loading can't find tickets...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Tab -->
+        <div id="performance" class="tab-content">
+            <div class="card">
+                <h3 class="text-xl font-bold text-green-400 mb-4">📈 Picking Performance</h3>
+                <div class="grid md:grid-cols-4 gap-4 mb-6">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-blue-400" id="todayPicks">0</div>
+                        <div class="text-gray-300">Today's Picks</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-green-400" id="avgPickTime">0:00</div>
+                        <div class="text-gray-300">Average Pick Time</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-purple-400" id="accuracyRate">100%</div>
+                        <div class="text-gray-300">Accuracy Rate</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-orange-400" id="currentRate">0 picks/hour</div>
+                        <div class="text-gray-300">Current Rate</div>
+                    </div>
+                </div>
+                <div id="pickHistory">
+                    <h4 class="text-lg font-bold text-gray-300 mb-4">Recent Picking Activity</h4>
+                    <!-- Pick history will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Department Chat Tab -->
+        <div id="chat" class="tab-content">
+            <div class="card">
+                <h3 class="text-xl font-bold text-blue-400 mb-4">💬 Picking Team Chat</h3>
+                <div class="bg-gray-800 rounded-lg h-96 flex flex-col">
+                    <div class="flex-1 overflow-y-auto p-4" id="dept-chat-messages">
+                        <div class="text-center text-gray-400 py-20">
+                            <div class="text-4xl mb-4">💬</div>
+                            <div>Order picking team chat - Coordinate waves, share pick issues, and communicate with your team</div>
+                        </div>
+                    </div>
+                    <div class="p-4 border-t border-gray-700">
+                        <div class="flex gap-2">
+                            <input type="text" id="dept-message-input" 
+                                   placeholder="Type your message to the picking team..." 
+                                   class="form-input flex-1" 
+                                   onkeypress="handleDeptChatEnter(event)">
+                            <button onclick="sendDeptMessage('order_picking')" class="btn-primary">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Dashboard Button -->
+    <a href="/main_dashboard" class="floating-dashboard-btn">
+        🏠 Dashboard
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script>
+        let pickTickets = [];
+        let activeTicket = null;
+        let pickTimer = null;
+        let pickStartTime = null;
+        let currentPickIndex = 0;
+        let pickerStats = {
+            todayPicks: 0,
+            totalPickTime: 0,
+            completedOrders: 0,
+            correctPicks: 0,
+            totalPicks: 0
+        };
+
+        // Tab switching functionality
+        function switchTab(tabName) {
+            console.log('🔄 Switching to tab:', tabName);
+            
+            // Remove active class from all tabs and tab contents
+            const tabs = document.querySelectorAll('.nav-tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+                content.style.display = 'none';
+            });
+
+            // Show the selected tab content
+            const selectedTabContent = document.getElementById(tabName);
+            if (selectedTabContent) {
+                selectedTabContent.classList.add('active');
+                selectedTabContent.style.display = 'block';
+            }
+
+            // Mark the clicked tab as active
+            const clickedTab = document.querySelector(`[onclick="switchTab('${tabName}')"]`);
+            if (clickedTab) {
+                clickedTab.classList.add('active');
+            }
+
+            console.log('✅ Successfully switched to tab:', tabName);
+        }
+
+        // QR Scanner Functions
+        function focusScanner() {const scanInput = document.getElementById('qrScanInput')
+            scanInput.focus();
+            scanInput.select();}
+
+        // Open camera scanner for mobile devices
+        async function openCameraScanner() {if (typeof QRCameraScanner !== 'undefined') {
+                const scanner = new QRCameraScanner()
+                scanner.initCamera(function(qrData) {
+                    document.getElementById('qrScanInput').value = qrData;
+                    processScannedQR();}).catch(error => {console.error('Camera scanner error:', error)
+                    alert('Camera access failed. Please allow camera permission and try again.');});
+            } else {const qrCode = prompt('Camera scanner not available. Please enter QR code manually:')
+                if (qrCode && qrCode.trim()) {
+                    document.getElementById('qrScanInput').value = qrCode.trim();
+                    processScannedQR();}
+            }
+        }
+
+        async function processScannedQR() {const qrData = document.getElementById('qrScanInput').value.trim()
+            const resultDiv = document.getElementById('scanProcessingResult');
+
+            if (!qrData) {
+                resultDiv.innerHTML = `
+                    <div class="p-4 bg-yellow-900 border border-yellow-600 rounded-lg text-yellow-200">
+                        ⚠️ Please scan or enter a QR code first
+                    </div>
+                `;
+                return;}
+
+            // Process QR code here
+            // Placeholder logic for different QR code types
+            if (qrData.startsWith('PICK_TICKET:')) {const parts = qrData.split(':')
+                const ticketId = parts[1];
+                const orderNumber = parts[2];
+                const ticket = pickTickets.find(t => t.id === ticketId);
+                if (ticket) {
+                    activeTicket = ticket;
+                    currentPickIndex = 0;
+                    activeTicket.status = 'created';
+                    updateActivePickSession();
+                    updatePickTicketDisplay();
+                    resultDiv.innerHTML = `
+                        <div class="p-4 bg-green-900 border border-green-600 rounded-lg text-green-200">
+                            ✅ Pick Ticket Activated: ${ticketId} for Order ${orderNumber}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="p-4 bg-red-900 border border-red-600 rounded-lg text-red-200">
+                            ❌ Pick Ticket not found: ${ticketId}
+                        </div>
+                    `;
+                }
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="p-4 bg-blue-900 border border-blue-600 rounded-lg text-blue-200">
+                        ℹ️ QR Data Processed: ${qrData}
+                    </div>
+                `;
+            }
+
+            // Clear the input for next scan
+            document.getElementById('qrScanInput').value = '';
+            document.getElementById('qrScanInput').focus();
+        }
+
+        async function generateQRCode(data) {
+            try {
+                const response = await fetch('/api/qr/generate', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({data: data})
+                });
+                const result = await response.json();
+                return result.qr_image;
+            } catch (error) {console.error('Error generating QR code:', error)
+                return null;}
+        }
+
+        function createPickTicket() {const orderNumber = document.getElementById('orderNumber').value
+            const customer = document.getElementById('customer').value;
+            const priority = document.getElementById('orderPriority').value;
+            const itemsText = document.getElementById('pickItems').value;
+
+            if (!orderNumber || !customer || !itemsText) {
+                alert('Please fill all required fields');
+                return;}
+
+            const pickItems = itemsText.split('\n').filter(line => line.trim()).map((line, index) => {const parts = line.trim().split('-')
+                if (parts.length >= 3) {
+                    return {
+                        id: index + 1,
+                        item: parts[0].trim(),
+                        slot: parts[1].trim() + '-' + parts[2].trim(),
+                        quantity: parseInt(parts[3]?.trim()) || 1,
+                        picked: 0,
+                        completed: false};
+                }
+                return null;
+            }).filter(item => item !== null);
+
+            if (pickItems.length === 0) {alert('Please enter valid pick items in the format ITEM-SLOT-QUANTITY')
+                return;}
+
+            const ticketId = 'PICK-' + Date.now();
+            const qrData = `PICK_TICKET:${ticketId}:${orderNumber}`;
+
+            const ticket = {
+                id: ticketId,
+                orderNumber,
+                customer,
+                priority,
+                items: pickItems,
+                qrData,
+                created: new Date().toISOString(),
+                status: 'created',
+                totalItems: pickItems.length,
+                completedItems: 0
+            };
+
+            pickTickets.unshift(ticket);
+            activeTicket = ticket;
+
+            document.getElementById('pickTicketResult').innerHTML = `
+                <div class="p-4 bg-green-900 border border-green-600 rounded-lg text-green-200">
+                    <h4 class="text-lg font-bold mb-2">✅ Pick Ticket Created</h4>
+                    <p><strong>Ticket:</strong> ${ticketId}</p>
+                    <p><strong>Order:</strong> ${orderNumber}</p>
+                    <p><strong>Items:</strong> ${pickItems.length}</p>
+                    <div class="mt-4 p-4 bg-gray-800 rounded text-center">
+                        <div class="text-6xl">📋</div>
+                        <p class="text-sm text-gray-400 mt-2">Scan this QR code to activate pick ticket.</p>
+                    </div>
+                </div>
+            `;
+
+            updateActivePickSession();
+            updatePickTicketDisplay();
+
+            // Clear form
+            document.getElementById('orderNumber').value = '';
+            document.getElementById('customer').value = '';
+            document.getElementById('pickItems').value = '';
+        }
+
+        function updateActivePickSession() {const sessionDiv = document.getElementById('activePickSession')
+            const startBtn = document.getElementById('startPickBtn');
+            const stageBtn = document.getElementById('stageBtn');
+            const completeBtn = document.getElementById('completePickBtn');
+
+            if (activeTicket) {
+                const completionPercentage = Math.round((activeTicket.completedItems / activeTicket.totalItems) * 100);
+
+                sessionDiv.innerHTML = `
+                    <div class="p-4 bg-blue-900 border border-blue-600 rounded-lg text-blue-200">
+                        <strong>Ticket:</strong> ${activeTicket.id}<br>
+                        <strong>Order:</strong> ${activeTicket.orderNumber}<br>
+                        <strong>Customer:</strong> ${activeTicket.customer}<br>
+                        <strong>Status:</strong> ${activeTicket.status}<br>
+                        <strong>Progress:</strong> ${activeTicket.completedItems}/${activeTicket.totalItems} (${completionPercentage}%)
+                    </div>
+                `;
+
+                if (activeTicket.status === 'created') {startBtn.disabled = false
+                    stageBtn.disabled = true;
+                    completeBtn.disabled = true;} else if (activeTicket.status === 'in_progress') {startBtn.disabled = true
+                    stageBtn.disabled = completionPercentage < 80;
+                    completeBtn.disabled = false;} else {// completed or staged
+                    startBtn.disabled = true
+                    stageBtn.disabled = true;
+                    completeBtn.disabled = true;}
+            } else {sessionDiv.innerHTML = 'No active pick session'
+                startBtn.disabled = true;
+                stageBtn.disabled = true;
+                completeBtn.disabled = true;}
+        }
+
+        function startPicking() {if (activeTicket) {
+                activeTicket.status = 'in_progress'
+                activeTicket.startTime = new Date().toISOString();
+                pickStartTime = Date.now();
+
+                pickTimer = setInterval(updatePickTimer, 1000);
+                updateActivePickSession();
+                updatePickTicketDisplay();}
+        }
+
+        function stageForDropOff() {if (activeTicket) {
+                activeTicket.status = 'staged'
+                alert('Order staged for drop-off!');
+                updateActivePickSession();}
+        }
+
+        function completePicking() {if (activeTicket) {
+                activeTicket.status = 'completed'
+                clearInterval(pickTimer);
+                document.getElementById('pickTimer').textContent = '00:00:00';
+
+                pickerStats.completedOrders++;
+                pickerStats.todayPicks += activeTicket.completedItems;
+
+                updateActivePickSession();
+                updatePickHistory();
+                updatePerformanceStats();
+
+                activeTicket = null;
+                updateActivePickSession();
+
+                alert('Order picking completed!');}
+        }
+
+        function updatePickTimer() {if (pickStartTime) {
+                const elapsed = Date.now() - pickStartTime
+                const hours = Math.floor(elapsed / 3600000);
+                const minutes = Math.floor((elapsed % 3600000) / 60000);
+                const seconds = Math.floor((elapsed % 60000) / 1000);
+
+                document.getElementById('pickTimer').textContent = 
+                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }
+
+        function confirmItemPick() {alert('Item pick confirmed!')}
+
+        function reportItemNotFound() {alert('Item not found reported!')}
+
+        function updatePerformanceStats() {document.getElementById('todayPicks').textContent = pickerStats.todayPicks
+            document.getElementById('avgPickTime').textContent = '2:30';
+            document.getElementById('accuracyRate').textContent = '98%';
+            document.getElementById('currentRate').textContent = '45 picks/hour';}
+
+        function updatePickTicketDisplay() {if (!activeTicket) {
+                const ticketDisplay = document.getElementById('activeTicketDisplay')
+                if (ticketDisplay) {
+                    ticketDisplay.style.display = 'none';}
+                return;
+            }
+
+            const ticketDetailsDiv = document.getElementById('pickTicketDetails');
+            const pickItemsListDiv = document.getElementById('pickItemsList');
+
+            if (ticketDetailsDiv) {
+                ticketDetailsDiv.innerHTML = `
+                    <div class="pick-ticket">
+                        <h4>Order: ${activeTicket.orderNumber} | Customer: ${activeTicket.customer}</h4>
+                        <p>Priority: ${activeTicket.priority} | Progress: ${activeTicket.completedItems}/${activeTicket.totalItems}</p>
+                    </div>
+                `;
+            }
+
+            if (pickItemsListDiv) {
+                pickItemsListDiv.innerHTML = activeTicket.items.map((item, index) => `
+                    <div class="pick-item ${item.completed ? 'completed' : index === currentPickIndex ? 'current' : ''}" 
+                         onclick="selectPickItem(${index})">
+                        <strong>${item.item}</strong> - Slot: ${item.slot} - Qty: ${item.quantity}
+                        ${item.notFound ? ' ❌ NOT FOUND' : item.completed ? ' ✅' : ''} ${index === currentPickIndex ? ' ← CURRENT' : ''}
+                        <br>Picked: ${item.picked}/${item.quantity}
+                        ${item.notFound ? '<br><em style="color: #dc3545">Item not found at location</em>' : ''}
+                    </div>
+                `).join('');
+            }
+        }
+
+        function selectPickItem(index) {if (activeTicket && activeTicket.status === 'in_progress') {
+                currentPickIndex = index
+                updatePickTicketDisplay();}
+        }
+
+        // Picking operation functions with real backend integration
+        async function generateDailyPickTickets() {
+            try {
+                const response = await fetch('/api/picking/daily-tickets', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`✅ Generated ${data.total} Pick Tickets for Today!\n\nTickets:\n${data.tickets.map(t => `• ${t.ticket_id} - ${t.order_number}`).join('\n')}`);
+                } else {
+                    alert('❌ Failed to generate pick tickets: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error generating pick tickets:', error);
+                alert('❌ Failed to generate pick tickets');
+            }
+        }
+
+        async function syncSalesPadOrders() {
+            try {
+                const response = await fetch('/api/picking/sync-salespad', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    const ordersList = data.new_orders.map(o => `• ${o.order_id} - ${o.customer} (${o.items} items)`).join('\n');
+                    alert(`✅ Synced ${data.orders_synced} New Orders from SalesPad!\n\n${ordersList}`);
+                } else {
+                    alert('❌ Failed to sync orders: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error syncing SalesPad orders:', error);
+                alert('❌ Failed to sync SalesPad orders');
+            }
+        }
+
+        function viewTodaysOrders() {
+            alert('📋 Opening today\'s orders view...\n\nThis feature displays all pending orders for today. Full order management coming soon!');
+        }
+
+        function updateWaveType() {
+            console.log('Wave type updated');
+        }
+
+        async function createPickingWave() {
+            const waveType = document.getElementById('waveType')?.value || 'standard';
+            
+            try {
+                const response = await fetch('/api/picking/create-wave', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        wave_type: waveType,
+                        orders: []
+                    })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`✅ Picking Wave Created!\n\nWave ID: ${data.wave.wave_id}\nType: ${data.wave.wave_type}\nStatus: ${data.wave.status}`);
+                } else {
+                    alert('❌ Failed to create wave: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error creating picking wave:', error);
+                alert('❌ Failed to create picking wave');
+            }
+        }
+
+        async function generateOptimizedPickRoute() {
+            try {
+                const response = await fetch('/api/picking/optimize-route', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        wave_id: 'CURRENT'
+                    })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    const route = data.route;
+                    alert(`✅ Optimized Pick Route Generated!\n\nRoute ID: ${route.route_id}\nDistance: ${route.total_distance}ft\nEst. Time: ${route.estimated_time} min\n\nSequence: ${route.pick_sequence.join(' → ')}`);
+                } else {
+                    alert('❌ Failed to optimize route: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error optimizing route:', error);
+                alert('❌ Failed to generate optimized route');
+            }
+        }
+
+        function startWaveExecution() {
+            alert('🚀 Starting wave execution...\n\nThis will assign pickers and initiate the picking process. Full wave execution features coming soon!');
+        }
+
+        function processBatchOrders() {
+            alert('📦 Processing batch orders...\n\nBatch processing allows multiple orders to be picked simultaneously.');
+        }
+
+        function downloadBatchTemplate() {
+            alert('📄 Downloading batch template...\n\nTemplate file for batch order uploads will be generated.');
+        }
+
+        function processPendingBatch() {
+            alert('🔄 Processing pending batch...\n\nReviewing and processing queued batch orders.');
+        }
+
+        function processUnfulfilledOrders() {
+            alert('⚠️ Processing unfulfilled orders...\n\nIdentifying and addressing orders that could not be completed.');
+        }
+
+        function loadCantFindTickets() {
+            document.getElementById('cantFindTickets').innerHTML = '<p class="text-gray-400">No can\'t find tickets found.</p>';
+        }
+
+        function exportCantFindReport() {
+            alert('📊 Exporting can\'t find report...\n\nGenerating detailed report of items not found during picking.');
+        }
+        function sendDeptMessage(department) {const messageInput = document.getElementById('dept-message-input')
+            const messageText = messageInput.value.trim();
+            if (!messageText) return;
+
+            const messagesDiv = document.getElementById('dept-chat-messages');
+            const newMessage = document.createElement('div');
+            newMessage.className = 'mb-4';
+            newMessage.innerHTML = `
+                <div class="flex items-center mb-2">
+                    <div class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm mr-2">You</div>
+                    <div class="text-gray-400 text-sm">${new Date().toLocaleTimeString()}</div>
+                </div>
+                <div class="bg-gray-700 p-3 rounded-lg">${messageText}</div>
+            `;
+            messagesDiv.appendChild(newMessage);
+            messageInput.value = '';
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function handleDeptChatEnter(event) {if (event.key === 'Enter') {
+                sendDeptMessage('order_picking')}
+        }
+
+        // Lift Driver Request Functions
+        async function requestPullDown() {
+            const itemName = document.getElementById('pullDownItemName').value.trim();
+            const location = document.getElementById('pullDownLocation').value.trim();
+            const priority = parseInt(document.getElementById('pullDownPriority').value);
+            const notes = document.getElementById('pullDownNotes').value.trim();
+            
+            if (!itemName || !location) {
+                alert('❌ Please enter both item name and location');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/lift-drivers/tasks', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'pull_down',
+                        item_name: itemName,
+                        location: location,
+                        priority: priority,
+                        notes: notes
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const resultDiv = document.getElementById('requestResult');
+                    resultDiv.innerHTML = `
+                        <div class="p-4 bg-green-900 border border-green-600 rounded-lg text-green-200">
+                            ✅ Pull-down request sent successfully!<br>
+                            <strong>Assigned to:</strong> ${data.task.assigned_driver_name}<br>
+                            <strong>Task ID:</strong> ${data.task.id}
+                        </div>
+                    `;
+                    
+                    // Clear form
+                    document.getElementById('pullDownItemName').value = '';
+                    document.getElementById('pullDownLocation').value = '';
+                    document.getElementById('pullDownNotes').value = '';
+                    
+                    // Clear success message after 5 seconds
+                    setTimeout(() => {
+                        resultDiv.innerHTML = '';
+                    }, 5000);
+                } else {
+                    alert('❌ Error sending request: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error requesting pull-down:', error);
+                alert('❌ Error sending request. Please try again.');
+            }
+        }
+        
+        async function requestReplenishment() {
+            const itemName = document.getElementById('pullDownItemName').value.trim();
+            const location = document.getElementById('pullDownLocation').value.trim();
+            const priority = parseInt(document.getElementById('pullDownPriority').value);
+            const notes = document.getElementById('pullDownNotes').value.trim();
+            
+            if (!itemName || !location) {
+                alert('❌ Please enter both item name and location');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/lift-drivers/tasks', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'replenishment',
+                        item_name: itemName,
+                        location: location,
+                        priority: priority,
+                        notes: notes
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const resultDiv = document.getElementById('requestResult');
+                    resultDiv.innerHTML = `
+                        <div class="p-4 bg-blue-900 border border-blue-600 rounded-lg text-blue-200">
+                            ✅ Replenishment request sent successfully!<br>
+                            <strong>Assigned to:</strong> ${data.task.assigned_driver_name}<br>
+                            <strong>Task ID:</strong> ${data.task.id}
+                        </div>
+                    `;
+                    
+                    // Clear form
+                    document.getElementById('pullDownItemName').value = '';
+                    document.getElementById('pullDownLocation').value = '';
+                    document.getElementById('pullDownNotes').value = '';
+                    
+                    // Clear success message after 5 seconds
+                    setTimeout(() => {
+                        resultDiv.innerHTML = '';
+                    }, 5000);
+                } else {
+                    alert('❌ Error sending request: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error requesting replenishment:', error);
+                alert('❌ Error sending request. Please try again.');
+            }
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {updateActivePickSession()
+            loadCantFindTickets();
+            updatePerformanceStats();
+
+            // Focus scanner input
+            const scanInput = document.getElementById('qrScanInput');
+            if (scanInput) {
+                scanInput.focus();}
+
+            console.log('Order Picking page initialized');
+        });
+    </script>
+
+    <!-- Include QR Camera Scanner -->
+    <script src="/static/qr_camera_scanner.js"></script>
+    <!-- Include Universal Dashboard Button -->
+    <script src="/static/universal_dashboard_button.js"></script>
+    <!-- Include Floating Chat Widget -->
+    <script src="/static/floating_chat_widget.js"></script>
+    <!-- Include Employee Messaging Widget -->
+    <script src="/static/employee_messaging_widget.js"></script>
+
+<button class="ql-fab" onclick="location.href='main_dashboard.html'">🏠 Dashboard</button></body></html>

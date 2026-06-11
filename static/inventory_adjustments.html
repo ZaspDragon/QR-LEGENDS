@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Adjustments - QR Legends</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="qr_camera_scanner.js"></script>
+    <script src="copyright_notice.js"></script>
+    <script src="floating_chat_widget.js"></script>
+    <script src="employee_messaging_widget.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0b1220 0%, #1e293b 100%);
+            min-height: 100vh;
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #2563eb, #3b82f6);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+        }
+        .form-input, .form-select {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: #e2e8f0;
+            width: 100%;
+        }
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        option {
+            background: #1e293b;
+            color: #e2e8f0;
+        }
+        .adjustment-record {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="max-w-7xl mx-auto p-6">
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold mb-2">⚖️ Inventory Adjustments</h1>
+            <p class="text-gray-400">Make manual inventory quantity adjustments and track variance reasons</p>
+        </div>
+
+        <!-- Adjustment Form -->
+        <div class="card">
+            <h2 class="text-2xl font-bold mb-4">📝 Create New Adjustment</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block mb-2 text-sm font-medium">Item SKU</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="itemSku" class="form-input" placeholder="Enter SKU or scan QR">
+                        <button onclick="startQRScanner()" class="btn-primary whitespace-nowrap">📷 Scan</button>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block mb-2 text-sm font-medium">Item Name</label>
+                    <input type="text" id="itemName" class="form-input" placeholder="Auto-filled from SKU" readonly>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div>
+                    <label class="block mb-2 text-sm font-medium">Current Quantity</label>
+                    <input type="number" id="currentQty" class="form-input" readonly>
+                </div>
+                
+                <div>
+                    <label class="block mb-2 text-sm font-medium">New Quantity</label>
+                    <input type="number" id="newQty" class="form-input" placeholder="Enter new quantity">
+                </div>
+                
+                <div>
+                    <label class="block mb-2 text-sm font-medium">Variance</label>
+                    <input type="text" id="variance" class="form-input" readonly>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block mb-2 text-sm font-medium">Reason</label>
+                    <select id="reason" class="form-select">
+                        <option value="">Select reason...</option>
+                        <option value="damage">Damaged Goods</option>
+                        <option value="shrinkage">Shrinkage/Theft</option>
+                        <option value="count_error">Count Error Correction</option>
+                        <option value="expired">Expired Product</option>
+                        <option value="return">Customer Return</option>
+                        <option value="transfer">Internal Transfer</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block mb-2 text-sm font-medium">Location</label>
+                    <input type="text" id="location" class="form-input" placeholder="e.g., A1-B2-C3">
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="block mb-2 text-sm font-medium">Notes</label>
+                <textarea id="notes" class="form-input" rows="3" placeholder="Additional details about this adjustment..."></textarea>
+            </div>
+
+            <button onclick="submitAdjustment()" class="btn-primary w-full">✅ Submit Adjustment</button>
+        </div>
+
+        <!-- Recent Adjustments -->
+        <div class="card">
+            <h2 class="text-2xl font-bold mb-4">📋 Recent Adjustments</h2>
+            <div id="adjustmentsList">
+                <p class="text-gray-400 text-center py-4">No adjustments recorded yet</p>
+            </div>
+        </div>
+
+        <!-- Back to Inventory -->
+        <div class="mt-4">
+            <button onclick="location.href='/inventory'" class="btn-primary">
+                ← Back to Inventory Management
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const adjustments = [];
+
+        function startQRScanner() {
+            if (window.QRCameraScanner) {
+                window.QRCameraScanner.startScanning((result) => {
+                    document.getElementById('itemSku').value = result;
+                    loadItemData(result);
+                });
+            } else {
+                alert('QR Scanner not available. Please enter SKU manually.');
+            }
+        }
+
+        function loadItemData(sku) {
+            fetch(`/api/inventory/items`)
+                .then(res => res.json())
+                .then(data => {
+                    const item = Object.values(data.items || {}).find(i => i.sku === sku);
+                    if (item) {
+                        document.getElementById('itemName').value = item.name;
+                        document.getElementById('currentQty').value = item.quantity;
+                        document.getElementById('location').value = item.location;
+                        calculateVariance();
+                    } else {
+                        alert('Item not found');
+                    }
+                })
+                .catch(err => console.error('Error loading item:', err));
+        }
+
+        function calculateVariance() {
+            const current = parseFloat(document.getElementById('currentQty').value) || 0;
+            const newQty = parseFloat(document.getElementById('newQty').value) || 0;
+            const variance = newQty - current;
+            document.getElementById('variance').value = variance >= 0 ? `+${variance}` : variance;
+        }
+
+        document.getElementById('newQty').addEventListener('input', calculateVariance);
+
+        function submitAdjustment() {
+            const adjustment = {
+                sku: document.getElementById('itemSku').value,
+                itemName: document.getElementById('itemName').value,
+                currentQty: document.getElementById('currentQty').value,
+                newQty: document.getElementById('newQty').value,
+                variance: document.getElementById('variance').value,
+                reason: document.getElementById('reason').value,
+                location: document.getElementById('location').value,
+                notes: document.getElementById('notes').value,
+                timestamp: new Date().toLocaleString(),
+                user: 'Current User'
+            };
+
+            if (!adjustment.sku || !adjustment.newQty || !adjustment.reason) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            adjustments.unshift(adjustment);
+            displayAdjustments();
+            
+            document.getElementById('itemSku').value = '';
+            document.getElementById('itemName').value = '';
+            document.getElementById('currentQty').value = '';
+            document.getElementById('newQty').value = '';
+            document.getElementById('variance').value = '';
+            document.getElementById('reason').value = '';
+            document.getElementById('location').value = '';
+            document.getElementById('notes').value = '';
+
+            alert('Adjustment recorded successfully!');
+        }
+
+        function displayAdjustments() {
+            const list = document.getElementById('adjustmentsList');
+            if (adjustments.length === 0) {
+                list.innerHTML = '<p class="text-gray-400 text-center py-4">No adjustments recorded yet</p>';
+                return;
+            }
+
+            list.innerHTML = adjustments.map(adj => `
+                <div class="adjustment-record">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h3 class="font-bold text-lg">${adj.itemName} (${adj.sku})</h3>
+                            <p class="text-sm text-gray-400">${adj.location}</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xl font-bold ${parseInt(adj.variance) >= 0 ? 'text-green-400' : 'text-red-400'}">
+                                ${adj.variance}
+                            </div>
+                            <div class="text-sm text-gray-400">${adj.currentQty} → ${adj.newQty}</div>
+                        </div>
+                    </div>
+                    <div class="text-sm">
+                        <span class="bg-blue-500 bg-opacity-20 text-blue-300 px-2 py-1 rounded">${adj.reason}</span>
+                        <span class="text-gray-400 ml-2">${adj.timestamp}</span>
+                    </div>
+                    ${adj.notes ? `<p class="text-sm text-gray-400 mt-2">${adj.notes}</p>` : ''}
+                </div>
+            `).join('');
+        }
+
+        console.log('Inventory Adjustments page loaded');
+    </script>
+</body>
+</html>

@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receiving Transactions - ERP</title>
+    <style>
+        * {box-sizing: border-box}
+
+        body {font-family: Arial, sans-serif
+            margin: 0
+            padding: 10px
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            padding-top: 70px;
+            padding-bottom: 120px}
+
+        .container {max-width: 1400px
+            margin: 0 auto
+            background: white
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+
+        .header {text-align: center
+            margin-bottom: 30px
+            padding: 20px
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            border-radius: 10px}
+
+        .header h1 {margin: 0 0 10px 0
+            font-size: 2.2rem}
+
+        .header p {margin: 0
+            opacity: 0.9
+            font-size: 1.1rem}
+
+        .tabs {display: flex
+            border-bottom: 3px solid #3498db
+            margin-bottom: 20px}
+
+        .tab {padding: 12px 24px
+            cursor: pointer
+            border: none
+            background: #f8f9fa;
+            margin-right: 5px;
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
+            transition: all 0.3s ease}
+
+        .tab.active {background: #3498db
+            color: white}
+
+        .tab-content {display: none}
+
+        .tab-content.active {display: block}
+
+        .form-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
+            gap: 20px
+            margin-bottom: 20px}
+
+        .form-group {margin-bottom: 15px}
+
+        .form-group label {display: block
+            margin-bottom: 5px
+            font-weight: bold
+            color: #2c3e50}
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {width: 100%
+            padding: 10px
+            border: 1px solid #ddd
+            border-radius: 5px;
+            font-size: 14px}
+
+        .btn {padding: 10px 20px
+            border: none
+            border-radius: 5px
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+            transition: all 0.3s ease}
+
+        .btn-primary {background: #3498db
+            color: white}
+
+        .btn-success {background: #27ae60
+            color: white}
+
+        .btn-warning {background: #f39c12
+            color: white}
+
+        .btn-danger {background: #e74c3c
+            color: white}
+
+        .btn: hover {opacity: 0.9
+            transform: translateY(-1px)}
+
+        .transaction-card {background: white
+            border: 1px solid #ddd
+            border-radius: 8px
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+
+        .status-badge {padding: 4px 12px
+            border-radius: 20px
+            font-size: 12px
+            font-weight: bold;
+            text-transform: uppercase}
+
+        .status-pending {background: #fff3cd
+            color: #856404}
+
+        .status-received {background: #d4edda
+            color: #155724}
+
+        .status-in-transit {background: #d1ecf1
+            color: #0c5460}
+
+        .status-damaged {background: #f8d7da
+            color: #721c24}
+
+        .table-container {overflow-x: auto
+            margin: 20px 0}
+
+        table {width: 100%
+            border-collapse: collapse
+            background: white}
+
+        th, td {padding: 12px
+            text-align: left
+            border-bottom: 1px solid #ddd}
+
+        th {background: #f8f9fa
+            font-weight: bold
+            color: #2c3e50}
+
+        .stats-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
+            gap: 20px
+            margin-bottom: 30px}
+
+        .stat-card {background: white
+            padding: 20px
+            border-radius: 8px
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid #3498db}
+
+        .stat-value {font-size: 2rem
+            font-weight: bold
+            color: #2c3e50
+            margin-bottom: 8px}
+
+        .stat-label {color: #666
+            font-size: 0.9rem}
+
+        @media (max-width: 768px) {.form-grid {
+                grid-template-columns: 1fr}
+
+            .tabs {flex-direction: column}
+
+            .tab {margin-right: 0
+                margin-bottom: 5px}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📥 ERP Receiving Transactions</h1>
+            <p>Record receiving transactions, manage in-transit inventory, and track goods movement</p>
+        </div>
+
+        <!-- Statistics Dashboard -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalReceived">0</div>
+                <div class="stat-label">Items Received Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="inTransitCount">0</div>
+                <div class="stat-label">Items In Transit</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="pendingReceiving">0</div>
+                <div class="stat-label">Pending Receiving</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalValue">$0</div>
+                <div class="stat-label">Total Value Received</div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('receiving-entry')">📥 Record Receiving</button>
+            <button class="tab" onclick="switchTab('in-transit')">🚛 In-Transit Items</button>
+            <button class="tab" onclick="switchTab('transaction-history')">📋 Transaction History</button>
+            <button class="tab" onclick="switchTab('variance-tracking')">⚠️ Variance Tracking</button>
+            <button class="tab" onclick="switchTab('partials-overages')">📊 Partials & Overages</button>
+        </div>
+
+        <!-- Receiving Entry Tab -->
+        <div id="receiving-entry" class="tab-content active">
+            <h3>📥 Record Receiving Transaction</h3>
+
+            <!-- PO Selection Dropdown with Vendor Search -->
+            <div class="form-group" style="margin-bottom: 25px;">
+                <label>Select Purchase Order to Process or Search by Vendor</label>
+                <div style="display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: end;">
+                    <select id="poDropdown" onchange="loadPODetails()" style="padding: 12px; font-size: 16px; font-weight: bold;">
+                        <option value="">Select a Purchase Order...</option>
+                        <option value="PO-2025-001">PO-2025-001 - ABC Manufacturing (5 items pending)</option>
+                        <option value="PO-2025-002">PO-2025-002 - XYZ Distributors (3 items pending)</option>
+                        <option value="PO-2025-003">PO-2025-003 - Global Supply Co. (8 items pending)</option>
+                        <option value="PO-2025-004">PO-2025-004 - Tech Components Inc. (2 items pending)</option>
+                        <option value="XFR-2025-001">XFR-2025-001 - Transfer from Warehouse B (4 items)</option>
+                        <option value="SXFR-2025-001">SXFR-2025-001 - Special Transfer Emergency (1 item)</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="showVendorSearch()">🔍 Search by Vendor</button>
+                </div>
+
+                <!-- Vendor Search Panel -->
+                <div id="vendorSearchPanel" style="display: none; margin-top: 15px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 2px solid #007bff;">
+                    <h4 style="margin: 0 0 15px 0; color: #007bff;">🔍 Search by Vendor Number</h4>
+                    <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: end;">
+                        <div>
+                            <label>Vendor Number</label>
+                            <input type="text" id="vendorNumberSearch" placeholder="Enter vendor number (e.g., VND001, VND002)" onkeyup="searchByVendor()" style="padding: 10px; font-size: 14px;">
+                        </div>
+                        <button class="btn btn-success" onclick="searchByVendor()">🔍 Search</button>
+                        <button class="btn btn-secondary" onclick="hideVendorSearch()">❌ Close</button>
+                    </div>
+
+                    <!-- Search Results -->
+                    <div id="vendorSearchResults" style="margin-top: 15px; display: none;">
+                        <h5 style="color: #28a745; margin-bottom: 10px;">📋 Found Purchase Orders:</h5>
+                        <div id="vendorPOResults" style="display: grid; gap: 10px;">
+                            <!-- Search results will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- No Results Message -->
+                    <div id="noVendorResults" style="display: none; margin-top: 15px; padding: 15px; background: #fff3cd; border-radius: 5px; border-left: 4px solid #ffc107;">
+                        <h5 style="color: #856404; margin: 0 0 5px 0;">⚠️ No Results Found</h5>
+                        <p style="margin: 0; color: #856404;">No purchase orders found for the entered vendor number. Please check the vendor number and try again.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selected PO Details Panel -->
+            <div id="selectedPOPanel" style="display: none; background: linear-gradient(135deg, #e3f2fd, #f8f9fa); padding: 20px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #2196f3;">
+                <h4 id="selectedPOTitle" style="margin: 0 0 15px 0; color: #1976d2;">📋 Selected PO Details</h4>
+                <div id="selectedPODetails" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <!-- PO details will be populated here -->
+                </div>
+                <div style="margin-top: 15px;">
+                    <button class="btn btn-success" onclick="startBulkReceiving()">📦 Start Bulk Receiving</button>
+                    <button class="btn btn-primary" onclick="viewPOManifest()">📋 View Full Manifest</button>
+                    <button class="btn btn-warning" onclick="reportPOIssue()">⚠️ Report Issue</button>
+                </div>
+            </div>
+
+            <form id="receivingForm" class="form-grid">
+                <div>
+                    <div class="form-group">
+                        <label>Purchase Order Number</label>
+                        <input type="text" id="poNumber" placeholder="Enter PO Number or select from dropdown" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Supplier</label>
+                        <select id="supplier" required>
+                            <option value="">Select Supplier</option>
+                            <option value="SUP001">ABC Manufacturing</option>
+                            <option value="SUP002">XYZ Distributors</option>
+                            <option value="SUP003">Global Supply Co.</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Receipt Date</label>
+                        <input type="date" id="receiptDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Received By</label>
+                        <input type="text" id="receivedBy" placeholder="Employee Name" required>
+                    </div>
+                </div>
+                <div>
+                    <div class="form-group">
+                        <label>Item Number</label>
+                        <input type="text" id="itemNumber" placeholder="Enter Item Number" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Expected Quantity</label>
+                        <input type="number" id="expectedQty" placeholder="Expected Qty" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Received Quantity</label>
+                        <input type="number" id="receivedQty" placeholder="Actual Qty Received" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Unit Cost</label>
+                        <input type="number" id="unitCost" step="0.01" placeholder="0.00" required>
+                    </div>
+                </div>
+            </form>
+
+            <div class="form-group">
+                <label>Condition</label>
+                <select id="condition">
+                    <option value="good">Good</option>
+                    <option value="damaged">Damaged</option>
+                    <option value="defective">Defective</option>
+                    <option value="incomplete">Incomplete</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Notes</label>
+                <textarea id="notes" rows="3" placeholder="Additional notes or comments"></textarea>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button type="button" class="btn btn-success" onclick="recordReceiving()">📥 Record Receiving</button>
+                <button type="button" class="btn btn-primary" onclick="addToTransaction()">➕ Add to Transaction</button>
+                <button type="button" class="btn btn-warning" onclick="clearForm()">🔄 Clear Form</button>
+            </div>
+
+            <!-- Current Transaction Items -->
+            <div id="currentTransaction" style="margin-top: 30px; display: none;">
+                <h4>Current Transaction Items</h4>
+                <div id="transactionItems"></div>
+                <div style="margin-top: 15px;">
+                    <button class="btn btn-success" onclick="commitTransaction()">✅ Commit Transaction</button>
+                    <button class="btn btn-danger" onclick="clearTransaction()">❌ Clear Transaction</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- In-Transit Items Tab -->
+        <div id="in-transit" class="tab-content">
+            <h3>🚛 In-Transit Inventory</h3>
+
+            <div style="margin-bottom: 20px;">
+                <button class="btn btn-primary" onclick="addInTransitItem()">➕ Add In-Transit Item</button>
+                <button class="btn btn-warning" onclick="updateTransitStatus()">🔄 Update Status</button>
+                <button class="btn btn-success" onclick="refreshInTransit()">🔄 Refresh</button>
+            </div>
+
+            <div class="table-container">
+                <table id="inTransitTable">
+                    <thead>
+                        <tr>
+                            <th>PO Number</th>
+                            <th>Item Number</th>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Supplier</th>
+                            <th>Ship Date</th>
+                            <th>Expected Date</th>
+                            <th>Carrier</th>
+                            <th>Tracking Number</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inTransitBody">
+                        <!-- In-transit items will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Transaction History Tab -->
+        <div id="transaction-history" class="tab-content">
+            <h3>📋 Receiving Transaction History</h3>
+
+            <div class="form-grid" style="margin-bottom: 20px;">
+                <div class="form-group">
+                    <label>Filter by Date Range</label>
+                    <input type="date" id="startDate">
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <input type="date" id="endDate">
+                </div>
+                <div class="form-group">
+                    <label>Filter by Supplier</label>
+                    <select id="supplierFilter">
+                        <option value="">All Suppliers</option>
+                        <option value="SUP001">ABC Manufacturing</option>
+                        <option value="SUP002">XYZ Distributors</option>
+                        <option value="SUP003">Global Supply Co.</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-primary" onclick="filterHistory()">🔍 Filter</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="historyTable">
+                    <thead>
+                        <tr>
+                            <th>Transaction ID</th>
+                            <th>Date</th>
+                            <th>PO Number</th>
+                            <th>Supplier</th>
+                            <th>Item Count</th>
+                            <th>Total Value</th>
+                            <th>Received By</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody">
+                        <!-- Transaction history will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Variance Tracking Tab -->
+        <div id="variance-tracking" class="tab-content">
+            <h3>⚠️ Receiving Variance Tracking</h3>
+
+            <div style="margin-bottom: 20px;">
+                <button class="btn btn-warning" onclick="generateVarianceReport()">📊 Generate Variance Report</button>
+                <button class="btn btn-primary" onclick="exportVariances()">📤 Export Variances</button>
+            </div>
+
+            <div class="table-container">
+                <table id="varianceTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>PO Number</th>
+                            <th>Item Number</th>
+                            <th>Expected Qty</th>
+                            <th>Received Qty</th>
+                            <th>Variance</th>
+                            <th>Variance %</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="varianceBody">
+                        <!-- Variance data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Partials & Overages Tab -->
+        <div id="partials-overages" class="tab-content">
+            <h3>📊 Partials & Overages Management</h3>
+
+            <!-- Summary Cards -->
+            <div class="stats-grid" style="margin-bottom: 30px;">
+                <div class="stat-card" style="border-left-color: #f39c12;">
+                    <div class="stat-value" id="totalPartials" style="color: #f39c12;">0</div>
+                    <div class="stat-label">Partial Shipments</div>
+                </div>
+                <div class="stat-card" style="border-left-color: #27ae60;">
+                    <div class="stat-value" id="totalOverages" style="color: #27ae60;">0</div>
+                    <div class="stat-label">Overage Items</div>
+                </div>
+                <div class="stat-card" style="border-left-color: #e74c3c;">
+                    <div class="stat-value" id="pendingPartials" style="color: #e74c3c;">0</div>
+                    <div class="stat-label">Pending Partials</div>
+                </div>
+                <div class="stat-card" style="border-left-color: #9b59b6;">
+                    <div class="stat-value" id="partialValue" style="color: #9b59b6;">$0</div>
+                    <div class="stat-label">Partial Value Impact</div>
+                </div>
+            </div>
+
+            <!-- Filter Options -->
+            <div class="form-grid" style="margin-bottom: 20px; background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                <div class="form-group">
+                    <label>Filter by Type</label>
+                    <select id="partialOverageFilter" onchange="filterPartialsOverages()">
+                        <option value="all">All Items</option>
+                        <option value="partials">Partials Only</option>
+                        <option value="overages">Overages Only</option>
+                        <option value="pending">Pending Resolution</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date Range</label>
+                    <input type="date" id="partialsStartDate">
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <input type="date" id="partialsEndDate">
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-primary" onclick="refreshPartialsOverages()">🔍 Apply Filter</button>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="margin-bottom: 20px;">
+                <button class="btn btn-success" onclick="processPartialShipment()">➕ Process Partial Shipment</button>
+                <button class="btn btn-warning" onclick="handleOverageItem()">📦 Handle Overage</button>
+                <button class="btn btn-primary" onclick="generatePartialOverageReport()">📊 Generate Report</button>
+                <button class="btn btn-secondary" onclick="exportPartialOverageData()">📤 Export Data</button>
+            </div>
+
+            <!-- Partials & Overages Table -->
+            <div class="table-container">
+                <table id="partialsOveragesTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>PO Number</th>
+                            <th>Item Number</th>
+                            <th>Description</th>
+                            <th>Expected Qty</th>
+                            <th>Received Qty</th>
+                            <th>Difference</th>
+                            <th>Unit Cost</th>
+                            <th>Value Impact</th>
+                            <th>Status</th>
+                            <th>Reason</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="partialsOveragesBody">
+                        <!-- Partials and overages data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Partial Shipment Processing Modal -->
+            <div id="partialShipmentModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000;">
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 10px; max-width: 600px; width: 90%; max-height: 80%; overflow-y: auto;">
+                    <h3>📦 Process Partial Shipment</h3>
+
+                    <div class="form-group">
+                        <label>Purchase Order</label>
+                        <select id="partialPOSelect">
+                            <option value="">Select PO with pending items...</option>
+                            <option value="PO-2025-001">PO-2025-001 - ABC Manufacturing</option>
+                            <option value="PO-2025-002">PO-2025-002 - XYZ Distributors</option>
+                            <option value="PO-2025-003">PO-2025-003 - Global Supply Co.</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Item Number</label>
+                        <input type="text" id="partialItemNumber" placeholder="Enter item number">
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Expected Quantity</label>
+                            <input type="number" id="partialExpectedQty" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Received Quantity</label>
+                            <input type="number" id="partialReceivedQty" placeholder="Actual received">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Reason for Partial</label>
+                        <select id="partialReason">
+                            <option value="">Select reason...</option>
+                            <option value="supplier_shortage">Supplier Shortage</option>
+                            <option value="damaged_goods">Damaged Goods</option>
+                            <option value="shipping_error">Shipping Error</option>
+                            <option value="quality_issue">Quality Issue</option>
+                            <option value="partial_delivery">Partial Delivery</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Expected Delivery Date for Remaining</label>
+                        <input type="date" id="partialExpectedDate">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea id="partialNotes" rows="3" placeholder="Additional notes about the partial shipment"></textarea>
+                    </div>
+
+                    <div style="margin-top: 20px; text-align: right;">
+                        <button class="btn btn-secondary" onclick="closePartialModal()">❌ Cancel</button>
+                        <button class="btn btn-success" onclick="savePartialShipment()">💾 Save Partial</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Overage Handling Modal -->
+            <div id="overageModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000;">
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 10px; max-width: 600px; width: 90%; max-height: 80%; overflow-y: auto;">
+                    <h3>📦 Handle Overage Item</h3>
+
+                    <div class="form-group">
+                        <label>Item Information</label>
+                        <input type="text" id="overageItemNumber" placeholder="Item number with overage">
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Expected Quantity</label>
+                            <input type="number" id="overageExpectedQty" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Received Quantity</label>
+                            <input type="number" id="overageReceivedQty" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Overage Quantity</label>
+                            <input type="number" id="overageQty" readonly style="background: #e8f5e8;">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Overage Disposition</label>
+                        <select id="overageDisposition">
+                            <option value="">Select action...</option>
+                            <option value="accept">Accept & Add to Inventory</option>
+                            <option value="return">Return to Supplier</option>
+                            <option value="credit">Request Credit</option>
+                            <option value="quarantine">Place in Quarantine</option>
+                            <option value="reject">Reject Shipment</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Reason for Overage</label>
+                        <select id="overageReason">
+                            <option value="">Select reason...</option>
+                            <option value="supplier_error">Supplier Packing Error</option>
+                            <option value="counting_error">Counting Error</option>
+                            <option value="bonus_shipment">Bonus Shipment</option>
+                            <option value="wrong_item">Wrong Item Shipped</option>
+                            <option value="system_error">System Error</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea id="overageNotes" rows="3" placeholder="Additional notes about the overage"></textarea>
+                    </div>
+
+                    <div style="margin-top: 20px; text-align: right;">
+                        <button class="btn btn-secondary" onclick="closeOverageModal()">❌ Cancel</button>
+                        <button class="btn btn-success" onclick="saveOverageHandling()">💾 Save Disposition</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="/erp_hub" class="btn btn-primary">🏠 Back to ERP Hub</a>
+            <a href="/main_dashboard" class="btn btn-primary">🏠 Main Dashboard</a>
+        </div>
+    </div>
+
+    <script>
+        let currentTransactionItems = [];
+        let receivingTransactions = [];
+        let inTransitItems = [];
+        let variances = [];
+        let partialsOverages = [];
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {loadInitialData()
+            setToday()
+            updateStatistics()});
+
+        function setToday() {const today = new Date().toISOString().split('T')[0]
+            document.getElementById('receiptDate').value = today}
+
+        function switchTab(tabName) {// Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content')
+            contents.forEach(content => content.classList.remove('active'))
+
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab')
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked tab
+            event.target.classList.add('active');}
+
+        function addToTransaction() {const item = getFormData()
+            if (!validateFormData(item)) return
+
+            const variance = item.receivedQty - item.expectedQty
+            const extendedCost = item.receivedQty * item.unitCost;
+
+            const transactionItem = {
+                ...item,
+                variance: variance,
+                variancePercent: ((variance / item.expectedQty) * 100).toFixed(2),
+                extendedCost: extendedCost.toFixed(2),
+                id: Date.now()};
+
+            currentTransactionItems.push(transactionItem);
+            updateCurrentTransaction();
+            clearForm();
+        }
+
+        function recordReceiving() {const item = getFormData()
+            if (!validateFormData(item)) return
+
+            // Extract slot information from notes if present
+            const slotMatch = item.notes.match(/Allocated to slot: ([A-Za-z0-9-]+)/)
+            const allocatedSlot = slotMatch ? slotMatch[1] : null;
+
+            const enhancedItem = {
+                ...item,
+                allocatedSlot: allocatedSlot};
+
+            const transaction = {
+                id: generateTransactionId(),
+                date: item.receiptDate,
+                poNumber: item.poNumber,
+                supplier: item.supplier,
+                items: [enhancedItem],
+                receivedBy: item.receivedBy,
+                status: 'completed',
+                totalValue: (item.receivedQty * item.unitCost).toFixed(2),
+                hasSlotAssignments: !!allocatedSlot
+            };
+
+            receivingTransactions.unshift(transaction);
+
+            // Check for variance
+            const variance = item.receivedQty - item.expectedQty;
+            if (variance !== 0) {recordVariance(item, variance)
+
+                // Record partials and overages
+                if (variance < 0) {
+                    recordPartial(item, Math.abs(variance))} else if (variance > 0) {recordOverage(item, variance)}
+            }
+
+            updateStatistics();
+            updateTransactionHistory();
+            clearForm();
+
+            let alertMessage = `✅ Receiving recorded successfully!\nTransaction ID: ${transaction.id}`;
+            if (allocatedSlot) {
+                alertMessage += `\n📍 Assigned to slot: ${allocatedSlot}`;
+            }
+            alert(alertMessage);
+        }
+
+        function getFormData() {
+            return {
+                poNumber: document.getElementById('poNumber').value,
+                supplier: document.getElementById('supplier').value,
+                receiptDate: document.getElementById('receiptDate').value,
+                receivedBy: document.getElementById('receivedBy').value,
+                itemNumber: document.getElementById('itemNumber').value,
+                expectedQty: parseInt(document.getElementById('expectedQty').value),
+                receivedQty: parseInt(document.getElementById('receivedQty').value),
+                unitCost: parseFloat(document.getElementById('unitCost').value),
+                condition: document.getElementById('condition').value,
+                notes: document.getElementById('notes').value
+            };
+        }
+
+        function validateFormData(item) {if (!item.poNumber || !item.supplier || !item.itemNumber || 
+                !item.expectedQty || !item.receivedQty || !item.unitCost) {
+                alert('Please fill in all required fields')
+                return false}
+            return true;
+        }
+
+        function updateCurrentTransaction() {const container = document.getElementById('currentTransaction')
+            const itemsContainer = document.getElementById('transactionItems')
+
+            if (currentTransactionItems.length === 0) {
+                container.style.display = 'none'
+                return;}
+
+            container.style.display = 'block';
+            itemsContainer.innerHTML = currentTransactionItems.map(item => `
+                <div class="transaction-card">
+                    <div style="display: flex justify-content: space-between align-items: center">
+                        <div>
+                            <strong>${item.itemNumber}</strong> - ${item.supplier}
+                            <br>PO: ${item.poNumber}
+                            <br>Qty: ${item.receivedQty} (Expected: ${item.expectedQty})
+                            <br>Cost: $${item.extendedCost}
+                            ${item.variance !== 0 ? `<br><span style="color: ${item.variance > 0 ? 'green' : 'red'}">Variance: ${item.variance} (${item.variancePercent}%)</span>` : ''}
+                        </div>
+                        <button class="btn btn-danger" onclick="removeTransactionItem(${item.id})">❌</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function removeTransactionItem(id) {currentTransactionItems = currentTransactionItems.filter(item => item.id !== id)
+            updateCurrentTransaction()}
+
+        function commitTransaction() {if (currentTransactionItems.length === 0) {
+                alert('No items in current transaction')
+                return}
+
+            const transaction = {
+                id: generateTransactionId(),
+                date: new Date().toISOString().split('T')[0],
+                poNumber: currentTransactionItems[0].poNumber,
+                supplier: currentTransactionItems[0].supplier,
+                items: currentTransactionItems,
+                receivedBy: currentTransactionItems[0].receivedBy,
+                status: 'completed',
+                totalValue: currentTransactionItems.reduce((sum, item) => sum + parseFloat(item.extendedCost), 0).toFixed(2)
+            };
+
+            receivingTransactions.unshift(transaction);
+
+            // Record variances
+            currentTransactionItems.forEach(item => {if (item.variance !== 0) {
+                    recordVariance(item, item.variance)}
+            });
+
+            currentTransactionItems = [];
+            updateCurrentTransaction();
+            updateStatistics();
+            updateTransactionHistory();
+
+            alert(`✅ Transaction committed successfully!\nTransaction ID: ${transaction.id}\nTotal Value: $${transaction.totalValue}`);
+        }
+
+        function clearTransaction() {currentTransactionItems = []
+            updateCurrentTransaction()}
+
+        function clearForm() {document.getElementById('receivingForm').reset()
+            document.getElementById('notes').value = ''
+            setToday()}
+
+        function recordVariance(item, variance) {
+            const varianceRecord = {
+                id: Date.now(),
+                date: item.receiptDate,
+                poNumber: item.poNumber,
+                itemNumber: item.itemNumber,
+                expectedQty: item.expectedQty,
+                receivedQty: item.receivedQty,
+                variance: variance,
+                variancePercent: ((variance / item.expectedQty) * 100).toFixed(2),
+                reason: item.notes || 'No reason provided',
+                status: 'pending_review'
+            };
+
+            variances.unshift(varianceRecord);
+            updateVarianceTable();
+        }
+
+        function generateTransactionId() {const date = new Date()
+            const timestamp = date.getTime().toString().slice(-6)
+            return `RCV${date.getFullYear()}${(date.getMonth() + 1).toString().padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}-${timestamp}`;
+        }
+
+        // Vendor Database - in real implementation, this would come from your API
+        const vendorDatabase = {
+            'VND001': {
+                name: 'ABC Manufacturing',
+                vendorNumber: 'VND001',
+                purchaseOrders: ['PO-2025-001']
+            },
+            'VND002': {
+                name: 'XYZ Distributors', 
+                vendorNumber: 'VND002',
+                purchaseOrders: ['PO-2025-002']
+            },
+            'VND003': {
+                name: 'Global Supply Co.',
+                vendorNumber: 'VND003',
+                purchaseOrders: ['PO-2025-003']
+            },
+            'VND004': {
+                name: 'Tech Components Inc.',
+                vendorNumber: 'VND004',
+                purchaseOrders: ['PO-2025-004']
+            },
+            'VND005': {
+                name: 'Warehouse B Transfer',
+                vendorNumber: 'VND005',
+                purchaseOrders: ['XFR-2025-001', 'SXFR-2025-001']
+            }
+        };
+
+        // Vendor Search Functions
+        function showVendorSearch() {document.getElementById('vendorSearchPanel').style.display = 'block'
+            document.getElementById('vendorNumberSearch').focus()}
+
+        function hideVendorSearch() {document.getElementById('vendorSearchPanel').style.display = 'none'
+            document.getElementById('vendorSearchResults').style.display = 'none'
+            document.getElementById('noVendorResults').style.display = 'none'
+            document.getElementById('vendorNumberSearch').value = '';}
+
+        function searchByVendor() {const vendorNumber = document.getElementById('vendorNumberSearch').value.trim().toUpperCase()
+            const resultsDiv = document.getElementById('vendorSearchResults')
+            const noResultsDiv = document.getElementById('noVendorResults')
+            const poResultsDiv = document.getElementById('vendorPOResults');
+
+            // Hide previous results
+            resultsDiv.style.display = 'none';
+            noResultsDiv.style.display = 'none';
+
+            if (!vendorNumber) {
+                return;}
+
+            // Search for vendor
+            const vendor = vendorDatabase[vendorNumber];
+
+            if (vendor && vendor.purchaseOrders.length > 0) {// Display found POs
+                poResultsDiv.innerHTML = vendor.purchaseOrders.map(poNumber => {
+                    const poInfo = getDisplayPOInfo(poNumber)
+                    return `
+                        <div style="background: white padding: 15px border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <div style="display: flex; justify-content: between; align-items: center;">
+                                <div style="flex: 1;">
+                                    <h6 style="margin: 0 0 5px 0; color: #007bff; font-size: 16px;">${poNumber}</h6>
+                                    <p style="margin: 0 0 5px 0; color: #666;"><strong>Vendor:</strong> ${vendor.name} (${vendor.vendorNumber})</p>
+                                    <p style="margin: 0; color: #666; font-size: 14px;">${poInfo.description}</p>
+                                </div>
+                                <div style="margin-left: 15px;">
+                                    <button class="btn btn-success" onclick="selectPOFromVendorSearch('${poNumber}')" style="font-size: 14px; padding: 8px 16px;">
+                                        📋 Select This PO
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                resultsDiv.style.display = 'block';
+            } else {// Show no results message
+                noResultsDiv.style.display = 'block'}
+        }
+
+        function getDisplayPOInfo(poNumber) {
+            const poDescriptions = {
+                'PO-2025-001': '5 items pending - Expected delivery Aug 20',
+                'PO-2025-002': '3 items pending - Expected delivery Aug 22', 
+                'PO-2025-003': '8 items pending - Expected delivery Aug 25',
+                'PO-2025-004': '2 items pending - Expected delivery Aug 21',
+                'XFR-2025-001': '4 items - Inter-warehouse transfer',
+                'SXFR-2025-001': '1 item - Special emergency transfer'
+            };
+
+            return {
+                description: poDescriptions[poNumber] || 'Purchase order details'
+            };
+        }
+
+        function selectPOFromVendorSearch(poNumber) {// Set the PO dropdown to the selected value
+            document.getElementById('poDropdown').value = poNumber
+
+            // Load the PO details
+            loadPODetails()
+
+            // Hide the vendor search panel
+            hideVendorSearch()
+
+            // Show success message
+            alert(`✅ Selected ${poNumber} from vendor search results!`);
+
+            // Scroll to the PO details panel
+            document.getElementById('selectedPOPanel').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Enhanced search with Enter key support
+        document.addEventListener('DOMContentLoaded', function() {const vendorSearchInput = document.getElementById('vendorNumberSearch')
+            if (vendorSearchInput) {
+                vendorSearchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        searchByVendor()}
+                });
+            }
+        });
+
+        // PO Dropdown Management Functions
+        async function loadPODetails() {const selectedPO = document.getElementById('poDropdown').value
+            const panel = document.getElementById('selectedPOPanel')
+            const title = document.getElementById('selectedPOTitle')
+            const details = document.getElementById('selectedPODetails');
+
+            if (!selectedPO) {
+                panel.style.display = 'none';
+                return;}
+
+            try {
+                // Load PO data from API
+                const response = await fetch(`/api/receiving/po-details/${selectedPO}`);
+                if (!response.ok) throw new Error('Failed to load PO details');
+
+                const poData = await response.json();
+
+                if (poData.success) {displayPOWithSlots(poData.po_data, selectedPO)} else {// Fallback to sample data
+                    loadSamplePOData(selectedPO)}
+            } catch (error) {console.error('Error loading PO:', error)
+                loadSamplePOData(selectedPO)}
+        }
+
+        function loadSamplePOData(selectedPO) {
+            // Sample PO data with slot allocations
+            const poData = {
+                'PO-2025-001': {
+                    supplier: 'ABC Manufacturing',
+                    expectedDate: '2025-08-20',
+                    status: 'In Transit',
+                    totalItems: 5,
+                    totalValue: '$12,450.00',
+                    items: [
+                        { itemNumber: 'ITM-001', description: 'Warehouse Equipment', expectedQty: 10, unitCost: 125.00, allocatedSlot: 'RCV-DOCK-01' },
+                        { itemNumber: 'ITM-002', description: 'Safety Gear', expectedQty: 25, unitCost: 45.00, allocatedSlot: 'RCV-DOCK-02' },
+                        { itemNumber: 'ITM-003', description: 'Office Supplies', expectedQty: 50, unitCost: 12.50, allocatedSlot: 'RCV-DOCK-03' },
+                        { itemNumber: 'ITM-004', description: 'Cleaning Materials', expectedQty: 15, unitCost: 35.00, allocatedSlot: 'RCV-BULK-01' },
+                        { itemNumber: 'ITM-005', description: 'Tools', expectedQty: 8, unitCost: 89.00, allocatedSlot: 'RCV-DOCK-04' }
+                    ]
+                },
+                'PO-2025-002': {
+                    supplier: 'XYZ Distributors',
+                    expectedDate: '2025-08-22',
+                    status: 'Shipped',
+                    totalItems: 3,
+                    totalValue: '$8,900.00',
+                    items: [
+                        { itemNumber: 'ITM-006', description: 'Computer Hardware', expectedQty: 5, unitCost: 650.00, allocatedSlot: 'RCV-DOCK-05' },
+                        { itemNumber: 'ITM-007', description: 'Network Equipment', expectedQty: 3, unitCost: 1200.00, allocatedSlot: 'RCV-DOCK-06' },
+                        { itemNumber: 'ITM-008', description: 'Cables & Accessories', expectedQty: 20, unitCost: 25.00, allocatedSlot: 'RCV-DOCK-07' }
+                    ]
+                },
+                'XFR-2025-001': {
+                    supplier: 'Warehouse B Transfer',
+                    expectedDate: '2025-08-19',
+                    status: 'Ready for Transfer',
+                    totalItems: 4,
+                    totalValue: '$3,200.00',
+                    transferType: 'Inter-warehouse Transfer',
+                    items: [
+                        { itemNumber: 'ITM-009', description: 'Surplus Inventory', expectedQty: 12, unitCost: 150.00, allocatedSlot: 'RCV-BULK-02' },
+                        { itemNumber: 'ITM-010', description: 'Returned Items', expectedQty: 8, unitCost: 200.00, allocatedSlot: 'RCV-DOCK-08' },
+                        { itemNumber: 'ITM-011', description: 'Rebalance Stock', expectedQty: 15, unitCost: 80.00, allocatedSlot: 'RCV-DOCK-09' },
+                        { itemNumber: 'ITM-012', description: 'Emergency Stock', expectedQty: 5, unitCost: 120.00, allocatedSlot: 'RCV-DOCK-10' }
+                    ]
+                }
+            };
+
+            displayPOWithSlots(poData[selectedPO] || poData['PO-2025-001'], selectedPO);
+        }
+
+        function displayPOWithSlots(po, selectedPO) {const title = document.getElementById('selectedPOTitle')
+            const details = document.getElementById('selectedPODetails')
+            const panel = document.getElementById('selectedPOPanel')
+
+            title.textContent = `📋 ${selectedPO} - ${po.supplier}`;
+
+            details.innerHTML = `
+                <div style="background: white padding: 15px border-radius: 8px box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h5 style="margin: 0 0 10px 0; color: #1976d2;">🏢 Supplier Information</h5>
+                    <p style="margin: 5px 0;"><strong>Supplier:</strong> ${po.supplier}</p>
+                    <p style="margin: 5px 0;"><strong>Expected Date:</strong> ${new Date(po.expectedDate).toLocaleDateString()}</p>
+                    <p style="margin: 5px 0;"><strong>Status:</strong> <span style="color: #28a745; font-weight: bold;">${po.status}</span></p>
+                </div>
+
+                <div style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h5 style="margin: 0 0 10px 0; color: #1976d2;">📊 Order Summary</h5>
+                    <p style="margin: 5px 0;"><strong>Total Items:</strong> ${po.totalItems}</p>
+                    <p style="margin: 5px 0;"><strong>Total Value:</strong> ${po.totalValue}</p>
+                    ${po.transferType ? `<p style="margin: 5px 0"><strong>Type:</strong> ${po.transferType}</p>` : ''}
+                </div>
+
+                <div style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); grid-column: 1 / -1;">
+                    <h5 style="margin: 0 0 15px 0; color: #1976d2;">📦 Items to Receive with Slot Assignments</h5>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px;">
+                        ${po.items.map((item, index) => `}
+                            <div style="background: #f8f9fa padding: 12px; border-radius: 5px; border-left: 3px solid #28a745;">
+                                <div style="font-weight: bold; color: #333; margin-bottom: 5px;">${item.itemNumber}</div>
+                                <div style="font-size: 12px; color: #666; margin: 2px 0;">${item.description}</div>
+                                <div style="font-size: 14px; margin: 5px 0;">
+                                    <strong>Qty:</strong> ${item.expectedQty} | 
+                                    <strong>Cost:</strong> $${item.unitCost.toFixed(2)}
+                                </div>
+                                <div style="font-size: 12px; margin: 5px 0; padding: 5px; background: #e8f5e8; border-radius: 3px;">
+                                    <strong>🎯 Slot:</strong> <span style="color: #155724; font-weight: bold;">${item.allocatedSlot || 'Not Assigned'}</span>
+                                </div>
+                                <button class="btn btn-success" onclick="quickReceiveItemWithSlot('${item.itemNumber}', ${item.expectedQty}, ${item.unitCost}, '${item.allocatedSlot || ''}')" 
+                                        style="font-size: 11px; padding: 5px 10px; margin-top: 5px; width: 100%;">
+                                    Quick Receive to ${item.allocatedSlot || 'TBD'}
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            panel.style.display = 'block';
+
+            // Pre-populate the PO number field
+            document.getElementById('poNumber').value = selectedPO;
+
+            // Set supplier
+            const supplierField = document.getElementById('supplier');
+            if (supplierField) {supplierField.value = po.supplier}
+        }
+
+        function quickReceiveItem(itemNumber, expectedQty, unitCost) {quickReceiveItemWithSlot(itemNumber, expectedQty, unitCost, '')}
+
+        function quickReceiveItemWithSlot(itemNumber, expectedQty, unitCost, allocatedSlot) {document.getElementById('itemNumber').value = itemNumber
+            document.getElementById('expectedQty').value = expectedQty
+            document.getElementById('receivedQty').value = expectedQty
+            document.getElementById('unitCost').value = unitCost;
+
+            // Add slot information to notes if available
+            const notesField = document.getElementById('notes');
+            if (allocatedSlot) {
+                notesField.value = `Allocated to slot: ${allocatedSlot}`;
+            }
+
+            // Show success message about slot assignment
+            if (allocatedSlot) {const alertDiv = document.createElement('div')
+                alertDiv.style.cssText = `
+                    position: fixed top: 20px right: 20px; z-index: 1000;
+                    background: #d4edda; color: #155724; padding: 15px; border-radius: 5px;
+                    border: 1px solid #c3e6cb; max-width: 300px;
+                `;
+                alertDiv.innerHTML = `
+                    <strong>✅ Slot Assigned</strong><br>
+                    Item ${itemNumber} should go to slot <strong>${allocatedSlot}</strong>
+                `;
+                document.body.appendChild(alertDiv);
+                setTimeout(() => alertDiv.remove(), 3000);
+            }
+
+            // Scroll to the receiving form
+            document.getElementById('receivingForm').scrollIntoView({ behavior: 'smooth' });
+
+            // Focus on the received quantity field for quick editing
+            document.getElementById('receivedQty').focus();
+            document.getElementById('receivedQty').select();
+        }
+
+        function startBulkReceiving() {const selectedPO = document.getElementById('poDropdown').value
+            if (!selectedPO) {
+                alert('Please select a Purchase Order first')
+                return}
+
+            alert(`Starting bulk receiving for ${selectedPO}. This feature will allow you to receive multiple items at once.`);
+            // Implementation for bulk receiving workflow
+        }
+
+        function viewPOManifest() {const selectedPO = document.getElementById('poDropdown').value
+            if (!selectedPO) {
+                alert('Please select a Purchase Order first')
+                return}
+
+            // Open a modal or new page with detailed manifest
+            const manifestWindow = window.open('', '_blank');
+            manifestWindow.document.write(`
+                <html>
+                    <head><title>PO Manifest - ${selectedPO}</title></head>
+                    <body style="font-family: Arial, sans-serif padding: 20px">
+                        <h1>📋 Purchase Order Manifest</h1>
+                        <h2>${selectedPO}</h2>
+                        <p>Detailed manifest view would be displayed here...</p>
+                        <button onclick="window.print()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px;">
+                            🖨️ Print Manifest
+                        </button>
+                    </body>
+                </html>
+            `);
+        }
+
+        function reportPOIssue() {const selectedPO = document.getElementById('poDropdown').value
+            if (!selectedPO) {
+                alert('Please select a Purchase Order first')
+                return}
+
+            const issue = prompt(`Report an issue with ${selectedPO}:\n\nPlease describe the problem:`);
+            if (issue && issue.trim()) {
+                alert(`Issue reported for ${selectedPO}:\n"${issue}"\n\nYour report has been sent to the procurement team.`);
+                // In real implementation, this would send the issue to your tracking system
+            }
+        }
+
+        function updateStatistics() {const today = new Date().toISOString().split('T')[0]
+            const todayTransactions = receivingTransactions.filter(t => t.date === today)
+
+            const totalReceived = todayTransactions.reduce((sum, t) => 
+                sum + t.items.reduce((itemSum, item) => itemSum + item.receivedQty, 0), 0)
+
+            const totalValue = todayTransactions.reduce((sum, t) => sum + parseFloat(t.totalValue), 0);
+
+            document.getElementById('totalReceived').textContent = totalReceived;
+            document.getElementById('inTransitCount').textContent = inTransitItems.length;
+            document.getElementById('pendingReceiving').textContent = inTransitItems.filter(item => item.status === 'in_transit').length;
+            document.getElementById('totalValue').textContent = `$${totalValue.toFixed(2)}`;
+        }
+
+        function updateTransactionHistory() {const tbody = document.getElementById('historyBody')
+            tbody.innerHTML = receivingTransactions.map(transaction => `
+                <tr>
+                    <td>
+                        ${transaction.id}
+                        ${transaction.hasSlotAssignments ? '<br><span style="font-size: 10px color: #28a745">📍 With Slots</span>' : ''}
+                    </td>
+                    <td>${new Date(transaction.date).toLocaleDateString()}</td>
+                    <td>${transaction.poNumber}</td>
+                    <td>${transaction.supplier}</td>
+                    <td>${transaction.items.length}</td>
+                    <td>$${transaction.totalValue}</td>
+                    <td>${transaction.receivedBy}</td>
+                    <td><span class="status-badge status-${transaction.status}">${transaction.status}</span></td>
+                    <td>
+                        <button class="btn btn-primary" onclick="viewTransaction('${transaction.id}')">👁️ View</button>
+                        <button class="btn btn-warning" onclick="editTransaction('${transaction.id}')">✏️ Edit</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateVarianceTable() {const tbody = document.getElementById('varianceBody')
+            tbody.innerHTML = variances.map(variance => `
+                <tr>
+                    <td>${new Date(variance.date).toLocaleDateString()}</td>
+                    <td>${variance.poNumber}</td>
+                    <td>${variance.itemNumber}</td>
+                    <td>${variance.expectedQty}</td>
+                    <td>${variance.receivedQty}</td>
+                    <td style="color: ${variance.variance > 0 ? 'green' : 'red'}">${variance.variance > 0 ? '+' : ''}${variance.variance}</td>
+                    <td style="color: ${variance.variance > 0 ? 'green' : 'red'}">${variance.variancePercent}%</td>
+                    <td>${variance.reason}</td>
+                    <td><span class="status-badge status-${variance.status.replace('_', '-')}">${variance.status}</span></td>
+                    <td>
+                        <button class="btn btn-primary" onclick="reviewVariance(${variance.id})">👁️ Review</button>
+                        <button class="btn btn-success" onclick="approveVariance(${variance.id})">✅ Approve</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadInitialData() {
+            // Load sample in-transit items
+            inTransitItems = [
+                {
+                    id: 1,
+                    poNumber: 'PO-2025-001',
+                    itemNumber: 'ITM-001',
+                    description: 'Warehouse Equipment',
+                    quantity: 50,
+                    supplier: 'ABC Manufacturing',
+                    shipDate: '2025-08-15',
+                    expectedDate: '2025-08-20',
+                    carrier: 'FedEx',
+                    trackingNumber: 'FX123456789',
+                    status: 'in_transit'
+                },
+                {
+                    id: 2,
+                    poNumber: 'PO-2025-002',
+                    itemNumber: 'ITM-002',
+                    description: 'Office Supplies',
+                    quantity: 100,
+                    supplier: 'XYZ Distributors',
+                    shipDate: '2025-08-16',
+                    expectedDate: '2025-08-21',
+                    carrier: 'UPS',
+                    trackingNumber: 'UPS987654321',
+                    status: 'shipped'
+                }
+            ];
+
+            updateInTransitTable();
+            updateTransactionHistory();
+            updateVarianceTable();
+            updatePartialsOveragesTable();
+            updatePartialsOveragesStats();
+        }
+
+        function updateInTransitTable() {const tbody = document.getElementById('inTransitBody')
+            tbody.innerHTML = inTransitItems.map(item => `
+                <tr>
+                    <td>${item.poNumber}</td>
+                    <td>${item.itemNumber}</td>
+                    <td>${item.description}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.supplier}</td>
+                    <td>${new Date(item.shipDate).toLocaleDateString()}</td>
+                    <td>${new Date(item.expectedDate).toLocaleDateString()}</td>
+                    <td>${item.carrier}</td>
+                    <td>${item.trackingNumber}</td>
+                    <td><span class="status-badge status-${item.status.replace('_', '-')}">${item.status}</span></td>
+                    <td>
+                        <button class="btn btn-primary" onclick="trackItem(${item.id})">📍 Track</button>
+                        <button class="btn btn-success" onclick="receiveInTransit(${item.id})">📥 Receive</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function addInTransitItem() {// Implementation for adding in-transit items
+            alert('Add In-Transit Item functionality - integrate with PO system')}
+
+        function updateTransitStatus() {alert('Update Transit Status functionality - integrate with carrier APIs')}
+
+        function refreshInTransit() {updateInTransitTable()
+            alert('In-transit data refreshed')}
+
+        function trackItem(id) {const item = inTransitItems.find(i => i.id === id)
+            if (item) {
+                alert(`Tracking ${item.trackingNumber} with ${item.carrier}\nStatus: ${item.status}`);
+            }
+        }
+
+        function receiveInTransit(id) {const item = inTransitItems.find(i => i.id === id)
+            if (item) {
+                // Pre-populate receiving form
+                document.getElementById('poNumber').value = item.poNumber
+                document.getElementById('itemNumber').value = item.itemNumber
+                document.getElementById('expectedQty').value = item.quantity;
+
+                // Switch to receiving tab
+                switchTab('receiving-entry');
+                document.querySelector('.tab').click();
+
+                alert('In-transit item loaded into receiving form');}
+        }
+
+        function filterHistory() {alert('Filter History functionality - implement date and supplier filtering')}
+
+        function viewTransaction(id) {const transaction = receivingTransactions.find(t => t.id === id)
+            if (transaction) {
+                let details = `Transaction Details:\nID: ${transaction.id}\nDate: ${transaction.date}\nPO: ${transaction.poNumber}\nSupplier: ${transaction.supplier}\nItems: ${transaction.items.length}\nTotal Value: $${transaction.totalValue}\n\nItems Received:`;
+
+                transaction.items.forEach((item, index) => {
+                    details += `\n${index + 1}. ${item.itemNumber} - ${item.receivedQty} units`;
+                    if (item.allocatedSlot) {
+                        details += ` (Slot: ${item.allocatedSlot})`;
+                    }
+                    if (item.variance && item.variance !== 0) {
+                        details += ` [Variance: ${item.variance > 0 ? '+' : ''}${item.variance}]`;
+                    }
+                });
+
+                alert(details);
+            }
+        }
+
+        function editTransaction(id) {alert('Edit Transaction functionality - implement transaction editing')}
+
+        function generateVarianceReport() {alert('Generate Variance Report functionality - create detailed variance analysis')}
+
+        function exportVariances() {alert('Export Variances functionality - export to CSV/Excel')}
+
+        function reviewVariance(id) {const variance = variances.find(v => v.id === id)
+            if (variance) {
+                alert(`Variance Review:\nItem: ${variance.itemNumber}\nPO: ${variance.poNumber}\nVariance: ${variance.variance} (${variance.variancePercent}%)\nReason: ${variance.reason}`);
+            }
+        }
+
+        function approveVariance(id) {const variance = variances.find(v => v.id === id)
+            if (variance) {
+                variance.status = 'approved'
+                updateVarianceTable()
+                alert('Variance approved');}
+        }
+
+        // Partials and Overages Functions
+        function recordPartial(item, partialQty) {
+            const partial = {
+                id: Date.now(),
+                date: item.receiptDate,
+                type: 'partial',
+                poNumber: item.poNumber,
+                itemNumber: item.itemNumber,
+                description: `Item from ${item.supplier}`,
+                expectedQty: item.expectedQty,
+                receivedQty: item.receivedQty,
+                difference: -partialQty,
+                unitCost: item.unitCost,
+                valueImpact: -(partialQty * item.unitCost),
+                status: 'pending',
+                reason: 'Partial shipment received',
+                supplier: item.supplier
+            };
+
+            partialsOverages.unshift(partial);
+            updatePartialsOveragesTable();
+            updatePartialsOveragesStats();
+        }
+
+        function recordOverage(item, overageQty) {
+            const overage = {
+                id: Date.now(),
+                date: item.receiptDate,
+                type: 'overage',
+                poNumber: item.poNumber,
+                itemNumber: item.itemNumber,
+                description: `Item from ${item.supplier}`,
+                expectedQty: item.expectedQty,
+                receivedQty: item.receivedQty,
+                difference: overageQty,
+                unitCost: item.unitCost,
+                valueImpact: overageQty * item.unitCost,
+                status: 'pending',
+                reason: 'Overage received',
+                supplier: item.supplier
+            };
+
+            partialsOverages.unshift(overage);
+            updatePartialsOveragesTable();
+            updatePartialsOveragesStats();
+        }
+
+        function updatePartialsOveragesTable() {const tbody = document.getElementById('partialsOveragesBody')
+            if (!tbody) return
+
+            tbody.innerHTML = partialsOverages.map(item => `
+                <tr>
+                    <td>${new Date(item.date).toLocaleDateString()}</td>
+                    <td>
+                        <span class="status-badge ${item.type === 'partial' ? 'status-warning' : 'status-success'}" 
+                              style="background: ${item.type === 'partial' ? '#fff3cd' : '#d4edda'}; 
+                                     color: ${item.type === 'partial' ? '#856404' : '#155724'};">
+                            ${item.type === 'partial' ? '📉 Partial' : '📈 Overage'}
+                        </span>
+                    </td>
+                    <td>${item.poNumber}</td>
+                    <td>${item.itemNumber}</td>
+                    <td>${item.description}</td>
+                    <td>${item.expectedQty}</td>
+                    <td>${item.receivedQty}</td>
+                    <td style="color: ${item.difference < 0 ? '#e74c3c' : '#27ae60'}">
+                        ${item.difference > 0 ? '+' : ''}${item.difference}
+                    </td>
+                    <td>$${item.unitCost.toFixed(2)}</td>
+                    <td style="color: ${item.valueImpact < 0 ? '#e74c3c' : '#27ae60'}">
+                        ${item.valueImpact < 0 ? '-' : '+'} $${Math.abs(item.valueImpact).toFixed(2)}
+                    </td>
+                    <td><span class="status-badge status-${item.status}">${item.status}</span></td>
+                    <td>${item.reason}</td>
+                    <td>
+                        <button class="btn btn-primary" onclick="viewPartialOverageDetails(${item.id})" style="font-size: 11px; padding: 4px 8px;">👁️ View</button>
+                        ${item.status === 'pending' ? `<button class="btn btn-success" onclick="resolvePartialOverage(${item.id})" style="font-size: 11px; padding: 4px 8px;">✅ Resolve</button>` : ''}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updatePartialsOveragesStats() {const partials = partialsOverages.filter(item => item.type === 'partial')
+            const overages = partialsOverages.filter(item => item.type === 'overage')
+            const pendingPartials = partials.filter(item => item.status === 'pending')
+            const partialValueImpact = partials.reduce((sum, item) => sum + Math.abs(item.valueImpact), 0);
+
+            document.getElementById('totalPartials').textContent = partials.length;
+            document.getElementById('totalOverages').textContent = overages.length;
+            document.getElementById('pendingPartials').textContent = pendingPartials.length;
+            document.getElementById('partialValue').textContent = `$${partialValueImpact.toFixed(2)}`;
+        }
+
+        function processPartialShipment() {document.getElementById('partialShipmentModal').style.display = 'block'}
+
+        function closePartialModal() {document.getElementById('partialShipmentModal').style.display = 'none'
+            clearPartialForm()}
+
+        function savePartialShipment() {const poNumber = document.getElementById('partialPOSelect').value
+            const itemNumber = document.getElementById('partialItemNumber').value
+            const expectedQty = parseInt(document.getElementById('partialExpectedQty').value)
+            const receivedQty = parseInt(document.getElementById('partialReceivedQty').value);
+            const reason = document.getElementById('partialReason').value;
+            const expectedDate = document.getElementById('partialExpectedDate').value;
+            const notes = document.getElementById('partialNotes').value;
+
+            if (!poNumber || !itemNumber || !receivedQty || !reason) {
+                alert('Please fill in all required fields');
+                return;}
+
+            const partial = {
+                id: Date.now(),
+                date: new Date().toISOString().split('T')[0],
+                type: 'partial',
+                poNumber: poNumber,
+                itemNumber: itemNumber,
+                description: `Manual partial entry`,
+                expectedQty: expectedQty,
+                receivedQty: receivedQty,
+                difference: receivedQty - expectedQty,
+                unitCost: 0, // Would be populated from item master
+                valueImpact: 0,
+                status: 'pending',
+                reason: reason,
+                expectedDate: expectedDate,
+                notes: notes
+            };
+
+            partialsOverages.unshift(partial);
+            updatePartialsOveragesTable();
+            updatePartialsOveragesStats();
+            closePartialModal();
+            alert('Partial shipment recorded successfully');
+        }
+
+        function handleOverageItem() {document.getElementById('overageModal').style.display = 'block'}
+
+        function closeOverageModal() {document.getElementById('overageModal').style.display = 'none'
+            clearOverageForm()}
+
+        function saveOverageHandling() {const itemNumber = document.getElementById('overageItemNumber').value
+            const disposition = document.getElementById('overageDisposition').value
+            const reason = document.getElementById('overageReason').value
+            const notes = document.getElementById('overageNotes').value;
+
+            if (!itemNumber || !disposition || !reason) {
+                alert('Please fill in all required fields');
+                return;}
+
+            // Update the overage record with disposition
+            const overage = partialsOverages.find(item => 
+                item.itemNumber === itemNumber && item.type === 'overage' && item.status === 'pending'
+            );
+
+            if (overage) {overage.disposition = disposition
+                overage.reason = reason
+                overage.notes = notes
+                overage.status = 'resolved';
+                overage.resolvedDate = new Date().toISOString().split('T')[0];}
+
+            updatePartialsOveragesTable();
+            updatePartialsOveragesStats();
+            closeOverageModal();
+            alert('Overage disposition saved successfully');
+        }
+
+        function clearPartialForm() {document.getElementById('partialPOSelect').value = ''
+            document.getElementById('partialItemNumber').value = ''
+            document.getElementById('partialExpectedQty').value = ''
+            document.getElementById('partialReceivedQty').value = '';
+            document.getElementById('partialReason').value = '';
+            document.getElementById('partialExpectedDate').value = '';
+            document.getElementById('partialNotes').value = '';}
+
+        function clearOverageForm() {document.getElementById('overageItemNumber').value = ''
+            document.getElementById('overageExpectedQty').value = ''
+            document.getElementById('overageReceivedQty').value = ''
+            document.getElementById('overageQty').value = '';
+            document.getElementById('overageDisposition').value = '';
+            document.getElementById('overageReason').value = '';
+            document.getElementById('overageNotes').value = '';}
+
+        function filterPartialsOverages() {const filter = document.getElementById('partialOverageFilter').value
+            let filteredItems = partialsOverages
+
+            if (filter !== 'all') {
+                if (filter === 'partials') {
+                    filteredItems = partialsOverages.filter(item => item.type === 'partial')} else if (filter === 'overages') {filteredItems = partialsOverages.filter(item => item.type === 'overage')} else if (filter === 'pending') {filteredItems = partialsOverages.filter(item => item.status === 'pending')}
+            }
+
+            // Apply date filter if specified
+            const startDate = document.getElementById('partialsStartDate').value;
+            const endDate = document.getElementById('partialsEndDate').value;
+
+            if (startDate) {filteredItems = filteredItems.filter(item => item.date >= startDate)}
+            if (endDate) {filteredItems = filteredItems.filter(item => item.date <= endDate)}
+
+            // Update table with filtered data
+            const tbody = document.getElementById('partialsOveragesBody');
+            tbody.innerHTML = filteredItems.map(item => `
+                <tr>
+                    <td>${new Date(item.date).toLocaleDateString()}</td>
+                    <td>
+                        <span class="status-badge ${item.type === 'partial' ? 'status-warning' : 'status-success'}" 
+                              style="background: ${item.type === 'partial' ? '#fff3cd' : '#d4edda'}; 
+                                     color: ${item.type === 'partial' ? '#856404' : '#155724'};">
+                            ${item.type === 'partial' ? '📉 Partial' : '📈 Overage'}
+                        </span>
+                    </td>
+                    <td>${item.poNumber}</td>
+                    <td>${item.itemNumber}</td>
+                    <td>${item.description}</td>
+                    <td>${item.expectedQty}</td>
+                    <td>${item.receivedQty}</td>
+                    <td style="color: ${item.difference < 0 ? '#e74c3c' : '#27ae60'}">
+                        ${item.difference > 0 ? '+' : ''}${item.difference}
+                    </td>
+                    <td>$${item.unitCost.toFixed(2)}</td>
+                    <td style="color: ${item.valueImpact < 0 ? '#e74c3c' : '#27ae60'}">
+                        ${item.valueImpact < 0 ? '-' : '+'} $${Math.abs(item.valueImpact).toFixed(2)}
+                    </td>
+                    <td><span class="status-badge status-${item.status}">${item.status}</span></td>
+                    <td>${item.reason}</td>
+                    <td>
+                        <button class="btn btn-primary" onclick="viewPartialOverageDetails(${item.id})" style="font-size: 11px; padding: 4px 8px;">👁️ View</button>
+                        ${item.status === 'pending' ? `<button class="btn btn-success" onclick="resolvePartialOverage(${item.id})" style="font-size: 11px; padding: 4px 8px;">✅ Resolve</button>` : ''}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function refreshPartialsOverages() {filterPartialsOverages()
+            updatePartialsOveragesStats()
+            alert('Partials & Overages data refreshed')}
+
+        function viewPartialOverageDetails(id) {const item = partialsOverages.find(po => po.id === id)
+            if (item) {
+                alert(`${item.type === 'partial' ? 'Partial' : 'Overage'} Details:\n\nPO: ${item.poNumber}\nItem: ${item.itemNumber}\nExpected: ${item.expectedQty}\nReceived: ${item.receivedQty}\nDifference: ${item.difference}\nValue Impact: $${Math.abs(item.valueImpact).toFixed(2)}\nStatus: ${item.status}\nReason: ${item.reason}`);
+            }
+        }
+
+        function resolvePartialOverage(id) {const item = partialsOverages.find(po => po.id === id)
+            if (item) {
+                const resolution = prompt(`Resolve ${item.type} for ${item.itemNumber}:\n\nEnter resolution notes:`);
+                if (resolution && resolution.trim()) {item.status = 'resolved'
+                    item.resolution = resolution
+                    item.resolvedDate = new Date().toISOString().split('T')[0]
+                    updatePartialsOveragesTable();
+                    updatePartialsOveragesStats();
+                    alert(`${item.type} resolved successfully`);
+                }
+            }
+        }
+
+        function generatePartialOverageReport() {alert('Generate Partials & Overages Report functionality - create detailed analysis')}
+
+        function exportPartialOverageData() {alert('Export Partials & Overages Data functionality - export to CSV/Excel')}
+    </script>
+
+    <!-- Include Universal Dashboard Button -->
+    <script src="/static/universal_dashboard_button.js"></script>
+    <!-- Include Floating Chat Widget -->
+    <script src="/static/floating_chat_widget.js"></script>
+    <!-- Include Employee Messaging Widget -->
+    <script src="/static/employee_messaging_widget.js"></script>
+</body>
+</html>

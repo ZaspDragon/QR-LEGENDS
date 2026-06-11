@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Analytics Dashboard - QR LEGENDS</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="copyright_notice.js"></script>
+    <style>
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            margin: 0
+            padding: 20px
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            min-height: 100vh}
+        .container {max-width: 1400px
+            margin: 0 auto
+            background: white
+            border-radius: 15px
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);}
+        .header {display: flex
+            justify-content: space-between
+            align-items: center
+            margin-bottom: 40px
+            padding-bottom: 20px;
+            border-bottom: 2px solid #667eea}
+        .header h1 {color: #333
+            margin: 0
+            font-size: 2.5rem}
+        .filters {display: flex
+            gap: 15px
+            align-items: center}
+        .filter-select {padding: 8px 12px
+            border: 1px solid #ddd
+            border-radius: 8px
+            background: white}
+        .analytics-overview {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
+            gap: 20px
+            margin-bottom: 40px}
+        .metric-card {background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            color: white
+            border-radius: 12px
+            padding: 25px
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);}
+        .metric-value {font-size: 2.5rem
+            font-weight: bold
+            margin-bottom: 8px}
+        .metric-label {font-size: 0.9rem
+            opacity: 0.9}
+        .charts-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr))
+            gap: 30px
+            margin-bottom: 40px}
+        .chart-card {background: #f8f9fa
+            border-radius: 12px
+            padding: 25px
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08)}
+        .chart-title {font-size: 1.3rem
+            font-weight: bold
+            color: #333
+            margin-bottom: 20px
+            text-align: center}
+        .data-table {background: #f8f9fa
+            border-radius: 12px
+            padding: 25px
+            margin-bottom: 30px}
+        .table-responsive {overflow-x: auto}
+        .performance-table {width: 100%
+            border-collapse: collapse
+            margin-top: 15px}
+        .performance-table th,
+        .performance-table td {padding: 12px
+            text-align: left
+            border-bottom: 1px solid #ddd}
+        .performance-table th {background: #667eea
+            color: white
+            font-weight: 600}
+        .performance-table tr:hover {background: #f1f1f1}
+        .back-btn {position: absolute
+            top: 20px
+            left: 20px
+            background: white
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-weight: 600;
+            text-decoration: none;
+            color: #333}
+        .back-btn:hover {transform: translateY(-2px)
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3)}
+        .export-btn {background: #28a745
+            color: white
+            border: none
+            padding: 10px 20px
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-left: 10px}
+        .export-btn:hover {background: #218838}
+        .status-badge {padding: 4px 8px
+            border-radius: 12px
+            font-size: 0.8rem
+            font-weight: bold}
+        .status-fast {background: #d4edda color: #155724}
+        .status-slow {background: #fff3cd color: #856404}
+        .status-dead {background: #f8d7da color: #721c24}
+        .refresh-indicator {color: #666
+            font-size: 0.9rem
+            text-align: center
+            margin-top: 20px}
+    </style>
+</head>
+<body>
+    <a href="/main_dashboard" class="back-btn">← Back to Dashboard</a>
+
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>📊 Advanced Analytics Dashboard</h1>
+                <p style="color: #666; margin: 0;">Multi-warehouse performance insights and KPIs</p>
+            </div>
+            <div class="filters">
+                <select id="warehouseFilter" class="filter-select" onchange="filterByWarehouse()">
+                    <option value="">All Warehouses</option>
+                </select>
+                <select id="periodFilter" class="filter-select" onchange="filterByPeriod()">
+                    <option value="today">Today</option>
+                    <option value="week">This Week</option>
+                    <option value="month" selected>This Month</option>
+                    <option value="quarter">This Quarter</option>
+                </select>
+                <button class="export-btn" onclick="exportAnalytics()">📄 Export PDF</button>
+            </div>
+        </div>
+
+        <!-- Key Metrics Overview -->
+        <div class="analytics-overview">
+            <div class="metric-card">
+                <div class="metric-value" id="totalScans">0</div>
+                <div class="metric-label">Total Scans</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="activeUsers">0</div>
+                <div class="metric-label">Active Users</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="totalWarehouses">0</div>
+                <div class="metric-label">Warehouses</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="avgPickTime">0s</div>
+                <div class="metric-label">Avg Pick Time</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="errorRate">0%</div>
+                <div class="metric-label">Error Rate</div>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-title">📈 Picking Performance Trends</div>
+                <canvas id="performanceChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">🏗️ Activity by Department</div>
+                <canvas id="departmentChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">📦 SKU Movement Velocity</div>
+                <canvas id="skuVelocityChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">🕐 Hourly Activity Patterns</div>
+                <canvas id="hourlyActivityChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Picker Performance Table -->
+        <div class="data-table">
+            <h3>🏆 Picker Performance Leaderboard</h3>
+            <div class="table-responsive">
+                <table class="performance-table" id="pickerTable">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Employee</th>
+                            <th>Warehouse</th>
+                            <th>Picks/Hour</th>
+                            <th>Total Picks</th>
+                            <th>Error Rate</th>
+                            <th>Avg Time</th>
+                            <th>Performance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="8" style="text-align: center; color: #666;">Loading performance data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SKU Analysis Table -->
+        <div class="data-table">
+            <h3>📊 SKU Movement Analysis</h3>
+            <div class="table-responsive">
+                <table class="performance-table" id="skuTable">
+                    <thead>
+                        <tr>
+                            <th>SKU</th>
+                            <th>Category</th>
+                            <th>Movement Count</th>
+                            <th>Velocity</th>
+                            <th>Last Movement</th>
+                            <th>Warehouse</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="7" style="text-align: center; color: #666;">Loading SKU data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="refresh-indicator">
+            📡 Data refreshes automatically every 60 seconds | Last updated: <span id="lastUpdated">Loading...</span>
+        </div>
+    </div>
+
+    <script>
+        let charts = {};
+        let currentFilters = {
+            warehouse: '',
+            period: 'month'
+        };
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {loadWarehouses()
+            loadAnalytics()
+            initializeCharts()
+
+            // Auto-refresh every 60 seconds
+            setInterval(loadAnalytics, 60000)});
+
+        async function loadWarehouses() {try {
+                const response = await fetch('/api/warehouses')
+                if (response.ok) {
+                    const data = await response.json()
+                    const warehouseSelect = document.getElementById('warehouseFilter')
+
+                    // Clear existing options except "All Warehouses"
+                    warehouseSelect.innerHTML = '<option value="">All Warehouses</option>'
+
+                    data.warehouses.forEach(warehouse => {
+                        const option = document.createElement('option');
+                        option.value = warehouse.id;
+                        option.textContent = warehouse.name;
+                        warehouseSelect.appendChild(option);});
+
+                    document.getElementById('totalWarehouses').textContent = data.warehouses.length;
+                }
+            } catch (error) {console.error('Error loading warehouses:', error)}
+        }
+
+        async function loadAnalytics() {try {
+                // Load overall metrics
+                const metricsResponse = await fetch('/api/analytics/overview?' + new URLSearchParams(currentFilters))
+                if (metricsResponse.ok) {
+                    const metrics = await metricsResponse.json()
+                    updateMetrics(metrics)}
+
+                // Load picker performance
+                const performanceResponse = await fetch('/api/analytics/picker-performance?' + new URLSearchParams(currentFilters));
+                if (performanceResponse.ok) {const performance = await performanceResponse.json()
+                    updatePickerTable(performance)
+                    updatePerformanceChart(performance)}
+
+                // Load SKU movement
+                const skuResponse = await fetch('/api/analytics/sku-movement?' + new URLSearchParams(currentFilters));
+                if (skuResponse.ok) {const skuData = await skuResponse.json()
+                    updateSKUTable(skuData)
+                    updateSKUChart(skuData)}
+
+                // Update last updated time
+                document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
+
+            } catch (error) {console.error('Error loading analytics:', error)}
+        }
+
+        function updateMetrics(data) {document.getElementById('totalScans').textContent = data.total_scans || 0
+            document.getElementById('activeUsers').textContent = data.active_users || 0
+            document.getElementById('avgPickTime').textContent = (data.avg_pick_time || 0) + 's'
+            document.getElementById('errorRate').textContent = (data.error_rate || 0).toFixed(1) + '%'}
+
+        function updatePickerTable(data) {const tbody = document.querySelector('#pickerTable tbody')
+            tbody.innerHTML = ''
+
+            if (!data.picker_performance || Object.keys(data.picker_performance).length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center color: #666">No picker performance data available</td></tr>';
+                return}
+
+            // Convert to array and sort by picks per hour
+            const pickers = Object.entries(data.picker_performance)
+                .map(([id, stats]) => ({ id, ...stats }))
+                .sort((a, b) => b.picks_per_hour - a.picks_per_hour);
+
+            pickers.forEach((picker, index) => {const row = document.createElement('tr')
+
+                // Determine performance badge
+                let performanceBadge = ''
+                if (picker.picks_per_hour > 50) {
+                    performanceBadge = '<span class="status-badge status-fast">Excellent</span>'} else if (picker.picks_per_hour > 30) {performanceBadge = '<span class="status-badge status-slow">Good</span>'} else {performanceBadge = '<span class="status-badge status-dead">Needs Improvement</span>'}
+
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${picker.id}</td>
+                    <td>Main</td>
+                    <td>${picker.picks_per_hour}</td>
+                    <td>${picker.total_picks}</td>
+                    <td>${picker.error_rate}%</td>
+                    <td>${picker.avg_time_per_pick}s</td>
+                    <td>${performanceBadge}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateSKUTable(data) {const tbody = document.querySelector('#skuTable tbody')
+            tbody.innerHTML = ''
+
+            if (!data.sku_analysis) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center color: #666">No SKU data available</td></tr>';
+                return}
+
+            const allSKUs = [
+                ...data.sku_analysis.fast_movers.map(sku => ({ ...sku, category: 'Fast Mover' })),
+                ...data.sku_analysis.slow_movers.map(sku => ({ ...sku, category: 'Slow Mover' })),
+                ...data.sku_analysis.dead_stock.map(sku => ({ ...sku, category: 'Dead Stock' }))
+            ];
+
+            allSKUs.forEach(sku => {const row = document.createElement('tr')
+
+                let velocityBadge = ''
+                if (sku.velocity === 'fast') {
+                    velocityBadge = '<span class="status-badge status-fast">Fast</span>'} else if (sku.velocity === 'slow') {velocityBadge = '<span class="status-badge status-slow">Slow</span>'} else {velocityBadge = '<span class="status-badge status-dead">Dead</span>'}
+
+                row.innerHTML = `
+                    <td>${sku.sku}</td>
+                    <td>${sku.category}</td>
+                    <td>${sku.movement_count || 0}</td>
+                    <td>${velocityBadge}</td>
+                    <td>${sku.days_since_last_movement ? sku.days_since_last_movement + ' days ago' : 'Recent'}</td>
+                    <td>Main</td>
+                    <td>Active</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function initializeCharts() {// Performance Trend Chart
+            const performanceCtx = document.getElementById('performanceChart').getContext('2d')
+            charts.performance = new Chart(performanceCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Picks per Hour',
+                        data: [45, 52, 48, 61, 55, 42, 38],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true}]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Department Activity Chart
+            const departmentCtx = document.getElementById('departmentChart').getContext('2d');
+            charts.department = new Chart(departmentCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Receiving', 'Picking', 'Inventory', 'Transfers', 'Problem Solving'],
+                    datasets: [{
+                        data: [25, 35, 20, 15, 5],
+                        backgroundColor: [
+                            '#667eea',
+                            '#764ba2',
+                            '#f093fb',
+                            '#f5576c',
+                            '#4facfe'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // SKU Velocity Chart
+            const skuCtx = document.getElementById('skuVelocityChart').getContext('2d');
+            charts.skuVelocity = new Chart(skuCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Fast Movers', 'Slow Movers', 'Dead Stock'],
+                    datasets: [{
+                        label: 'SKU Count',
+                        data: [45, 78, 23],
+                        backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Hourly Activity Chart
+            const hourlyCtx = document.getElementById('hourlyActivityChart').getContext('2d');
+            charts.hourlyActivity = new Chart(hourlyCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['6AM', '8AM', '10AM', '12PM', '2PM', '4PM', '6PM'],
+                    datasets: [{
+                        label: 'Activity Level',
+                        data: [20, 45, 65, 80, 75, 60, 35],
+                        backgroundColor: 'rgba(102, 126, 234, 0.6)',
+                        borderColor: '#667eea',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function updatePerformanceChart(data) {
+            // Update chart with real data if available
+            // This would be implemented with actual performance trends
+        }
+
+        function updateSKUChart(data) {if (data.summary && charts.skuVelocity) {
+                charts.skuVelocity.data.datasets[0].data = [
+                    data.summary.fast_movers_count || 0,
+                    data.summary.slow_movers_count || 0,
+                    data.summary.dead_stock_count || 0
+                ]
+                charts.skuVelocity.update()}
+        }
+
+        function filterByWarehouse() {currentFilters.warehouse = document.getElementById('warehouseFilter').value
+            loadAnalytics()}
+
+        function filterByPeriod() {currentFilters.period = document.getElementById('periodFilter').value
+            loadAnalytics()}
+
+        function exportAnalytics() {
+            // Create export data
+            const exportData = {
+                timestamp: new Date().toISOString(),
+                filters: currentFilters,
+                metrics: {
+                    totalScans: document.getElementById('totalScans').textContent,
+                    activeUsers: document.getElementById('activeUsers').textContent,
+                    avgPickTime: document.getElementById('avgPickTime').textContent,
+                    errorRate: document.getElementById('errorRate').textContent
+                }
+            };
+
+            // Generate and download CSV
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + "Metric,Value\n"
+                + `Total Scans,${exportData.metrics.totalScans}\n`
+                + `Active Users,${exportData.metrics.activeUsers}\n`
+                + `Average Pick Time,${exportData.metrics.avgPickTime}\n`
+                + `Error Rate,${exportData.metrics.errorRate}\n`;
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `analytics_export_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>

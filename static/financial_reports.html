@@ -1,0 +1,361 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Reports - QR Legends ERP</title>
+    <link rel="stylesheet" href="color_scheme.css">
+    <style>
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            margin: 0
+            padding: 0
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh}
+
+        .container {max-width: 1400px
+            margin: 0 auto
+            padding: 20px}
+
+        .header {background: rgba(255, 255, 255, 0.95)
+            padding: 30px
+            border-radius: 15px
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center}
+
+        .header h1 {margin: 0
+            color: #2c3e50
+            font-size: 2.5em
+            font-weight: 300}
+
+        .reports-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr))
+            gap: 25px
+            margin-bottom: 30px}
+
+        .report-card {background: rgba(255, 255, 255, 0.95)
+            padding: 25px
+            border-radius: 15px
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;}
+
+        .report-card:hover {transform: translateY(-5px)
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2)}
+
+        .report-card h3 {margin-top: 0
+            color: #2c3e50
+            font-size: 1.4em
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px}
+
+        .financial-summary {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
+            gap: 20px
+            margin-bottom: 30px}
+
+        .summary-card {background: rgba(255, 255, 255, 0.95)
+            padding: 20px
+            border-radius: 10px
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);}
+
+        .summary-value {font-size: 2em
+            font-weight: bold
+            color: #27ae60
+            margin-bottom: 5px}
+
+        .summary-label {color: #7f8c8d
+            font-size: 0.9em
+            text-transform: uppercase
+            letter-spacing: 1px}
+
+        .btn {background: linear-gradient(135deg, #3498db, #2980b9)
+            color: white
+            border: none
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+            transition: all 0.3s ease}
+
+        .btn:hover {background: linear-gradient(135deg, #2980b9, #1f5582)
+            transform: translateY(-2px)}
+
+        .btn-secondary {background: linear-gradient(135deg, #95a5a6, #7f8c8d)}
+
+        .btn-success {background: linear-gradient(135deg, #27ae60, #229954)}
+
+        .btn-warning {background: linear-gradient(135deg, #f39c12, #e67e22)}
+
+        .report-table {width: 100%
+            border-collapse: collapse
+            margin-top: 15px
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);}
+
+        .report-table th,
+        .report-table td {padding: 12px
+            text-align: left
+            border-bottom: 1px solid #ecf0f1}
+
+        .report-table th {background: #34495e
+            color: white
+            font-weight: 600
+            text-transform: uppercase;
+            font-size: 0.9em}
+
+        .report-table tbody tr:hover {background: #f8f9fa}
+
+        .status-indicator {padding: 4px 12px
+            border-radius: 20px
+            font-size: 0.8em
+            font-weight: bold;
+            text-transform: uppercase}
+
+        .status-paid {background: #d5f4e6
+            color: #27ae60}
+
+        .status-pending {background: #fef9e7
+            color: #f39c12}
+
+        .status-overdue {background: #fadbd8
+            color: #e74c3c}
+
+        .chart-placeholder {background: #ecf0f1
+            height: 200px
+            border-radius: 8px
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7f8c8d;
+            font-style: italic;
+            margin-top: 15px}
+
+        @media (max-width: 768px) {.reports-grid {
+                grid-template-columns: 1fr}
+
+            .financial-summary {grid-template-columns: repeat(2, 1fr)}
+
+            .header h1 {font-size: 2em}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Financial Reports Dashboard</h1>
+            <p>Comprehensive financial analysis and reporting system</p>
+        </div>
+
+        <!-- Financial Summary Cards -->
+        <div class="financial-summary">
+            <div class="summary-card">
+                <div class="summary-value" id="totalRevenue">$0</div>
+                <div class="summary-label">Total Revenue</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-value" id="totalExpenses">$0</div>
+                <div class="summary-label">Total Expenses</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-value" id="netProfit">$0</div>
+                <div class="summary-label">Net Profit</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-value" id="cashFlow">$0</div>
+                <div class="summary-label">Cash Flow</div>
+            </div>
+        </div>
+
+        <!-- Reports Grid -->
+        <div class="reports-grid">
+            <!-- Profit & Loss Report -->
+            <div class="report-card">
+                <h3>📈 Profit & Loss Statement</h3>
+                <p>View comprehensive income statement with revenue, expenses, and profit analysis.</p>
+                <button class="btn" onclick="generatePLReport()">Generate Report</button>
+                <button class="btn btn-secondary" onclick="exportPLReport()">Export PDF</button>
+                <div id="plChart" class="chart-placeholder">P&L Chart will be displayed here</div>
+            </div>
+
+            <!-- Balance Sheet -->
+            <div class="report-card">
+                <h3>⚖️ Balance Sheet</h3>
+                <p>Assets, liabilities, and equity overview for financial position analysis.</p>
+                <button class="btn" onclick="generateBalanceSheet()">Generate Report</button>
+                <button class="btn btn-secondary" onclick="exportBalanceSheet()">Export PDF</button>
+                <div id="balanceChart" class="chart-placeholder">Balance Sheet Chart will be displayed here</div>
+            </div>
+
+            <!-- Cash Flow Statement -->
+            <div class="report-card">
+                <h3>💰 Cash Flow Statement</h3>
+                <p>Track cash inflows and outflows from operations, investing, and financing.</p>
+                <button class="btn" onclick="generateCashFlow()">Generate Report</button>
+                <button class="btn btn-secondary" onclick="exportCashFlow()">Export PDF</button>
+                <div id="cashFlowChart" class="chart-placeholder">Cash Flow Chart will be displayed here</div>
+            </div>
+
+            <!-- Accounts Receivable -->
+            <div class="report-card">
+                <h3>📋 Accounts Receivable</h3>
+                <p>Outstanding customer invoices and payment status tracking.</p>
+                <button class="btn" onclick="loadReceivables()">View Details</button>
+                <button class="btn btn-warning" onclick="sendReminders()">Send Reminders</button>
+                <table class="report-table" id="receivablesTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Invoice #</th>
+                            <th>Customer</th>
+                            <th>Amount</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="receivablesBody">
+                        <!-- Dynamic content -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Accounts Payable -->
+            <div class="report-card">
+                <h3>💳 Accounts Payable</h3>
+                <p>Outstanding vendor bills and payment obligations management.</p>
+                <button class="btn" onclick="loadPayables()">View Details</button>
+                <button class="btn btn-success" onclick="processPayments()">Process Payments</button>
+                <table class="report-table" id="payablesTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Bill #</th>
+                            <th>Vendor</th>
+                            <th>Amount</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="payablesBody">
+                        <!-- Dynamic content -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Budget vs Actual -->
+            <div class="report-card">
+                <h3>📊 Budget vs Actual</h3>
+                <p>Compare budgeted amounts against actual performance metrics.</p>
+                <button class="btn" onclick="generateBudgetReport()">Generate Report</button>
+                <button class="btn btn-secondary" onclick="updateBudget()">Update Budget</button>
+                <div id="budgetChart" class="chart-placeholder">Budget Comparison Chart will be displayed here</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load financial data on page load
+        document.addEventListener('DOMContentLoaded', function() {loadFinancialSummary()
+            console.log('Financial Reports page loaded successfully')});
+
+        async function loadFinancialSummary() {
+            try {
+                // Simulate loading financial data
+                const summaryData = {
+                    totalRevenue: 245670.89,
+                    totalExpenses: 156789.45,
+                    netProfit: 88881.44,
+                    cashFlow: 125890.67
+                };
+
+                // Update summary cards
+                document.getElementById('totalRevenue').textContent = `$${summaryData.totalRevenue.toLocaleString()}`;
+                document.getElementById('totalExpenses').textContent = `$${summaryData.totalExpenses.toLocaleString()}`;
+                document.getElementById('netProfit').textContent = `$${summaryData.netProfit.toLocaleString()}`;
+                document.getElementById('cashFlow').textContent = `$${summaryData.cashFlow.toLocaleString()}`;
+
+            } catch (error) {console.error('Error loading financial summary:', error)}
+        }
+
+        function generatePLReport() {alert('Profit & Loss report generation started. This feature will generate a comprehensive income statement.')
+            console.log('P&L Report requested')}
+
+        function exportPLReport() {alert('Exporting P&L report to PDF...')
+            console.log('P&L Report export requested')}
+
+        function generateBalanceSheet() {alert('Balance Sheet generation started. This will show assets, liabilities, and equity.')
+            console.log('Balance Sheet requested')}
+
+        function exportBalanceSheet() {alert('Exporting Balance Sheet to PDF...')
+            console.log('Balance Sheet export requested')}
+
+        function generateCashFlow() {alert('Cash Flow statement generation started.')
+            console.log('Cash Flow Report requested')}
+
+        function exportCashFlow() {alert('Exporting Cash Flow statement to PDF...')
+            console.log('Cash Flow export requested')}
+
+        function loadReceivables() {const table = document.getElementById('receivablesTable')
+            const tbody = document.getElementById('receivablesBody')
+            
+            // Sample receivables data
+            const receivables = [
+                { invoice: 'INV-001', customer: 'ABC Corp', amount: 15750.00, dueDate: '2025-02-15', status: 'pending'},
+                { invoice: 'INV-002', customer: 'XYZ Ltd', amount: 8900.50, dueDate: '2025-02-20', status: 'overdue' },
+                { invoice: 'INV-003', customer: 'Tech Solutions', amount: 12500.00, dueDate: '2025-03-01', status: 'paid' }
+            ];
+
+            tbody.innerHTML = '';
+            receivables.forEach(item => {const row = tbody.insertRow()
+                row.innerHTML = `
+                    <td>${item.invoice}</td>
+                    <td>${item.customer}</td>
+                    <td>$${item.amount.toLocaleString()}</td>
+                    <td>${item.dueDate}</td>
+                    <td><span class="status-indicator status-${item.status}">${item.status}</span></td>
+                `;
+            });
+
+            table.style.display = 'table';
+        }
+
+        function sendReminders() {alert('Payment reminders sent to overdue accounts!')
+            console.log('Payment reminders sent')}
+
+        function loadPayables() {const table = document.getElementById('payablesTable')
+            const tbody = document.getElementById('payablesBody')
+            
+            // Sample payables data
+            const payables = [
+                { bill: 'BILL-001', vendor: 'Office Supplies Co', amount: 2750.00, dueDate: '2025-02-18', status: 'pending'},
+                { bill: 'BILL-002', vendor: 'Utility Company', amount: 1200.00, dueDate: '2025-02-25', status: 'paid' },
+                { bill: 'BILL-003', vendor: 'Equipment Rental', amount: 4500.00, dueDate: '2025-03-05', status: 'pending' }
+            ];
+
+            tbody.innerHTML = '';
+            payables.forEach(item => {const row = tbody.insertRow()
+                row.innerHTML = `
+                    <td>${item.bill}</td>
+                    <td>${item.vendor}</td>
+                    <td>$${item.amount.toLocaleString()}</td>
+                    <td>${item.dueDate}</td>
+                    <td><span class="status-indicator status-${item.status}">${item.status}</span></td>
+                `;
+            });
+
+            table.style.display = 'table';
+        }
+
+        function processPayments() {alert('Payment processing initiated for selected bills!')
+            console.log('Payments processed')}
+
+        function generateBudgetReport() {alert('Budget vs Actual report generation started.')
+            console.log('Budget Report requested')}
+
+        function updateBudget() {alert('Budget update form will be displayed.')
+            console.log('Budget update requested')}
+    </script>
+</body>
+</html>

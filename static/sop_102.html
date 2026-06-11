@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOP-102: Batch Picking Guidelines - QR Legends</title>
+    <style>
+        body {font-family: Arial, sans-serif margin: 20px background-color: #f5f5f5}
+        .container {max-width: 800px margin: 0 auto background: white padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+        .header {text-align: center margin-bottom: 30px padding: 20px background: linear-gradient(135deg, #2c3e50, #3498db); color: white; border-radius: 10px}
+        .section {margin: 20px 0 padding: 15px border-left: 4px solid #3498db background: #f8f9fa}
+        .step {margin: 10px 0 padding: 10px background: white border-radius: 5px; border: 1px solid #ddd}
+        .back-btn {display: inline-block padding: 10px 20px background: #6c757d color: white; text-decoration: none; border-radius: 5px; margin-bottom: 20px}
+        .back-btn:hover {background: #5a6268}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/sop_library" class="back-btn">← Back to SOP Library</a>
+        
+        <div class="header">
+            <h1>📦 SOP-102: Batch Picking Guidelines</h1>
+            <p>Standard Operating Procedure for Batch Picking Operations</p>
+        </div>
+
+        <div class="section">
+            <h3>Purpose</h3>
+            <p>To optimize picking efficiency by combining multiple orders into batch picks while maintaining accuracy and order integrity.</p>
+        </div>
+
+        <div class="section">
+            <h3>Batch Creation Criteria</h3>
+            
+            <div class="step">
+                <h4>Order Grouping Rules</h4>
+                <ul>
+                    <li>Similar delivery routes or zones</li>
+                    <li>Compatible shipping methods</li>
+                    <li>Similar priority levels</li>
+                    <li>Maximum 8 orders per batch</li>
+                    <li>No conflicting special requirements</li>
+                </ul>
+            </div>
+
+            <div class="step">
+                <h4>Item Compatibility</h4>
+                <ul>
+                    <li>No hazmat with non-hazmat items</li>
+                    <li>Temperature requirements must match</li>
+                    <li>Fragile items grouped separately</li>
+                    <li>High-value items in secure batches</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Batch Picking Process</h3>
+            
+            <div class="step">
+                <h4>Pre-Pick Setup</h4>
+                <ul>
+                    <li>Scan batch ID using QR Legends app</li>
+                    <li>Set up sorting containers for each order</li>
+                    <li>Label containers with order numbers</li>
+                    <li>Review batch summary for special instructions</li>
+                </ul>
+            </div>
+
+            <div class="step">
+                <h4>Pick Execution</h4>
+                <ul>
+                    <li>Follow optimized pick path</li>
+                    <li>Pick total quantity for all orders at each location</li>
+                    <li>Scan item and quantity using QR scanner</li>
+                    <li>Place items in master container for sorting</li>
+                </ul>
+            </div>
+
+            <div class="step">
+                <h4>Sorting and Allocation</h4>
+                <ul>
+                    <li>Sort picked items by order number</li>
+                    <li>Verify quantities match individual order requirements</li>
+                    <li>Scan items into individual order containers</li>
+                    <li>Double-check allocation accuracy</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Quality Control</h3>
+            
+            <div class="step">
+                <h4>Verification Steps</h4>
+                <ul>
+                    <li>Scan each sorted container to verify contents</li>
+                    <li>Compare system counts with physical counts</li>
+                    <li>Check for missed items or overages</li>
+                    <li>Verify special handling requirements met</li>
+                </ul>
+            </div>
+
+            <div class="step">
+                <h4>Error Resolution</h4>
+                <ul>
+                    <li>Investigate any quantity discrepancies</li>
+                    <li>Re-pick missing items immediately</li>
+                    <li>Return excess items to proper locations</li>
+                    <li>Document all corrections in system</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Performance Standards</h3>
+            <ul>
+                <li>30% improvement in pick efficiency over single-order picking</li>
+                <li>99.5% allocation accuracy target</li>
+                <li>Maximum 2 hours total batch completion time</li>
+                <li>Zero order mix-ups between customers</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3>Equipment Requirements</h3>
+            <ul>
+                <li>Multi-compartment pick cart or totes</li>
+                <li>QR Legends mobile device with batch picking module</li>
+                <li>Order labels and sorting containers</li>
+                <li>Handheld calculator for quantity verification</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Include Universal Dashboard Button -->
+    <script src="/universal_dashboard_button.js"></script>
+    <!-- Include Floating Chat Widget -->
+    <script src="/floating_chat_widget.js"></script>
+    <!-- Include Employee Messaging Widget -->
+    <script src="/employee_messaging_widget.js"></script>
+</body>
+</html>

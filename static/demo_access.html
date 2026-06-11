@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Legends Demo - Warehouse Management System</title>
+    <style>
+        :root {--primary-color: #667eea
+            --secondary-color: #764ba2
+            --success-color: #28a745
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --dark-color: #343a40;
+            --light-color: #f8f9fa}
+
+        * {margin: 0
+            padding: 0
+            box-sizing: border-box}
+
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%)
+            min-height: 100vh
+            color: #333}
+
+        .demo-container {max-width: 1200px
+            margin: 0 auto
+            padding: 20px}
+
+        .demo-header {background: white
+            border-radius: 20px
+            padding: 40px
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            margin-bottom: 30px}
+
+        .demo-header h1 {font-size: 3rem
+            color: var(--primary-color)
+            margin-bottom: 15px}
+
+        .demo-header .beta-badge {background: linear-gradient(135deg, #ff6b35, #f7931e)
+            color: white
+            padding: 6px 15px
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-left: 15px}
+
+        .demo-header p {font-size: 1.2rem
+            color: #666
+            margin-bottom: 30px}
+
+        .demo-button {display: inline-block
+            background: linear-gradient(135deg, var(--success-color), #20c997)
+            color: white
+            padding: 20px 40px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 15px;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px}
+
+        .demo-button:hover {transform: translateY(-3px)
+            box-shadow: 0 15px 40px rgba(40, 167, 69, 0.4)}
+
+        .features-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
+            gap: 20px
+            margin-bottom: 30px}
+
+        .feature-card {background: white
+            border-radius: 15px
+            padding: 30px
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease}
+
+        .feature-card:hover {transform: translateY(-5px)}
+
+        .feature-card h3 {color: var(--primary-color)
+            font-size: 1.5rem
+            margin-bottom: 15px}
+
+        .feature-card p {color: #666
+            line-height: 1.6
+            margin-bottom: 15px}
+
+        .feature-list {list-style: none}
+
+        .feature-list li {padding: 5px 0
+            color: #555}
+
+        .feature-list li: :before {content: "✓"
+            color: var(--success-color)
+            font-weight: bold
+            margin-right: 10px}
+
+        .demo-info {background: white
+            border-radius: 15px
+            padding: 30px
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px}
+
+        .demo-info h2 {color: var(--primary-color)
+            margin-bottom: 20px}
+
+        .demo-credentials {background: #f8f9fa
+            border-left: 4px solid var(--info-color)
+            padding: 15px
+            border-radius: 8px;
+            margin: 15px 0}
+
+        .demo-credentials code {background: #e9ecef
+            padding: 2px 6px
+            border-radius: 4px
+            font-family: 'Courier New', monospace;}
+
+        .quick-links {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr))
+            gap: 15px
+            margin-top: 20px}
+
+        .quick-link {background: linear-gradient(135deg, var(--info-color), #138496)
+            color: white
+            padding: 15px 20px
+            border-radius: 10px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s ease}
+
+        .quick-link:hover {transform: translateY(-2px)
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2)
+            color: white}
+
+        .footer {text-align: center
+            color: white
+            margin-top: 40px
+            padding: 20px}
+
+        @media (max-width: 768px) {.demo-header h1 {
+                font-size: 2rem}
+
+            .demo-header {padding: 20px}
+
+            .feature-card {padding: 20px}
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>🏭 QR Legends<span class="beta-badge">DEMO</span></h1>
+            <p>Professional Warehouse Management System - Brandon's Demo Access</p>
+            <a href="/main_dashboard" class="demo-button">🚀 Enter Live Demo</a>
+        </div>
+
+        <div class="demo-info">
+            <h2>📋 Demo Information</h2>
+            <p>This is a fully functional demonstration of QR Legends warehouse management system. You can explore all features and test the complete workflow.</p>
+
+            <div class="demo-credentials">
+                <h4>🔑 Demo Login Credentials:</h4>
+                <p><strong>Username/Email:</strong> <code>qrlegends22@gmail.com</code></p>
+                <p><strong>Company:</strong> QR LEGENDS</p>
+                <p><strong>Employer Code:</strong> <code>36KUYVF5</code></p>
+                <p><em>Note: Demo access is restricted to Brandon's email only</em></p>
+            </div>
+
+            <div class="demo-credentials">
+                <h3>👥 Employee Login</h3>
+                <p><strong>Employee ID:</strong> <code>TF001</code></p>
+                <p><strong>Password:</strong> <code>demo123</code></p>
+                <p><strong>Role:</strong> Receiving Manager (Sarah Johnson)</p>
+                <a href="/employee_login" class="quick-link">Employee Login →</a>
+            </div>
+
+            <div class="demo-credentials">
+                <h3>🏢 Company Admin Login</h3>
+                <p><strong>Email:</strong> <code>ilevanshine@gmail.com</code></p>
+                <p><strong>Password:</strong> <code>Luffy22!</code></p>
+                <p><strong>Role:</strong> Full Company Admin</p>
+                <a href="/company_login" class="quick-link">Company Login →</a>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>📦 Warehouse Operations</h3>
+                <p>Complete warehouse workflow management from receiving to shipping.</p>
+                <ul class="feature-list">
+                    <li>Receiving & Container Assignment</li>
+                    <li>QR Code Generation & Labeling</li>
+                    <li>Putaway & Location Management</li>
+                    <li>Order Picking & Packing</li>
+                    <li>Shipping & Returns Processing</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3>📱 QR Code Technology</h3>
+                <p>Advanced QR code scanning and tracking capabilities.</p>
+                <ul class="feature-list">
+                    <li>Real-time QR Scanning</li>
+                    <li>Static UID Generation</li>
+                    <li>Location QR Codes</li>
+                    <li>Bulk QR Generation</li>
+                    <li>Mobile-Optimized Scanner</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3>📊 Analytics & Reporting</h3>
+                <p>Comprehensive analytics and business intelligence.</p>
+                <ul class="feature-list">
+                    <li>Real-time Dashboard</li>
+                    <li>Production Rate Tracking</li>
+                    <li>Inventory Analytics</li>
+                    <li>Employee Performance</li>
+                    <li>Export & Reporting</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3>🔗 ERP Integration</h3>
+                <p>Seamless integration with existing business systems.</p>
+                <ul class="feature-list">
+                    <li>SalesPad Integration</li>
+                    <li>Great Plains Support</li>
+                    <li>Custom API Connections</li>
+                    <li>File Upload Processing</li>
+                    <li>Real-time Data Sync</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3>👥 User Management</h3>
+                <p>Role-based access control and employee management.</p>
+                <ul class="feature-list">
+                    <li>Multi-role Support</li>
+                    <li>Department Access Control</li>
+                    <li>Employee Tracking</li>
+                    <li>Group Messaging</li>
+                    <li>Performance Monitoring</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3>🛡️ Advanced Features</h3>
+                <p>Enterprise-grade features for professional use.</p>
+                <ul class="feature-list">
+                    <li>Automatic Backups</li>
+                    <li>IT Support System</li>
+                    <li>Quality Control</li>
+                    <li>Cycle Counting</li>
+                    <li>AI-Powered Search</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="demo-info">
+            <h2>🎯 Quick Demo Links</h2>
+            <p>Jump directly to specific areas of the system:</p>
+            <div class="quick-links">
+                <a href="/receiving" class="quick-link">📦 Receiving Department</a>
+                <a href="/transfers" class="quick-link">🔄 Transfers</a>
+                <a href="/inventory" class="quick-link">📋 Inventory Management</a>
+                <a href="/order_picking" class="quick-link">🛒 Order Picking</a>
+                <a href="/shipping" class="quick-link">🚛 Shipping</a>
+                <a href="/returns" class="quick-link">🔁 Returns</a>
+                <a href="/qr_generator" class="quick-link">🏷️ QR Generator</a>
+                <a href="/analytics_dashboard" class="quick-link">📊 Analytics</a>
+                <a href="/company_integrations" class="quick-link">🔗 ERP Integration</a>
+                <a href="/admin_dashboard" class="quick-link">⚙️ Admin Panel</a>
+            </div>
+        </div>
+
+        <div class="demo-info">
+            <h2>🤖 For AI & ChatGPT Testing</h2>
+            <p>This demo environment is perfect for AI testing and evaluation:</p>
+            <ul class="feature-list">
+                <li>All features are fully functional</li>
+                <li>No registration required</li>
+                <li>Pre-loaded with sample data</li>
+                <li>Complete workflow testing available</li>
+                <li>REST API endpoints accessible</li>
+                <li>Real-time scanning simulation</li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p>© 2025 QR LEGENDS by Brandon Evanshine. All rights reserved.</p>
+            <p>Professional Warehouse Management System - Beta Version</p>
+        </div>
+    </div>
+
+    <script>
+        // Auto-login for demo
+        document.addEventListener('DOMContentLoaded', function() {
+            // Track demo page visit
+            try {
+                fetch('/api/user/activity', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'demo_page_visit',
+                        timestamp: new Date().toISOString(),
+                        page: 'demo_access',
+                        user_agent: navigator.userAgent
+                    })
+                }).catch(() => {}); // Silent fail
+            } catch (e) {
+                // Silent fail for demo
+            }
+        });
+
+        // Add click tracking for demo links
+        document.querySelectorAll('.quick-link').forEach(link => {
+            link.addEventListener('click', function() {
+                try {
+                    fetch('/api/user/activity', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'demo_link_clicked',
+                            destination: this.href,
+                            timestamp: new Date().toISOString()
+                        })
+                    }).catch(() => {});
+                } catch (e) {}
+            });
+        });
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Access - QR Legends</title>
+    <style>
+        body {font-family: Arial, sans-serif
+            margin: 0
+            padding: 20px
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white}
+        .container {max-width: 600px
+            margin: 0 auto
+            text-align: center}
+        .access-card {background: rgba(255,255,255,0.1)
+            border-radius: 15px
+            padding: 30px
+            margin: 20px 0;
+            backdrop-filter: blur(10px)}
+        .btn {background: #4CAF50
+            color: white
+            padding: 15px 30px
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+            width: 200px}
+        .btn:hover {background: #45a049}
+        .credentials {background: rgba(0,0,0,0.2)
+            padding: 15px
+            border-radius: 8px
+            margin: 10px 0}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Demo Access Portal</h1>
+        <div class="access-card">
+            <h2>Quick Demo Login</h2>
+            <div class="credentials">
+                <strong>Demo Credentials:</strong><br>
+                Email: qrlegends22@gmail.com<br>
+                Password: demo123
+            </div>
+            
+            <a href="/company_login" class="btn">Company Login</a>
+            <a href="/employee_login" class="btn">Employee Login</a>
+        </div>
+        
+        <div class="access-card">
+            <h3>What's Included</h3>
+            <p>Full access to all warehouse management features including receiving, putaway, picking, shipping, and analytics.</p>
+        </div>
+    </div>
+</body>
+</html>

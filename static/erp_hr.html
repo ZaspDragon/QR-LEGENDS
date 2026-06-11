@@ -1,0 +1,385 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Management Portal - QR Legends</title>
+    <link rel="stylesheet" href="qr_legends_dark_theme.css">
+    <style>
+        .hr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+            margin: 30px 0;
+        }
+        
+        .hr-module {
+            background: var(--ql-card);
+            border: 1px solid var(--ql-border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hr-module:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(2,8,23,.6);
+        }
+        
+        .module-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .module-icon {
+            background: linear-gradient(135deg, var(--ql-primary), var(--ql-accent));
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .module-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--ql-text);
+            margin: 0;
+        }
+        
+        .module-description {
+            color: var(--ql-sub);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .module-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(99, 102, 241, 0.05));
+            border: 1px solid var(--ql-border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--ql-primary);
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            color: var(--ql-sub);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .quick-actions {
+            background: var(--ql-surface);
+            border: 1px solid var(--ql-border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+        
+        .quick-actions h3 {
+            color: var(--ql-text);
+            margin-bottom: 16px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .btn-action {
+            padding: 12px 20px;
+            border: 1px solid var(--ql-border);
+            border-radius: 10px;
+            background: var(--ql-primary);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
+        
+        .btn-secondary {
+            background: var(--ql-surface);
+            color: var(--ql-text);
+        }
+        
+        .btn-success {
+            background: var(--ql-success);
+        }
+        
+        .btn-warning {
+            background: var(--ql-warning);
+        }
+    </style>
+</head>
+<body>
+    <header class="ql-header">
+        <div class="ql-header-inner">
+            <div class="ql-title">
+                <span class="ql-logo">👥</span>
+                <h1 class="ql-h1">Human Resources Portal</h1>
+            </div>
+            <nav class="ql-nav">
+                <a class="ql-btn" href="/main_dashboard">🏠 Dashboard</a>
+                <a class="ql-btn" href="/erp_dashboard">📊 ERP</a>
+                <a class="ql-btn ql-secondary" href="/company_employee_management">👤 Employees</a>
+            </nav>
+            <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+        </div>
+    </header>
+
+    <div class="ql-container">
+        <!-- Stats Overview -->
+        <div class="stats-overview">
+            <div class="stat-card">
+                <div class="stat-value">247</div>
+                <div class="stat-label">Total Employees</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">8</div>
+                <div class="stat-label">Open Positions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">96.2%</div>
+                <div class="stat-label">Attendance Rate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">$847K</div>
+                <div class="stat-label">Monthly Payroll</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">4.8</div>
+                <div class="stat-label">Avg Performance</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">12%</div>
+                <div class="stat-label">Annual Turnover</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <h3>🚀 Quick Actions</h3>
+            <div class="action-buttons">
+                <button class="btn-action" onclick="addNewEmployee()">+ Add Employee</button>
+                <button class="btn-action btn-success" onclick="runPayroll()">💰 Run Payroll</button>
+                <button class="btn-action btn-warning" onclick="reviewTimeOff()">📅 Review Time Off</button>
+                <button class="btn-action btn-secondary" onclick="generateReports()">📊 Generate Reports</button>
+                <button class="btn-action" onclick="scheduleInterview()">🤝 Schedule Interview</button>
+                <button class="btn-action btn-secondary" onclick="updateBenefits()">🏥 Update Benefits</button>
+            </div>
+        </div>
+
+        <!-- HR Modules Grid -->
+        <div class="hr-grid">
+            <!-- Employee Management -->
+            <div class="hr-module">
+                <div class="module-header">
+                    <div class="module-icon">👤</div>
+                    <h3 class="module-title">Employee Management</h3>
+                </div>
+                <p class="module-description">
+                    Comprehensive employee records, onboarding, offboarding, and personnel file management.
+                </p>
+                <div class="module-actions">
+                    <a href="/hr_employee_directory" class="ql-btn ql-secondary">📋 Employee Directory</a>
+                    <a href="/hr_onboarding" class="ql-btn">🎯 Onboarding</a>
+                    <a href="/hr_performance_reviews" class="ql-btn">⭐ Performance</a>
+                </div>
+            </div>
+
+            <!-- Payroll & Benefits -->
+            <div class="hr-module">
+                <div class="module-header">
+                    <div class="module-icon">💰</div>
+                    <h3 class="module-title">Payroll & Benefits</h3>
+                </div>
+                <p class="module-description">
+                    Process payroll, manage benefits, handle tax compliance, and track compensation.
+                </p>
+                <div class="module-actions">
+                    <a href="/hr_payroll_processing" class="ql-btn ql-secondary">💵 Payroll</a>
+                    <a href="/hr_benefits_management" class="ql-btn">🏥 Benefits</a>
+                    <a href="/hr_compensation" class="ql-btn">💎 Compensation</a>
+                </div>
+            </div>
+
+            <!-- Time & Attendance -->
+            <div class="hr-module">
+                <div class="module-header">
+                    <div class="module-icon">⏰</div>
+                    <h3 class="module-title">Time & Attendance</h3>
+                </div>
+                <p class="module-description">
+                    Track employee hours, manage schedules, approve time off, and monitor attendance.
+                </p>
+                <div class="module-actions">
+                    <a href="/hr_time_tracking" class="ql-btn ql-secondary">⏱️ Time Tracking</a>
+                    <a href="/hr_time_off_management" class="ql-btn">🏖️ Time Off</a>
+                    <a href="/hr_scheduling" class="ql-btn">📅 Scheduling</a>
+                </div>
+            </div>
+
+            <!-- Recruitment & Hiring -->
+            <div class="hr-module">
+                <div class="module-header">
+                    <div class="module-icon">🎯</div>
+                    <h3 class="module-title">Recruitment & Hiring</h3>
+                </div>
+                <p class="module-description">
+                    Manage job postings, track candidates, schedule interviews, and streamline hiring.
+                </p>
+                <div class="module-actions">
+                    <a href="/hr_job_postings" class="ql-btn ql-secondary">📢 Job Postings</a>
+                    <a href="/hr_candidate_tracking" class="ql-btn">👥 Candidates</a>
+                    <a href="/hr_interview_management" class="ql-btn">🤝 Interviews</a>
+                </div>
+            </div>
+
+            <!-- Training & Development -->
+            <div class="hr-module">
+                <div class="module-header">
+                    <div class="module-icon">📚</div>
+                    <h3 class="module-title">Training & Development</h3>
+                </div>
+                <p class="module-description">
+                    Create training programs, track certifications, and manage employee development.
+                </p>
+                <div class="module-actions">
+                    <a href="/hr_training_programs" class="ql-btn ql-secondary">🎓 Programs</a>
+                    <a href="/hr_certifications" class="ql-btn">🏆 Certifications</a>
+                    <a href="/hr_career_development" class="ql-btn">🚀 Development</a>
+                </div>
+            </div>
+
+            <!-- Compliance & Safety -->
+            <div class="hr-module">
+                <div class="module-header">
+                    <div class="module-icon">⚖️</div>
+                    <h3 class="module-title">Compliance & Safety</h3>
+                </div>
+                <p class="module-description">
+                    Ensure regulatory compliance, manage safety protocols, and handle documentation.
+                </p>
+                <div class="module-actions">
+                    <a href="/hr_compliance_tracking" class="ql-btn ql-secondary">📋 Compliance</a>
+                    <a href="/equipment_safety" class="ql-btn">🛡️ Safety</a>
+                    <a href="/hr_policy_management" class="ql-btn">📖 Policies</a>
+                </div>
+            </div>
+
+            <!-- Analytics & Reports -->
+            <div class="hr-module">
+                <div class="module-header">
+                    <div class="module-icon">📊</div>
+                    <h3 class="module-title">HR Analytics</h3>
+                </div>
+                <p class="module-description">
+                    Generate insights, track KPIs, analyze workforce trends, and create reports.
+                </p>
+                <div class="module-actions">
+                    <a href="/hr_analytics_dashboard" class="ql-btn ql-secondary">📈 Analytics</a>
+                    <a href="/hr_workforce_planning" class="ql-btn">🎯 Planning</a>
+                    <a href="/hr_reports_generator" class="ql-btn">📄 Reports</a>
+                </div>
+            </div>
+
+            <!-- Employee Self-Service -->
+            <div class="hr-module">
+                <div class="module-header">
+                    <div class="module-icon">🔐</div>
+                    <h3 class="module-title">Employee Self-Service</h3>
+                </div>
+                <p class="module-description">
+                    Employee portal for viewing pay stubs, requesting time off, and updating information.
+                </p>
+                <div class="module-actions">
+                    <a href="/employee_portal" class="ql-btn ql-secondary">🏠 Portal</a>
+                    <a href="/employee_documents" class="ql-btn">📄 Documents</a>
+                    <a href="/employee_benefits_portal" class="ql-btn">🎁 Benefits</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('ql-theme-toggle');
+            
+            // Load saved theme
+            const savedTheme = localStorage.getItem('ql-theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light');
+                themeToggle.textContent = '☀️';
+            }
+            
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('light');
+                const isLight = document.body.classList.contains('light');
+                themeToggle.textContent = isLight ? '☀️' : '🌙';
+                localStorage.setItem('ql-theme', isLight ? 'light' : 'dark');
+            });
+        });
+
+        // Quick action functions
+        function addNewEmployee() {
+            window.location.href = '/hr_employee_onboarding';
+        }
+
+        function runPayroll() {
+            window.location.href = '/hr_payroll_processing';
+        }
+
+        function reviewTimeOff() {
+            window.location.href = '/hr_time_off_management';
+        }
+
+        function generateReports() {
+            window.location.href = '/hr_reports_generator';
+        }
+
+        function scheduleInterview() {
+            window.location.href = '/hr_interview_management';
+        }
+
+        function updateBenefits() {
+            window.location.href = '/hr_benefits_management';
+        }
+    </script>
+</body>
+</html>

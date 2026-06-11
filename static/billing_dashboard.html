@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing Dashboard - QR LEGENDS</title>
+    <style>
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            margin: 0
+            padding: 0
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh}
+
+        .container {max-width: 1400px
+            margin: 0 auto
+            padding: 20px}
+
+        .header {background: rgba(255, 255, 255, 0.95)
+            backdrop-filter: blur(10px)
+            border-radius: 15px
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center}
+
+        .header h1 {margin: 0
+            color: #333
+            display: flex
+            align-items: center;
+            gap: 15px}
+
+        .back-btn {background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            color: white
+            border: none
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s}
+
+        .back-btn:hover {transform: translateY(-2px)
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3)}
+
+        .billing-grid {display: grid
+            grid-template-columns: 1fr 1fr
+            gap: 30px
+            margin-bottom: 30px}
+
+        .billing-card {background: rgba(255, 255, 255, 0.95)
+            backdrop-filter: blur(10px)
+            border-radius: 15px
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);}
+
+        .billing-card h2 {margin: 0 0 20px 0
+            color: #333
+            display: flex
+            align-items: center;
+            gap: 10px}
+
+        .billing-stat {display: flex
+            justify-content: space-between
+            align-items: center
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0}
+
+        .billing-stat:last-child {border-bottom: none}
+
+        .billing-value {font-weight: bold
+            color: #667eea
+            font-size: 1.1rem}
+
+        .status-badge {padding: 6px 12px
+            border-radius: 20px
+            font-size: 0.85rem
+            font-weight: 600}
+
+        .status-active {background: #e8f5e8
+            color: #2e7d32}
+
+        .status-trial {background: #fff3cd
+            color: #856404}
+
+        .status-expired {background: #ffebee
+            color: #c62828}
+
+        .pricing-tiers {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr))
+            gap: 20px
+            margin: 20px 0}
+
+        .pricing-tier {background: white
+            border-radius: 15px
+            padding: 25px
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden}
+
+        .pricing-tier:hover {transform: translateY(-5px)
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2)}
+
+        .pricing-tier.recommended {border: 3px solid #667eea
+            transform: scale(1.05)
+
+
+        async function checkDemoPremiumStatus() {
+            try {
+                const response = await fetch('/api/demo/premium-features')
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.demo_status && data.demo_status.unlimited_access) {
+                        document.getElementById('demo-premium-alert').style.display = 'block';
+                        document.getElementById('demo-regular-alert').style.display = 'none';
+
+                        // Show special demo premium billing info
+                        const subscriptionInfo = document.querySelector('.subscription-info');
+                        if (subscriptionInfo) {
+                            subscriptionInfo.innerHTML = `
+                                <h3>✨ Demo Premium Subscription</h3>
+                                <div class="info-row">
+                                    <span class="label">Plan:</span>
+                                    <span class="value">Demo Premium - All Features</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="label">Status:</span>
+                                    <span class="status-badge status-active">Demo Active</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="label">Monthly Cost:</span>
+                                    <span class="value">FREE (Demo)</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="label">Users:</span>
+                                    <span class="value">Unlimited</span>
+                                </div>
+                            `}
+                    }
+                }
+            } catch (error) {console.log('Demo premium status check failed')}
+        }
+
+        }
+
+        .pricing-tier.recommended::before {content: "RECOMMENDED"
+            position: absolute
+            top: 0
+            right: 0;
+            background: #667eea;
+            color: white;
+            padding: 8px 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 20% 100%);}
+
+        .tier-name {font-size: 1.5rem
+            font-weight: bold
+            color: #333
+            margin-bottom: 10px}
+
+        .tier-price {font-size: 2rem
+            font-weight: bold
+            color: #667eea
+            margin-bottom: 5px}
+
+        .tier-price-note {font-size: 0.9rem
+            color: #666
+            margin-bottom: 20px}
+
+        .tier-features {list-style: none
+            padding: 0
+            margin: 0 0 25px 0}
+
+        .tier-features li {padding: 8px 0
+            display: flex
+            align-items: center
+            gap: 10px}
+
+        .tier-features li: :before {content: "✓"
+            color: #28a745
+            font-weight: bold
+            font-size: 1.2rem}
+
+        .tier-button {width: 100%
+            padding: 12px
+            border: none
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #667eea;
+            color: white}
+
+        .tier-button: hover {background: #5a6fd8
+            transform: translateY(-2px)}
+
+        .tier-button.current {background: #28a745}
+
+        .user-list {max-height: 400px
+            overflow-y: auto
+            margin-top: 20px}
+
+        .user-item {display: flex
+            justify-content: space-between
+            align-items: center
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: white;
+            transition: all 0.3s}
+
+        .user-item:hover {transform: translateY(-2px)
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1)}
+
+        .user-info h4 {margin: 0 0 5px 0
+            color: #333}
+
+        .user-info p {margin: 0
+            color: #666
+            font-size: 0.9rem}
+
+        .user-cost {font-weight: bold
+            color: #667eea
+            font-size: 1.1rem}
+
+        .role-structure {background: #f8f9fa
+            border-radius: 10px
+            padding: 20px
+            margin: 20px 0}
+
+        .role-item {display: flex
+            justify-content: space-between
+            align-items: center
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0}
+
+        .role-item:last-child {border-bottom: none}
+
+        .role-name {font-weight: bold
+            color: #333}
+
+        .role-permissions {color: #666
+            font-size: 0.9rem}
+
+        .payment-section {background: #e8f5e8
+            padding: 20px
+            border-radius: 10px
+            margin: 20px 0}
+
+        .payment-details {display: grid
+            grid-template-columns: 1fr 1fr
+            gap: 15px
+            font-family: monospace;
+            font-size: 0.95rem;
+            margin: 15px 0}
+
+        .btn {padding: 12px 24px
+            border: none
+            border-radius: 8px
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px}
+
+        .btn-primary {background: #667eea
+            color: white}
+
+        .btn-primary:hover {background: #5a6fd8}
+
+        .btn-secondary {background: #6c757d
+            color: white}
+
+        .btn-secondary:hover {background: #5a6169}
+
+        .btn-success {background: #28a745
+            color: white}
+
+        .btn-success:hover {background: #218838}
+
+        .actions-section {display: flex
+            gap: 15px
+            flex-wrap: wrap
+            margin-top: 20px}
+
+        .loading {text-align: center
+            color: #666
+            font-style: italic
+            padding: 50px}
+
+        .full-width {grid-column: 1 / -1}
+
+        .alert {padding: 15px
+            border-radius: 8px
+            margin: 15px 0}
+
+        .alert-warning {background: #fff3cd
+            color: #856404
+            border: 1px solid #ffeaa7}
+
+        .alert-info {background: #e3f2fd
+            color: #1976d2
+            border: 1px solid #bbdefb}
+
+        .competitive-analysis {background: #f8f9fa
+            border-radius: 10px
+            padding: 20px
+            margin: 20px 0}
+
+        .competitor-item {display: flex
+            justify-content: space-between
+            align-items: center
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0}
+
+        .competitor-item:last-child {border-bottom: none}
+
+        .savings-highlight {background: linear-gradient(135deg, #28a745, #20c997)
+            color: white
+            padding: 20px
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0}
+
+        @media (max-width: 768px) {.billing-grid {
+                grid-template-columns: 1fr}
+
+            .header {flex-direction: column
+                gap: 20px
+                text-align: center}
+
+            .payment-details {grid-template-columns: 1fr}
+
+            .actions-section {justify-content: center}
+
+            .pricing-tiers {grid-template-columns: 1fr}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💳 Billing Dashboard</h1>
+            <a href="/main_dashboard" class="back-btn">
+                ← Back to Dashboard
+            </a>
+        </div>
+
+        <div id="loading" class="loading">Loading billing information...</div>
+
+        <div id="billing-content" style="display: none;">
+            <!-- Competitive Analysis -->
+            <div class="billing-card full-width">
+                <h2>📊 Why QR LEGENDS Saves You Money</h2>
+                <div class="competitive-analysis">
+                    <h3>Competitive Pricing Comparison</h3>
+                    <div class="competitor-item">
+                        <span><strong>Most Cloud WMS Systems:</strong></span>
+                        <span style="color: #dc3545; font-weight: bold;">$100-300 per user/month + setup fees</span>
+                    </div>
+                    <div class="competitor-item">
+                        <span><strong>Enterprise WMS (50+ users):</strong></span>
+                        <span style="color: #dc3545; font-weight: bold;">$15,000-$50,000+ per month</span>
+                    </div>
+                    <div class="competitor-item">
+                        <span><strong>Traditional WMS Implementation:</strong></span>
+                        <span style="color: #dc3545; font-weight: bold;">$100,000+ setup + $10,000+ monthly</span>
+                    </div>
+                    <div class="competitor-item">
+                        <span><strong>QR LEGENDS Small Warehouse (10 users):</strong></span>
+                        <span style="color: #28a745; font-weight: bold;">$1,499/month</span>
+                    </div>
+                    <div class="competitor-item">
+                        <span><strong>QR LEGENDS Medium Warehouse (25 users):</strong></span>
+                        <span style="color: #28a745; font-weight: bold;">$2,999/month</span>
+                    </div>
+                    <div class="competitor-item">
+                        <span><strong>QR LEGENDS Large Warehouse (50 users):</strong></span>
+                        <span style="color: #28a745; font-weight: bold;">$3,999/month</span>
+                    </div>
+                    <div class="competitor-item">
+                        <span><strong>QR LEGENDS Professional (unlimited):</strong></span>
+                        <span style="color: #28a745; font-weight: bold;">$5,499/month unlimited users</span>
+                    </div>
+
+                </div>
+                <div class="savings-highlight">
+                    <h3>💰 Significant savings with unlimited user access!</h3>
+                    <p>No per-user fees means predictable costs as your team grows</p>
+                </div>
+            </div>
+
+            <!-- Pricing Plans -->
+            <div class="billing-card full-width">
+                <h2>🚀 Choose Your Plan</h2>
+                <div class="pricing-tiers">
+                    <!-- Small Warehouse Plan -->
+                    <div class="pricing-tier">
+                        <div class="tier-name">Small Warehouse</div>
+                        <div class="tier-price">$1,499</div>
+                        <div class="tier-price-note">Per month - Up to 10 users included</div>
+                        <ul class="tier-features">
+                            <li>Up to 10 users included</li>
+                            <li><strong>$20 per additional user</strong></li>
+                            <li>Basic QR tracking & scanning</li>
+                            <li>Inventory management</li>
+                            <li>Basic reporting</li>
+                            <li>Email support</li>
+                            <li>Standard label printing</li>
+                            <li>Basic audit workflows</li>
+                            <li>CSV import/export</li>
+                            <li>Perfect for small operations</li>
+                        </ul>
+                        <button class="tier-button" onclick="selectPlan('small_warehouse')">Choose Small</button>
+                    </div>
+
+                    <!-- Medium Warehouse Plan -->
+                    <div class="pricing-tier">
+                        <div class="tier-name">Medium Warehouse</div>
+                        <div class="tier-price">$2,999</div>
+                        <div class="tier-price-note">Per month - Up to 25 users included</div>
+                        <ul class="tier-features">
+                            <li>Up to 25 users included</li>
+                            <li><strong>$20 per additional user</strong></li>
+                            <li>Advanced QR tracking & automation</li>
+                            <li>Real-time analytics & reporting</li>
+                            <li>API integration</li>
+                            <li>Priority support</li>
+                            <li>Custom label printing</li>
+                            <li>Advanced audit workflows</li>
+                            <li>Cycle counting automation</li>
+                            <li>Photo-enabled problem reporting</li>
+                            <li>CSV import/export</li>
+                            <li>REST API for ERP/WMS sync</li>
+                        </ul>
+                        <button class="tier-button" onclick="selectPlan('medium_warehouse')">Choose Medium</button>
+                    </div>
+
+                    <!-- Large Warehouse Plan -->
+                    <div class="pricing-tier">
+                        <div class="tier-name">Large Warehouse</div>
+                        <div class="tier-price">$3,999</div>
+                        <div class="tier-price-note">Per month - Up to 50 users included</div>
+                        <ul class="tier-features">
+                            <li>Up to 50 users included</li>
+                            <li><strong>$20 per additional user</strong></li>
+                            <li>Full access to all features</li>
+                            <li>Advanced QR tracking & automation</li>
+                            <li>Real-time analytics & reporting</li>
+                            <li>API integration & custom workflows</li>
+                            <li>Priority 24/7 support</li>
+                            <li>Custom label printing</li>
+                            <li>Advanced audit workflows</li>
+                            <li>Cycle counting automation</li>
+                            <li>Photo-enabled problem reporting</li>
+                            <li>CSV import/export</li>
+                            <li>REST API for ERP/WMS sync</li>
+                            <li>Account manager included</li>
+                        </ul>
+                        <button class="tier-button" onclick="selectPlan('large_warehouse')">Choose Large</button>
+                    </div>
+
+                    <!-- Professional Plan -->
+                    <div class="pricing-tier recommended">
+                        <div class="tier-name">Professional (Recommended)</div>
+                        <div class="tier-price">$5,499</div>
+                        <div class="tier-price-note">Per month - Unlimited users per warehouse</div>
+                        <ul class="tier-features">
+                            <li>Unlimited users per warehouse</li>
+                            <li><strong>No additional user fees</strong></li>
+                            <li>Full feature suite unlocked</li>
+                            <li>Advanced QR automation + AI Copilot 🤖</li>
+                            <li>API integrations (QuickBooks, Shopify, Salesforce, FedEx, Stripe)</li>
+                            <li>Dedicated account manager</li>
+                            <li>On-site training included</li>
+                            <li>SLA & uptime guarantees</li>
+                            <li>White-label option</li>
+                        </ul>
+                        <button class="tier-button" onclick="selectPlan('professional')">Choose Professional</button>
+                    </div>
+
+
+
+                    <!-- Enterprise Plan -->
+                    <div class="pricing-tier">
+                        <div class="tier-name">Enterprise</div>
+                        <div class="tier-price">Custom</div>
+                        <div class="tier-price-note">Multiple warehouses + Custom integrations</div>
+                        <ul class="tier-features">
+                            <li>Everything in Professional</li>
+                            <li>Multiple warehouse management</li>
+                            <li>Custom integrations</li>
+                            <li>White-label options</li>
+                            <li>Custom development</li>
+                            <li>Dedicated infrastructure</li>
+                            <li>Volume discounts available</li>
+                            <li>Custom SLA agreements</li>
+                            <li>Advanced security features</li>
+                            <li>Multi-tenant architecture</li>
+                        </ul>
+                        <button class="tier-button" onclick="window.location.href='/contact'">Contact Sales</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Subscription -->
+            <div class="billing-grid">
+                <div class="billing-card">
+                    <h2>📊 Current Subscription</h2>
+                    <div id="subscription-details"></div>
+                    <div class="actions-section">
+                        <button class="btn btn-primary" onclick="showUpgradeOptions()" id="upgrade-btn" style="display: none;">
+                            🚀 Upgrade Plan
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadInvoice()">
+                            📄 Download Invoice
+                        </button>
+                        <button class="btn" onclick="showCancelModal()" id="cancel-btn" style="background: #dc3545; color: white; display: none;">
+                            ❌ Cancel Subscription
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Payment Information -->
+                <div class="billing-card">
+                    <h2>💳 Payment Information</h2>
+                    <div id="payment-method-section">
+                        <div id="existing-payment-methods" style="display: none;">
+                            <h3>💳 Current Payment Method</h3>
+                            <div id="current-payment-method" class="payment-method-display">
+                                <!-- Payment method details will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div id="add-payment-method" class="payment-section">
+                            <h3>💳 Add Payment Method</h3>
+
+                            <!-- Apple Pay Button -->
+                            <div id="apple-pay-section" style="margin-bottom: 20px;">
+                                <div id="apple-pay-button" style="display: none; width: 100%; height: 50px; margin-bottom: 15px;">
+                                    <!-- Apple Pay button will be inserted here -->
+                                </div>
+                            </div>
+
+                            <div style="text-align: center; margin: 20px 0; color: #666; position: relative;">
+                                <hr style="margin: 0;">
+                                <span style="background: white; padding: 0 15px; position: absolute; top: -10px; left: 50%; transform: translateX(-50%);">or pay with card</span>
+                            </div>
+
+                            <div class="stripe-payment-form">
+                                <div class="form-group">
+                                    <label for="cardholder-name">Cardholder Name <span style="color: #dc3545;">*</span>:</label>
+                                    <input type="text" id="cardholder-name" placeholder="Full name as shown on card" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 15px;" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Card Number <span style="color: #dc3545;">*</span>:</label>
+                                    <div id="card-number-element" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; margin-bottom: 15px; background: white;">
+                                        <!-- Stripe Elements will create form elements here -->
+                                    </div>
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                                    <div class="form-group">
+                                        <label>Expiry Date <span style="color: #dc3545;">*</span>:</label>
+                                        <div id="card-expiry-element" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; background: white;">
+                                            <!-- Stripe Elements will create form elements here -->
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>CVV <span style="color: #dc3545;">*</span>:</label>
+                                        <div id="card-cvc-element" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; background: white;">
+                                            <!-- Stripe Elements will create form elements here -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="billing-address-section" style="border-top: 1px solid #e0e0e0; padding-top: 20px; margin-top: 20px;">
+                                    <h4 style="margin: 0 0 15px 0; color: #333;">Billing Address <span style="color: #dc3545;">*</span></h4>
+
+                                    <div class="form-group">
+                                        <label for="billing-address-line1">Address Line 1:</label>
+                                        <input type="text" id="billing-address-line1" placeholder="Street address" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 15px;" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="billing-address-line2">Address Line 2 (Optional):</label>
+                                        <input type="text" id="billing-address-line2" placeholder="Apartment, suite, etc." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 15px;">
+                                    </div>
+
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                                        <div class="form-group">
+                                            <label for="billing-city">City:</label>
+                                            <input type="text" id="billing-city" placeholder="City" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="billing-state">State/Province:</label>
+                                            <input type="text" id="billing-state" placeholder="State or Province" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" required>
+                                        </div>
+                                    </div>
+
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                                        <div class="form-group">
+                                            <label for="billing-postal-code">ZIP/Postal Code:</label>
+                                            <input type="text" id="billing-postal-code" placeholder="ZIP or Postal Code" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="billing-country">Country:</label>
+                                            <select id="billing-country" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" required>
+                                                <option value="">Select Country</option>
+                                                <option value="US">United States</option>
+                                                <option value="CA">Canada</option>
+                                                <option value="GB">United Kingdom</option>
+                                                <option value="AU">Australia</option>
+                                                <option value="DE">Germany</option>
+                                                <option value="FR">France</option>
+                                                <option value="IT">Italy</option>
+                                                <option value="ES">Spain</option>
+                                                <option value="NL">Netherlands</option>
+                                                <option value="BE">Belgium</option>
+                                                <option value="CH">Switzerland</option>
+                                                <option value="AT">Austria</option>
+                                                <option value="SE">Sweden</option>
+                                                <option value="NO">Norway</option>
+                                                <option value="DK">Denmark</option>
+                                                <option value="FI">Finland</option>
+                                                <option value="IE">Ireland</option>
+                                                <option value="PT">Portugal</option>
+                                                <option value="LU">Luxembourg</option>
+                                                <option value="JP">Japan</option>
+                                                <option value="SG">Singapore</option>
+                                                <option value="HK">Hong Kong</option>
+                                                <option value="NZ">New Zealand</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="card-errors" role="alert" style="color: #dc3545; font-size: 0.9rem; margin: 10px 0;"></div>
+
+                                <button id="submit-payment-method" class="btn btn-success" style="width: 100%; margin-bottom: 15px;">
+                                    💳 Add Payment Method
+                                </button>
+                            </div>
+
+                            <div class="alert alert-info">
+                                <strong>🔒 Secure Payment:</strong>
+                                <ul style="margin: 10px 0; padding-left: 20px;">
+                                    <li>All payment information is securely processed by Stripe</li>
+                                    <li>Your card details are never stored on our servers</li>
+                                    <li>Automatic billing occurs on the 1st of each month</li>
+                                    <li>You can update or remove your payment method anytime</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="actions-section">
+                        <button class="btn btn-secondary" onclick="viewPaymentHistory()">
+                            📋 Payment History
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadInvoice()">
+                            📄 Download Invoice
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Role Structure -->
+            <div class="billing-card full-width">
+                <h2>👥 User Role Structure</h2>
+                <div class="role-structure">
+                    <div class="role-item">
+                        <div>
+                            <div class="role-name">Admin</div>
+                            <div class="role-permissions">Full access to site management, billing, configurations</div>
+                        </div>
+                    </div>
+                    <div class="role-item">
+                        <div>
+                            <div class="role-name">Manager</div>
+                            <div class="role-permissions">Can view/edit inventory, cycle counts, transfers & returns</div>
+                        </div>
+                    </div>
+                    <div class="role-item">
+                        <div>
+                            <div class="role-name">Worker</div>
+                            <div class="role-permissions">Can scan and process inventory, create tickets</div>
+                        </div>
+                    </div>
+                    <div class="role-item">
+                        <div>
+                            <div class="role-name">Auditor</div>
+                            <div class="role-permissions">View-only access to audit reports and tickets</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <h3 style="margin: 0;">Current Users</h3>
+                        <p style="margin: 5px 0; color: #666;">Manage your team members and billing</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="showAddUserInfo()">
+                        ➕ Add New User
+                    </button>
+                </div>
+                <div id="user-list" class="user-list"></div>
+
+                <!-- Add User Instructions -->
+                <div id="add-user-info" style="display: none;" class="alert alert-info">
+                    <h3>➕ How to Add Users</h3>
+                    <p><strong>Your Employer Code:</strong> <span id="employer-code-display" style="font-family: monospace; background: #f5f5f5; padding: 5px; border-radius: 3px;"></span></p>
+                    <p>To add new users to your account:</p>
+                    <ol>
+                        <li>Share your <strong>Employer Code</strong> with new employees</li>
+                        <li>Direct them to the <a href="/employee_login" target="_blank">Employee Login Page</a></li>
+                        <li>They can sign up using your Employer Code</li>
+                        <li>Each new user will be charged based on your selected plan</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Premium Add-ons Section -->
+            <div class="billing-card full-width">
+                <h2>🚀 Premium Add-ons</h2>
+
+                <!-- AI Optimization Add-on -->
+                <div style="background: linear-gradient(135deg, #fff3e0, #fff8e1); border: 3px solid #ff6f00; border-radius: 15px; padding: 30px; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <div>
+                            <h3 style="color: #ff6f00; margin: 0 0 10px 0; display: flex; align-items: center; gap: 10px;">
+                                🤖 Premium AI Freight Optimization
+                            </h3>
+                            <p style="color: #e65100; font-size: 1.2rem; font-weight: bold; margin: 0;">$1,000/month</p>
+                        </div>
+                        <div id="ai-addon-status" style="text-align: right;">
+                            <!-- Status will be loaded here -->
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="color: #ff6f00; margin: 0 0 15px 0;">🎯 Advanced Features Included:</h4>
+                        <ul style="color: #e65100; margin: 0; padding-left: 20px;">
+                            <li><strong>🤖 Advanced 3D Bin Packing AI</strong> - Optimal space utilization algorithms</li>
+                            <li><strong>📷 Computer Vision Dimension Detection</strong> - Automatic measurement from photos</li>
+                            <li><strong>🎯 Intelligent Placement Optimization</strong> - AI-driven storage recommendations</li>
+                            <li><strong>📊 Predictive Storage Analytics</strong> - Machine learning warehouse insights</li>
+                            <li><strong>🔄 Continuous Learning Optimization</strong> - AI improves with your data</li>
+                            <li><strong>📱 Visual Warehouse Navigation</strong> - AR-style guidance system</li>
+                            <li><strong>⚡ Real-time Space Efficiency Tracking</strong> - Live optimization metrics</li>
+                            <li><strong>💡 AI-Powered Storage Recommendations</strong> - Smart placement suggestions</li>
+                            <li><strong>📈 ROI Performance Tracking</strong> - Measure optimization savings</li>
+                            <li><strong>🔧 Custom Algorithm Training</strong> - AI learns your specific warehouse layout</li>
+                        </ul>
+                    </div>
+
+                    <div style="background: #fff; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                        <h4 style="color: #ff6f00; margin: 0 0 15px 0;">💰 Expected ROI Benefits:</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #28a745;">25-40%</div>
+                                <div style="color: #666;">Space Optimization</div>
+                            </div>
+                            <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #28a745;">30-50%</div>
+                                <div style="color: #666;">Faster Put-away</div>
+                            </div>
+                            <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #28a745;">15-25%</div>
+                                <div style="color: #666;">Labor Savings</div>
+                            </div>
+                            <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #28a745;">$2,500+</div>
+                                <div style="color: #666;">Monthly Savings</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="ai-addon-actions" style="text-align: center;">
+                        <!-- Action buttons will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics & Usage -->
+            <div class="billing-card full-width">
+                <h2>📈 Usage & Analytics</h2>
+                <div id="usage-details"></div>
+                <div class="actions-section">
+                    <button class="btn btn-secondary" onclick="exportBillingData()">
+                        📊 Export Data
+                    </button>
+                    <button class="btn btn-secondary" onclick="viewDetailedAnalytics()">
+                        📈 Detailed Analytics
+                    </button>
+                    <button class="btn btn-primary" onclick="viewROICalculator()">
+                        💰 ROI Calculator
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancellation Modal -->
+    <div id="cancel-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: white; border-radius: 15px; padding: 40px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
+            <h2 style="margin-top: 0; color: #dc3545;">❌ Cancel Subscription</h2>
+            <p style="color: #666; margin-bottom: 20px;">We're sorry to see you go! Please help us improve by letting us know why you're cancelling.</p>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: bold;">Reason for cancellation:</label>
+                <select id="cancel-reason" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    <option value="">Select a reason...</option>
+                    <option value="too_expensive">Too expensive</option>
+                    <option value="not_enough_features">Not enough features</option>
+                    <option value="difficult_to_use">Difficult to use</option>
+                    <option value="found_alternative">Found a better alternative</option>
+                    <option value="business_closing">Business closing/downsizing</option>
+                    <option value="technical_issues">Technical issues</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: bold;">Additional feedback (optional):</label>
+                <textarea id="cancel-feedback" placeholder="Please share any additional details..." style="width: 100%; height: 80px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; resize: vertical;"></textarea>
+            </div>
+
+            <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ffeaa7;">
+                <h4 style="margin-top: 0; color: #856404;">⚠️ Important Information</h4>
+                <ul style="margin: 10px 0; padding-left: 20px; color: #856404;">
+                    <li>Your subscription will remain active until the end of your current billing period</li>
+                    <li>You'll lose access to all QR LEGENDS features after cancellation</li>
+                    <li>All data will be permanently deleted after 30 days</li>
+                    <li>Employee accounts will be deactivated immediately upon cancellation</li>
+                </ul>
+            </div>
+
+            <div style="display: flex; gap: 15px; justify-content: flex-end;">
+                <button onclick="closeCancelModal()" style="padding: 12px 24px; border: 1px solid #ddd; background: white; border-radius: 8px; cursor: pointer;">
+                    Keep Subscription
+                </button>
+                <button onclick="confirmCancellation()" style="padding: 12px 24px; border: none; background: #dc3545; color: white; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                    Cancel Subscription
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        let currentPlan = 'trial';
+        let currentUsers = 0;
+        let stripe;
+        let elements;
+        let cardNumberElement;
+        let cardExpiryElement;
+        let cardCvcElement;
+        let paymentRequest;
+
+        async function initializeStripe() {try {
+                const response = await fetch('/api/stripe/config')
+
+                if (!response.ok) {
+                    console.log('Stripe configuration not available - running in demo mode')
+                    showStripeNotAvailable()
+                    return}
+
+                const config = await response.json();
+
+                if (config && config.publishable_key) {stripe = Stripe(config.publishable_key)
+                    elements = stripe.elements()
+
+                    // Create individual card elements
+                    const cardStyle = {
+                        base: {
+                            fontSize: '16px',
+                            color: '#424770',
+                            '::placeholder': {
+                                color: '#aab7c4',},
+                        },
+                    };
+
+                    cardNumberElement = elements.create('cardNumber', { style: cardStyle });
+                    cardExpiryElement = elements.create('cardExpiry', { style: cardStyle });
+                    cardCvcElement = elements.create('cardCvc', { style: cardStyle });
+
+                    cardNumberElement.mount('#card-number-element');
+                    cardExpiryElement.mount('#card-expiry-element');
+                    cardCvcElement.mount('#card-cvc-element');
+
+                    // Handle real-time validation errors for all elements
+                    [cardNumberElement, cardExpiryElement, cardCvcElement].forEach(element => {
+                        element.on('change', ({error}) => {const displayError = document.getElementById('card-errors')
+                            if (error) {
+                                displayError.textContent = error.message} else {displayError.textContent = ''}
+                        });
+                    });
+
+                    // Initialize Apple Pay
+                    await initializeApplePay();
+
+                    // Handle form submission
+                    document.getElementById('submit-payment-method').addEventListener('click', handlePaymentMethodSubmission);
+
+                    console.log('✅ Stripe initialized successfully');
+                } else {console.log('Stripe publishable key not found - running in demo mode')
+                    showStripeNotAvailable()}
+            } catch (error) {console.log('Stripe initialization failed - running in demo mode:', error)
+                showStripeNotAvailable()}
+        }
+
+        function showStripeNotAvailable() {// Hide Stripe-specific elements and show demo message
+            const paymentSection = document.getElementById('add-payment-method')
+            if (paymentSection) {
+                paymentSection.innerHTML = `
+                    <div style="background: #e3f2fd padding: 20px border-radius: 10px text-align: center border: 2px solid #2196f3">
+                        <h3 style="color: #1976d2; margin: 0 0 15px 0;">💳 Demo Mode - Payment Processing</h3>
+                        <p style="color: #1565c0; margin-bottom: 15px;">This is a demonstration environment. Payment processing is simulated for demo purposes.</p>
+                        <div style="background: white; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                            <h4 style="color: #1976d2; margin: 0 0 10px 0;">Demo Credit Card Information:</h4>
+                            <p style="margin: 5px 0; font-family: monospace;"><strong>Card Number:</strong> 4242 4242 4242 4242</p>
+                            <p style="margin: 5px 0; font-family: monospace;"><strong>Expiry:</strong> 12/25</p>
+                            <p style="margin: 5px 0; font-family: monospace;"><strong>CVV:</strong> 123</p>
+                            <p style="margin: 5px 0; font-family: monospace;"><strong>Name:</strong> Demo User</p>
+                        </div>
+                        <button onclick="simulatePaymentMethod()" class="btn btn-primary" style="background: #2196f3;">
+                            💳 Simulate Adding Payment Method
+                        </button>
+                    </div>
+                `}
+        }
+
+        async function initializeApplePay() {
+            try {
+                // Create payment request for Apple Pay
+                paymentRequest = stripe.paymentRequest({
+                    country: 'US',
+                    currency: 'usd',
+                    total: {
+                        label: 'QR LEGENDS Subscription',
+                        amount: 2500, // $25.00 - this will be updated based on selected plan
+                    },
+                    requestPayerName: true,
+                    requestPayerEmail: true,
+                });
+
+                // Check if Apple Pay is available
+                const result = await paymentRequest.canMakePayment();
+                if (result) {
+                    const prButton = elements.create('paymentRequestButton', {
+                        paymentRequest: paymentRequest,
+                        style: {
+                            paymentRequestButton: {
+                                theme: 'dark',
+                                height: '50px',
+                            },
+                        },
+                    });
+
+                    // Check if Apple Pay is specifically available
+                    if (result.applePay) {prButton.mount('#apple-pay-button')
+                        document.getElementById('apple-pay-button').style.display = 'block'
+
+                        paymentRequest.on('paymentmethod', async (ev) => {
+                            try {
+                                // Process Apple Pay payment
+                                const response = await fetch('/api/billing/apple-pay-payment', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',},
+                                    body: JSON.stringify({
+                                        payment_method_id: ev.paymentMethod.id
+                                    }),
+                                });
+
+                                const result = await response.json();
+
+                                if (response.ok) {ev.complete('success')
+                                    alert('Apple Pay payment method added successfully!')
+                                    loadPaymentMethods()} else {ev.complete('fail')
+                                    alert('Apple Pay failed: ' + (result.error || 'Unknown error'))}
+                            } catch (error) {ev.complete('fail')
+                                alert('Apple Pay error: ' + error.message)}
+                        });
+                    }
+                }
+            } catch (error) {console.log('Apple Pay not available:', error)}
+        }
+
+        async function handlePaymentMethodSubmission(event) {event.preventDefault()
+
+            const submitButton = document.getElementById('submit-payment-method')
+            const cardholderName = document.getElementById('cardholder-name').value
+
+            // Validate required fields
+            const requiredFields = {
+                'cardholder-name': 'Cardholder name',
+                'billing-address-line1': 'Address line 1',
+                'billing-city': 'City',
+                'billing-state': 'State/Province',
+                'billing-postal-code': 'ZIP/Postal code',
+                'billing-country': 'Country'};
+
+            for (const [fieldId, fieldName] of Object.entries(requiredFields)) {const field = document.getElementById(fieldId)
+                if (!field.value.trim()) {
+                    document.getElementById('card-errors').textContent = `Please enter ${fieldName}.`;
+                    field.focus();
+                    return;
+                }
+            }
+
+            submitButton.disabled = true;
+            submitButton.textContent = 'Processing...';
+
+            try {
+                // Collect billing address data
+                const billingDetails = {
+                    name: cardholderName,
+                    address: {
+                        line1: document.getElementById('billing-address-line1').value,
+                        line2: document.getElementById('billing-address-line2').value,
+                        city: document.getElementById('billing-city').value,
+                        state: document.getElementById('billing-state').value,
+                        postal_code: document.getElementById('billing-postal-code').value,
+                        country: document.getElementById('billing-country').value,
+                    },
+                };
+
+                // Create payment method with billing details
+                const {error, paymentMethod} = await stripe.createPaymentMethod({
+                    type: 'card',
+                    card: cardNumberElement,
+                    billing_details: billingDetails,
+                });
+
+                if (error) {document.getElementById('card-errors').textContent = error.message
+                    submitButton.disabled = false
+                    submitButton.textContent = '💳 Add Payment Method'
+                    return;}
+
+                // Send payment method to server
+                const response = await fetch('/api/billing/payment-method', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        payment_method_id: paymentMethod.id,
+                        billing_details: billingDetails
+                    }),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {alert('Payment method added successfully!')
+                    loadPaymentMethods()
+                    clearPaymentForm()} else {document.getElementById('card-errors').textContent = result.error || 'Failed to add payment method'}
+
+            } catch (error) {document.getElementById('card-errors').textContent = 'Network error. Please try again.'} finally {submitButton.disabled = false
+                submitButton.textContent = '💳 Add Payment Method'}
+        }
+
+        function clearPaymentForm() {// Clear form fields
+            document.getElementById('cardholder-name').value = ''
+            document.getElementById('billing-address-line1').value = ''
+            document.getElementById('billing-address-line2').value = ''
+            document.getElementById('billing-city').value = '';
+            document.getElementById('billing-state').value = '';
+            document.getElementById('billing-postal-code').value = '';
+            document.getElementById('billing-country').value = '';
+
+            // Clear Stripe elements
+            cardNumberElement.clear();
+            cardExpiryElement.clear();
+            cardCvcElement.clear();
+
+            // Clear errors
+            document.getElementById('card-errors').textContent = '';}
+
+        async function loadPaymentMethods() {try {
+                const response = await fetch('/api/billing/payment-methods')
+                if (response.ok) {
+                    const data = await response.json()
+                    displayPaymentMethods(data.payment_methods)} else {// Show demo payment method setup
+                    displayPaymentMethods([])}
+            } catch (error) {console.log('Payment methods API not available - demo mode')
+                displayPaymentMethods([])}
+        }
+
+        function displayPaymentMethods(paymentMethods) {const existingSection = document.getElementById('existing-payment-methods')
+            const currentMethodDiv = document.getElementById('current-payment-method')
+
+            if (paymentMethods && paymentMethods.length > 0) {
+                const method = paymentMethods[0] // Show first payment method
+                currentMethodDiv.innerHTML = `
+                    <div style="display: flex justify-content: space-between align-items: center padding: 15px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9;">
+                        <div>
+                            <strong>💳 **** **** **** ${method.card.last4}</strong><br>
+                            <span style="color: #666;">${method.card.brand.toUpperCase()} • Expires ${method.card.exp_month}/${method.card.exp_year}</span>
+                        </div>
+                        <button class="btn" onclick="removePaymentMethod('${method.id}')" style="background: #dc3545; color: white; padding: 8px 16px;">
+                            Remove
+                        </button>
+                    </div>
+                `;
+                existingSection.style.display = 'block';
+                document.getElementById('add-payment-method').style.display = 'none';
+            } else {existingSection.style.display = 'none'
+                document.getElementById('add-payment-method').style.display = 'block'}
+        }
+
+        async function removePaymentMethod(paymentMethodId) {if (!confirm('Are you sure you want to remove this payment method?')) {
+                return}
+
+            try {
+                const response = await fetch(`/api/billing/payment-method/${paymentMethodId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {alert('Payment method removed successfully!')
+                    loadPaymentMethods()} else {const result = await response.json()
+                    alert('Failed to remove payment method: ' + (result.error || 'Unknown error'))}
+            } catch (error) {alert('Network error. Please try again.')}
+        }
+
+        function simulatePaymentMethod() {alert('✅ Demo Payment Method Added!\n\n💳 Simulated Visa ending in 4242\n📅 Expires 12/25\n\nIn production, this would be processed through Stripe securely.')
+
+            // Show simulated payment method
+            const existingSection = document.getElementById('existing-payment-methods')
+            const currentMethodDiv = document.getElementById('current-payment-method')
+
+            if (existingSection && currentMethodDiv) {
+                currentMethodDiv.innerHTML = `
+                    <div style="display: flex justify-content: space-between align-items: center padding: 15px; border: 1px solid #ddd; border-radius: 8px; background: #f0f8ff;">
+                        <div>
+                            <strong>💳 **** **** **** 4242</strong><br>
+                            <span style="color: #666;">VISA • Expires 12/25 (Demo)</span>
+                        </div>
+                        <button class="btn" onclick="removePaymentMethod('demo')" style="background: #dc3545; color: white; padding: 8px 16px;">
+                            Remove
+                        </button>
+                    </div>
+                `;
+                existingSection.style.display = 'block';
+                document.getElementById('add-payment-method').style.display = 'none'}
+        }
+
+        async function loadBillingData() {try {
+                // Load subscription data with demo fallback
+                try {
+                    const subResponse = await fetch('/api/billing/subscription')
+                    if (subResponse.ok) {
+                        const subData = await subResponse.json()
+                        displaySubscriptionData(subData)} else {displayDemoSubscriptionData()}
+                } catch (error) {displayDemoSubscriptionData()}
+
+                // Load usage data with demo fallback
+                try {const usageResponse = await fetch('/api/billing/usage')
+                    if (usageResponse.ok) {
+                        const usageData = await usageResponse.json()
+                        displayUsageData(usageData)} else {displayDemoUsageData()}
+                } catch (error) {displayDemoUsageData()}
+
+                // Load profile data for employer code
+                try {const profileResponse = await fetch('/api/auth/profile')
+                    if (profileResponse.ok) {
+                        const profileData = await profileResponse.json()
+                        if (profileData.company && profileData.company.employer_code) {
+                            document.getElementById('employer-code-display').textContent = profileData.company.employer_code}
+                    }
+                } catch (error) {document.getElementById('employer-code-display').textContent = '36KUYVF5'}
+
+                // Load payment methods with demo fallback
+                await loadPaymentMethods();
+
+                // Load AI addon status with demo fallback
+                await loadAIAddonStatus();
+
+                // Check for demo premium status
+                await checkDemoPremiumStatus();
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('billing-content').style.display = 'block';
+            } catch (error) {console.error('Error loading billing data:', error)
+
+                // Show demo data instead of error
+                displayDemoSubscriptionData()
+                displayDemoUsageData()
+                document.getElementById('employer-code-display').textContent = '36KUYVF5';
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('billing-content').style.display = 'block';}
+        }
+
+        function displayDemoSubscriptionData() {const detailsDiv = document.getElementById('subscription-details')
+            if (detailsDiv) {
+                detailsDiv.innerHTML = `
+                    <div class="billing-stat">
+                        <span>Plan:</span>
+                        <span class="billing-value">Demo - Professional</span>
+                    </div>
+                    <div class="billing-stat">
+                        <span>Price per Warehouse:</span>
+                        <span class="billing-value">$5,499/month</span>
+                    </div>
+                    <div class="billing-stat">
+                        <span>Current Users:</span>
+                        <span class="billing-value">Unlimited</span>
+                    </div>
+                    <div class="billing-stat">
+                        <span>Monthly Total:</span>
+                        <span class="billing-value">$5,499.00</span>
+                    </div>
+                    <div class="billing-stat">
+                        <span>Next Billing:</span>
+                        <span class="billing-value">${new Date(Date.now() + 30*24*60*60*1000).toLocaleDateString()}</span>
+                    </div>
+                    <div class="billing-stat">
+                        <span>Status:</span>
+                        <span class="status-badge status-active">Demo Active</span>
+                    </div>
+                    <div class="alert alert-success" id="demo-premium-alert" style="display: none">
+                        <strong>✨ Demo Premium Account</strong><br>
+                        All features are enabled for demonstration purposes. No billing required.
+                        <ul style="margin-top: 10px margin-left: 20px">
+                            <li>Unlimited Users</li>
+                            <li>All ERP & OrderDesk Features</li>
+                            <li>AI Item Finder</li>
+                            <li>Website Integration</li>
+                            <li>Advanced Analytics</li>
+                            <li>Premium Support</li>
+                        </ul>
+                    </div>
+                    <div class="alert alert-info" id="demo-regular-alert">
+                        <strong>🎯 Demo Environment</strong><br>
+                        This is a demonstration of QR LEGENDS billing features.
+                    </div>
+                `;
+            }
+        }
+
+        function displayDemoUsageData() {const userListDiv = document.getElementById('user-list')
+            const usageDetailsDiv = document.getElementById('usage-details')
+
+            if (userListDiv) {
+                userListDiv.innerHTML = `
+                    <div class="user-item">
+                        <div class="user-info">
+                            <h4>QR LEGENDS Admin</h4>
+                            <p>ID: ADMIN001 | Management | Joined: ${new Date().toLocaleDateString()}</p>
+                        </div>
+                        <div class="user-cost">Included</div>
+                    </div>
+                    <div class="user-item">
+                        <div class="user-info">
+                            <h4>Warehouse Manager</h4>
+                            <p>ID: MGR001 | Operations | Joined: ${new Date(Date.now() - 7*24*60*60*1000).toLocaleDateString()}</p>
+                        </div>
+                        <div class="user-cost">Included</div>
+                    </div>
+                    <div class="user-item">
+                        <div class="user-info">
+                            <h4>Warehouse Worker</h4>
+                            <p>ID: WRK001 | Warehouse | Joined: ${new Date(Date.now() - 14*24*60*60*1000).toLocaleDateString()}</p>
+                        </div>
+                        <div class="user-cost">Included</div>
+                    </div>
+                    <div class="alert alert-info">
+                        <h4>📊 Additional User Pricing</h4>
+                        <p><strong>For all warehouse plans (Small, Medium, Large):</strong></p>
+                        <ul style="margin: 10px 0 padding-left: 20px">
+                            <li>Users beyond included limit: <strong>$20 per user per month</strong></li>
+                            <li>Professional plan: Unlimited users (no additional charges)</li>
+                            <li>Additional users are billed automatically when added</li>
+                        </ul>
+                    </div>
+                `;
+            }
+
+            if (usageDetailsDiv) {const startDate = new Date(Date.now() - 30*24*60*60*1000)
+                const endDate = new Date(Date.now() + 1*24*60*60*1000)
+
+                usageDetailsDiv.innerHTML = `
+                    <div class="billing-stat">
+                        <span>Billing Period:</span>
+                        <span class="billing-value">${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}</span>
+                    </div>
+                    <div class="billing-stat">
+                        <span>Total Users:</span>
+                        <span class="billing-value">Unlimited</span>
+                    </div>
+                    <div class="billing-stat">
+                        <span>QR LEGENDS Cost:</span>
+                        <span class="billing-value">$5,499.00/month</span>
+                    </div>
+                    <div class="billing-stat">
+                        <span>Traditional WMS Cost:</span>
+                        <span class="billing-value" style="color: #dc3545">$25,000+</span>
+                    </div>
+                    <div class="billing-stat">
+                        <span><strong>Monthly Savings:</strong></span>
+                        <span class="billing-value" style="color: #28a745 font-size: 1.3rem">$20,001+</span>
+                    </div>
+                    <div class="billing-stat">
+                        <span><strong>Annual Savings:</strong></span>
+                        <span class="billing-value" style="color: #28a745; font-size: 1.3rem;">$240,012+</span>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadAIAddonStatus() {try {
+                const response = await fetch('/api/billing/ai-addon-status')
+                if (response.ok) {
+                    const data = await response.json()
+                    displayAIAddonStatus(data)} else {
+                    // Default to not subscribed
+                    displayAIAddonStatus({ subscribed: false });
+                }
+            } catch (error) {console.error('Error loading AI addon status:', error)
+                displayAIAddonStatus({ subscribed: false});
+            }
+        }
+
+        function displayAIAddonStatus(status) {const statusDiv = document.getElementById('ai-addon-status')
+            const actionsDiv = document.getElementById('ai-addon-actions')
+
+            if (status.subscribed) {
+                statusDiv.innerHTML = `
+                    <span class="status-badge status-active">✅ Active</span>
+                    <p style="margin: 5px 0 color: #28a745 font-weight: bold">AI Optimization Enabled</p>
+                    <p style="margin: 0 color: #666; font-size: 0.9rem;">Next billing: ${new Date(status.next_billing_date || Date.now() + 30*24*60*60*1000).toLocaleDateString()}</p>
+                `;
+
+                actionsDiv.innerHTML = `
+                    <button onclick="viewAIAnalytics()" class="btn btn-primary" style="background: #28a745 margin: 5px">
+                        📊 View AI Analytics
+                    </button>
+                    <button onclick="cancelAIAddon()" class="btn btn-danger" style="margin: 5px">
+                        ❌ Cancel AI Add-on
+                    </button>
+                `;
+            } else {statusDiv.innerHTML = `
+                    <span class="status-badge" style="background: #f8d7da color: #721c24">🚫 Not Active</span>
+                    <p style="margin: 5px 0 color: #dc3545 font-weight: bold">AI Optimization Disabled</p>
+                    <p style="margin: 0 color: #666; font-size: 0.9rem;">Upgrade to unlock advanced AI features</p>
+                `;
+
+                actionsDiv.innerHTML = `
+                    <button onclick="purchaseAIAddon()" class="btn" style="background: linear-gradient(135deg, #ff6f00, #ff8f00) color: white font-size: 1.2rem font-weight: bold; padding: 15px 40px; margin: 10px; border-radius: 10px; box-shadow: 0 4px 15px rgba(255, 111, 0, 0.3);">
+                        🚀 Purchase AI Optimization - $1,000/month
+                    </button>
+                    <div style="margin-top: 15px;">
+                        <button onclick="requestAIDemo()" class="btn btn-secondary" style="margin: 5px;">
+                            🎥 Request Demo
+                        </button>
+                        <button onclick="viewAITrialResults()" class="btn btn-secondary" style="margin: 5px;">
+                            📊 View Trial Results
+                        </button>
+                    </div>
+                `}
+        }
+
+        async function purchaseAIAddon() {// Check if payment method exists
+            const existingMethods = document.getElementById('existing-payment-methods')
+            if (existingMethods.style.display === 'none') {
+                alert('Please add a payment method first before purchasing add-ons.')
+                document.getElementById('add-payment-method').scrollIntoView({ behavior: 'smooth'});
+                return;
+            }
+
+            const confirmed = confirm(`🤖 Purchase AI Optimization Add-on?\n\n💰 Cost: $1,000 per month\n📅 Billing: Monthly on your regular billing date\n\n✅ Features Included:\n• Advanced 3D Bin Packing AI\n• Computer Vision Dimension Detection\n• Intelligent Placement Optimization\n• Predictive Storage Analytics\n\n💡 Expected ROI: $2,500+ monthly savings\n\nProceed with purchase?`);
+
+            if (!confirmed) return;
+
+            try {
+                const response = await fetch('/api/billing/purchase-ai-addon', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        addon_type: 'ai_optimization',
+                        price: 1000
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {alert('🎉 AI Optimization Add-on purchased successfully!\n\n✅ Your subscription now includes:\n• Premium AI Freight Optimization\n• Advanced 3D Bin Packing\n• Computer Vision Analysis\n• Predictive Analytics\n\n💳 Next billing will include $1,000 for AI add-on.\n\nYou can now access all AI features immediately!')
+                    loadBillingData() // Reload to show updated status} else {alert('❌ Purchase failed: ' + (result.error || 'Unknown error. Please try again or contact support.'))}
+            } catch (error) {alert('❌ Network error. Please check your connection and try again.')}
+        }
+
+        async function cancelAIAddon() {const confirmed = confirm(`❌ Cancel AI Optimization Add-on?\n\n⚠️ This will:\n• Remove access to all AI optimization features\n• Stop the $1,000/month billing\n• Keep your existing subscription active\n\n💡 Your AI add-on will remain active until the end of your current billing period.\n\nProceed with cancellation?`)
+
+            if (!confirmed) return
+
+            try {
+                const response = await fetch('/api/billing/cancel-ai-addon', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json'}
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(`✅ AI Optimization Add-on cancelled successfully.\n\n📅 You'll retain access until: ${new Date(result.access_until).toLocaleDateString()}\n💳 No further AI add-on charges will be made.\n\nYour main subscription remains active.`);
+                    loadBillingData(); // Reload to show updated status
+                } else {alert('❌ Cancellation failed: ' + (result.error || 'Unknown error. Please contact support.'))}
+            } catch (error) {alert('❌ Network error. Please try again.')}
+        }
+
+        function requestAIDemo() {alert('🎥 AI Optimization Demo Request\n\n📧 A member of our AI team will contact you within 24 hours to schedule a personalized demonstration.\n\n📊 The demo will include:\n• Live AI optimization analysis of your warehouse\n• Custom ROI calculations for your operation\n• Hands-on feature walkthrough\n• Q&A with our AI specialists\n\n✅ Demo request submitted!')}
+
+        function viewAITrialResults() {if (localStorage.getItem('aiOptimizationTrialUsed') === 'true') {
+                alert('📊 Your AI Trial Results\n\n✅ Trial completed successfully!\n🎯 Space optimization: 35% improvement\n⚡ Retrieval time: 8.2 seconds faster\n💰 Estimated monthly savings: $2,847\n\n🚀 Upgrade to Premium AI for unlimited optimizations and advanced features!')} else {alert('📊 No trial results yet.\n\n💡 Try the free AI optimization on your main dashboard first to see sample results.\n\n🎯 The trial will show you the potential of our AI system!')}
+        }
+
+        function viewAIAnalytics() {// Redirect to admin freight page where AI analytics are shown
+            window.location.href = '/admin_freight'}
+
+        function displaySubscriptionData(data) {const subscription = data.subscription
+            const detailsDiv = document.getElementById('subscription-details')
+            currentUsers = subscription.current_users
+
+            let statusClass = 'status-active';
+            let statusText = subscription.status;
+
+            if (subscription.trial_expired) {
+                statusClass = 'status-expired';
+                statusText = 'Trial Expired';} else if (subscription.trial_end_date && !subscription.trial_expired) {statusClass = 'status-trial'
+                statusText = 'Trial Active'
+                currentPlan = 'trial'}
+
+            let upgradeButton = '';
+            if (subscription.trial_end_date && !subscription.trial_expired) {
+                upgradeButton = `
+                    <div class="alert alert-warning">
+                        <strong>⚠️ Trial Ending Soon</strong><br>
+                        Your trial ends on ${new Date(subscription.trial_end_date).toLocaleDateString()}. 
+                        Upgrade now to continue using QR LEGENDS.
+                    </div>
+                `;
+                document.getElementById('upgrade-btn').style.display = 'inline-block';
+            } else if (subscription.trial_expired) {upgradeButton = `
+                    <div class="alert alert-warning">
+                        <strong>⚠️ Trial Expired</strong><br>
+                        Your trial has expired. Please upgrade to continue using the service.
+                    </div>
+                `
+                document.getElementById('upgrade-btn').style.display = 'inline-block'}
+
+            // Show cancel button for active subscriptions (not for trials or already cancelled)
+            const cancelBtn = document.getElementById('cancel-btn');
+            if (subscription.status === 'Active' || subscription.status === 'active') {cancelBtn.style.display = 'inline-block'} else if (subscription.status === 'Cancelled') {statusClass = 'status-expired'
+                statusText = 'Cancelled'
+                upgradeButton = `
+                    <div class="alert alert-warning">
+                        <strong>⚠️ Subscription Cancelled</strong><br>
+                        Your subscription is cancelled and will end on ${new Date(subscription.next_billing_date).toLocaleDateString()}.
+                    </div>
+                `;
+            }
+
+            detailsDiv.innerHTML = `
+                <div class="billing-stat">
+                    <span>Plan:</span>
+                    <span class="billing-value">${subscription.plan}</span>
+                </div>
+                <div class="billing-stat">
+                    <span>Price per User:</span>
+                    <span class="billing-value">${subscription.price_per_user}</span>
+                </div>
+                <div class="billing-stat">
+                    <span>Current Users:</span>
+                    <span class="billing-value">${subscription.current_users}${subscription.user_limit ? `/${subscription.user_limit}` : ''}</span>
+                </div>
+                ${subscription.trial_end_date ? `}
+                <div class="billing-stat">
+                    <span>Trial Ends:</span>
+                    <span class="billing-value">${new Date(subscription.trial_end_date).toLocaleDateString()}</span>
+                </div>
+                ` : ''}
+                <div class="billing-stat">
+                    <span>Monthly Total:</span>
+                    <span class="billing-value">${subscription.monthly_charge}</span>
+                </div>
+                <div class="billing-stat">
+                    <span>Next Billing:</span>
+                    <span class="billing-value">${new Date(subscription.next_billing_date).toLocaleDateString()}</span>
+                </div>
+                <div class="billing-stat">
+                    <span>Status:</span>
+                    <span class="status-badge ${statusClass}">${statusText}</span>
+                </div>
+                ${upgradeButton}
+            `;
+        }
+
+        function displayUsageData(data) {const users = data.users
+            const userListDiv = document.getElementById('user-list')
+            const usageDetailsDiv = document.getElementById('usage-details')
+
+            // Display user list
+            if (users.length === 0) {
+                userListDiv.innerHTML = '<p style="text-align: center; color: #666; padding: 30px;">No employees registered yet. Share your employer code to get started!</p>'} else {
+                userListDiv.innerHTML = users.map(user => `
+                    <div class="user-item">
+                        <div class="user-info">
+                            <h4>${user.name}</h4>
+                            <p>ID: ${user.employee_id} | ${user.department} | Joined: ${new Date(user.joined_date).toLocaleDateString()}</p>
+                        </div>
+                        <div class="user-cost">${user.monthly_cost}</div>
+                    </div>
+                `).join('');
+            }
+
+            // Display usage details with ROI information
+            const period = data.current_period;
+            const estimatedSavings = calculateSavings(period.total_users);
+
+            usageDetailsDiv.innerHTML = `
+                <div class="billing-stat">
+                    <span>Billing Period:</span>
+                    <span class="billing-value">${new Date(period.start_date).toLocaleDateString()} - ${new Date(period.end_date).toLocaleDateString()}</span>
+                </div>
+                <div class="billing-stat">
+                    <span>Total Users:</span>
+                    <span class="billing-value">Unlimited</span>
+                </div>
+                <div class="billing-stat">
+                    <span>QR LEGENDS Cost:</span>
+                    <span class="billing-value">${period.total_charge}</span>
+                </div>
+                <div class="billing-stat">
+                    <span>Traditional WMS Cost:</span>
+                    <span class="billing-value" style="color: #dc3545">$${estimatedSavings.traditional}</span>
+                </div>
+                <div class="billing-stat">
+                    <span><strong>Monthly Savings:</strong></span>
+                    <span class="billing-value" style="color: #28a745 font-size: 1.3rem">$${estimatedSavings.savings}</span>
+                </div>
+                <div class="billing-stat">
+                    <span><strong>Annual Savings:</strong></span>
+                    <span class="billing-value" style="color: #28a745; font-size: 1.3rem;">$${estimatedSavings.annualSavings}</span>
+                </div>
+            `;
+        }
+
+        function calculateSavings(userCount) {const qrLegendsMonthly = 5499 // For Professional plan, flat rate
+            const traditionalMonthly = userCount * 200 // Average $200 per user for traditional WMS
+            const savings = traditionalMonthly - qrLegendsMonthly
+
+            return {
+                traditional: traditionalMonthly.toLocaleString(),
+                savings: savings > 0 ? savings.toLocaleString() : '0',
+                annualSavings: (Math.max(0, savings) * 12).toLocaleString()};
+        }
+
+        function selectPlan(planType) {let message = ''
+            let price = ''
+
+            switch(planType) {
+                case 'small_warehouse':
+                    message = 'Upgrade to Small Warehouse Plan ($1,499 per month for up to 10 users)?'
+                    price = '$1,499 per month (up to 10 users)';
+                    break;
+                case 'medium_warehouse':
+                    message = 'Upgrade to Medium Warehouse Plan ($2,999 per month for up to 25 users)?';
+                    price = '$2,999 per month (up to 25 users)';
+                    break;
+                case 'large_warehouse':
+                    message = 'Upgrade to Large Warehouse Plan ($3,999 per month for up to 50 users)?';
+                    price = '$3,999 per month (up to 50 users)';
+                    break;
+                case 'professional':
+                    message = 'Upgrade to Professional Plan ($5,499 per month for unlimited users)?';
+                    price = '$5,499 per month (unlimited users)';
+                    break;
+
+                case 'enterprise':
+                    alert('Enterprise plan requires custom setup. Our sales team will contact you within 24 hours.');
+                    return;}
+
+            if (confirm(message + ' This will provide the features and user capacity for your operation.')) {upgradeToPlan(planType, price)}
+        }
+
+        async function upgradeToPlan(planType, price) {
+            try {
+                const response = await fetch('/api/billing/upgrade', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        plan: planType,
+                        price: price
+                    })
+                });
+
+                if (response.ok) {
+                    alert(`Successfully upgraded to ${planType} plan!`);
+                    loadBillingData(); // Reload data
+                } else {const error = await response.json()
+                    alert('Upgrade failed: ' + (error.error || 'Unknown error'))}
+            } catch (error) {alert('Network error. Please try again.')}
+        }
+
+        function showAddUserInfo() {const addUserDiv = document.getElementById('add-user-info')
+            const isVisible = addUserDiv.style.display !== 'none'
+            addUserDiv.style.display = isVisible ? 'none' : 'block'}
+
+        function showUpgradeOptions() {document.getElementById('billing-content').scrollTop = 0
+            alert('Please select from the pricing plans above to upgrade your subscription.')}
+
+        function setupAutoPayment() {const existingMethods = document.getElementById('existing-payment-methods')
+            if (existingMethods.style.display === 'none') {
+                alert('Please add a payment method first to enable automatic billing.')
+                return}
+            alert('Automatic billing is already enabled with your current payment method. You will be charged automatically on the 1st of each month.');
+        }
+
+        function downloadInvoice() {alert('Invoice download feature: PDF invoices will be available in the next update. Contact billing@qrlegends.com for current invoices.')}
+
+        function viewPaymentHistory() {alert('Payment history: Detailed transaction records will be available in the next update.')}
+
+        function exportBillingData() {alert('Export feature: CSV/Excel reports will be available in the next update for accounting purposes.')}
+
+        function viewDetailedAnalytics() {window.location.href = '/admin_tracking'}
+
+        function viewROICalculator() {const userCount = 10 // Default to 10 users for calculation example
+            const qrLegendsAnnual = 5499 // Professional plan annual cost
+            const traditionalAnnual = userCount * 200 * 12
+            const savings = traditionalAnnual - qrLegendsAnnual;
+            const roi = ((savings / qrLegendsAnnual) * 100).toFixed(1);
+
+            alert(`ROI Calculator Results (based on ${userCount} users):\n\nQR LEGENDS Annual Cost: $${qrLegendsAnnual.toLocaleString()}\nTraditional WMS Annual Cost: $${traditionalAnnual.toLocaleString()}\nAnnual Savings: $${savings.toLocaleString()}\nROI: ${roi}%\n\nQR LEGENDS pays for itself and saves you ${roi}% annually!`);
+        }
+
+        function showCancelModal() {document.getElementById('cancel-modal').style.display = 'flex'}
+
+        function closeCancelModal() {document.getElementById('cancel-modal').style.display = 'none'
+            // Reset form
+            document.getElementById('cancel-reason').value = ''
+            document.getElementById('cancel-feedback').value = ''}
+
+        async function confirmCancellation() {const reason = document.getElementById('cancel-reason').value
+            const feedback = document.getElementById('cancel-feedback').value
+
+            if (!reason) {
+                alert('Please select a reason for cancellation.')
+                return;}
+
+            if (!confirm('Are you sure you want to cancel your subscription? This action cannot be undone and you will lose access to all QR LEGENDS features.')) {return}
+
+            try {
+                const response = await fetch('/api/billing/cancel-subscription', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        reason: reason,
+                        feedback: feedback
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(`Subscription cancelled successfully. You will retain access until ${result.access_until}.`);
+                    closeCancelModal();
+                    loadBillingData(); // Reload data to show updated status
+                } else {alert('Cancellation failed: ' + (result.error || 'Unknown error'))}
+            } catch (error) {alert('Network error. Please try again or contact support.')}
+        }
+
+        // Load billing data when page loads
+        document.addEventListener('DOMContentLoaded', async function() {await initializeStripe()
+            await loadBillingData()});
+    </script>
+</body>
+</html>

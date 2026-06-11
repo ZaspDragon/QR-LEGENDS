@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Replenishment - QR Legends</title>
+    <style>
+        body {font-family: Arial, sans-serif margin: 20px background-color: #f5f5f5}
+        .container {max-width: 1200px margin: 0 auto background: white padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+        .header {text-align: center margin-bottom: 30px padding: 20px background: linear-gradient(135deg, #d35400, #e67e22); color: white; border-radius: 10px}
+        .card {background: white border-radius: 8px padding: 20px margin: 10px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #d35400}
+        .btn {padding: 10px 20px margin: 5px border: none border-radius: 5px; cursor: pointer; background: #d35400; color: white}
+        .btn:hover {background: #ba4a00}
+        .grid {display: grid grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) gap: 20px}
+        .urgent {background: #e74c3c color: white padding: 10px border-radius: 5px; margin: 5px 0}
+        .normal {background: #f39c12 color: white padding: 10px border-radius: 5px; margin: 5px 0}
+        .low-priority {background: #27ae60 color: white padding: 10px border-radius: 5px; margin: 5px 0}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📦 Replenishment</h1>
+            <p>Automated inventory replenishment and restocking management</p>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h3>🚨 Urgent Replenishment</h3>
+                <div class="urgent">ITEM-001: Stock Out - 0 units</div>
+                <div class="urgent">ITEM-045: Below Safety Stock - 5 units</div>
+                <div class="urgent">ITEM-078: Critical Low - 2 units</div>
+                <button class="btn" onclick="processUrgent()">Process Urgent</button>
+            </div>
+
+            <div class="card">
+                <h3>⚡ Auto Replenishment</h3>
+                <p>System automatically generates replenishment tasks based on min/max levels</p>
+                <button class="btn" onclick="configureRules()">Configure Rules</button>
+                <button class="btn" onclick="viewQueue()">View Queue</button>
+            </div>
+
+            <div class="card">
+                <h3>📊 Replenishment Analytics</h3>
+                <p>Track replenishment performance and optimize stocking levels</p>
+                <button class="btn" onclick="performanceReport()">Performance Report</button>
+                <button class="btn" onclick="trendAnalysis()">Trend Analysis</button>
+            </div>
+
+            <div class="card">
+                <h3>🎯 Pick Face Replenishment</h3>
+                <p>Replenish picking locations from reserve storage</p>
+                <button class="btn" onclick="generatePickFaceTasks()">Generate Pick Face Tasks</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>📋 Replenishment Queue</h3>
+            <div class="normal">ITEM-123: Normal Priority - Reorder 50 units</div>
+            <div class="normal">ITEM-156: Normal Priority - Reorder 25 units</div>
+            <div class="low-priority">ITEM-189: Low Priority - Reorder 100 units</div>
+            <button class="btn" onclick="processAllTasks()">Process All Tasks</button>
+        </div>
+    </div>
+
+    <script>
+        // Item weight mapping for calculations
+        const itemWeights = {
+            'ITEM-123': 2.5,
+            'ITEM-156': 1.8,
+            'ITEM-189': 3.2
+        };
+
+        let currentStream = null;
+
+        // Process urgent replenishment items
+        function processUrgent() {showNotification('🚨 Processing urgent replenishment items...', 'warning')
+
+            // Simulate processing
+            setTimeout(() => {
+                showNotification('✅ Urgent replenishment tasks completed!', 'success')
+
+                // Update urgent items display
+                const urgentCard = document.querySelector('.card h3')
+                if (urgentCard && urgentCard.textContent.includes('Urgent Replenishment')) {
+                    const urgentDiv = urgentCard.parentElement;
+                    urgentDiv.innerHTML = `
+                        <h3>🚨 Urgent Replenishment</h3>
+                        <div style="background: #28a745 color: white padding: 10px border-radius: 5px; margin: 5px 0;">
+                            ✅ All urgent items processed
+                        </div>
+                        <button class="btn" onclick="refreshUrgentItems()">🔄 Refresh Urgent Items</button>
+                    `}
+            }, 2000);
+        }
+
+        // Configure replenishment rules
+        function configureRules() {showNotification('⚙️ Opening replenishment configuration...', 'info')
+
+            const rulesOverlay = document.createElement('div')
+            rulesOverlay.style.cssText = `
+                position: fixed
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+
+            const rulesModal = document.createElement('div');
+            rulesModal.style.cssText = `
+                background: white;
+                padding: 30px;
+                border-radius: 10px;
+                max-width: 500px;
+                width: 90%;
+                max-height: 80vh;
+                overflow-y: auto;
+            `;
+
+            rulesModal.innerHTML = `
+                <h3 style="color: #d35400 margin-bottom: 20px">⚙️ Replenishment Rules Configuration</h3>
+
+                <div style="margin-bottom: 15px">
+                    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Minimum Stock Level:</label>
+                    <input type="number" id="minStock" value="10" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Maximum Stock Level:</label>
+                    <input type="number" id="maxStock" value="100" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Reorder Quantity:</label>
+                    <input type="number" id="reorderQty" value="50" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-weight: bold; margin-bottom: 5px;">
+                        <input type="checkbox" id="autoReplenish" checked> Enable Auto Replenishment
+                    </label>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="saveReplenishmentRules()" class="btn" style="flex: 1;">💾 Save Rules</button>
+                    <button onclick="this.closest('[style*=\'position: fixed\']').remove()" class="btn" style="flex: 1; background: #6c757d;">❌ Cancel</button>
+                </div>
+            `;
+
+            rulesOverlay.appendChild(rulesModal);
+            document.body.appendChild(rulesOverlay)}
+
+        // Save replenishment rules
+        function saveReplenishmentRules() {const minStock = document.getElementById('minStock').value
+            const maxStock = document.getElementById('maxStock').value
+            const reorderQty = document.getElementById('reorderQty').value
+            const autoReplenish = document.getElementById('autoReplenish').checked;
+
+            showNotification('💾 Saving replenishment rules...', 'info');
+
+            // Simulate save
+            setTimeout(() => {
+                showNotification('✅ Replenishment rules saved successfully!', 'success');
+                document.querySelector('[style*="position: fixed"]').remove()}, 1000);
+        }
+
+        // View replenishment queue
+        function viewQueue() {showNotification('📋 Loading replenishment queue...', 'info')
+
+            const queueOverlay = document.createElement('div')
+            queueOverlay.style.cssText = `
+                position: fixed
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+
+            const queueModal = document.createElement('div');
+            queueModal.style.cssText = `
+                background: white;
+                padding: 30px;
+                border-radius: 10px;
+                max-width: 600px;
+                width: 90%;
+                max-height: 80vh;
+                overflow-y: auto;
+            `;
+
+            queueModal.innerHTML = `
+                <h3 style="color: #d35400 margin-bottom: 20px">📋 Replenishment Queue</h3>
+
+                <div style="background: #f8f9fa padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <strong>Priority: High</strong><br>
+                    Item: WIDGET-001 | Current: 3 | Target: 50 | Reorder: 47 units
+                    <button onclick="processQueueItem(this)" class="btn" style="float: right; padding: 5px 10px; font-size: 12px;">Process</button>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <strong>Priority: Medium</strong><br>
+                    Item: GADGET-202 | Current: 15 | Target: 75 | Reorder: 60 units
+                    <button onclick="processQueueItem(this)" class="btn" style="float: right; padding: 5px 10px; font-size: 12px;">Process</button>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <strong>Priority: Low</strong><br>
+                    Item: TOOL-345 | Current: 25 | Target: 100 | Reorder: 75 units
+                    <button onclick="processQueueItem(this)" class="btn" style="float: right; padding: 5px 10px; font-size: 12px;">Process</button>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="processAllQueueItems()" class="btn" style="flex: 1;">🚀 Process All</button>
+                    <button onclick="this.closest('[style*=\'position: fixed\']').remove()" class="btn" style="flex: 1; background: #6c757d;">❌ Close</button>
+                </div>
+            `;
+
+            queueOverlay.appendChild(queueModal);
+            document.body.appendChild(queueOverlay)}
+
+        // Process individual queue item
+        function processQueueItem(button) {const item = button.closest('div')
+            item.style.background = '#d4edda'
+            item.innerHTML = item.innerHTML.replace('Process</button>', 'Processed ✅</button>')
+            button.disabled = true;
+            button.style.background = '#28a745';
+            showNotification('✅ Queue item processed!', 'success');}
+
+        // Process all queue items
+        function processAllQueueItems() {const items = document.querySelectorAll('[style*="background: #f8f9fa"]')
+            items.forEach((item, index) => {
+                setTimeout(() => {
+                    const button = item.querySelector('button')
+                    if (button && !button.disabled) {
+                        processQueueItem(button)}
+                }, index * 500);
+            });
+
+            setTimeout(() => {showNotification('🚀 All queue items processed!', 'success')}, items.length * 500 + 500);
+        }
+
+        // Generate performance report
+        function performanceReport() {showNotification('📊 Generating performance report...', 'info')
+
+            setTimeout(() => {
+                const reportOverlay = document.createElement('div')
+                reportOverlay.style.cssText = `
+                    position: fixed
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.8);
+                    z-index: 1000;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                `;
+
+                const reportModal = document.createElement('div');
+                reportModal.style.cssText = `
+                    background: white;
+                    padding: 30px;
+                    border-radius: 10px;
+                    max-width: 600px;
+                    width: 90%;
+                    max-height: 80vh;
+                    overflow-y: auto;
+                `;
+
+                reportModal.innerHTML = `
+                    <h3 style="color: #d35400 margin-bottom: 20px">📊 Replenishment Performance Report</h3>
+
+                    <div style="display: grid grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                        <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; text-align: center;">
+                            <h4 style="margin: 0; color: #1976d2;">Average Fill Rate</h4>
+                            <div style="font-size: 24px; font-weight: bold; color: #1976d2;">94.5%</div>
+                        </div>
+                        <div style="background: #f3e5f5; padding: 15px; border-radius: 8px; text-align: center;">
+                            <h4 style="margin: 0; color: #7b1fa2;">Response Time</h4>
+                            <div style="font-size: 24px; font-weight: bold; color: #7b1fa2;">2.3 hrs</div>
+                        </div>
+                        <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; text-align: center;">
+                            <h4 style="margin: 0; color: #388e3c;">Cost Savings</h4>
+                            <div style="font-size: 24px; font-weight: bold; color: #388e3c;">$12,450</div>
+                        </div>
+                    </div>
+
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <h4>📈 Monthly Trends</h4>
+                        <ul style="margin: 10px 0; padding-left: 20px;">
+                            <li>Stock-outs reduced by 23%</li>
+                            <li>Replenishment cycles improved by 15%</li>
+                            <li>Inventory turns increased to 8.2x</li>
+                            <li>Emergency orders decreased by 31%</li>
+                        </ul>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="exportReport()" class="btn" style="flex: 1;">📥 Export PDF</button>
+                        <button onclick="this.closest('[style*=\'position: fixed\']').remove()" class="btn" style="flex: 1; background: #6c757d;">❌ Close</button>
+                    </div>
+                `;
+
+                reportOverlay.appendChild(reportModal);
+                document.body.appendChild(reportOverlay)}, 1500);
+        }
+
+        // Trend analysis
+        function trendAnalysis() {showNotification('📈 Analyzing replenishment trends...', 'info')
+
+            setTimeout(() => {
+                showNotification('📈 Trend analysis shows 15% improvement in efficiency!', 'success')}, 2000);
+        }
+
+        // Generate pick face tasks
+        function generatePickFaceTasks() {showNotification('🎯 Generating pick face replenishment tasks...', 'info')
+
+            setTimeout(() => {
+                showNotification('🎯 Pick face tasks generated: 12 locations need replenishment!', 'success')
+
+                // Update the pick face card
+                const pickFaceCards = document.querySelectorAll('.card')
+                pickFaceCards.forEach(card => {
+                    if (card.innerHTML.includes('Pick Face Replenishment')) {
+                        card.innerHTML = `
+                            <h3>🎯 Pick Face Replenishment</h3>
+                            <p>Replenish picking locations from reserve storage</p>
+                            <div style="background: #17a2b8 color: white padding: 10px border-radius: 5px; margin: 10px 0;">
+                                12 pick face locations need replenishment
+                            </div>
+                            <button class="btn" onclick="viewPickFaceTasks()">📋 View Tasks</button>
+                            <button class="btn" onclick="generatePickFaceTasks()">🔄 Refresh</button>
+                        `}
+                });
+            }, 1500);
+        }
+
+        // View pick face tasks
+        function viewPickFaceTasks() {showNotification('📋 Loading pick face tasks...', 'info')
+
+            setTimeout(() => {
+                showNotification('📋 Pick face task list loaded!', 'success')}, 1000);
+        }
+
+        // Process all replenishment tasks
+        function processAllTasks() {showNotification('🚀 Processing all replenishment tasks...', 'warning')
+
+            setTimeout(() => {
+                showNotification('✅ All replenishment tasks completed successfully!', 'success')
+
+                // Update the queue display
+                const queueCard = document.querySelector('.card: last-child')
+                if (queueCard) {
+                    queueCard.innerHTML = `
+                        <h3>📋 Replenishment Queue</h3>
+                        <div style="background: #28a745 color: white padding: 10px border-radius: 5px; margin: 5px 0;">
+                            ✅ All tasks completed successfully!
+                        </div>
+                        <button class="btn" onclick="refreshQueue()">🔄 Refresh Queue</button>
+                    `}
+            }, 3000);
+        }
+
+        // Refresh functions
+        function refreshUrgentItems() {showNotification('🔄 Refreshing urgent items...', 'info')
+            setTimeout(() => {
+                location.reload()}, 1000);
+        }
+
+        function refreshQueue() {showNotification('🔄 Refreshing replenishment queue...', 'info')
+            setTimeout(() => {
+                location.reload()}, 1000);
+        }
+
+        // Export report function
+        function exportReport() {showNotification('📥 Exporting performance report...', 'info')
+            setTimeout(() => {
+                showNotification('📥 Report exported successfully!', 'success')}, 1000);
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {const notification = document.createElement('div')
+            notification.style.cssText = `
+                position: fixed
+                top: 20px
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: bold;
+                z-index: 10000;
+                max-width: 300px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                animation: slideIn 0.3s ease-out;
+            `;
+
+            const colors = {
+                success: '#28a745',
+                error: '#dc3545',
+                warning: '#ffc107',
+                info: '#17a2b8'};
+
+            notification.style.background = colors[type] || colors.info;
+            notification.textContent = message;
+
+            // Add slide-in animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {from { transform: translateX(100%) opacity: 0}
+                    to {transform: translateX(0) opacity: 1}
+                }
+            `;
+            document.head.appendChild(style);
+
+            document.body.appendChild(notification);
+
+            // Auto-remove after 4 seconds
+            setTimeout(() => {notification.style.animation = 'slideIn 0.3s ease-out reverse'
+                setTimeout(() => notification.remove(), 300)}, 4000);
+        }
+
+        // The original code had missing function definitions that are now provided.
+        // The 'openQuickCountLocationScanner' function was not defined in the original code,
+        // and is not directly related to the buttons on this page based on the provided HTML structure.
+        // If it's intended for a specific functionality, it would need to be added with its own logic.
+
+        async function loadEquipmentStatus() {try {
+                const response = await fetch('/api/equipment/status')
+
+                // Check if the response is actually JSON
+                const contentType = response.headers.get('content-type')
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Server returned non-JSON response')}
+
+                const data = await response.json();
+
+                if (data.success) {updateEquipmentDisplay(data.equipment)} else {showError('Failed to load equipment status')}
+            } catch (error) {console.error('Error loading equipment status:', error)
+                showError('Error loading equipment status. Please try again.')
+
+                // Show mock data instead of failing completely
+                updateEquipmentDisplay([
+                    { id: 'forklift-01', name: 'Forklift #01', status: 'active', location: 'Zone A'},
+                    { id: 'scanner-12', name: 'Scanner #12', status: 'active', location: 'Receiving' },
+                    { id: 'printer-03', name: 'Label Printer #03', status: 'maintenance', location: 'Shipping' }
+                ]);
+            }
+        }
+
+        // Placeholder for the updateEquipmentDisplay function, as it was not provided in the original code.
+        // This function would be responsible for rendering the equipment status on the page.
+        function updateEquipmentDisplay(equipment) {console.log('Updating equipment display with:', equipment)
+            // In a real application, you would select an element and update its content
+            // For example:
+            // const equipmentContainer = document.getElementById('equipment-status-container')
+            // if (equipmentContainer) {
+            //     equipmentContainer.innerHTML = equipment.map(item =>
+            //         `<div class="equipment-item"><strong>${item.name} (${item.id})</strong>: ${item.status} at ${item.location}</div>`
+            //     ).join('');
+            // }
+        }
+
+        // Placeholder for showError function, as it was not provided in the original code.
+        // This function is called within loadEquipmentStatus.
+        function showError(message) {console.error('Displaying error:', message)
+            // In a real application, you would display this message to the user,
+            // possibly using the showNotification function with type 'error'.
+            showNotification(message, 'error')}
+
+    </script>
+</body>
+</html>

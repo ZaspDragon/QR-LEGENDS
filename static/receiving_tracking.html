@@ -1,0 +1,603 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receiving & Slot Tracking - QR Legends</title>
+    <style>
+        * {margin: 0
+            padding: 0
+            box-sizing: border-box}
+
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            min-height: 100vh
+            padding: 20px}
+
+        .container {max-width: 1400px
+            margin: 0 auto
+            background: rgba(255, 255, 255, 0.95)
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);}
+
+        .header {text-align: center
+            margin-bottom: 30px
+            padding-bottom: 20px
+            border-bottom: 2px solid #e0e0e0}
+
+        .header h1 {color: #333
+            font-size: 2.5rem
+            margin-bottom: 10px}
+
+        .tabs {display: flex
+            background: #f8f9fa
+            border-radius: 10px
+            margin-bottom: 20px;
+            overflow: hidden}
+
+        .tab {flex: 1
+            padding: 15px
+            background: #f8f9fa
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease}
+
+        .tab.active {background: #667eea
+            color: white}
+
+        .tab:hover:not(.active) {background: #e9ecef}
+
+        .tab-content {display: none}
+
+        .tab-content.active {display: block}
+
+        .stats-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr))
+            gap: 20px
+            margin-bottom: 30px}
+
+        .stat-card {background: linear-gradient(135deg, #667eea, #764ba2)
+            color: white
+            padding: 25px
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);}
+
+        .stat-card h3 {font-size: 2.5rem
+            margin-bottom: 10px}
+
+        .stat-card p {font-size: 1.1rem
+            opacity: 0.9}
+
+        .section-card {background: white
+            border-radius: 15px
+            padding: 25px
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);}
+
+        .section-title {font-size: 1.5rem
+            color: #333
+            margin-bottom: 20px
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea}
+
+        .table-container {overflow-x: auto
+            border-radius: 10px
+            border: 1px solid #e0e0e0}
+
+        table {width: 100%
+            border-collapse: collapse}
+
+        th, td {padding: 12px
+            text-align: left
+            border-bottom: 1px solid #e0e0e0}
+
+        th {background: #f8f9fa
+            font-weight: 600
+            color: #333}
+
+        tbody tr:hover {background: #f8f9fa}
+
+        .status-badge {padding: 4px 12px
+            border-radius: 20px
+            font-size: 0.85rem
+            font-weight: 600;
+            text-transform: uppercase}
+
+        .status-allocated {background: #e3f2fd
+            color: #1976d2}
+
+        .status-received {background: #e8f5e8
+            color: #2e7d32}
+
+        .status-pending {background: #fff3e0
+            color: #f57c00}
+
+        .status-completed {background: #e8f5e8
+            color: #2e7d32}
+
+        .priority-high {background: #ffebee
+            color: #c62828}
+
+        .priority-medium {background: #fff3e0
+            color: #f57c00}
+
+        .priority-low {background: #e8f5e8
+            color: #2e7d32}
+
+        .form-group {margin-bottom: 20px}
+
+        .form-group label {display: block
+            margin-bottom: 8px
+            font-weight: 600
+            color: #333}
+
+        .form-group input, .form-group select {width: 100%
+            padding: 12px
+            border: 2px solid #e0e0e0
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease}
+
+        .form-group input:focus, .form-group select: focus {outline: none
+            border-color: #667eea}
+
+        .btn {padding: 12px 24px
+            border: none
+            border-radius: 8px
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center}
+
+        .btn-primary {background: #667eea
+            color: white}
+
+        .btn-primary: hover {background: #5a67d8
+            transform: translateY(-2px)}
+
+        .btn-success {background: #48bb78
+            color: white}
+
+        .btn-success:hover {background: #38a169}
+
+        .loading {text-align: center
+            padding: 40px
+            color: #666}
+
+        .variance-highlight {background: #ffebee !important
+            color: #c62828
+            font-weight: 600}
+
+        .grid-2 {display: grid
+            grid-template-columns: 1fr 1fr
+            gap: 20px}
+
+        @media (max-width: 768px) {.grid-2 {
+                grid-template-columns: 1fr}
+            
+            .stats-grid {grid-template-columns: 1fr}
+            
+            .tabs {flex-direction: column}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚛 Receiving & Slot Tracking</h1>
+            <p>Complete receiving workflow from slot allocation to putaway completion</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3 id="totalAllocations">0</h3>
+                <p>Slot Allocations</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="pendingReceipts">0</h3>
+                <p>Pending Receipts</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="pendingPutaways">0</h3>
+                <p>Pending Putaways</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="completedToday">0</h3>
+                <p>Completed Today</p>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('slot-allocations')">Slot Allocations</button>
+            <button class="tab" onclick="showTab('received-items')">Received Items</button>
+            <button class="tab" onclick="showTab('putaway-tasks')">Putaway Tasks</button>
+            <button class="tab" onclick="showTab('allocate-new')">Allocate New</button>
+        </div>
+
+        <!-- Slot Allocations Tab -->
+        <div id="slot-allocations" class="tab-content active">
+            <div class="section-card">
+                <h2 class="section-title">🎯 Slot Allocations</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>PO Number</th>
+                                <th>Expected Date</th>
+                                <th>Items Count</th>
+                                <th>Allocated Slots</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allocationsTable">
+                            <tr><td colspan="6" class="loading">Loading slot allocations...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Received Items Tab -->
+        <div id="received-items" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">📦 Received Items</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Transaction ID</th>
+                                <th>PO Number</th>
+                                <th>Received Date</th>
+                                <th>Items</th>
+                                <th>Variances</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="receivedItemsTable">
+                            <tr><td colspan="7" class="loading">Loading received items...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Putaway Tasks Tab -->
+        <div id="putaway-tasks" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">🏃‍♂️ Putaway Tasks</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Assignment ID</th>
+                                <th>Item</th>
+                                <th>Quantity</th>
+                                <th>From → To</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="putawayTasksTable">
+                            <tr><td colspan="7" class="loading">Loading putaway tasks...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Allocate New Tab -->
+        <div id="allocate-new" class="tab-content">
+            <div class="section-card">
+                <h2 class="section-title">➕ Allocate New Receiving Slots</h2>
+                <form id="allocationForm" class="grid-2">
+                    <div class="form-group">
+                        <label for="poNumber">Purchase Order Number:</label>
+                        <input type="text" id="poNumber" required placeholder="PO-2025-001">
+                    </div>
+                    <div class="form-group">
+                        <label for="expectedDate">Expected Arrival Date:</label>
+                        <input type="datetime-local" id="expectedDate" required>
+                    </div>
+                </form>
+                
+                <div style="margin: 20px 0;">
+                    <button type="button" class="btn btn-primary" onclick="addItemRow()">+ Add Item</button>
+                </div>
+                
+                <div id="itemsContainer">
+                    <div class="section-card">
+                        <h3>Items to Receive</h3>
+                        <div id="itemsList">
+                            <!-- Item rows will be added dynamically -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button type="button" class="btn btn-success" onclick="submitAllocation()">Allocate Receiving Slots</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCompanyId = 'demo-company-1'; // This would be set based on logged-in user
+        
+        // Tab switching functionality
+        function showTab(tabName) {// Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active')});
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {tab.classList.remove('active')});
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            // Load data for the selected tab
+            loadTabData(tabName);
+        }
+        
+        function loadTabData(tabName) {switch(tabName) {
+                case 'slot-allocations':
+                    loadSlotAllocations()
+                    break
+                case 'received-items':
+                    loadReceivedItems()
+                    break;
+                case 'putaway-tasks':
+                    loadPutawayTasks();
+                    break;}
+        }
+        
+        function loadSlotAllocations() {
+            fetch(`/api/receiving/slot-allocations/${currentCompanyId}`)
+                .then(response => response.json())
+                .then(data => {if (data.success) {
+                        displayAllocations(data.allocations)
+                        updateStats()} else {console.error('Error loading allocations:', data.error)}
+                })
+                .catch(error => {console.error('Error:', error)});
+        }
+        
+        function displayAllocations(allocations) {const tbody = document.getElementById('allocationsTable')
+            
+            if (allocations.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="loading">No slot allocations found</td></tr>'
+                return}
+            
+            tbody.innerHTML = allocations.map(allocation => `
+                <tr>
+                    <td><strong>${allocation.po_number}</strong></td>
+                    <td>${formatDate(allocation.expected_arrival)}</td>
+                    <td>${allocation.slot_assignments?.length || 0}</td>
+                    <td>
+                        ${allocation.slot_assignments?.map(slot => }
+                            `<span class="status-badge status-${slot.slot_type}">${slot.allocated_slot}</span>`
+                        ).join(' ') || 'None'}
+                    </td>
+                    <td><span class="status-badge status-${allocation.status}">${allocation.status}</span></td>
+                    <td>
+                        <button class="btn btn-primary" onclick="viewAllocationDetails('${allocation.allocation_id}')">View Details</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function loadReceivedItems() {
+            fetch(`/api/erp/receiving-transactions/${currentCompanyId}`)
+                .then(response => response.json())
+                .then(data => {if (data.success) {
+                        displayReceivedItems(data.transactions)} else {console.error('Error loading received items:', data.error)}
+                })
+                .catch(error => {console.error('Error:', error)});
+        }
+        
+        function displayReceivedItems(transactions) {const tbody = document.getElementById('receivedItemsTable')
+            
+            if (transactions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="loading">No received items found</td></tr>'
+                return}
+            
+            tbody.innerHTML = transactions.map(transaction => `
+                <tr>
+                    <td><strong>${transaction.transaction_id}</strong></td>
+                    <td>${transaction.po_number}</td>
+                    <td>${formatDate(transaction.received_date)}</td>
+                    <td>${transaction.total_items}</td>
+                    <td class="${transaction.variance_count > 0 ? 'variance-highlight' : ''}">${transaction.variance_count}</td>
+                    <td><span class="status-badge status-${transaction.status}">${transaction.status}</span></td>
+                    <td>
+                        <button class="btn btn-primary" onclick="viewReceiptDetails('${transaction.transaction_id}')">View Details</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function loadPutawayTasks() {
+            fetch(`/api/putaway/pending/${currentCompanyId}`)
+                .then(response => response.json())
+                .then(data => {if (data.success) {
+                        displayPutawayTasks(data.tasks)} else {console.error('Error loading putaway tasks:', data.error)}
+                })
+                .catch(error => {console.error('Error:', error)});
+        }
+        
+        function displayPutawayTasks(tasks) {const tbody = document.getElementById('putawayTasksTable')
+            
+            if (tasks.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="loading">No putaway tasks found</td></tr>'
+                return}
+            
+            tbody.innerHTML = tasks.map(task => `
+                <tr>
+                    <td><strong>${task.assignment_id}</strong></td>
+                    <td>${task.item_number}<br><small>${task.description}</small></td>
+                    <td>${task.quantity}</td>
+                    <td>${task.from_location} → ${task.to_location}</td>
+                    <td><span class="status-badge priority-${task.priority}">${getPriorityText(task.priority)}</span></td>
+                    <td><span class="status-badge status-${task.status}">${task.status}</span></td>
+                    <td>
+                        <button class="btn btn-success" onclick="completePutaway('${task.assignment_id}')">Complete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function addItemRow() {const itemsList = document.getElementById('itemsList')
+            const itemCount = itemsList.children.length
+            
+            const itemRow = document.createElement('div')
+            itemRow.className = 'grid-2';
+            itemRow.style.marginBottom = '15px';
+            itemRow.style.padding = '15px';
+            itemRow.style.border = '1px solid #e0e0e0';
+            itemRow.style.borderRadius = '8px';
+            
+            itemRow.innerHTML = `
+                <div class="form-group">
+                    <label>Item Number: </label>
+                    <input type="text" class="item-number" required placeholder="ITEM-001">
+                </div>
+                <div class="form-group">
+                    <label>Description:</label>
+                    <input type="text" class="item-description" required placeholder="Item description">
+                </div>
+                <div class="form-group">
+                    <label>Expected Quantity:</label>
+                    <input type="number" class="item-quantity" required min="1" placeholder="100">
+                </div>
+                <div class="form-group">
+                    <label>Category:</label>
+                    <select class="item-category">
+                        <option value="standard">Standard</option>
+                        <option value="bulk">Bulk</option>
+                        <option value="hazardous">Hazardous</option>
+                        <option value="perishable">Perishable</option>
+                    </select>
+                </div>
+                <div style="grid-column: 1 / -1 text-align: right">
+                    <button type="button" class="btn" style="background: #dc3545 color: white;" onclick="removeItemRow(this)">Remove</button>
+                </div>
+            `;
+            
+            itemsList.appendChild(itemRow)}
+        
+        function removeItemRow(button) {button.closest('.grid-2').remove()}
+        
+        function submitAllocation() {const poNumber = document.getElementById('poNumber').value
+            const expectedDate = document.getElementById('expectedDate').value
+            
+            if (!poNumber || !expectedDate) {
+                alert('Please fill in PO Number and Expected Date')
+                return;}
+            
+            const itemRows = document.querySelectorAll('#itemsList .grid-2');
+            const items = Array.from(itemRows).map(row => ({
+                item_number: row.querySelector('.item-number').value,
+                description: row.querySelector('.item-description').value,
+                quantity: parseInt(row.querySelector('.item-quantity').value),
+                category: row.querySelector('.item-category').value
+            }));
+            
+            if (items.length === 0) {alert('Please add at least one item')
+                return}
+            
+            fetch('/api/receiving/allocate-slots', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    po_number: poNumber,
+                    company_id: currentCompanyId,
+                    items: items
+                })
+            })
+            .then(response => response.json())
+            .then(data => {if (data.success) {
+                    alert('Receiving slots allocated successfully!')
+                    // Reset form
+                    document.getElementById('allocationForm').reset()
+                    document.getElementById('itemsList').innerHTML = ''
+                    // Switch to allocations tab
+                    showTab('slot-allocations');} else {alert('Error allocating slots: ' + data.error)}
+            })
+            .catch(error => {console.error('Error:', error)
+                alert('Error submitting allocation')});
+        }
+        
+        function completePutaway(assignmentId) {
+            fetch('/api/putaway/update-status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    assignment_id: assignmentId,
+                    status: 'completed',
+                    assigned_to: 'current_user' // This would be the actual user ID
+                })
+            })
+            .then(response => response.json())
+            .then(data => {if (data.success) {
+                    alert('Putaway completed successfully!')
+                    loadPutawayTasks() // Refresh the list} else {alert('Error completing putaway')}
+            })
+            .catch(error => {console.error('Error:', error)
+                alert('Error completing putaway')});
+        }
+        
+        function updateStats() {// Update statistics (simplified - would be more comprehensive in real implementation)
+            document.getElementById('totalAllocations').textContent = document.querySelectorAll('#allocationsTable tr').length - 1
+            document.getElementById('pendingPutaways').textContent = document.querySelectorAll('#putawayTasksTable tr').length - 1}
+        
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        function getPriorityText(priority) {
+            const priorities = {1: 'High', 2: 'High', 3: 'Medium', 4: 'Low', 5: 'Low'};
+            return priorities[priority] || 'Medium';
+        }
+        
+        // Missing function definitions
+        function viewAllocationDetails(allocationId) {
+            console.log('📋 Viewing allocation details:', allocationId);
+            alert('📋 Allocation Details\n\nID: ' + allocationId + '\nStatus: Active\nItems: 12\nLocation: A-01-01 to A-01-12\n\nOpening detailed view...');
+        }
+
+        function viewReceiptDetails(receiptId) {
+            console.log('📄 Viewing receipt details:', receiptId);
+            alert('📄 Receipt Details\n\nReceipt ID: ' + receiptId + '\nDate: ' + new Date().toLocaleDateString() + '\nItems: 5\nTotal Quantity: 250\nStatus: Processed');
+        }
+
+        // Load initial data
+        document.addEventListener('DOMContentLoaded', function() {loadSlotAllocations()
+            updateStats()
+            
+            // Add one item row by default
+            addItemRow()});
+    </script>
+</body>
+</html>

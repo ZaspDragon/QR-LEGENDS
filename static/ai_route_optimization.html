@@ -1,0 +1,192 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Route Optimization - QR Legends</title>
+    <link rel="icon" type="image/png" href="/static/qr_legends_logo.png">
+    <style>
+        body {font-family: Arial, sans-serif 
+            margin: 0 
+            padding: 20px 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh}
+        .container {max-width: 1200px 
+            margin: 0 auto 
+            background: white 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden}
+        .header {background: linear-gradient(135deg, #4CAF50, #45a049) 
+            color: white 
+            padding: 30px 
+            text-align: center}
+        .content {padding: 30px}
+        .route-card {background: #f8f9fa
+            border-radius: 10px
+            padding: 20px
+            margin: 15px 0;
+            border-left: 5px solid #4CAF50;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
+        .optimization-stats {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
+            gap: 20px
+            margin: 20px 0}
+        .stat-card {background: linear-gradient(135deg, #667eea, #764ba2)
+            color: white
+            padding: 20px
+            border-radius: 10px;
+            text-align: center}
+        .btn {background: #4CAF50
+            color: white
+            border: none
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s}
+        .btn: hover {background: #45a049 transform: translateY(-2px)}
+        .route-map {background: #e3f2fd
+            padding: 20px
+            border-radius: 10px
+            margin: 20px 0;
+            text-align: center}
+        .gamification {background: linear-gradient(135deg, #ff6b6b, #ee5a24)
+            color: white
+            padding: 20px
+            border-radius: 10px;
+            margin: 20px 0}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 AI Route Optimization</h1>
+            <p>Smart picking routes that reduce walk time and increase productivity</p>
+        </div>
+        
+        <div class="content">
+            <div class="optimization-stats">
+                <div class="stat-card">
+                    <h3>Walk Time Saved</h3>
+                    <h2 id="walkTimeSaved">32%</h2>
+                    <p>Average reduction per picker</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Picks per Hour</h3>
+                    <h2 id="picksPerHour">127</h2>
+                    <p>Current productivity rate</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Efficiency Score</h3>
+                    <h2 id="efficiencyScore">94%</h2>
+                    <p>AI optimization rating</p>
+                </div>
+            </div>
+
+            <div class="route-card">
+                <h3>🎯 Current Optimized Route</h3>
+                <div class="route-map">
+                    <h4>Suggested Path: A-05 → B-12 → B-15 → C-03 → A-09</h4>
+                    <p><strong>Estimated Time:</strong> 12 minutes | <strong>Walk Distance:</strong> 380 feet</p>
+                    <p><strong>Items to Pick:</strong> 8 | <strong>Priority Orders:</strong> 2</p>
+                </div>
+                <button class="btn" onclick="startOptimizedRoute()">🚀 Start This Route</button>
+                <button class="btn" onclick="requestAlternative()">🔄 Get Alternative Route</button>
+            </div>
+
+            <div class="gamification">
+                <h3>🏆 Picker Performance Gamification</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center;">
+                    <div>
+                        <p><strong>Today's Challenge:</strong> Complete 15 optimized routes</p>
+                        <p><strong>Progress:</strong> 11/15 routes completed</p>
+                        <p><strong>Streak:</strong> 4 days following AI recommendations</p>
+                        <p><strong>Team Ranking:</strong> #2 of 12 pickers</p>
+                    </div>
+                    <div>
+                        <h4>Badges Earned:</h4>
+                        <p>🎯 Accuracy Master (98%+ pick accuracy)</p>
+                        <p>⚡ Speed Demon (150+ picks/hour)</p>
+                        <p>🧭 Route Optimizer (Follows AI routes 90%)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="route-card">
+                <h3>📱 Voice-Enabled Workflow</h3>
+                <p>Hands-free picking with voice guidance:</p>
+                <div style="background: #f0f8ff; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                    <p><strong>🗣️ AI Voice:</strong> "Proceed to Aisle A, Section 5, Bin 3. Pick 2 units of Motor Assembly."</p>
+                    <p><strong>👤 You:</strong> "Picked 2 units"</p>
+                    <p><strong>🗣️ AI Voice:</strong> "Confirmed. Next: Aisle B, Section 12, Bin 7."</p>
+                </div>
+                <button class="btn" onclick="enableVoiceMode()">🎤 Enable Voice Picking</button>
+                <button class="btn" onclick="viewVoiceSettings()">⚙️ Voice Settings</button>
+            </div>
+
+            <div class="route-card">
+                <h3>🧠 AI Insights & Recommendations</h3>
+                <ul>
+                    <li><strong>Peak Hours Analysis:</strong> Your productivity is highest between 9-11 AM and 2-4 PM</li>
+                    <li><strong>Optimal Route Types:</strong> Cluster picking increases your efficiency by 23%</li>
+                    <li><strong>Break Suggestions:</strong> Take a 5-minute break after every 45 minutes for peak performance</li>
+                    <li><strong>Training Opportunity:</strong> Learn multi-order picking to increase hourly rate by 15%</li>
+                </ul>
+            </div>
+
+            <div class="route-card">
+                <h3>📊 Real-Time Analytics</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h4>Today's Performance</h4>
+                        <p>Routes Completed: <strong>11</strong></p>
+                        <p>Total Picks: <strong>89</strong></p>
+                        <p>Walk Distance: <strong>2.1 miles</strong></p>
+                        <p>Time in Zone: <strong>6.2 hours</strong></p>
+                    </div>
+                    <div>
+                        <h4>Compared to Yesterday</h4>
+                        <p style="color: green;">Picks/Hour: <strong>+8%</strong> ↗️</p>
+                        <p style="color: green;">Accuracy: <strong>+2%</strong> ↗️</p>
+                        <p style="color: green;">Walk Efficiency: <strong>+12%</strong> ↗️</p>
+                        <p style="color: red;">Break Time: <strong>+5 min</strong> ↘️</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function startOptimizedRoute() {alert('🚀 Starting optimized route! AI guidance activated.')
+            // Would integrate with actual route execution}
+
+        function requestAlternative() {alert('🔄 Calculating alternative route... New path optimized for current warehouse traffic.')
+            // Would trigger AI recalculation}
+
+        function enableVoiceMode() {alert('🎤 Voice picking mode enabled! Put on your headset and follow voice instructions.')
+            // Would activate voice recognition and guidance}
+
+        function viewVoiceSettings() {alert('⚙️ Voice settings: Adjust language, speed, volume, and confirmation preferences.')
+            // Would open voice configuration panel}
+
+        // Simulate real-time stat updates
+        function updateStats() {
+            const stats = {
+                walkTimeSaved: Math.floor(Math.random() * 10) + 28,
+                picksPerHour: Math.floor(Math.random() * 20) + 120,
+                efficiencyScore: Math.floor(Math.random() * 8) + 90
+            };
+
+            document.getElementById('walkTimeSaved').textContent = stats.walkTimeSaved + '%';
+            document.getElementById('picksPerHour').textContent = stats.picksPerHour;
+            document.getElementById('efficiencyScore').textContent = stats.efficiencyScore + '%';
+        }
+
+        // Update stats every 30 seconds
+        setInterval(updateStats, 30000);
+    </script>
+</body>
+</html>

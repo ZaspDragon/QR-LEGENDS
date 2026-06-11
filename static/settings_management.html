@@ -1,0 +1,478 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings Management - QR LEGENDS</title>
+    <style>
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            margin: 0
+            padding: 20px
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh}
+        .container {max-width: 1200px
+            margin: 0 auto
+            background: white
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);}
+        .header {text-align: center
+            margin-bottom: 30px}
+        .back-btn {position: absolute
+            top: 20px
+            left: 20px
+            background: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-weight: 600}
+        .settings-tabs {display: flex
+            background: #f8f9fa
+            border-radius: 10px
+            padding: 5px;
+            margin-bottom: 30px}
+        .tab {flex: 1
+            padding: 12px 20px
+            text-align: center
+            border: none;
+            background: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s}
+        .tab.active {background: #667eea
+            color: white}
+        .tab-content {display: none}
+        .tab-content.active {display: block}
+        .settings-section {background: #f8f9fa
+            border-radius: 10px
+            padding: 20px
+            margin-bottom: 20px}
+        .form-group {margin-bottom: 20px}
+        .form-group label {display: block
+            margin-bottom: 8px
+            font-weight: 600
+            color: #333}
+        .form-group input, .form-group select, .form-group textarea {width: 100%
+            padding: 10px
+            border: 1px solid #ddd
+            border-radius: 5px;
+            font-size: 14px}
+        .form-group input:focus, .form-group select:focus, .form-group textarea: focus {outline: none
+            border-color: #667eea}
+        .checkbox-group {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
+            gap: 10px}
+        .checkbox-item {display: flex
+            align-items: center}
+        .checkbox-item input[type="checkbox"] {width: auto
+            margin-right: 8px}
+        .btn {padding: 10px 20px
+            border: none
+            border-radius: 5px
+            cursor: pointer;
+            font-weight: 600;
+            margin: 5px}
+        .btn-primary {background: #667eea color: white}
+        .btn-success {background: #28a745 color: white}
+        .btn-warning {background: #ffc107 color: #333}
+        .btn-danger {background: #dc3545 color: white}
+        .role-management {background: white
+            border-radius: 10px
+            padding: 20px
+            margin-bottom: 20px}
+        .role-list {margin: 20px 0}
+        .role-item {display: flex
+            justify-content: space-between
+            align-items: center
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px}
+        .role-info {flex: 1}
+        .role-name {font-weight: bold
+            color: #333
+            margin-bottom: 5px}
+        .role-permissions {color: #666
+            font-size: 0.9rem}
+        .role-actions {display: flex
+            gap: 10px}
+        .permission-matrix {overflow-x: auto
+            margin: 20px 0}
+        .permission-table {width: 100%
+            border-collapse: collapse
+            min-width: 800px}
+        .permission-table th,
+        .permission-table td {padding: 12px
+            text-align: center
+            border: 1px solid #e0e0e0}
+        .permission-table th {background: #f8f9fa
+            font-weight: 600}
+        .alert {padding: 15px
+            border-radius: 5px
+            margin: 15px 0}
+        .alert-success {background: #d4edda
+            color: #155724
+            border: 1px solid #c3e6cb}
+        .alert-warning {background: #fff3cd
+            color: #856404
+            border: 1px solid #ffeaa7}
+        .alert-danger {background: #f8d7da
+            color: #721c24
+            border: 1px solid #f5c6cb}
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='/'">← Back to Dashboard</button>
+
+    <div class="container">
+        <div class="header">
+            <h1>⚙️ Settings Management</h1>
+            <p>Configure system settings, user roles, and permissions</p>
+        </div>
+
+        <div class="settings-tabs">
+            <button class="tab active" onclick="switchTab('general')">General Settings</button>
+            <button class="tab" onclick="switchTab('roles')">Role Management</button>
+            <button class="tab" onclick="switchTab('permissions')">Permissions</button>
+            <button class="tab" onclick="switchTab('notifications')">Notifications</button>
+            <button class="tab" onclick="switchTab('security')">Security</button>
+        </div>
+
+        <!-- General Settings Tab -->
+        <div id="general-tab" class="tab-content active">
+            <div class="settings-section">
+                <h3>🏢 Company Settings</h3>
+                <div class="form-group">
+                    <label>Company Name</label>
+                    <input type="text" id="companyName" value="Demo Company" placeholder="Enter company name">
+                </div>
+                <div class="form-group">
+                    <label>Time Zone</label>
+                    <select id="timeZone">
+                        <option value="EST">Eastern Time (EST)</option>
+                        <option value="CST">Central Time (CST)</option>
+                        <option value="MST">Mountain Time (MST)</option>
+                        <option value="PST">Pacific Time (PST)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Default Currency</label>
+                    <select id="currency">
+                        <option value="USD">US Dollar (USD)</option>
+                        <option value="CAD">Canadian Dollar (CAD)</option>
+                        <option value="EUR">Euro (EUR)</option>
+                        <option value="GBP">British Pound (GBP)</option>
+                    </select>
+                </div>
+                <button class="btn btn-success" onclick="saveGeneralSettings()">Save General Settings</button>
+            </div>
+
+            <div class="settings-section">
+                <h3>🔧 System Preferences</h3>
+                <div class="form-group">
+                    <label>Auto-save Interval (minutes)</label>
+                    <input type="number" id="autoSave" value="5" min="1" max="60">
+                </div>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enableNotifications" checked>
+                        <label for="enableNotifications">Enable Push Notifications</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="autoBackup" checked>
+                        <label for="autoBackup">Enable Auto Backup</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="darkMode">
+                        <label for="darkMode">Enable Dark Mode</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="emailReports" checked>
+                        <label for="emailReports">Email Daily Reports</label>
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="saveSystemSettings()">Save System Settings</button>
+            </div>
+        </div>
+
+        <!-- Role Management Tab -->
+        <div id="roles-tab" class="tab-content">
+            <div class="role-management">
+                <h3>👥 Role Management</h3>
+                <p>Configure user roles and their access levels</p>
+                
+                <div style="margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="showCreateRoleModal()">+ Create New Role</button>
+                    <button class="btn btn-warning" onclick="resetToDefaults()">Reset to Defaults</button>
+                </div>
+
+                <div class="role-list">
+                    <div class="role-item">
+                        <div class="role-info">
+                            <div class="role-name">Company Owner</div>
+                            <div class="role-permissions">Full system access, billing, user management</div>
+                        </div>
+                        <div class="role-actions">
+                            <span style="background: #6f42c1; color: white; padding: 4px 12px; border-radius: 15px; font-size: 12px;">SYSTEM</span>
+                        </div>
+                    </div>
+
+                    <div class="role-item">
+                        <div class="role-info">
+                            <div class="role-name">Manager</div>
+                            <div class="role-permissions">Department oversight, user management, reports</div>
+                        </div>
+                        <div class="role-actions">
+                            <button class="btn btn-primary" onclick="editRole('manager')">Edit</button>
+                            <button class="btn btn-warning" onclick="duplicateRole('manager')">Duplicate</button>
+                        </div>
+                    </div>
+
+                    <div class="role-item">
+                        <div class="role-info">
+                            <div class="role-name">Admin</div>
+                            <div class="role-permissions">System configuration, inventory management</div>
+                        </div>
+                        <div class="role-actions">
+                            <button class="btn btn-primary" onclick="editRole('admin')">Edit</button>
+                            <button class="btn btn-warning" onclick="duplicateRole('admin')">Duplicate</button>
+                        </div>
+                    </div>
+
+                    <div class="role-item">
+                        <div class="role-info">
+                            <div class="role-name">User</div>
+                            <div class="role-permissions">Basic operations, department-specific access</div>
+                        </div>
+                        <div class="role-actions">
+                            <button class="btn btn-primary" onclick="editRole('user')">Edit</button>
+                            <button class="btn btn-warning" onclick="duplicateRole('user')">Duplicate</button>
+                        </div>
+                    </div>
+
+                    <div class="role-item">
+                        <div class="role-info">
+                            <div class="role-name">Guest</div>
+                            <div class="role-permissions">Limited read-only access</div>
+                        </div>
+                        <div class="role-actions">
+                            <button class="btn btn-primary" onclick="editRole('guest')">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteRole('guest')">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Permissions Tab -->
+        <div id="permissions-tab" class="tab-content">
+            <div class="settings-section">
+                <h3>🔐 Permission Matrix</h3>
+                <p>Configure detailed permissions for each role</p>
+
+                <div class="permission-matrix">
+                    <table class="permission-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Company Owner</th>
+                                <th>Manager</th>
+                                <th>Admin</th>
+                                <th>User</th>
+                                <th>Guest</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>User Management</strong></td>
+                                <td><input type="checkbox" checked disabled></td>
+                                <td><input type="checkbox" checked></td>
+                                <td><input type="checkbox"></td>
+                                <td><input type="checkbox"></td>
+                                <td><input type="checkbox"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Billing & Subscriptions</strong></td>
+                                <td><input type="checkbox" checked disabled></td>
+                                <td><input type="checkbox"></td>
+                                <td><input type="checkbox"></td>
+                                <td><input type="checkbox"></td>
+                                <td><input type="checkbox"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Inventory Management</strong></td>
+                                <td><input type="checkbox" checked disabled></td>
+                                <td><input type="checkbox" checked></td>
+                                <td><input type="checkbox" checked></td>
+                                <td><input type="checkbox" checked></td>
+                                <td><input type="checkbox"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Reports & Analytics</strong></td>
+                                <td><input type="checkbox" checked disabled></td>
+                                <td><input type="checkbox" checked></td>
+                                <td><input type="checkbox" checked></td>
+                                <td><input type="checkbox"></td>
+                                <td><input type="checkbox"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>System Configuration</strong></td>
+                                <td><input type="checkbox" checked disabled></td>
+                                <td><input type="checkbox"></td>
+                                <td><input type="checkbox" checked></td>
+                                <td><input type="checkbox"></td>
+                                <td><input type="checkbox"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Data Export</strong></td>
+                                <td><input type="checkbox" checked disabled></td>
+                                <td><input type="checkbox" checked></td>
+                                <td><input type="checkbox"></td>
+                                <td><input type="checkbox"></td>
+                                <td><input type="checkbox"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <button class="btn btn-success" onclick="savePermissions()">Save Permission Changes</button>
+            </div>
+        </div>
+
+        <!-- Notifications Tab -->
+        <div id="notifications-tab" class="tab-content">
+            <div class="settings-section">
+                <h3>🔔 Notification Settings</h3>
+                <div class="form-group">
+                    <label>Admin Email Addresses (one per line)</label>
+                    <textarea id="adminEmails" rows="4" placeholder="admin@company.com">admin@company.com
+manager@company.com</textarea>
+                </div>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="notifyLowStock" checked>
+                        <label for="notifyLowStock">Low Stock Alerts</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="notifyErrors" checked>
+                        <label for="notifyErrors">System Error Notifications</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="notifyUserLogin">
+                        <label for="notifyUserLogin">User Login Notifications</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="notifyDataChanges" checked>
+                        <label for="notifyDataChanges">Data Change Notifications</label>
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="saveNotificationSettings()">Save Notification Settings</button>
+            </div>
+        </div>
+
+        <!-- Security Tab -->
+        <div id="security-tab" class="tab-content">
+            <div class="settings-section">
+                <h3>🛡️ Security Settings</h3>
+                <div class="form-group">
+                    <label>Password Policy</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="requireUppercase" checked>
+                            <label for="requireUppercase">Require Uppercase Letters</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="requireNumbers" checked>
+                            <label for="requireNumbers">Require Numbers</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="requireSymbols">
+                            <label for="requireSymbols">Require Special Characters</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="minLength" checked>
+                            <label for="minLength">Minimum 8 Characters</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Session Timeout (minutes)</label>
+                    <input type="number" id="sessionTimeout" value="60" min="5" max="480">
+                </div>
+                <div class="form-group">
+                    <label>Failed Login Attempts Before Lockout</label>
+                    <input type="number" id="loginAttempts" value="3" min="1" max="10">
+                </div>
+                <button class="btn btn-success" onclick="saveSecuritySettings()">Save Security Settings</button>
+            </div>
+        </div>
+
+        <div id="alerts"></div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {// Remove active class from all tabs and content
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'))
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'))
+
+            // Add active class to selected tab and content
+            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+
+        function saveGeneralSettings() {showAlert('success', 'General settings saved successfully')}
+
+        function saveSystemSettings() {showAlert('success', 'System settings updated')}
+
+        function showCreateRoleModal() {const roleName = prompt('Enter new role name:')
+            if (roleName) {
+                showAlert('success', `Role "${roleName}" created successfully`);
+            }
+        }
+
+        function editRole(roleName) {
+            showAlert('info', `Opening role editor for "${roleName}"`);
+        }
+
+        function duplicateRole(roleName) {
+            const newName = prompt(`Enter name for copy of "${roleName}":`);
+            if (newName) {
+                showAlert('success', `Role "${newName}" created as copy of "${roleName}"`);
+            }
+        }
+
+        function deleteRole(roleName) {
+            if (confirm(`Are you sure you want to delete the "${roleName}" role?`)) {
+                showAlert('warning', `Role "${roleName}" deleted`);
+            }
+        }
+
+        function resetToDefaults() {if (confirm('Reset all roles to default settings?')) {
+                showAlert('warning', 'Roles reset to default configuration')}
+        }
+
+        function savePermissions() {showAlert('success', 'Permission matrix updated successfully')}
+
+        function saveNotificationSettings() {showAlert('success', 'Notification settings saved')}
+
+        function saveSecuritySettings() {showAlert('success', 'Security settings updated')}
+
+        function showAlert(type, message) {const alertsDiv = document.getElementById('alerts')
+            const alertClass = type === 'success' ? 'alert-success' : 
+                              type === 'warning' ? 'alert-warning' : 
+                              type === 'danger' ? 'alert-danger' : 'alert-success'
+            
+            alertsDiv.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
+            
+            setTimeout(() => {alertsDiv.innerHTML = ''}, 5000);
+        }
+
+        // Load current settings on page load
+        window.addEventListener('load', function() {console.log('Settings Management page loaded')});
+    </script>
+</body>
+</html>

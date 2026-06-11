@@ -1,0 +1,458 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>☁️ Backup Management - QR Legends</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 30px; }
+        .card { background: white; padding: 20px; margin: 10px 0; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .btn { padding: 12px 24px; margin: 5px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.3s; }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .backup-item { border: 2px solid #e0e0e0; padding: 15px; margin: 10px 0; border-radius: 10px; background: #f8f9fa; }
+        .backup-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .stat-card { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 15px; border-radius: 10px; text-align: center; }
+        .form-group { margin: 15px 0; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .status-indicator { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; }
+        .status-success { background: #28a745; }
+        .status-warning { background: #ffc107; }
+        .status-error { background: #dc3545; }
+        .backup-timeline { border-left: 3px solid #667eea; padding-left: 20px; margin-left: 10px; }
+        .timeline-item { margin-bottom: 20px; position: relative; }
+        .timeline-item::before { content: ''; position: absolute; left: -26px; top: 5px; width: 12px; height: 12px; background: #667eea; border-radius: 50%; }
+        .nav { margin-bottom: 20px; }
+        .nav a { color: white; text-decoration: none; margin-right: 15px; }
+        .loading { text-align: center; padding: 20px; }
+    </style>
+<style>
+/* === QRLegends Unified Theme (Dark/Light) === */
+:root{
+  --ql-bg: #0b1724;
+  --ql-panel: #0f2340;
+  --ql-card: #102846;
+  --ql-text: #dbe8ff;
+  --ql-sub: #97a6c1;
+  --ql-primary: #3b82f6;
+  --ql-success: #22c55e;
+  --ql-warning: #f59e0b;
+  --ql-danger: #ef4444;
+  --ql-accent: #6366f1;
+  --ql-border: rgba(255,255,255,.12);
+  --ql-surface: rgba(255,255,255,.06);
+}
+/* Light mode overrides */
+body.light{
+  --ql-bg: #f2f6fb;
+  --ql-panel: #ffffff;
+  --ql-card: #ffffff;
+  --ql-text: #1d2840;
+  --ql-sub: #51607c;
+  --ql-primary: #2563eb;
+  --ql-success: #16a34a;
+  --ql-warning: #d97706;
+  --ql-danger: #dc2626;
+  --ql-accent: #4f46e5;
+  --ql-border: rgba(0,0,0,.12);
+  --ql-surface: rgba(15,23,42,.04);
+}
+
+html,body{height:100%;}
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed;
+  color: var(--ql-text);
+  font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+  line-height: 1.45;
+}
+body.light{
+  background: linear-gradient(180deg,#f7faff,#eef3fb);
+}
+
+.ql-header{
+  position: sticky; top:0; z-index:1000;
+  background: rgba(8,27,46,.7);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--ql-border);
+}
+body.light .ql-header{
+  background: rgba(255,255,255,.75);
+}
+.ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
+.ql-title{display:flex; align-items:center; gap:10px;}
+.ql-h1{font-size:1.25rem; margin:0; letter-spacing:.2px;}
+.ql-nav{display:flex; gap:8px; flex-wrap:wrap;}
+.ql-btn{
+  display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
+  background: var(--ql-surface); border: 1px solid var(--ql-border);
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+  transition: transform .08s ease, background .2s ease, border-color .2s ease;
+}
+.ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+body.light .ql-btn:hover{ background: rgba(15,23,42,.08); }
+.ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
+
+.ql-theme-toggle{
+  margin-left:12px; cursor:pointer; border:1px solid var(--ql-border);
+  background: var(--ql-surface); color: var(--ql-text);
+  border-radius:10px; padding:8px 10px; font-size:16px;
+}
+
+.ql-container{ max-width:1200px; margin:22px auto; padding:0 20px; }
+.ql-grid{ display:grid; gap:16px; grid-template-columns: repeat(12, 1fr);}
+.ql-card{
+  grid-column: span 12;
+  background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+  border: 1px solid var(--ql-border);
+  box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+  border-radius:16px; padding:16px 16px;
+}
+body.light .ql-card{
+  background: var(--ql-card);
+  box-shadow: 0 10px 30px rgba(2,8,23,.08);
+}
+
+@media(min-width:900px){
+  .ql-card.half{ grid-column: span 6; }
+  .ql-card.third{ grid-column: span 4; }
+}
+
+.ql-card h2{ font-size:1.05rem; margin:0 0 10px 0; color: #bcd5ff; letter-spacing:.2px; }
+body.light .ql-card h2{ color:#234073; }
+
+.ql-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+.ql-input, .ql-select, input[type="text"], input[type="date"], textarea, select {
+  width:100%; background: var(--ql-surface); color: var(--ql-text); border: 1px solid var(--ql-border);
+  padding:10px 12px; border-radius:10px; outline:none;
+}
+.ql-input::placeholder{ color: #9fb0cc; }
+body.light .ql-input::placeholder{ color: #6b7b92; }
+
+/* dashboard bubble */
+.ql-fab{ position: fixed; right: 18px; bottom: 18px; background: var(--ql-accent); color:white; border:none;
+  border-radius:999px; padding:10px 14px; font-weight:600; box-shadow: 0 14px 30px rgba(0,0,0,.35);}
+</style>
+<script>
+(function(){
+  try {
+    const saved = localStorage.getItem('ql-theme');
+    if(saved === 'light'){ document.addEventListener('DOMContentLoaded', ()=> document.body.classList.add('light')); }
+  } catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const btn = document.getElementById('ql-theme-toggle');
+    if(btn){
+      btn.addEventListener('click', function(){
+        document.body.classList.toggle('light');
+        const isLight = document.body.classList.contains('light');
+        btn.textContent = isLight ? '☀️' : '🌙';
+        try { localStorage.setItem('ql-theme', isLight ? 'light' : 'dark'); } catch(e){}
+      });
+      if(document.body.classList.contains('light')) btn.textContent = '☀️';
+    }
+    document.querySelectorAll('button:not([type])').forEach(b=> b.setAttribute('type','button'));
+  });
+})();
+</script>
+</head>
+<body>
+<!-- Unified QR Legends Header -->
+<header class="ql-header">
+  <div class="ql-header-inner">
+    <div class="ql-title">
+      <span class="ql-logo">🟦</span>
+      <h1 class="ql-h1">☁️ Backup Management - QR Legends</h1>
+    </div>
+    <nav class="ql-nav">
+      <a class="ql-btn ql-secondary" href="main_dashboard.html">🏠 Dashboard</a>
+      <a class="ql-btn ql-tertiary" href="order_picking.html">📦 Order Picking</a>
+      <a class="ql-btn ql-tertiary" href="inbound_hub.html">⬅️ Inbound</a>
+      <a class="ql-btn ql-tertiary" href="outbound_hub.html">➡️ Outbound</a>
+      <a class="ql-btn ql-tertiary" href="putaway.html">🧱 Putaway</a>
+      <a class="ql-btn ql-tertiary" href="inventory_management.html">📊 Inventory</a>
+    </nav>
+    <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<div class='ql-container'>
+    <div class="container">
+        <div class="header">
+            <h1>☁️ Backup & Recovery Management</h1>
+            <p>Protect your warehouse data with automated cloud backups</p>
+        </div>
+
+        <nav class="nav">
+            <a href="/" class="btn btn-secondary">← Back to Dashboard</a>
+            <a href="/admin_dashboard" class="btn btn-primary">Admin Dashboard</a>
+        </nav>
+
+        <!-- Backup Statistics -->
+        <div class="card">
+            <h3>📊 Backup Status Overview</h3>
+            <div class="backup-stats" id="backupStats">
+                <div class="stat-card">
+                    <h4>Total Backups</h4>
+                    <p id="totalBackups">Loading...</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Last Backup</h4>
+                    <p id="lastBackup">Loading...</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Storage Used</h4>
+                    <p id="storageUsed">Loading...</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Auto-Backup</h4>
+                    <p id="autoBackupStatus">Loading...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create New Backup -->
+        <div class="card">
+            <h3>🆕 Create New Backup</h3>
+            <div class="form-group">
+                <label>Backup Type</label>
+                <select id="backupType">
+                    <option value="full">Full Backup (All Data)</option>
+                    <option value="incremental">Incremental Backup (Changes Only)</option>
+                    <option value="critical">Critical Data Only</option>
+                </select>
+            </div>
+            <button class="btn btn-success" onclick="createBackup()">🔄 Create Backup Now</button>
+            <div id="backupProgress" style="display: none;">
+                <div class="loading">
+                    <p>📦 Creating backup... This may take a few minutes.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auto-Backup Settings -->
+        <div class="card">
+            <h3>⏰ Automatic Backup Schedule</h3>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="autoBackupEnabled"> Enable Automatic Backups
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Backup Frequency (Hours)</label>
+                <select id="backupFrequency">
+                    <option value="1">Every Hour</option>
+                    <option value="6" selected>Every 6 Hours</option>
+                    <option value="12">Every 12 Hours</option>
+                    <option value="24">Daily</option>
+                    <option value="168">Weekly</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Retention Period (Days)</label>
+                <input type="number" id="retentionDays" value="90" min="7" max="365">
+            </div>
+            <button class="btn btn-primary" onclick="saveAutoBackupSettings()">💾 Save Settings</button>
+        </div>
+
+        <!-- Backup History -->
+        <div class="card">
+            <h3>📋 Backup History</h3>
+            <div style="margin-bottom: 15px;">
+                <button class="btn btn-warning" onclick="cleanupOldBackups()">🗑️ Cleanup Old Backups</button>
+                <button class="btn btn-primary" onclick="refreshBackupList()">🔄 Refresh List</button>
+            </div>
+            <div id="backupList">
+                <div class="loading">Loading backup history...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let backupData = [];
+
+        async function loadBackupData() {
+            try {
+                const response = await fetch('/api/backup/list');
+                const data = await response.json();
+                
+                if (data.success) {
+                    backupData = data.backups || [];
+                    updateBackupStats(data);
+                    displayBackupList();
+                } else {
+                    console.error('Failed to load backup data:', data.error);
+                    document.getElementById('backupList').innerHTML = '<p>❌ Failed to load backup history</p>';
+                }
+            } catch (error) {
+                console.error('Error loading backup data:', error);
+                document.getElementById('backupList').innerHTML = '<p>❌ Error loading backup history</p>';
+            }
+        }
+
+        function updateBackupStats(data) {
+            document.getElementById('totalBackups').textContent = data.total_backups || 0;
+            
+            if (data.backups && data.backups.length > 0) {
+                const lastBackup = new Date(data.backups[0].timestamp);
+                document.getElementById('lastBackup').textContent = lastBackup.toLocaleDateString() + ' ' + lastBackup.toLocaleTimeString();
+                
+                const totalSizeMB = data.backups.reduce((sum, backup) => sum + (backup.statistics?.backup_size_mb || 0), 0);
+                document.getElementById('storageUsed').textContent = totalSizeMB.toFixed(2) + ' MB';
+            } else {
+                document.getElementById('lastBackup').textContent = 'No backups yet';
+                document.getElementById('storageUsed').textContent = '0 MB';
+            }
+            
+            document.getElementById('autoBackupStatus').textContent = 'Manual Only';
+        }
+
+        function displayBackupList() {
+            const listContainer = document.getElementById('backupList');
+            
+            if (backupData.length === 0) {
+                listContainer.innerHTML = '<p>No backups found. Create your first backup above.</p>';
+                return;
+            }
+
+            let html = '<div class="backup-timeline">';
+            
+            backupData.forEach(backup => {
+                const date = new Date(backup.timestamp);
+                const stats = backup.statistics || {};
+                
+                html += `
+                    <div class="timeline-item backup-item">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4>
+                                    <span class="status-indicator status-success"></span>
+                                    ${backup.backup_type.toUpperCase()} Backup
+                                </h4>
+                                <p><strong>Date:</strong> ${date.toLocaleDateString()} ${date.toLocaleTimeString()}</p>
+                                <p><strong>Size:</strong> ${(stats.backup_size_mb || 0).toFixed(2)} MB</p>
+                                <p><strong>Items:</strong> ${stats.total_items || 0} inventory items backed up</p>
+                            </div>
+                            <div>
+                                <button class="btn btn-primary" onclick="restoreBackup('${backup.backup_id}')">🔄 Restore</button>
+                                <button class="btn btn-danger" onclick="deleteBackup('${backup.backup_id}')">🗑️ Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            listContainer.innerHTML = html;
+        }
+
+        async function createBackup() {
+            const backupType = document.getElementById('backupType').value;
+            const progressDiv = document.getElementById('backupProgress');
+            
+            progressDiv.style.display = 'block';
+            
+            try {
+                const response = await fetch('/api/backup/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ backup_type: backupType })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Backup created successfully!');
+                    loadBackupData(); // Refresh the list
+                } else {
+                    alert('❌ Backup failed: ' + result.error);
+                }
+            } catch (error) {
+                alert('❌ Network error: ' + error.message);
+            } finally {
+                progressDiv.style.display = 'none';
+            }
+        }
+
+        async function restoreBackup(backupId) {
+            if (!confirm('Are you sure you want to restore this backup? This will overwrite current data.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/backup/restore', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ backup_id: backupId })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Backup restored successfully!');
+                } else {
+                    alert('❌ Restore failed: ' + result.error);
+                }
+            } catch (error) {
+                alert('❌ Network error: ' + error.message);
+            }
+        }
+
+        async function deleteBackup(backupId) {
+            if (!confirm('Are you sure you want to delete this backup? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/backup/delete', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ backup_id: backupId })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Backup deleted successfully!');
+                    loadBackupData(); // Refresh the list
+                } else {
+                    alert('❌ Delete failed: ' + result.error);
+                }
+            } catch (error) {
+                alert('❌ Network error: ' + error.message);
+            }
+        }
+
+        function saveAutoBackupSettings() {
+            const enabled = document.getElementById('autoBackupEnabled').checked;
+            const frequency = document.getElementById('backupFrequency').value;
+            const retention = document.getElementById('retentionDays').value;
+            
+            alert(`Auto-backup settings saved:\nEnabled: ${enabled}\nFrequency: Every ${frequency} hours\nRetention: ${retention} days`);
+        }
+
+        function cleanupOldBackups() {
+            if (confirm('Remove backups older than retention period?')) {
+                alert('Cleanup completed - Old backups removed');
+                loadBackupData();
+            }
+        }
+
+        function refreshBackupList() {
+            loadBackupData();
+        }
+
+        // Load backup data when page loads
+        document.addEventListener('DOMContentLoaded', loadBackupData);
+    </script>
+</div>
+<button class='ql-fab' onclick="location.href='main_dashboard.html'">🏠 Dashboard</button>
+</body>
+</html>

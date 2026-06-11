@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Inventory - QR LEGENDS</title>
+<style>
+:root {
+  --ql-primary: #667eea;
+  --ql-secondary: #764ba2;
+  --ql-success: #22c55e;
+  --ql-warning: #f59e0b;
+  --ql-danger: #ef4444;
+  --ql-accent: #06b6d4;
+  --ql-bg: #0f1419;
+  --ql-surface: #1a1f2e;
+  --ql-text: #e5e7eb;
+  --ql-sub: #9ca3af;
+  --ql-border: #2d3748;
+}
+
+body.light {
+  --ql-bg: #f8fafc;
+  --ql-surface: #ffffff;
+  --ql-text: #1e293b;
+  --ql-sub: #64748b;
+  --ql-border: #e2e8f0;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--ql-bg);
+  color: var(--ql-text);
+  line-height: 1.6;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.ql-header {
+  background: linear-gradient(135deg, var(--ql-primary) 0%, var(--ql-secondary) 100%);
+  color: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.ql-header-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.ql-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ql-logo { font-size: 2rem; }
+
+.ql-h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.ql-role-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin-left: 12px;
+}
+
+.ql-nav {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.ql-btn {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+  color: white;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ql-btn:hover {
+  background: rgba(255,255,255,0.25);
+  transform: translateY(-2px);
+}
+
+.ql-btn.ql-secondary {
+  background: rgba(0,0,0,0.2);
+}
+
+.ql-theme-toggle {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.3s;
+}
+
+.ql-theme-toggle:hover {
+  background: rgba(255,255,255,0.25);
+  transform: rotate(20deg);
+}
+
+.ql-container {
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+}
+
+.ql-card {
+  background: var(--ql-surface);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  margin-bottom: 24px;
+  border: 1px solid var(--ql-border);
+}
+
+.ql-card h2 {
+  color: var(--ql-primary);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ql-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.ql-stat-card {
+  background: var(--ql-bg);
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid var(--ql-border);
+}
+
+.ql-stat-value {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--ql-primary);
+  margin-bottom: 8px;
+}
+
+.ql-stat-label {
+  color: var(--ql-sub);
+  font-size: 0.9rem;
+}
+
+.ql-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.ql-input, .ql-select {
+  width: 100%;
+  background: var(--ql-bg);
+  color: var(--ql-text);
+  border: 1px solid var(--ql-border);
+  padding: 10px 12px;
+  border-radius: 10px;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.ql-input:focus, .ql-select:focus {
+  border-color: var(--ql-primary);
+  box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+}
+
+.ql-table-container {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--ql-border);
+}
+
+.ql-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--ql-surface);
+}
+
+.ql-table thead {
+  background: rgba(102,126,234,0.1);
+  border-bottom: 2px solid var(--ql-border);
+}
+
+.ql-table th {
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--ql-primary);
+  white-space: nowrap;
+}
+
+.ql-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--ql-border);
+}
+
+.ql-table tbody tr:hover {
+  background: rgba(102,126,234,0.05);
+  cursor: pointer;
+}
+
+.ql-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.badge-available { background: rgba(34,197,94,0.2); color: var(--ql-success); }
+.badge-active { background: rgba(34,197,94,0.2); color: var(--ql-success); }
+.badge-quality_hold { background: rgba(239,68,68,0.2); color: var(--ql-danger); }
+.badge-needs_putaway { background: rgba(245,158,11,0.2); color: var(--ql-warning); }
+.badge-needs_relocation { background: rgba(6,182,212,0.2); color: var(--ql-accent); }
+.badge-reserved { background: rgba(168,85,247,0.2); color: #a855f7; }
+
+.ql-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--ql-sub);
+}
+
+.ql-empty-state-icon {
+  font-size: 4rem;
+  margin-bottom: 16px;
+  opacity: 0.3;
+}
+
+.ql-loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--ql-sub);
+}
+
+.ql-info-box {
+  background: rgba(102,126,234,0.1);
+  border-left: 4px solid var(--ql-primary);
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+  .ql-header-inner { flex-direction: column; gap: 1rem; }
+  .ql-nav { flex-direction: column; width: 100%; }
+  .ql-btn { width: 100%; justify-content: center; }
+  .ql-filters { grid-template-columns: 1fr; }
+  .ql-table { font-size: 0.85rem; }
+  .ql-table th, .ql-table td { padding: 10px; }
+}
+</style>
+</head>
+<body>
+<!-- Header -->
+<header class="ql-header">
+  <div class="ql-header-inner">
+    <div class="ql-title">
+      <span class="ql-logo">🟦</span>
+      <h1 class="ql-h1">
+        My Inventory - QR LEGENDS
+        <span class="ql-role-badge" id="role-display"></span>
+      </h1>
+    </div>
+    <nav class="ql-nav">
+      <a class="ql-btn ql-secondary" href="/main_dashboard">🏠 Dashboard</a>
+      <a class="ql-btn" href="/inventory">📊 All Inventory</a>
+      <a class="ql-btn" href="/warehouse_activity_history">📋 Activity History</a>
+      <a class="ql-btn" href="/page_navigator">🧭 All Pages</a>
+    </nav>
+    <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<div class="ql-container">
+  <!-- Info Box -->
+  <div class="ql-info-box" id="info-box">
+    <strong>ℹ️ Role-Specific View:</strong> <span id="info-text">Loading...</span>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="ql-stats" id="stats-container">
+    <div class="ql-stat-card">
+      <div class="ql-stat-value" id="stat-items">0</div>
+      <div class="ql-stat-label">My Items</div>
+    </div>
+    <div class="ql-stat-card">
+      <div class="ql-stat-value" id="stat-total-qty">0</div>
+      <div class="ql-stat-label">Total Quantity</div>
+    </div>
+    <div class="ql-stat-card">
+      <div class="ql-stat-value" id="stat-locations">0</div>
+      <div class="ql-stat-label">Locations</div>
+    </div>
+    <div class="ql-stat-card">
+      <div class="ql-stat-value" id="stat-total-items">0</div>
+      <div class="ql-stat-label">Total Company Items</div>
+    </div>
+  </div>
+
+  <!-- Filters Card -->
+  <div class="ql-card">
+    <h2>🔍 Filter Items</h2>
+    
+    <div class="ql-filters">
+      <div>
+        <label style="display: block; margin-bottom: 6px; font-weight: 500;">Search Item Number</label>
+        <input type="text" id="filter-item" class="ql-input" placeholder="Enter item number..." onkeyup="applyFilters()">
+      </div>
+
+      <div>
+        <label style="display: block; margin-bottom: 6px; font-weight: 500;">Location</label>
+        <select id="filter-location" class="ql-select" onchange="applyFilters()">
+          <option value="">All Locations</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="display: block; margin-bottom: 6px; font-weight: 500;">Status</label>
+        <select id="filter-status" class="ql-select" onchange="applyFilters()">
+          <option value="">All Status</option>
+        </select>
+      </div>
+
+      <div style="display: flex; align-items: flex-end;">
+        <button class="ql-btn" onclick="clearFilters()" style="width: 100%; background: var(--ql-secondary);">Clear Filters</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inventory Table -->
+  <div class="ql-card">
+    <h2>📦 Inventory Items</h2>
+    
+    <div id="loading" class="ql-loading">
+      <div style="font-size: 2rem; margin-bottom: 12px;">⏳</div>
+      <div>Loading your inventory...</div>
+    </div>
+
+    <div id="inventory-table-container" style="display: none;">
+      <div class="ql-table-container">
+        <table class="ql-table">
+          <thead>
+            <tr>
+              <th>Item Number</th>
+              <th>Name</th>
+              <th>Location</th>
+              <th>Quantity</th>
+              <th>Status</th>
+              <th>Category</th>
+              <th>Last Updated</th>
+            </tr>
+          </thead>
+          <tbody id="inventory-table-body">
+          </tbody>
+        </table>
+      </div>
+
+      <div id="item-count" style="margin-top: 16px; text-align: center; color: var(--ql-sub);"></div>
+    </div>
+
+    <div id="empty-state" style="display: none;" class="ql-empty-state">
+      <div class="ql-empty-state-icon">📭</div>
+      <h3>No Items Found</h3>
+      <p id="empty-message">No inventory items are assigned to your role.</p>
+    </div>
+  </div>
+</div>
+
+<script src="/auto_theme_injector.js"></script>
+<script src="/copyright_notice.js"></script>
+<script>
+let allItems = [];
+let currentFilters = {
+  item_number: '',
+  location: '',
+  status: ''
+};
+let userRole = '';
+
+// Load inventory on page load
+document.addEventListener('DOMContentLoaded', function() {
+  loadRoleInventory();
+});
+
+async function loadRoleInventory() {
+  try {
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('inventory-table-container').style.display = 'none';
+    document.getElementById('empty-state').style.display = 'none';
+
+    const response = await fetch('/api/inventory/by-role');
+    
+    if (!response.ok) {
+      if (response.status === 401) {
+        alert('Please log in to view inventory');
+        window.location.href = '/';
+        return;
+      }
+      throw new Error('Failed to load inventory');
+    }
+    
+    const data = await response.json();
+    allItems = data.items || [];
+    userRole = data.role || 'unknown';
+    
+    // Update role display
+    document.getElementById('role-display').textContent = userRole.replace('_', ' ').toUpperCase();
+    
+    // Update info box based on role
+    updateInfoBox(userRole, data.count, data.total_count);
+    
+    // Populate location and status filters
+    const locations = [...new Set(allItems.map(item => item.location).filter(Boolean))].sort();
+    const statuses = [...new Set(allItems.map(item => item.status).filter(Boolean))].sort();
+    
+    const locationSelect = document.getElementById('filter-location');
+    locationSelect.innerHTML = '<option value="">All Locations</option>';
+    locations.forEach(location => {
+      const option = document.createElement('option');
+      option.value = location;
+      option.textContent = location;
+      locationSelect.appendChild(option);
+    });
+    
+    const statusSelect = document.getElementById('filter-status');
+    statusSelect.innerHTML = '<option value="">All Status</option>';
+    statuses.forEach(status => {
+      const option = document.createElement('option');
+      option.value = status;
+      option.textContent = status.replace('_', ' ').toUpperCase();
+      statusSelect.appendChild(option);
+    });
+    
+    // Update statistics
+    updateStatistics(allItems, data.total_count);
+    
+    // Display items
+    displayItems(allItems);
+    
+  } catch (error) {
+    console.error('Error loading inventory:', error);
+    document.getElementById('loading').innerHTML = '<div style="color: var(--ql-danger);">❌ Failed to load inventory</div>';
+  }
+}
+
+function updateInfoBox(role, count, totalCount) {
+  const infoText = document.getElementById('info-text');
+  const messages = {
+    'admin': `As an Admin, you can see all ${totalCount} items in inventory.`,
+    'manager': `As a Manager, you can see all ${totalCount} items in inventory.`,
+    'lift_driver': `As a Lift Driver, you see ${count} items that need movement or are in bulk (>50 units). Full inventory has ${totalCount} items.`,
+    'picker': `As a Picker, you see ${count} available items ready for picking. Full inventory has ${totalCount} items.`,
+    'worker': `As a Worker, you see ${count} available items ready for picking. Full inventory has ${totalCount} items.`,
+    'receiver': `As a Receiver, you see ${count} items in receiving areas or needing putaway. Full inventory has ${totalCount} items.`,
+    'cycle_count': `As a Cycle Counter, you can see all ${totalCount} items for counting purposes.`
+  };
+  
+  infoText.textContent = messages[role] || `Showing ${count} of ${totalCount} total items based on your role (${role}).`;
+}
+
+function updateStatistics(items, totalCount) {
+  const totalQty = items.reduce((sum, item) => sum + (item.quantity || 0), 0);
+  const uniqueLocations = new Set(items.map(item => item.location).filter(Boolean));
+  
+  document.getElementById('stat-items').textContent = items.length;
+  document.getElementById('stat-total-qty').textContent = totalQty.toLocaleString();
+  document.getElementById('stat-locations').textContent = uniqueLocations.size;
+  document.getElementById('stat-total-items').textContent = totalCount;
+}
+
+function displayItems(items) {
+  document.getElementById('loading').style.display = 'none';
+  
+  if (items.length === 0) {
+    document.getElementById('empty-state').style.display = 'block';
+    document.getElementById('inventory-table-container').style.display = 'none';
+    return;
+  }
+  
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('inventory-table-container').style.display = 'block';
+  
+  const tbody = document.getElementById('inventory-table-body');
+  tbody.innerHTML = '';
+  
+  items.forEach(item => {
+    const row = document.createElement('tr');
+    
+    const lastUpdated = item.last_updated ? new Date(item.last_updated).toLocaleDateString() : 'N/A';
+    const statusBadgeClass = `badge-${item.status || 'available'}`;
+    
+    row.innerHTML = `
+      <td style="font-family: monospace; font-weight: 500;">${item.item_number || 'N/A'}</td>
+      <td><strong>${item.name || 'Unnamed Item'}</strong></td>
+      <td>${item.location || 'Unknown'}</td>
+      <td style="text-align: right; font-weight: 600;">${item.quantity || 0}</td>
+      <td><span class="ql-badge ${statusBadgeClass}">${(item.status || 'available').replace('_', ' ')}</span></td>
+      <td>${item.category || 'N/A'}</td>
+      <td>${lastUpdated}</td>
+    `;
+    
+    tbody.appendChild(row);
+  });
+  
+  document.getElementById('item-count').textContent = `Showing ${items.length} items`;
+}
+
+function applyFilters() {
+  currentFilters.item_number = document.getElementById('filter-item').value.toLowerCase();
+  currentFilters.location = document.getElementById('filter-location').value;
+  currentFilters.status = document.getElementById('filter-status').value;
+  
+  let filtered = allItems;
+  
+  if (currentFilters.item_number) {
+    filtered = filtered.filter(item => 
+      (item.item_number || '').toLowerCase().includes(currentFilters.item_number) ||
+      (item.name || '').toLowerCase().includes(currentFilters.item_number)
+    );
+  }
+  
+  if (currentFilters.location) {
+    filtered = filtered.filter(item => item.location === currentFilters.location);
+  }
+  
+  if (currentFilters.status) {
+    filtered = filtered.filter(item => item.status === currentFilters.status);
+  }
+  
+  displayItems(filtered);
+}
+
+function clearFilters() {
+  document.getElementById('filter-item').value = '';
+  document.getElementById('filter-location').value = '';
+  document.getElementById('filter-status').value = '';
+  
+  currentFilters = {
+    item_number: '',
+    location: '',
+    status: ''
+  };
+  
+  displayItems(allItems);
+}
+
+console.log('✅ QR Legends Role-Based Inventory loaded');
+</script>
+</body>
+</html>

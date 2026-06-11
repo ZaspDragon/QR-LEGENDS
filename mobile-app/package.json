@@ -1,0 +1,26 @@
+
+{
+  "name": "qr-legends-mobile",
+  "version": "1.0.0",
+  "description": "QR Legends Mobile App",
+  "main": "index.js",
+  "scripts": {
+    "build-ios": "cordova build ios",
+    "build-android": "cordova build android",
+    "run-ios": "cordova run ios",
+    "run-android": "cordova run android"
+  },
+  "keywords": [
+    "warehouse",
+    "inventory",
+    "qr-code",
+    "mobile"
+  ],
+  "author": "QR Legends",
+  "license": "MIT",
+  "devDependencies": {
+    "cordova": "^12.0.0",
+    "cordova-ios": "^7.0.0",
+    "cordova-android": "^12.0.0"
+  }
+}

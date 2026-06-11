@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Scanner - QR Legends</title>
+    <style>
+/* === QRLegends Unified Theme (Dark/Light) === */
+:root{
+  --ql-bg: #0b1724;
+  --ql-panel: #0f2340;
+  --ql-card: #102846;
+  --ql-text: #dbe8ff;
+  --ql-sub: #97a6c1;
+  --ql-primary: #3b82f6;
+  --ql-success: #22c55e;
+  --ql-warning: #f59e0b;
+  --ql-danger: #ef4444;
+  --ql-accent: #6366f1;
+  --ql-border: rgba(255,255,255,.12);
+  --ql-surface: rgba(255,255,255,.06);
+}
+
+html,body{height:100%;}
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed;
+  color: var(--ql-text);
+  font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+  line-height: 1.45;
+}
+
+.ql-header{
+  position: sticky; top:0; z-index:1000;
+  background: rgba(8,27,46,.7);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--ql-border);
+}
+.ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
+.ql-title{display:flex; align-items:center; gap:10px;}
+.ql-h1{font-size:1.25rem; margin:0; letter-spacing:.2px;}
+.ql-nav{display:flex; gap:8px; flex-wrap:wrap;}
+.ql-btn{
+  display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
+  background: var(--ql-surface); border: 1px solid var(--ql-border);
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+  transition: transform .08s ease, background .2s ease, border-color .2s ease;
+}
+.ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+.ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
+
+.ql-container{ max-width:1400px; margin:22px auto; padding:0 20px; }
+.ql-card{
+  background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+  border: 1px solid var(--ql-border);
+  box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+  border-radius:16px; padding:20px;
+  margin-bottom: 20px;
+}
+
+.mobile-scanner {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.scanner-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 25px 15px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(59, 130, 246, 0.05));
+    border-radius: 16px;
+    border: 1px solid var(--ql-border);
+}
+
+.camera-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    background: var(--ql-card);
+    border: 2px solid var(--ql-border);
+    border-radius: 16px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#camera-feed {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.camera-placeholder {
+    color: var(--ql-sub);
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.scan-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    border: 2px solid var(--ql-primary);
+    border-radius: 12px;
+    box-shadow: 0 0 0 1000px rgba(0,0,0,0.3);
+}
+
+.scan-overlay::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border: 2px solid var(--ql-primary);
+    border-radius: 12px;
+    animation: scanPulse 2s infinite;
+}
+
+@keyframes scanPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.scan-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.control-btn {
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--ql-primary), var(--ql-accent));
+    color: white;
+}
+
+.btn-secondary {
+    background: var(--ql-surface);
+    color: var(--ql-text);
+    border: 1px solid var(--ql-border);
+}
+
+.control-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.scan-result {
+    background: var(--ql-card);
+    border: 1px solid var(--ql-border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.result-title {
+    font-weight: 600;
+    color: var(--ql-text);
+}
+
+.result-status {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-success { background: rgba(34, 197, 94, 0.2); color: var(--ql-success); }
+.status-error { background: rgba(239, 68, 68, 0.2); color: var(--ql-danger); }
+
+.result-data {
+    color: var(--ql-sub);
+    font-family: monospace;
+    background: var(--ql-surface);
+    padding: 8px;
+    border-radius: 6px;
+    word-break: break-all;
+}
+
+.scan-history {
+    background: var(--ql-card);
+    border: 1px solid var(--ql-border);
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--ql-border);
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
+
+.history-code {
+    font-family: monospace;
+    color: var(--ql-text);
+    font-size: 0.9rem;
+}
+
+.history-time {
+    color: var(--ql-sub);
+    font-size: 0.8rem;
+}
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.action-btn {
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--ql-success), rgba(34,197,94,.8));
+    color: white;
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--ql-warning), rgba(245,158,11,.8));
+    color: white;
+}
+
+.action-btn:hover {
+    transform: translateY(-1px);
+}
+
+@media (max-width: 480px) {
+    .mobile-scanner {
+        padding: 10px;
+    }
+
+    .camera-container {
+        height: 250px;
+    }
+
+    .scan-overlay {
+        width: 150px;
+        height: 150px;
+    }
+}
+    </style>
+</head>
+<body>
+<header class="ql-header">
+  <div class="ql-header-inner">
+    <div class="ql-title">
+      <span class="ql-logo">📱</span>
+      <h1 class="ql-h1">Mobile Scanner - QR LEGENDS</h1>
+    </div>
+    <nav class="ql-nav">
+      <a class="ql-btn ql-secondary" href="/main_dashboard">🏠 Dashboard</a>
+      <a class="ql-btn" href="/tools_hub">🔧 Tools</a>
+      <a class="ql-btn" href="/qr_generator">🎯 Generator</a>
+    </nav>
+  </div>
+</header>
+
+<div class='ql-container'>
+    <div class="mobile-scanner">
+        <div class="scanner-header">
+            <h1 style="font-size: 1.6rem; margin: 0 0 8px 0; color: var(--ql-text);">📱 Mobile QR Scanner</h1>
+            <p style="color: var(--ql-sub); margin: 0; font-size: 0.9rem;">Point camera at QR code to scan</p>
+        </div>
+
+        <!-- Camera Container -->
+        <div class="camera-container">
+            <video id="camera-feed" style="display: none;"></video>
+            <div class="camera-placeholder" id="camera-placeholder">
+                📷 Camera not started<br>
+                <small>Click "Start Camera" to begin scanning</small>
+            </div>
+            <div class="scan-overlay" id="scan-overlay" style="display: none;"></div>
+        </div>
+
+        <!-- Scan Controls -->
+        <div class="scan-controls">
+            <button class="control-btn btn-primary" id="start-camera">Start Camera</button>
+            <button class="control-btn btn-secondary" id="stop-camera">Stop Camera</button>
+        </div>
+
+        <!-- Scan Result -->
+        <div class="scan-result" id="scan-result">
+            <div class="result-header">
+                <span class="result-title">Scan Result</span>
+                <span class="result-status status-success" id="result-status">Success</span>
+            </div>
+            <div class="result-data" id="result-data"></div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="/inventory_hub" class="action-btn btn-success">📦 Go to Inventory</a>
+            <a href="/order_picking" class="action-btn btn-warning">🎯 Go to Picking</a>
+            <a href="/receiving" class="action-btn btn-primary">📥 Go to Receiving</a>
+        </div>
+
+        <!-- Scan History -->
+        <div class="scan-history">
+            <h3 style="margin-bottom: 12px; color: var(--ql-text);">Recent Scans</h3>
+            <div id="scan-history-list">
+                <div class="history-item">
+                    <span class="history-code">WH-LOC-A15-03</span>
+                    <span class="history-time">2:45 PM</span>
+                </div>
+                <div class="history-item">
+                    <span class="history-code">SKU-445789-BLK</span>
+                    <span class="history-time">2:42 PM</span>
+                </div>
+                <div class="history-item">
+                    <span class="history-code">ORD-89123-PICK</span>
+                    <span class="history-time">2:38 PM</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let stream = null;
+        let isScanning = false;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Mobile Scanner loaded');
+
+            const startBtn = document.getElementById('start-camera');
+            const stopBtn = document.getElementById('stop-camera');
+            const cameraFeed = document.getElementById('camera-feed');
+            const placeholder = document.getElementById('camera-placeholder');
+            const overlay = document.getElementById('scan-overlay');
+            const resultDiv = document.getElementById('scan-result');
+            const resultData = document.getElementById('result-data');
+            const resultStatus = document.getElementById('result-status');
+
+            startBtn.addEventListener('click', startCamera);
+            stopBtn.addEventListener('click', stopCamera);
+
+            function startCamera() {
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    navigator.mediaDevices.getUserMedia({ 
+                        video: { 
+                            facingMode: 'environment',
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 }
+                        } 
+                    })
+                    .then(function(mediaStream) {
+                        stream = mediaStream;
+                        cameraFeed.srcObject = stream;
+                        cameraFeed.style.display = 'block';
+                        placeholder.style.display = 'none';
+                        overlay.style.display = 'block';
+                        isScanning = true;
+
+                        cameraFeed.play();
+                        startBtn.textContent = 'Camera Active';
+                        startBtn.disabled = true;
+
+                        // Simulate QR detection
+                        simulateQRDetection();
+                    })
+                    .catch(function(err) {
+                        console.error('Camera access denied:', err);
+                        showResult('Camera access denied. Please check permissions.', false);
+                    });
+                } else {
+                    showResult('Camera not supported on this device.', false);
+                }
+            }
+
+            function stopCamera() {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                }
+
+                cameraFeed.style.display = 'none';
+                placeholder.style.display = 'block';
+                overlay.style.display = 'none';
+                isScanning = false;
+
+                startBtn.textContent = 'Start Camera';
+                startBtn.disabled = false;
+                placeholder.innerHTML = '📷 Camera stopped<br><small>Click "Start Camera" to begin scanning</small>';
+            }
+
+            function simulateQRDetection() {
+                if (!isScanning) return;
+
+                // Simulate random QR code detection
+                setTimeout(() => {
+                    if (isScanning && Math.random() > 0.7) {
+                        const codes = [
+                            'WH-LOC-B22-05',
+                            'SKU-778901-RED',
+                            'ORD-45678-SHIP',
+                            'PLT-9087-RECV',
+                            'INV-COUNT-Z15'
+                        ];
+                        const randomCode = codes[Math.floor(Math.random() * codes.length)];
+                        showResult(randomCode, true);
+                        addToHistory(randomCode);
+                    }
+                    simulateQRDetection();
+                }, 2000);
+            }
+
+            function showResult(data, success) {
+                resultData.textContent = data;
+                resultStatus.textContent = success ? 'Success' : 'Error';
+                resultStatus.className = success ? 'result-status status-success' : 'result-status status-error';
+                resultDiv.style.display = 'block';
+
+                // Auto-hide after 3 seconds
+                setTimeout(() => {
+                    resultDiv.style.display = 'none';
+                }, 3000);
+            }
+
+            function addToHistory(code) {
+                const historyList = document.getElementById('scan-history-list');
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <span class="history-code">${code}</span>
+                    <span class="history-time">${timeStr}</span>
+                `;
+
+                historyList.insertBefore(historyItem, historyList.firstChild);
+
+                // Keep only last 5 items
+                while (historyList.children.length > 5) {
+                    historyList.removeChild(historyList.lastChild);
+                }
+            }
+        });
+    </script>
+</div>
+</body>
+</html>

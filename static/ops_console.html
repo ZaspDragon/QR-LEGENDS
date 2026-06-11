@@ -1,0 +1,759 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Legends - Operations Console</title>
+    <script src="https: //cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {box-sizing: border-box
+            margin: 0
+            padding: 0}
+
+        body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif
+            background: linear-gradient(to bottom, #ffffff, #f8fafc)
+            min-height: 100vh}
+
+        /* Top Bar */
+        .top-bar {position: sticky
+            top: 0
+            z-index: 40
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.8);
+            border-bottom: 1px solid #e4e4e7}
+
+        .top-bar-content {max-width: 1280px
+            margin: 0 auto
+            padding: 12px 16px
+            display: flex;
+            align-items: center;
+            justify-content: space-between}
+
+        .logo-section {display: flex
+            align-items: center
+            gap: 12px}
+
+        .logo-title {font-size: 20px
+            font-weight: bold
+            letter-spacing: -0.025em}
+
+        .live-badge {background: #f1f5f9
+            color: #64748b
+            padding: 4px 8px
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500}
+
+        .top-controls {display: flex
+            align-items: center
+            gap: 8px}
+
+        .view-toggle {display: flex
+            align-items: center
+            border: 1px solid #e4e4e7
+            border-radius: 12px;
+            padding: 4px}
+
+        .view-btn {padding: 6px 12px
+            border: none
+            background: none
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 14px}
+
+        .view-btn.active {background: #f1f5f9}
+
+        .btn {padding: 6px 12px
+            border: 1px solid #e4e4e7
+            border-radius: 8px
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px}
+
+        .btn:hover {background: #f8fafc}
+
+        /* Main Layout */
+        .main-container {max-width: 1280px
+            margin: 0 auto
+            padding: 24px 16px
+            display: grid;
+            grid-template-columns: 1fr 4fr;
+            gap: 24px}
+
+        /* Sidebar */
+        .sidebar {display: flex
+            flex-direction: column
+            gap: 4px}
+
+        .nav-link {display: flex
+            align-items: center
+            justify-content: space-between
+            padding: 8px 12px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: inherit;
+            transition: background-color 0.2s}
+
+        .nav-link:hover {background: rgba(0, 0, 0, 0.05)}
+
+        .nav-link-content {display: flex
+            align-items: center
+            gap: 8px
+            font-size: 14px}
+
+        .nav-icon {opacity: 0.7}
+
+        .nav-link:hover .nav-icon {opacity: 1}
+
+        .nav-kpi {background: #f1f5f9
+            color: #64748b
+            padding: 2px 6px
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500}
+
+        /* Cards */
+        .card {background: white
+            border: 1px solid #e4e4e7
+            border-radius: 16px
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);}
+
+        .card-header {display: flex
+            align-items: center
+            gap: 8px
+            margin-bottom: 16px}
+
+        .card-title {font-size: 16px
+            font-weight: 600
+            display: flex
+            align-items: center;
+            gap: 8px}
+
+        .card-subtitle {font-size: 12px
+            color: #71717a
+            margin-top: 4px}
+
+        /* Grid Layouts */
+        .multi-view-grid {display: grid
+            grid-template-columns: repeat(12, 1fr)
+            gap: 24px}
+
+        .col-span-12 {grid-column: span 12}
+        .col-span-6 {grid-column: span 6}
+        .col-span-4 {grid-column: span 4}
+        .col-span-3 {grid-column: span 3}
+
+        /* Section Content */
+        .section-content {max-height: 480px
+            overflow-y: auto
+            padding-right: 4px}
+
+        /* Tables */
+        .data-table {width: 100%
+            border-collapse: collapse}
+
+        .table-header {display: grid
+            grid-template-columns: repeat(6, 1fr)
+            font-size: 12px
+            color: #71717a;
+            font-weight: 500;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f5f9}
+
+        .table-row {display: grid
+            grid-template-columns: repeat(6, 1fr)
+            align-items: center
+            padding: 12px 0;
+            border-bottom: 1px solid #f8fafc;
+            transition: background-color 0.2s}
+
+        .table-row:hover {background: #f8fafc}
+
+        /* Status Badges */
+        .badge {padding: 4px 8px
+            border-radius: 12px
+            font-size: 12px
+            font-weight: 500}
+
+        .badge-secondary {background: #f1f5f9
+            color: #64748b}
+
+        .badge-destructive {background: #fef2f2
+            color: #dc2626}
+
+        .badge-success {background: #f0fdf4
+            color: #16a34a}
+
+        /* Progress Bars */
+        .progress-container {width: 100%
+            background: #f1f5f9
+            border-radius: 4px
+            height: 8px}
+
+        .progress-bar {background: #3b82f6
+            height: 8px
+            border-radius: 4px
+            transition: width 0.3s}
+
+        /* KPI Cards */
+        .kpi-grid {display: grid
+            grid-template-columns: repeat(2, 1fr)
+            gap: 12px}
+
+        .kpi-card {background: white
+            border: 1px solid #e4e4e7
+            border-radius: 12px
+            padding: 16px}
+
+        .kpi-label {font-size: 12px
+            color: #71717a
+            margin-bottom: 4px}
+
+        .kpi-value {font-size: 20px
+            font-weight: 600}
+
+        /* Chart Container */
+        .chart-container {height: 200px
+            width: 100%}
+
+        /* Toolbar */
+        .toolbar {display: flex
+            gap: 8px
+            margin-bottom: 16px
+            flex-wrap: wrap}
+
+        .search-input {padding: 6px 12px
+            border: 1px solid #e4e4e7
+            border-radius: 8px
+            width: 200px}
+
+        .select {padding: 6px 12px
+            border: 1px solid #e4e4e7
+            border-radius: 8px
+            background: white;
+            cursor: pointer}
+
+        /* Responsive */
+        @media (max-width: 1024px) {.main-container {
+                grid-template-columns: 1fr
+                gap: 16px}
+            
+            .sidebar {display: none}
+            
+            .col-span-6 {grid-column: span 12}
+            .col-span-4 {grid-column: span 12}
+        }
+
+        /* Separator */
+        .separator {height: 1px
+            background: #e4e4e7
+            margin: 12px 0}
+
+        /* Checkbox */
+        .checkbox {width: 16px
+            height: 16px
+            margin-right: 8px}
+
+        /* Quick Actions */
+        .quick-actions {display: grid
+            grid-template-columns: repeat(2, 1fr)
+            gap: 8px}
+
+        .quick-action-btn {padding: 12px
+            border: 1px solid #e4e4e7
+            border-radius: 12px
+            background: white;
+            cursor: pointer;
+            text-align: left;
+            transition: box-shadow 0.2s}
+
+        .quick-action-btn:hover {box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)}
+
+        .action-title {font-size: 14px
+            font-weight: 500
+            margin-bottom: 4px}
+
+        .action-desc {font-size: 12px
+            color: #71717a}
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="top-bar-content">
+            <div class="logo-section">
+                <div class="logo-title">QR Legends — Operations</div>
+                <span class="live-badge">Live</span>
+            </div>
+            <div class="top-controls">
+                <div class="view-toggle">
+                    <button class="view-btn" onclick="setViewMode('single')">Pages</button>
+                    <button class="view-btn active" onclick="setViewMode('multi')">Grid</button>
+                </div>
+                <button class="btn">🔔 Alerts</button>
+                <button class="btn">⚙️ Layout</button>
+                <button class="btn">📥 Export</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav>
+                <a href="#inbound" class="nav-link">
+                    <span class="nav-link-content">
+                        <span class="nav-icon">🚛</span>
+                        Inbound
+                    </span>
+                    <span class="nav-kpi">3</span>
+                </a>
+                <a href="#outbound" class="nav-link">
+                    <span class="nav-link-content">
+                        <span class="nav-icon">📤</span>
+                        Outbound
+                    </span>
+                    <span class="nav-kpi">5</span>
+                </a>
+                <a href="#inventory" class="nav-link">
+                    <span class="nav-link-content">
+                        <span class="nav-icon">📦</span>
+                        Inventory
+                    </span>
+                    <span class="nav-kpi">8,421</span>
+                </a>
+                <a href="#exceptions" class="nav-link">
+                    <span class="nav-link-content">
+                        <span class="nav-icon">⚠️</span>
+                        Exceptions
+                    </span>
+                    <span class="nav-kpi">7</span>
+                </a>
+                <div class="separator"></div>
+                <a href="#tools" class="nav-link">
+                    <span class="nav-link-content">
+                        <span class="nav-icon">🔧</span>
+                        Tools
+                    </span>
+                </a>
+                <a href="#admin" class="nav-link">
+                    <span class="nav-link-content">
+                        <span class="nav-icon">⚙️</span>
+                        Admin
+                    </span>
+                </a>
+                <a href="#reports" class="nav-link">
+                    <span class="nav-link-content">
+                        <span class="nav-icon">📊</span>
+                        Reports
+                    </span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main id="mainContent">
+            <!-- Multi-view Grid (default) -->
+            <div id="multiView" class="multi-view-grid">
+                <!-- Inbound Section -->
+                <div class="col-span-6 card">
+                    <div class="card-header">
+                        <h2 class="card-title">🚛 Inbound</h2>
+                    </div>
+                    <div class="section-content">
+                        <div class="toolbar">
+                            <input type="text" class="search-input" placeholder="Search IDs, SKUs, refs…">
+                            <select class="select">
+                                <option>All Status</option>
+                                <option>Open</option>
+                                <option>Closed</option>
+                            </select>
+                            <button class="btn">🔧 Filters</button>
+                        </div>
+                        
+                        <div class="card" style="margin-bottom: 16px;">
+                            <h3 style="font-size: 14px; margin-bottom: 12px;">Arrivals Today</h3>
+                            <div class="table-header">
+                                <div>Load ID</div>
+                                <div>Carrier</div>
+                                <div>ETA</div>
+                                <div>Dock</div>
+                                <div>Pallets</div>
+                                <div>Status</div>
+                            </div>
+                            <div class="table-row">
+                                <div><strong>AR-1001</strong></div>
+                                <div>UPS</div>
+                                <div>10:30 AM</div>
+                                <div>D3</div>
+                                <div>12</div>
+                                <div><span class="badge badge-success">On Time</span></div>
+                            </div>
+                            <div class="table-row">
+                                <div><strong>AR-1002</strong></div>
+                                <div>FedEx</div>
+                                <div>11:10 AM</div>
+                                <div>D1</div>
+                                <div>8</div>
+                                <div><span class="badge badge-destructive">Delayed</span></div>
+                            </div>
+                            <div class="table-row">
+                                <div><strong>AR-1003</strong></div>
+                                <div>XPO</div>
+                                <div>1:00 PM</div>
+                                <div>D2</div>
+                                <div>20</div>
+                                <div><span class="badge badge-success">On Time</span></div>
+                            </div>
+                        </div>
+
+                        <div class="kpi-grid">
+                            <div class="kpi-card">
+                                <div class="kpi-label">ASNs Open</div>
+                                <div class="kpi-value">14</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-label">Avg Dock Time</div>
+                                <div class="kpi-value">38m</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Outbound Section -->
+                <div class="col-span-6 card">
+                    <div class="card-header">
+                        <h2 class="card-title">📤 Outbound</h2>
+                    </div>
+                    <div class="section-content">
+                        <div class="toolbar">
+                            <input type="text" class="search-input" placeholder="Search waves, orders…">
+                            <button class="btn">🔧 Filters</button>
+                        </div>
+                        
+                        <div class="card" style="margin-bottom: 16px;">
+                            <h3 style="font-size: 14px; margin-bottom: 12px;">Active Picks</h3>
+                            <div class="table-header">
+                                <div>Pick ID</div>
+                                <div>Wave</div>
+                                <div>Lines</div>
+                                <div>Due</div>
+                                <div>Picker</div>
+                                <div>Progress</div>
+                            </div>
+                            <div class="table-row">
+                                <div><strong>PK-2001</strong></div>
+                                <div>AM-01</div>
+                                <div>34</div>
+                                <div>11:45 AM</div>
+                                <div>Celeste</div>
+                                <div>
+                                    <div class="progress-container">
+                                        <div class="progress-bar" style="width: 76%"></div>
+                                    </div>
+                                    <small>76%</small>
+                                </div>
+                            </div>
+                            <div class="table-row">
+                                <div><strong>PK-2002</strong></div>
+                                <div>AM-02</div>
+                                <div>18</div>
+                                <div>12:30 PM</div>
+                                <div>Isaiah</div>
+                                <div>
+                                    <div class="progress-container">
+                                        <div class="progress-bar" style="width: 41%"></div>
+                                    </div>
+                                    <small>41%</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="kpi-grid">
+                            <div class="kpi-card">
+                                <div class="kpi-label">Orders Due</div>
+                                <div class="kpi-value">148</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-label">OTIF</div>
+                                <div class="kpi-value">97.6%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inventory Section -->
+                <div class="col-span-4 card">
+                    <div class="card-header">
+                        <h2 class="card-title">📦 Inventory</h2>
+                    </div>
+                    <div class="section-content">
+                        <div class="kpi-grid" style="margin-bottom: 16px;">
+                            <div class="kpi-card">
+                                <div class="kpi-label">Total SKUs</div>
+                                <div class="kpi-value">8,421</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-label">On-Hand Units</div>
+                                <div class="kpi-value">1.25M</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-label">Cycle Count Due</div>
+                                <div class="kpi-value">126</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-label">Accuracy</div>
+                                <div class="kpi-value">99.13%</div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3 style="font-size: 14px; margin-bottom: 12px;">Cycle Count Queue</h3>
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <div style="display: flex; align-items: center;">
+                                        <input type="checkbox" class="checkbox">
+                                        <span>A1-02</span>
+                                    </div>
+                                    <button class="btn">Start</button>
+                                </div>
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <div style="display: flex; align-items: center;">
+                                        <input type="checkbox" class="checkbox">
+                                        <span>B3-10</span>
+                                    </div>
+                                    <button class="btn">Start</button>
+                                </div>
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <div style="display: flex; align-items: center;">
+                                        <input type="checkbox" class="checkbox">
+                                        <span>C7-08</span>
+                                    </div>
+                                    <button class="btn">Start</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exceptions Section -->
+                <div class="col-span-4 card">
+                    <div class="card-header">
+                        <h2 class="card-title">⚠️ Exceptions</h2>
+                    </div>
+                    <div class="section-content">
+                        <div class="card" style="margin-bottom: 16px;">
+                            <h3 style="font-size: 14px; margin-bottom: 12px;">Active Exceptions</h3>
+                            <div class="table-header">
+                                <div>Ticket</div>
+                                <div>Type</div>
+                                <div>Reference</div>
+                                <div>Owner</div>
+                                <div>Age</div>
+                                <div>Severity</div>
+                            </div>
+                            <div class="table-row">
+                                <div><strong>EX-9001</strong></div>
+                                <div>Short Pick</div>
+                                <div>SO-77412</div>
+                                <div>Brandon</div>
+                                <div>28m</div>
+                                <div><span class="badge badge-destructive">High</span></div>
+                            </div>
+                            <div class="table-row">
+                                <div><strong>EX-9002</strong></div>
+                                <div>Overage</div>
+                                <div>PO-66105</div>
+                                <div>Peyton</div>
+                                <div>52m</div>
+                                <div><span class="badge badge-secondary">Medium</span></div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3 style="font-size: 14px; margin-bottom: 12px;">SLA Timers</h3>
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 14px;">Critical 30m</span>
+                                    <span class="badge badge-success">On Track</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 14px;">High 2h</span>
+                                    <span class="badge badge-success">On Track</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tools Section -->
+                <div class="col-span-4 card">
+                    <div class="card-header">
+                        <h2 class="card-title">🔧 Tools</h2>
+                    </div>
+                    <div class="section-content">
+                        <div class="quick-actions">
+                            <div class="quick-action-btn" onclick="window.location.href='/qr_generator'">
+                                <div class="action-title">Bulk Label Reprint</div>
+                                <div class="action-desc">Reprint by order, wave, or date range</div>
+                            </div>
+                            <div class="quick-action-btn" onclick="window.location.href='/inventory'">
+                                <div class="action-title">Location Audit</div>
+                                <div class="action-desc">Scan to validate SKU/qty vs system</div>
+                            </div>
+                            <div class="quick-action-btn" onclick="window.location.href='/transfers'">
+                                <div class="action-title">Mass Move</div>
+                                <div class="action-desc">Move LPNs or pallets across zones</div>
+                            </div>
+                            <div class="quick-action-btn" onclick="window.location.href='/replenishment'">
+                                <div class="action-title">Replen Planner</div>
+                                <div class="action-desc">Slotting + min/max suggestions</div>
+                            </div>
+                            <div class="quick-action-btn" onclick="window.location.href='/receiving'">
+                                <div class="action-title">ASN Import</div>
+                                <div class="action-desc">CSV/XLSX template and validator</div>
+                            </div>
+                            <div class="quick-action-btn" onclick="window.location.href='/cycle_counting'">
+                                <div class="action-title">Cycle Scheduler</div>
+                                <div class="action-desc">ABCD class-driven counting</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Section -->
+                <div class="col-span-6 card">
+                    <div class="card-header">
+                        <h2 class="card-title">⚙️ Admin</h2>
+                    </div>
+                    <div class="section-content">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="card">
+                                <h3 style="font-size: 14px; margin-bottom: 12px;">User Roles</h3>
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <span class="badge badge-secondary">Viewer</span>
+                                            <span style="font-size: 12px; color: #71717a;">Read-only</span>
+                                        </div>
+                                        <button class="btn">Manage</button>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span class="badge badge-secondary">Operator</span>
+                                        <button class="btn">Manage</button>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span class="badge badge-secondary">Supervisor</span>
+                                        <button class="btn">Manage</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <h3 style="font-size: 14px; margin-bottom: 12px;">SLA & Alerts</h3>
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span style="font-size: 14px;">Dock to Receive</span>
+                                        <button class="btn">Configure</button>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span style="font-size: 14px;">Pick to Pack</span>
+                                        <button class="btn">Configure</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Section -->
+                <div class="col-span-6 card">
+                    <div class="card-header">
+                        <h2 class="card-title">📊 Reports</h2>
+                    </div>
+                    <div class="section-content">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="card">
+                                <div class="action-title">Inbound Performance</div>
+                                <div class="action-desc" style="margin: 8px 0;">Lead times, dwell, damages, by carrier & dock</div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn">Open Report</button>
+                                    <button class="btn">Schedule</button>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="action-title">Outbound OTIF</div>
+                                <div class="action-desc" style="margin: 8px 0;">Service level by customer, carrier, lane</div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn">Open Report</button>
+                                    <button class="btn">Schedule</button>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="action-title">Inventory Health</div>
+                                <div class="action-desc" style="margin: 8px 0;">Days cover, dead stock, stockouts risk</div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn">Open Report</button>
+                                    <button class="btn">Export</button>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="action-title">Labor Productivity</div>
+                                <div class="action-desc" style="margin: 8px 0;">UPH/LPH by function & shift</div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn">Open Report</button>
+                                    <button class="btn">Export</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Single View (hidden by default) -->
+            <div id="singleView" style="display: none;">
+                <p>Single page view would be implemented here with full-page sections</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Back to Main Dashboard -->
+    <div style="text-align: center; padding: 30px;">
+        <a href="/main_dashboard" class="btn" style="padding: 15px 30px; font-size: 16px; margin-right: 15px; background: #28a745; color: white; text-decoration: none;">
+            🏠 Back to Main Dashboard
+        </a>
+    </div>
+
+    <script>
+        function setViewMode(mode) {const multiView = document.getElementById('multiView')
+            const singleView = document.getElementById('singleView')
+            const buttons = document.querySelectorAll('.view-btn')
+            
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            if (mode === 'multi') {
+                multiView.style.display = 'grid';
+                singleView.style.display = 'none';
+                buttons[1].classList.add('active')} else {multiView.style.display = 'none'
+                singleView.style.display = 'block'
+                buttons[0].classList.add('active')}
+        }
+
+        // Auto-refresh data every 30 seconds
+        setInterval(function() {// In a real implementation, this would fetch live data
+            console.log('Refreshing operations data...')}, 30000);
+
+        // Initialize view
+        setViewMode('multi');
+    </script>
+</body>
+</html>

@@ -1,0 +1,373 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Quote - SalesPad</title>
+    <style>
+        * {box-sizing: border-box}
+
+        body {font-family: Arial, sans-serif
+            margin: 0
+            padding: 10px
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            padding-top: 70px;
+            padding-bottom: 120px}
+
+        .container {max-width: 1200px
+            margin: 0 auto
+            background: white
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+
+        .header {text-align: center
+            margin-bottom: 30px
+            padding: 20px
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border-radius: 10px}
+
+        .form-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
+            gap: 20px
+            margin-bottom: 20px}
+
+        .form-group {margin-bottom: 15px}
+
+        .form-group label {display: block
+            margin-bottom: 5px
+            font-weight: bold
+            color: #2c3e50}
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {width: 100%
+            padding: 10px
+            border: 1px solid #ddd
+            border-radius: 5px;
+            font-size: 14px}
+
+        .btn {padding: 10px 20px
+            border: none
+            border-radius: 5px
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+            transition: all 0.3s ease}
+
+        .btn-primary {background: #3498db
+            color: white}
+
+        .btn-success {background: #27ae60
+            color: white}
+
+        .btn-danger {background: #e74c3c
+            color: white}
+
+        .btn: hover {opacity: 0.9
+            transform: translateY(-1px)}
+
+        .line-items-section {border: 1px solid #ddd
+            border-radius: 8px
+            padding: 20px
+            margin: 20px 0}
+
+        .line-item {display: grid
+            grid-template-columns: 2fr 1fr 1fr 1fr 100px
+            gap: 10px
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee}
+
+        .line-item:last-child {border-bottom: none}
+
+        .totals-section {background: #f8f9fa
+            padding: 20px
+            border-radius: 8px
+            margin-top: 20px}
+
+        .total-row {display: flex
+            justify-content: space-between
+            margin-bottom: 10px}
+
+        .total-row.final {font-weight: bold
+            font-size: 1.2em
+            border-top: 2px solid #2c3e50
+            padding-top: 10px}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 Create New Quote</h1>
+            <p>Generate professional quotes for your customers</p>
+        </div>
+
+        <form id="quoteForm">
+            <!-- Customer Information -->
+            <h3>Customer Information</h3>
+            <div class="form-grid">
+                <div>
+                    <div class="form-group">
+                        <label>Customer</label>
+                        <select id="customer" required>
+                            <option value="">Select Customer</option>
+                            <option value="CUST001">ABC Manufacturing Inc.</option>
+                            <option value="CUST002">XYZ Distributors LLC</option>
+                            <option value="CUST003">Global Supply Co.</option>
+                            <option value="CUST004">Tech Solutions Ltd.</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Name</label>
+                        <input type="text" id="contactName" placeholder="Contact Person">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="email" placeholder="customer@company.com">
+                    </div>
+                </div>
+                <div>
+                    <div class="form-group">
+                        <label>Quote Date</label>
+                        <input type="date" id="quoteDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Valid Until</label>
+                        <input type="date" id="validUntil" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Terms</label>
+                        <select id="terms">
+                            <option value="NET30">Net 30</option>
+                            <option value="NET15">Net 15</option>
+                            <option value="COD">Cash on Delivery</option>
+                            <option value="PREPAID">Prepaid</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quote Details -->
+            <h3>Quote Details</h3>
+            <div class="form-grid">
+                <div>
+                    <div class="form-group">
+                        <label>Quote Title</label>
+                        <input type="text" id="quoteTitle" placeholder="Quote description" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Salesperson</label>
+                        <select id="salesperson">
+                            <option value="">Select Salesperson</option>
+                            <option value="SALES001">John Smith</option>
+                            <option value="SALES002">Jane Doe</option>
+                            <option value="SALES003">Mike Johnson</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <div class="form-group">
+                        <label>Discount %</label>
+                        <input type="number" id="discount" step="0.01" min="0" max="100" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Tax Rate %</label>
+                        <input type="number" id="taxRate" step="0.01" min="0" value="8.25">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Line Items -->
+            <div class="line-items-section">
+                <h3>Line Items</h3>
+                <div class="line-item" style="font-weight: bold; background: #f8f9fa;">
+                    <div>Product/Service</div>
+                    <div>Quantity</div>
+                    <div>Unit Price</div>
+                    <div>Total</div>
+                    <div>Actions</div>
+                </div>
+                <div id="lineItems">
+                    <!-- Line items will be added here -->
+                </div>
+                <button type="button" class="btn btn-primary" onclick="addLineItem()">➕ Add Line Item</button>
+            </div>
+
+            <!-- Totals -->
+            <div class="totals-section">
+                <div class="total-row">
+                    <span>Subtotal:</span>
+                    <span id="subtotal">$0.00</span>
+                </div>
+                <div class="total-row">
+                    <span>Discount:</span>
+                    <span id="discountAmount">$0.00</span>
+                </div>
+                <div class="total-row">
+                    <span>Tax:</span>
+                    <span id="taxAmount">$0.00</span>
+                </div>
+                <div class="total-row final">
+                    <span>Total:</span>
+                    <span id="total">$0.00</span>
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="form-group">
+                <label>Notes/Terms</label>
+                <textarea id="notes" rows="4" placeholder="Additional terms, conditions, or notes"></textarea>
+            </div>
+
+            <!-- Actions -->
+            <div style="text-align: center; margin-top: 30px;">
+                <button type="button" class="btn btn-success" onclick="saveQuote()">💾 Save Quote</button>
+                <button type="button" class="btn btn-primary" onclick="previewQuote()">👁️ Preview</button>
+                <button type="button" class="btn btn-primary" onclick="sendQuote()">📧 Send to Customer</button>
+                <a href="/salespad_dashboard" class="btn btn-danger">❌ Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let lineItemCounter = 0;
+
+        // Set today's date
+        document.addEventListener('DOMContentLoaded', function() {const today = new Date().toISOString().split('T')[0]
+            document.getElementById('quoteDate').value = today
+            
+            // Set valid until date (30 days from today)
+            const validUntil = new Date()
+            validUntil.setDate(validUntil.getDate() + 30);
+            document.getElementById('validUntil').value = validUntil.toISOString().split('T')[0];
+            
+            // Add initial line item
+            addLineItem();});
+
+        function addLineItem() {lineItemCounter++
+            const lineItemsContainer = document.getElementById('lineItems')
+            
+            const lineItemDiv = document.createElement('div')
+            lineItemDiv.className = 'line-item';
+            lineItemDiv.id = `lineItem${lineItemCounter}`;
+            
+            lineItemDiv.innerHTML = `
+                <select onchange="updateLineItem(${lineItemCounter})">
+                    <option value="">Select Product/Service</option>
+                    <option value="PROD001" data-price="25.00">Warehouse Labels (Pack of 100)</option>
+                    <option value="PROD002" data-price="150.00">QR Scanner Gun</option>
+                    <option value="PROD003" data-price="75.00">Inventory Management Software License</option>
+                    <option value="SERV001" data-price="125.00">Implementation Service (per hour)</option>
+                    <option value="SERV002" data-price="85.00">Training Service (per hour)</option>
+                </select>
+                <input type="number" min="1" value="1" onchange="updateLineItem(${lineItemCounter})">
+                <input type="number" step="0.01" min="0" placeholder="0.00" onchange="updateLineItem(${lineItemCounter})">
+                <span class="line-total">$0.00</span>
+                <button type="button" class="btn btn-danger" onclick="removeLineItem(${lineItemCounter})">🗑️</button>
+            `;
+            
+            lineItemsContainer.appendChild(lineItemDiv);
+        }
+
+        function removeLineItem(id) {
+            const lineItem = document.getElementById(`lineItem${id}`);
+            if (lineItem) {lineItem.remove()
+                calculateTotals()}
+        }
+
+        function updateLineItem(id) {
+            const lineItem = document.getElementById(`lineItem${id}`);
+            const select = lineItem.querySelector('select');
+            const qtyInput = lineItem.querySelector('input[type="number"]:nth-of-type(1)');
+            const priceInput = lineItem.querySelector('input[type="number"]:nth-of-type(2)');
+            const totalSpan = lineItem.querySelector('.line-total');
+            
+            // Auto-fill price when product is selected
+            if (select.value) {const selectedOption = select.options[select.selectedIndex]
+                const price = selectedOption.getAttribute('data-price')
+                if (price && !priceInput.value) {
+                    priceInput.value = price}
+            }
+            
+            // Calculate line total
+            const qty = parseFloat(qtyInput.value) || 0;
+            const price = parseFloat(priceInput.value) || 0;
+            const total = qty * price;
+            
+            totalSpan.textContent = `$${total.toFixed(2)}`;
+            
+            calculateTotals();
+        }
+
+        function calculateTotals() {let subtotal = 0
+            
+            // Sum all line items
+            const lineTotals = document.querySelectorAll('.line-total')
+            lineTotals.forEach(total => {
+                const amount = parseFloat(total.textContent.replace('$', '')) || 0
+                subtotal += amount;});
+            
+            const discountPercent = parseFloat(document.getElementById('discount').value) || 0;
+            const taxPercent = parseFloat(document.getElementById('taxRate').value) || 0;
+            
+            const discountAmount = subtotal * (discountPercent / 100);
+            const afterDiscount = subtotal - discountAmount;
+            const taxAmount = afterDiscount * (taxPercent / 100);
+            const total = afterDiscount + taxAmount;
+            
+            document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('discountAmount').textContent = `$${discountAmount.toFixed(2)}`;
+            document.getElementById('taxAmount').textContent = `$${taxAmount.toFixed(2)}`;
+            document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+        }
+
+        // Event listeners for discount and tax changes
+        document.getElementById('discount').addEventListener('input', calculateTotals);
+        document.getElementById('taxRate').addEventListener('input', calculateTotals);
+
+        function saveQuote() {
+            // Collect form data
+            const quoteData = {
+                customer: document.getElementById('customer').value,
+                contactName: document.getElementById('contactName').value,
+                email: document.getElementById('email').value,
+                quoteDate: document.getElementById('quoteDate').value,
+                validUntil: document.getElementById('validUntil').value,
+                terms: document.getElementById('terms').value,
+                quoteTitle: document.getElementById('quoteTitle').value,
+                salesperson: document.getElementById('salesperson').value,
+                discount: document.getElementById('discount').value,
+                taxRate: document.getElementById('taxRate').value,
+                notes: document.getElementById('notes').value,
+                subtotal: document.getElementById('subtotal').textContent,
+                total: document.getElementById('total').textContent
+            };
+            
+            console.log('Saving quote:', quoteData);
+            alert('Quote saved successfully!\nQuote ID: QT-' + Date.now());
+        }
+
+        function previewQuote() {alert('Quote preview functionality - would open PDF preview')}
+
+        function sendQuote() {const email = document.getElementById('email').value
+            if (!email) {
+                alert('Please enter customer email address')
+                return}
+            alert(`Quote will be sent to: ${email}`);
+        }
+    </script>
+
+    <!-- Include Universal Dashboard Button -->
+    <script src="/static/universal_dashboard_button.js"></script>
+    <!-- Include Floating Chat Widget -->
+    <script src="/static/floating_chat_widget.js"></script>
+    <!-- Include Employee Messaging Widget -->
+    <script src="/static/employee_messaging_widget.js"></script>
+</body>
+</html>

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe Integration Test - QR LEGENDS</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            margin: 0
+            padding: 20px
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            min-height: 100vh}
+
+        .container {max-width: 800px
+            margin: 0 auto
+            background: white
+            border-radius: 15px
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);}
+
+        .header {text-align: center
+            margin-bottom: 30px}
+
+        .header h1 {color: #333
+            margin: 0}
+
+        .test-section {background: #f8f9fa
+            border-radius: 10px
+            padding: 20px
+            margin: 20px 0
+            border-left: 4px solid #667eea}
+
+        .btn {background: #667eea
+            color: white
+            border: none
+            padding: 12px 24px
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 5px;
+            transition: all 0.3s}
+
+        .btn: hover {background: #5a6fd8
+            transform: translateY(-2px)}
+
+        .btn-success {background: #28a745}
+
+        .btn-success:hover {background: #218838}
+
+        .btn-danger {background: #dc3545}
+
+        .btn-danger:hover {background: #c82333}
+
+        .result {background: #e9ecef
+            border-radius: 5px
+            padding: 15px
+            margin: 10px 0
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto}
+
+        .success {background: #d4edda
+            color: #155724
+            border: 1px solid #c3e6cb}
+
+        .error {background: #f8d7da
+            color: #721c24
+            border: 1px solid #f5c6cb}
+
+        .payment-form {background: white
+            border: 1px solid #ddd
+            border-radius: 8px
+            padding: 20px
+            margin: 20px 0}
+
+        .form-group {margin-bottom: 15px}
+
+        .form-group label {display: block
+            margin-bottom: 5px
+            font-weight: 600}
+
+        .form-group input, .form-group select {width: 100%
+            padding: 10px
+            border: 1px solid #ddd
+            border-radius: 5px
+            font-size: 16px}
+
+        #card-element {background: white
+            padding: 12px
+            border: 1px solid #ddd
+            border-radius: 5px
+            margin: 10px 0}
+
+        .loading {opacity: 0.6
+            pointer-events: none}
+
+        .status-indicator {display: inline-block
+            width: 12px
+            height: 12px
+            border-radius: 50%
+            margin-right: 8px}
+
+        .status-success {background: #28a745}
+
+        .status-error {background: #dc3545}
+
+        .status-warning {background: #ffc107}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Stripe Integration Test</h1>
+            <p>Test your Stripe setup for QR LEGENDS billing</p>
+        </div>
+
+        <!-- Configuration Test -->
+        <div class="test-section">
+            <h3>1. Configuration Test</h3>
+            <p>Check if Stripe keys are properly configured</p>
+            <button class="btn" onclick="testConfiguration()">Test Configuration</button>
+            <div id="config-result" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Connection Test -->
+        <div class="test-section">
+            <h3>2. API Connection Test</h3>
+            <p>Test connection to Stripe API and retrieve account information</p>
+            <button class="btn" onclick="testConnection()">Test API Connection</button>
+            <div id="connection-result" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Payment Intent Test -->
+        <div class="test-section">
+            <h3>3. Payment Intent Test</h3>
+            <p>Create a test payment intent</p>
+            <div class="form-group">
+                <label for="test-amount">Test Amount (in dollars):</label>
+                <input type="number" id="test-amount" value="25.00" step="0.01" min="0.50">
+            </div>
+            <div class="form-group">
+                <label for="test-currency">Currency:</label>
+                <select id="test-currency">
+                    <option value="usd">USD</option>
+                    <option value="eur">EUR</option>
+                    <option value="gbp">GBP</option>
+                </select>
+            </div>
+            <button class="btn" onclick="testPaymentIntent()">Create Payment Intent</button>
+            <div id="payment-intent-result" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Live Payment Test -->
+        <div class="test-section">
+            <h3>4. Live Payment Test (Test Mode)</h3>
+            <p>Test the complete payment flow with Stripe test cards</p>
+
+            <div class="payment-form">
+                <div class="form-group">
+                    <label for="payment-amount">Amount (USD):</label>
+                    <input type="number" id="payment-amount" value="25.00" step="0.01" min="0.50">
+                </div>
+
+                <div class="form-group">
+                    <label>Card Information:</label>
+                    <div id="card-element">
+                        <!-- Stripe Elements will create form elements here -->
+                    </div>
+                </div>
+
+                <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                    <strong>Test Cards:</strong>
+                    <ul style="margin: 5px 0;">
+                        <li><strong>Success:</strong> 4242 4242 4242 4242</li>
+                        <li><strong>Declined:</strong> 4000 0000 0000 0002</li>
+                        <li><strong>Requires 3D Secure:</strong> 4000 0025 0000 3155</li>
+                    </ul>
+                    <small>Use any future expiry date and any 3-digit CVC</small>
+                </div>
+
+                <button class="btn btn-success" id="submit-payment" onclick="submitPayment()">
+                    Test Payment
+                </button>
+            </div>
+
+            <div id="payment-result" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Overall Status -->
+        <div class="test-section">
+            <h3>5. Overall Status</h3>
+            <div id="overall-status">
+                <p><span class="status-indicator status-warning"></span>Click "Run All Tests" to check all components</p>
+            </div>
+            <button class="btn" onclick="runAllTests()">Run All Tests</button>
+        </div>
+    </div>
+
+    <script>
+        let stripe;
+        let elements;
+        let cardElement;
+
+        // Initialize Stripe
+        async function initializeStripe() {try {
+                const response = await fetch('/api/stripe/config')
+                const config = await response.json()
+
+                if (config.publishable_key) {
+                    stripe = Stripe(config.publishable_key)
+                    elements = stripe.elements()
+
+                    // Create card element
+                    cardElement = elements.create('card', {
+                        style: {
+                            base: {
+                                fontSize: '16px',
+                                color: '#424770',
+                                '::placeholder': {
+                                    color: '#aab7c4',},
+                            },
+                        },
+                    });
+
+                    cardElement.mount('#card-element');
+                    console.log('✅ Stripe initialized successfully');
+                } else {console.error('❌ Stripe publishable key not found')}
+            } catch (error) {console.error('❌ Failed to initialize Stripe:', error)}
+        }
+
+        async function testConfiguration() {const resultDiv = document.getElementById('config-result')
+            resultDiv.style.display = 'block'
+            resultDiv.textContent = 'Testing configuration...'
+            resultDiv.className = 'result'
+
+            try {
+                const response = await fetch('/api/stripe/config');
+                const data = await response.json();
+
+                if (data.configured) {
+                    resultDiv.textContent = `✅ Configuration Test PASSED
+
+Publishable Key: ${data.publishable_key.substring(0, 12)}...
+Status: Properly configured`;
+                    resultDiv.className = 'result success';
+                } else {resultDiv.textContent = `❌ Configuration Test FAILED
+
+Missing Stripe keys. Please add to Replit Secrets: - STRIPE_SECRET_KEY
+- STRIPE_PUBLISHABLE_KEY`
+                    resultDiv.className = 'result error'}
+            } catch (error) {
+                resultDiv.textContent = `❌ Configuration Test ERROR: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function testConnection() {const resultDiv = document.getElementById('connection-result')
+            resultDiv.style.display = 'block'
+            resultDiv.textContent = 'Testing API connection...'
+            resultDiv.className = 'result'
+
+            try {
+                const response = await fetch('/api/stripe/test-connection', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json'}
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    resultDiv.textContent = `✅ Connection Test PASSED
+
+Account ID: ${data.account_info.account_id}
+Business Name: ${data.account_info.business_name}
+Country: ${data.account_info.country}
+Currency: ${data.account_info.currency}
+Charges Enabled: ${data.account_info.charges_enabled}
+Payouts Enabled: ${data.account_info.payouts_enabled}`;
+                    resultDiv.className = 'result success';
+                } else {
+                    resultDiv.textContent = `❌ Connection Test FAILED
+
+Error: ${data.error}
+Details: ${data.details}`;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.textContent = `❌ Connection Test ERROR: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function testPaymentIntent() {const resultDiv = document.getElementById('payment-intent-result')
+            resultDiv.style.display = 'block'
+            resultDiv.textContent = 'Creating payment intent...'
+            resultDiv.className = 'result'
+
+            const amount = parseFloat(document.getElementById('test-amount').value) * 100; // Convert to cents
+            const currency = document.getElementById('test-currency').value;
+
+            try {
+                const response = await fetch('/api/stripe/create-payment-intent', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        amount: amount,
+                        currency: currency,
+                        description: 'QR LEGENDS Test Payment'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.textContent = `✅ Payment Intent Test PASSED
+
+Payment Intent ID: ${data.payment_intent_id}
+Amount: $${(data.amount / 100).toFixed(2)} ${data.currency.toUpperCase()}
+Client Secret: ${data.client_secret.substring(0, 20)}...
+
+Payment intent created successfully!`;
+                    resultDiv.className = 'result success';
+                } else {
+                    resultDiv.textContent = `❌ Payment Intent Test FAILED
+
+Error: ${data.error}
+Details: ${data.details || 'No additional details'}`;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.textContent = `❌ Payment Intent Test ERROR: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function submitPayment() {const resultDiv = document.getElementById('payment-result')
+            const submitButton = document.getElementById('submit-payment')
+
+            resultDiv.style.display = 'block'
+            resultDiv.textContent = 'Processing payment...'
+            resultDiv.className = 'result';
+            submitButton.disabled = true;
+            submitButton.textContent = 'Processing...';
+
+            try {
+                const amount = parseFloat(document.getElementById('payment-amount').value) * 100;
+
+                // Create payment intent
+                const intentResponse = await fetch('/api/stripe/create-payment-intent', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        amount: amount,
+                        currency: 'usd',
+                        description: 'QR LEGENDS Live Test Payment'
+                    })
+                });
+
+                const intentData = await intentResponse.json();
+
+                if (!intentResponse.ok) {throw new Error(intentData.error || 'Failed to create payment intent')}
+
+                // Confirm payment with card
+                const {error, paymentIntent} = await stripe.confirmCardPayment(
+                    intentData.client_secret,
+                    {
+                        payment_method: {
+                            card: cardElement,
+                        }
+                    }
+                );
+
+                if (error) {
+                    resultDiv.textContent = `❌ Payment Test FAILED
+
+Error: ${error.message}
+Code: ${error.code || 'N/A'}
+Type: ${error.type || 'N/A'}`;
+                    resultDiv.className = 'result error';
+                } else {
+                    resultDiv.textContent = `✅ Payment Test PASSED
+
+Payment Intent: ${paymentIntent.id}
+Status: ${paymentIntent.status}
+Amount: $${(paymentIntent.amount / 100).toFixed(2)}
+Currency: ${paymentIntent.currency.toUpperCase()}
+
+Payment processed successfully!`;
+                    resultDiv.className = 'result success';
+                }
+            } catch (error) {
+                resultDiv.textContent = `❌ Payment Test ERROR: ${error.message}`;
+                resultDiv.className = 'result error';
+            } finally {submitButton.disabled = false
+                submitButton.textContent = 'Test Payment'}
+        }
+
+        async function runAllTests() {const statusDiv = document.getElementById('overall-status')
+            statusDiv.innerHTML = '<p><span class="status-indicator status-warning"></span>Running all tests...</p>'
+
+            let allPassed = true
+            const results = []
+
+            // Test 1: Configuration
+            try {
+                const configResponse = await fetch('/api/stripe/config');
+                const configData = await response.json();
+                if (configData.configured) {
+                    results.push('✅ Configuration')} else {results.push('❌ Configuration')
+                    allPassed = false}
+            } catch (error) {results.push('❌ Configuration')
+                allPassed = false}
+
+            // Test 2: Connection
+            try {
+                const connectionResponse = await fetch('/api/stripe/test-connection', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const connectionData = await response.json();
+                if (connectionData.success) {results.push('✅ API Connection')} else {results.push('❌ API Connection')
+                    allPassed = false}
+            } catch (error) {results.push('❌ API Connection')
+                allPassed = false}
+
+            // Test 3: Payment Intent
+            try {
+                const intentResponse = await fetch('/api/stripe/create-payment-intent', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount: 1000, currency: 'usd' })
+                });
+                const intentData = await response.json();
+                if (intentData.client_secret) {results.push('✅ Payment Intent Creation')} else {results.push('❌ Payment Intent Creation')
+                    allPassed = false}
+            } catch (error) {results.push('❌ Payment Intent Creation')
+                allPassed = false}
+
+            // Update UI with results
+            const status = allPassed ? 'success' : 'error';
+            const icon = allPassed ? '✅' : '❌';
+            const message = `${icon} Overall Status: ${allPassed ? 'All tests passed' : 'Some tests failed'}`;
+
+            statusDiv.innerHTML = `
+                <p><span class="status-indicator ${status === 'success' ? 'status-success' : 'status-error'}"></span>${message}</p>
+                <div style="margin-top: 10px">
+                    ${results.map(result => `<div>${result}</div>`).join('')}
+                </div>
+            `;
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializeStripe);
+    </script>
+</body>
+</html>

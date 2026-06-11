@@ -1,0 +1,670 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quotes & Pricing - QR LEGENDS</title>
+    <style>
+        * {margin: 0
+            padding: 0
+            box-sizing: border-box}
+
+        body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            min-height: 100vh
+            padding: 20px}
+
+        .container {max-width: 1400px
+            margin: 0 auto
+            background: white
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);}
+
+        .header {text-align: center
+            margin-bottom: 30px}
+
+        .back-btn {position: absolute
+            top: 20px
+            left: 20px
+            background: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-weight: 600}
+
+        .main-tabs {display: flex
+            background: #f8f9fa
+            border-radius: 10px
+            padding: 5px;
+            margin-bottom: 30px}
+
+        .main-tab {flex: 1
+            padding: 15px 20px
+            text-align: center
+            border: none;
+            background: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s}
+
+        .main-tab.active {background: #667eea
+            color: white}
+
+        .tab-content {display: none}
+
+        .tab-content.active {display: block}
+
+        .quick-actions {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
+            gap: 15px
+            margin-bottom: 30px}
+
+        .action-btn {padding: 15px 20px
+            border: none
+            border-radius: 8px
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-align: center}
+
+        .btn-primary {background: #667eea color: white}
+        .btn-success {background: #28a745 color: white}
+        .btn-warning {background: #ffc107 color: #333}
+        .btn-info {background: #17a2b8 color: white}
+
+        .action-btn:hover {transform: translateY(-2px)
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2)}
+
+        .content-grid {display: grid
+            grid-template-columns: 1fr 350px
+            gap: 30px}
+
+        .main-content {background: #f8f9fa
+            border-radius: 10px
+            padding: 20px}
+
+        .sidebar {background: #f8f9fa
+            border-radius: 10px
+            padding: 20px}
+
+        .form-group {margin-bottom: 15px}
+
+        .form-group label {display: block
+            margin-bottom: 5px
+            font-weight: 600
+            color: #333}
+
+        .form-group input, .form-group select, .form-group textarea {width: 100%
+            padding: 10px
+            border: 1px solid #ddd
+            border-radius: 5px;
+            font-size: 14px}
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea: focus {outline: none
+            border-color: #667eea}
+
+        .quote-item {background: white
+            border-radius: 8px
+            padding: 15px
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s}
+
+        .quote-item:hover {transform: translateY(-2px)
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1)}
+
+        .quote-header {display: flex
+            justify-content: space-between
+            align-items: center
+            margin-bottom: 10px}
+
+        .quote-number {font-weight: bold
+            color: #333}
+
+        .quote-status {padding: 4px 12px
+            border-radius: 15px
+            font-size: 12px
+            font-weight: 600}
+
+        .status-draft {background: #f8d7da color: #721c24}
+        .status-sent {background: #fff3cd color: #856404}
+        .status-accepted {background: #d4edda color: #155724}
+        .status-expired {background: #d1ecf1 color: #0c5460}
+
+        .pricing-rules {background: white
+            border-radius: 8px
+            padding: 15px
+            margin-bottom: 15px}
+
+        .rule-item {display: flex
+            justify-content: space-between
+            align-items: center
+            padding: 10px;
+            border-bottom: 1px solid #eee}
+
+        .rule-item:last-child {border-bottom: none}
+
+        @media (max-width: 768px) {.content-grid {
+                grid-template-columns: 1fr}
+            
+            .main-tabs {flex-direction: column}
+            
+            .quick-actions {grid-template-columns: repeat(2, 1fr)}
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='/salespad_dashboard'">← Back to SalesPad</button>
+
+    <div class="container">
+        <div class="header">
+            <h1>💰 Quotes & Pricing</h1>
+            <p>Manage sales quotes, customer pricing, and discount rules</p>
+        </div>
+
+        <div class="main-tabs">
+            <button class="main-tab active" onclick="switchMainTab('quotes')">📋 Quotes</button>
+            <button class="main-tab" onclick="switchMainTab('pricing')">💰 Pricing Rules</button>
+            <button class="main-tab" onclick="switchMainTab('discounts')">🎯 Discounts</button>
+            <button class="main-tab" onclick="switchMainTab('calculator')">🧮 Price Calculator</button>
+        </div>
+
+        <!-- Quotes Tab -->
+        <div id="quotes-tab" class="tab-content active">
+            <div class="quick-actions">
+                <button class="action-btn btn-primary" onclick="createNewQuote()">📝 New Quote</button>
+                <button class="action-btn btn-success" onclick="convertToOrder()">🔄 Convert to Order</button>
+                <button class="action-btn btn-warning" onclick="followUpQuotes()">📞 Follow-up</button>
+                <button class="action-btn btn-info" onclick="emailQuote()">📧 Email Quote</button>
+            </div>
+
+            <div class="content-grid">
+                <div class="main-content">
+                    <h3>📋 Active Quotes</h3>
+                    <div id="quotesList">
+                        <!-- Quotes will be populated here -->
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <h3>🔍 Quote Details</h3>
+                    <div id="quoteDetails">
+                        <p style="text-align: center; color: #666; margin-top: 50px;">
+                            Select a quote to view details
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Rules Tab -->
+        <div id="pricing-tab" class="tab-content">
+            <div class="quick-actions">
+                <button class="action-btn btn-primary" onclick="createPricingRule()">➕ New Pricing Rule</button>
+                <button class="action-btn btn-success" onclick="importPricing()">📤 Import Pricing</button>
+                <button class="action-btn btn-warning" onclick="exportPricing()">📥 Export Pricing</button>
+                <button class="action-btn btn-info" onclick="bulkUpdate()">🔄 Bulk Update</button>
+            </div>
+
+            <div class="content-grid">
+                <div class="main-content">
+                    <h3>💰 Pricing Rules</h3>
+                    <div id="pricingRules">
+                        <!-- Pricing rules will be populated here -->
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <h3>➕ Create Pricing Rule</h3>
+                    <form id="pricingForm">
+                        <div class="form-group">
+                            <label>Rule Name</label>
+                            <input type="text" id="ruleName" placeholder="Enter rule name">
+                        </div>
+                        <div class="form-group">
+                            <label>Rule Type</label>
+                            <select id="ruleType">
+                                <option value="customer">Customer Specific</option>
+                                <option value="volume">Volume Based</option>
+                                <option value="product">Product Category</option>
+                                <option value="promo">Promotional</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Discount Type</label>
+                            <select id="discountType">
+                                <option value="percentage">Percentage</option>
+                                <option value="fixed">Fixed Amount</option>
+                                <option value="special">Special Price</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Discount Value</label>
+                            <input type="number" id="discountValue" placeholder="Enter value">
+                        </div>
+                        <button type="button" class="action-btn btn-success" onclick="savePricingRule()">💾 Save Rule</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Discounts Tab -->
+        <div id="discounts-tab" class="tab-content">
+            <div class="quick-actions">
+                <button class="action-btn btn-primary" onclick="createPromoCode()">🎯 New Promo Code</button>
+                <button class="action-btn btn-success" onclick="seasonalDiscount()">🌟 Seasonal Discount</button>
+                <button class="action-btn btn-warning" onclick="loyaltyDiscount()">💎 Loyalty Discount</button>
+                <button class="action-btn btn-info" onclick="bulkDiscount()">📦 Bulk Discount</button>
+            </div>
+
+            <div class="main-content">
+                <h3>🎯 Active Discounts</h3>
+                <div id="discountsList">
+                    <!-- Discounts will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Price Calculator Tab -->
+        <div id="calculator-tab" class="tab-content">
+            <div class="content-grid">
+                <div class="main-content">
+                    <h3>🧮 Price Calculator</h3>
+                    <div style="background: white; padding: 20px; border-radius: 8px;">
+                        <div class="form-group">
+                            <label>Customer</label>
+                            <select id="calcCustomer">
+                                <option value="">Select Customer</option>
+                                <option value="CUST-001">Acme Industries</option>
+                                <option value="CUST-002">Tech Solutions LLC</option>
+                                <option value="CUST-003">Global Supply Co</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Product</label>
+                            <select id="calcProduct">
+                                <option value="">Select Product</option>
+                                <option value="PROD-001">Widget Set A</option>
+                                <option value="PROD-002">Component Pack B</option>
+                                <option value="PROD-003">Assembly Kit C</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Quantity</label>
+                            <input type="number" id="calcQuantity" placeholder="Enter quantity" onchange="calculatePrice()">
+                        </div>
+                        <div id="calculationResult" style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 15px;">
+                            <!-- Calculation results will appear here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <h3>📊 Pricing Breakdown</h3>
+                    <div id="pricingBreakdown">
+                        <p style="text-align: center; color: #666; margin-top: 50px;">
+                            Select customer, product, and quantity to see pricing
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let quotes = [];
+        let pricingRules = [];
+        let selectedQuote = null;
+
+        document.addEventListener('DOMContentLoaded', function() {loadQuotes()
+            loadPricingRules()
+            loadDiscounts()});
+
+        function loadQuotes() {
+            quotes = [
+                {
+                    id: 'QT-2025-001',
+                    customer: 'Acme Industries',
+                    date: '2025-01-15',
+                    expiry: '2025-02-15',
+                    status: 'sent',
+                    total: 12500.00,
+                    items: 25
+                },
+                {
+                    id: 'QT-2025-002',
+                    customer: 'Tech Solutions LLC',
+                    date: '2025-01-14',
+                    expiry: '2025-02-14',
+                    status: 'draft',
+                    total: 8900.00,
+                    items: 15
+                },
+                {
+                    id: 'QT-2025-003',
+                    customer: 'Global Supply Co',
+                    date: '2025-01-12',
+                    expiry: '2025-02-12',
+                    status: 'accepted',
+                    total: 25600.00,
+                    items: 50
+                }
+            ];
+            
+            displayQuotes();
+        }
+
+        function displayQuotes() {const container = document.getElementById('quotesList')
+            container.innerHTML = quotes.map(quote => `
+                <div class="quote-item" onclick="selectQuote('${quote.id}')">
+                    <div class="quote-header">
+                        <span class="quote-number">${quote.id}</span>
+                        <span class="quote-status status-${quote.status}">${quote.status.toUpperCase()}</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size: 14px; color: #666;">
+                        <div><strong>Customer:</strong> ${quote.customer}</div>
+                        <div><strong>Date:</strong> ${quote.date}</div>
+                        <div><strong>Total:</strong> $${quote.total.toFixed(2)}</div>
+                        <div><strong>Items:</strong> ${quote.items}</div>
+                        <div><strong>Expires:</strong> ${quote.expiry}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectQuote(quoteId) {selectedQuote = quotes.find(quote => quote.id === quoteId)
+            if (selectedQuote) {
+                document.getElementById('quoteDetails').innerHTML = `
+                    <div style="background: white padding: 15px border-radius: 8px">
+                        <h4>${selectedQuote.id}</h4>
+                        <p><strong>Customer:</strong> ${selectedQuote.customer}</p>
+                        <p><strong>Date:</strong> ${selectedQuote.date}</p>
+                        <p><strong>Expires:</strong> ${selectedQuote.expiry}</p>
+                        <p><strong>Status:</strong> ${selectedQuote.status}</p>
+                        <p><strong>Total:</strong> $${selectedQuote.total.toFixed(2)}</p>
+                        <p><strong>Items:</strong> ${selectedQuote.items} items</p>
+                        <div style="margin-top: 15px">
+                            <button class="action-btn btn-primary" onclick="editQuote()" style="width: 100%; margin-bottom: 10px;">✏️ Edit Quote</button>
+                            <button class="action-btn btn-success" onclick="sendQuote()" style="width: 100%;">📧 Send Quote</button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function loadPricingRules() {
+            pricingRules = [
+                {
+                    id: 'RULE-001',
+                    name: 'Volume Discount - 100+ units',
+                    type: 'Volume Based',
+                    discount: '10%',
+                    condition: 'Quantity >= 100',
+                    status: 'Active'
+                },
+                {
+                    id: 'RULE-002',
+                    name: 'Premium Customer Discount',
+                    type: 'Customer Specific',
+                    discount: '5%',
+                    condition: 'Customer Tier = Premium',
+                    status: 'Active'
+                },
+                {
+                    id: 'RULE-003',
+                    name: 'New Year Promotion',
+                    type: 'Promotional',
+                    discount: '15%',
+                    condition: 'Valid until Jan 31, 2025',
+                    status: 'Active'
+                }
+            ];
+            
+            displayPricingRules();
+        }
+
+        function displayPricingRules() {const container = document.getElementById('pricingRules')
+            container.innerHTML = pricingRules.map(rule => `
+                <div class="pricing-rules">
+                    <div class="rule-item">
+                        <div>
+                            <strong>${rule.name}</strong><br>
+                            <small>${rule.type} - ${rule.condition}</small>
+                        </div>
+                        <div>
+                            <strong>${rule.discount}</strong><br>
+                            <small>${rule.status}</small>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadDiscounts() {const container = document.getElementById('discountsList')
+            container.innerHTML = `
+                <div style="background: white border-radius: 8px padding: 15px margin-bottom: 10px">
+                    <h4>🎯 NEWYEAR2025</h4>
+                    <p>15% off all orders • Valid until Jan 31, 2025</p>
+                    <small>Used 45 times • $12,500 total discount given</small>
+                </div>
+                <div style="background: white border-radius: 8px; padding: 15px; margin-bottom: 10px;">
+                    <h4>💎 LOYALTY10</h4>
+                    <p>10% off for returning customers • No expiry</p>
+                    <small>Used 123 times • $8,900 total discount given</small>
+                </div>
+                <div style="background: white; border-radius: 8px; padding: 15px; margin-bottom: 10px;">
+                    <h4>📦 BULK25</h4>
+                    <p>25% off orders over $5,000 • Valid all year</p>
+                    <small>Used 18 times • $25,600 total discount given</small>
+                </div>
+            `;}
+
+        function switchMainTab(tabName) {document.querySelectorAll('.main-tab').forEach(tab => tab.classList.remove('active'))
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'))
+            
+            event.target.classList.add('active')
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+
+        function calculatePrice() {const customer = document.getElementById('calcCustomer').value
+            const product = document.getElementById('calcProduct').value
+            const quantity = parseInt(document.getElementById('calcQuantity').value) || 0
+
+            if (customer && product && quantity > 0) {
+                // Sample pricing calculation
+                const basePrice = 25.00;
+                const subtotal = basePrice * quantity;
+                let discount = 0;
+                let discountRate = 0;
+
+                // Apply volume discount
+                if (quantity >= 100) {
+                    discountRate = 0.10;
+                    discount = subtotal * discountRate;}
+
+                const total = subtotal - discount;
+
+                document.getElementById('calculationResult').innerHTML = `
+                    <h4>💰 Price Calculation</h4>
+                    <p><strong>Base Price:</strong> $${basePrice.toFixed(2)} per unit</p>
+                    <p><strong>Quantity:</strong> ${quantity} units</p>
+                    <p><strong>Subtotal:</strong> $${subtotal.toFixed(2)}</p>
+                    ${discount > 0 ? `<p><strong>Discount (${(discountRate * 100)}%):</strong> -$${discount.toFixed(2)}</p>` : ''}
+                    <p style="font-size: 1.2rem; font-weight: bold; color: #667eea;"><strong>Total:</strong> $${total.toFixed(2)}</p>
+                `;
+
+                document.getElementById('pricingBreakdown').innerHTML = `
+                    <div style="background: white padding: 15px border-radius: 8px">
+                        <h4>📊 Breakdown</h4>
+                        <div style="margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                            <div>Base Price: $${basePrice.toFixed(2)}</div>
+                            <div>Quantity: ${quantity}</div>
+                            <div>Subtotal: $${subtotal.toFixed(2)}</div>
+                            ${discount > 0 ? `<div style="color: green">Discount: -$${discount.toFixed(2)}</div>` : ''}
+                            <div style="font-weight: bold; border-top: 1px solid #ddd; padding-top: 5px; margin-top: 5px;">
+                                Total: $${total.toFixed(2)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function createNewQuote() {alert('📝 Creating new quote...\n- Quote ID: QT-2025-004\n- Customer selection required\n- Opening quote builder...')}
+
+        function convertToOrder() {if (!selectedQuote) {
+                alert('Please select a quote first')
+                return}
+            alert(`🔄 Converting ${selectedQuote.id} to order...\n- New Order ID: SO-2025-015\n- Customer notified\n- Pick ticket generated`);
+        }
+
+        function savePricingRule() {const ruleName = document.getElementById('ruleName').value
+            if (!ruleName) {
+                alert('Please enter a rule name')
+                return}
+            alert(`💾 Pricing rule "${ruleName}" saved successfully!`);
+            document.getElementById('pricingForm').reset();
+        }
+
+        function createPromoCode() {const code = prompt('Enter promo code:')
+            if (code) {
+                alert(`🎯 Promo code "${code}" created successfully!`);
+            }
+        }
+
+        // Missing function definitions
+        function bulkDiscount() {
+            console.log('💰 Applying bulk discount...');
+            const discount = prompt('Enter bulk discount percentage:', '10');
+            if (discount) {
+                alert('💰 Bulk Discount Applied\n\n✅ Discount: ' + discount + '%\n✅ Applied to all selected items\n✅ Prices updated');
+            }
+        }
+
+        function bulkUpdate() {
+            console.log('📦 Performing bulk price update...');
+            const percentage = prompt('Enter price adjustment percentage (use negative for decrease):', '5');
+            if (percentage) {
+                alert('📦 Bulk Price Update\n\n✅ Price adjustment: ' + percentage + '%\n✅ Items updated: 45\n✅ New prices effective immediately');
+            }
+        }
+
+        function createPricingRule() {
+            console.log('📋 Creating pricing rule...');
+            alert('📋 Pricing Rule Creator\n\n• Enter rule name\n• Select customer tier\n• Set discount percentage\n• Choose applicable products\n• Set date range\n\nOpening rule creator...');
+        }
+
+        // Additional missing function definitions
+        function editQuote(quoteId) {
+            console.log('✏️ Editing quote:', quoteId);
+            alert('✏️ Opening Quote Editor for: ' + quoteId);
+        }
+
+        function emailQuote(quoteId) {
+            console.log('📧 Emailing quote:', quoteId);
+            alert('📧 Quote ' + quoteId + ' sent to customer email successfully!');
+        }
+
+        function exportPricing() {
+            console.log('📤 Exporting pricing data...');
+            alert('📤 Pricing Export\n\n✅ 156 products exported\n✅ CSV file generated\n✅ Download starting...');
+        }
+
+        function followUpQuotes() {
+            console.log('📞 Following up on quotes...');
+            alert('📞 Quote Follow-up\n\n• 5 quotes pending response > 7 days\n• 3 quotes expiring this week\n• Opening follow-up dashboard...');
+        }
+
+        function importPricing() {
+            console.log('📥 Importing pricing data...');
+            alert('📥 Pricing Import\n\nSelect a CSV file with pricing data to import.\nFormat: SKU, Product Name, Base Price, Tier 1 Price, Tier 2 Price');
+        }
+
+        function loyaltyDiscount() {
+            console.log('🎖️ Setting loyalty discount...');
+            const discount = prompt('Enter loyalty discount percentage for premium customers:', '15');
+            if (discount) {
+                alert('🎖️ Loyalty Discount Set\n\n✅ ' + discount + '% discount applied to loyalty tier customers');
+            }
+        }
+
+        function seasonalDiscount() {
+            console.log('🎄 Setting seasonal discount...');
+            const discount = prompt('Enter seasonal discount percentage:', '20');
+            if (discount) {
+                alert('🎄 Seasonal Discount\n\n✅ ' + discount + '% discount activated\n✅ Valid for current season');
+            }
+        }
+
+        function sendQuote(quoteId) {
+            console.log('📤 Sending quote:', quoteId);
+            const quote = quoteId || 'QT-2025-001';
+            alert('📤 Quote ' + quote + ' Sent\n\n✅ Email sent to customer\n✅ PDF attachment included\n✅ Follow-up scheduled for 3 days');
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quotes & Pricing - QR Legends</title>
+    <style>
+        * {margin: 0 padding: 0 box-sizing: border-box}
+        body {font-family: Arial, sans-serif background: #f5f5f5}
+        .container {max-width: 1200px margin: 0 auto padding: 20px}
+        .header {background: #e67e22 color: white padding: 20px border-radius: 10px; margin-bottom: 20px}
+        .grid {display: grid grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) gap: 20px}
+        .card {background: white padding: 20px border-radius: 10px box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+        .btn {background: #e67e22 color: white border: none padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px}
+        .btn:hover {background: #d35400}
+        .btn-success {background: #27ae60}
+        .btn-warning {background: #f39c12}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Quotes & Pricing</h1>
+            <p>Generate quotes, manage pricing rules, and customer-specific pricing</p>
+        </div>
+        
+        <div class="grid">
+            <div class="card">
+                <h3>📝 Sales Quotes</h3>
+                <p>Create and manage customer quotes</p>
+                <button class="btn">View Quotes</button>
+                <button class="btn btn-success">New Quote</button>
+            </div>
+            
+            <div class="card">
+                <h3>💲 Pricing Rules</h3>
+                <p>Set up customer-specific and volume pricing</p>
+                <button class="btn">Manage Pricing</button>
+                <button class="btn btn-warning">Volume Discounts</button>
+            </div>
+            
+            <div class="card">
+                <h3>🏷️ Promo Codes</h3>
+                <p>Create and manage promotional pricing</p>
+                <button class="btn">Active Promos</button>
+                <button class="btn btn-success">Create Promo</button>
+            </div>
+            
+            <div class="card">
+                <h3>📊 Quote Analytics</h3>
+                <p>Quote conversion rates and pricing performance</p>
+                <button class="btn">View Reports</button>
+                <button class="btn">Export Data</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

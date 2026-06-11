@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lift Driver Dashboard - QR Legends</title>
+    <script src="/static/qr_camera_scanner.js"></script>
+    <script src="/copyright_notice.js"></script>
+    <link rel="stylesheet" href="/static/professional_style.css">
+    <style>
+        :root {
+            --ql-primary: #007bff;
+            --ql-success: #28a745;
+            --ql-danger: #dc3545;
+            --ql-warning: #ffc107;
+            --ql-info: #17a2b8;
+            --ql-dark: #343a40;
+            --ql-card-bg: #ffffff;
+            --ql-border-color: #e0e0e0;
+            --ql-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f39c12 0%, #e74c3c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .driver-info {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: var(--ql-shadow);
+        }
+
+        .driver-info h2 {
+            margin: 0 0 15px 0;
+            color: var(--ql-dark);
+            font-size: 1.8rem;
+        }
+
+        .aisle-badges {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .aisle-badge {
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .tasks-container {
+            display: grid;
+            gap: 20px;
+        }
+
+        .task-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--ql-shadow);
+            border-left: 5px solid;
+            transition: transform 0.2s ease;
+        }
+
+        .task-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .task-card.priority-1 {
+            border-left-color: #dc3545;
+            background: linear-gradient(to right, #ffebee 0%, #ffffff 5%);
+        }
+
+        .task-card.priority-2 {
+            border-left-color: #ffc107;
+            background: linear-gradient(to right, #fff8e1 0%, #ffffff 5%);
+        }
+
+        .task-card.priority-3 {
+            border-left-color: #17a2b8;
+            background: linear-gradient(to right, #e0f7fa 0%, #ffffff 5%);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .task-type {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .priority-badge {
+            padding: 6px 16px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .priority-1 .priority-badge {
+            background: #dc3545;
+            animation: pulse 1.5s infinite;
+        }
+
+        .priority-2 .priority-badge {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .priority-3 .priority-badge {
+            background: #17a2b8;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+        .task-details {
+            margin: 15px 0;
+        }
+
+        .task-detail-row {
+            display: flex;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .task-detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .task-detail-label {
+            font-weight: bold;
+            width: 150px;
+            color: #666;
+        }
+
+        .task-detail-value {
+            flex: 1;
+            color: #333;
+        }
+
+        .location-highlight {
+            background: #e8f5e9;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            color: #2e7d32;
+            font-size: 1.2rem;
+        }
+
+        .task-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #218838);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+        }
+
+        .no-tasks {
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: var(--ql-shadow);
+        }
+
+        .no-tasks .icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .no-tasks h3 {
+            color: #666;
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .refresh-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #28a745, #218838);
+            color: white;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--ql-shadow);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--ql-primary);
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .nav-buttons {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🏗️ Lift Driver Dashboard</h1>
+            <p>Real-time task management and priority notifications</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-buttons">
+            <button class="btn btn-primary" onclick="location.href='/main_dashboard'">🏠 Dashboard</button>
+            <button class="btn btn-primary" onclick="location.href='/inventory'">📊 Back to Inventory</button>
+        </div>
+
+        <!-- Driver Info -->
+        <div class="driver-info">
+            <h2>👤 <span id="driverName">Loading...</span></h2>
+            <div>
+                <strong>Assigned Aisles:</strong>
+                <div id="assignedAisles" class="aisle-badges">
+                    <div class="aisle-badge">Loading...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="pendingCount">0</div>
+                <div class="stat-label">Pending Tasks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="priorityCount">0</div>
+                <div class="stat-label">Priority Tasks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="completedToday">0</div>
+                <div class="stat-label">Completed Today</div>
+            </div>
+        </div>
+
+        <!-- Tasks List -->
+        <h2 style="color: white; margin: 20px 0;">📋 Your Tasks</h2>
+        <div id="tasksContainer" class="tasks-container">
+            <div class="no-tasks">
+                <div class="icon">📦</div>
+                <h3>Loading tasks...</h3>
+            </div>
+        </div>
+
+        <!-- Refresh Button -->
+        <button class="refresh-btn" onclick="loadTasks()" title="Refresh Tasks">🔄</button>
+    </div>
+
+    <script>
+        let currentDriver = null;
+        let currentTasks = [];
+
+        // Load lift driver assignments and tasks on page load
+        async function loadDriverInfo() {
+            try {
+                const response = await fetch('/api/lift-drivers/assignments');
+                const data = await response.json();
+                
+                if (data.success && data.assignments.length > 0) {
+                    // For demo, use first driver - in production this would be based on login
+                    currentDriver = data.assignments[0];
+                    
+                    document.getElementById('driverName').textContent = currentDriver.driver_name;
+                    
+                    const aislesHtml = currentDriver.assigned_aisles
+                        .map(aisle => `<div class="aisle-badge">${aisle}</div>`)
+                        .join('');
+                    document.getElementById('assignedAisles').innerHTML = aislesHtml || '<div class="aisle-badge">No aisles assigned</div>';
+                }
+            } catch (error) {
+                console.error('Error loading driver info:', error);
+            }
+        }
+
+        async function loadTasks() {
+            try {
+                const driverId = currentDriver ? currentDriver.id : null;
+                const url = driverId ? `/api/lift-drivers/tasks?driver_id=${driverId}` : '/api/lift-drivers/tasks';
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentTasks = data.tasks.filter(t => t.status === 'pending');
+                    displayTasks(currentTasks);
+                    updateStats(currentTasks);
+                }
+            } catch (error) {
+                console.error('Error loading tasks:', error);
+            }
+        }
+
+        function displayTasks(tasks) {
+            const container = document.getElementById('tasksContainer');
+            
+            if (tasks.length === 0) {
+                container.innerHTML = `
+                    <div class="no-tasks">
+                        <div class="icon">✅</div>
+                        <h3>No pending tasks</h3>
+                        <p>All caught up! Check back soon for new assignments.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const tasksHtml = tasks.map(task => {
+                const priorityText = task.priority === 1 ? 'URGENT' : task.priority === 2 ? 'HIGH' : 'NORMAL';
+                const typeIcon = task.type === 'pull_down' ? '⬇️ PULL DOWN' : '📦 REPLENISHMENT';
+                const typeText = task.type === 'pull_down' ? 'Pull Down Request' : 'Replenishment Request';
+                
+                return `
+                    <div class="task-card priority-${task.priority}">
+                        <div class="task-header">
+                            <div class="task-type">${typeIcon}</div>
+                            <div class="priority-badge">${priorityText}</div>
+                        </div>
+                        
+                        <div class="task-details">
+                            <div class="task-detail-row">
+                                <div class="task-detail-label">Type:</div>
+                                <div class="task-detail-value">${typeText}</div>
+                            </div>
+                            <div class="task-detail-row">
+                                <div class="task-detail-label">Item:</div>
+                                <div class="task-detail-value"><strong>${task.item_name || 'Unknown Item'}</strong></div>
+                            </div>
+                            <div class="task-detail-row">
+                                <div class="task-detail-label">Location:</div>
+                                <div class="task-detail-value"><span class="location-highlight">📍 ${task.location}</span></div>
+                            </div>
+                            <div class="task-detail-row">
+                                <div class="task-detail-label">Requested By:</div>
+                                <div class="task-detail-value">${task.requested_by}</div>
+                            </div>
+                            <div class="task-detail-row">
+                                <div class="task-detail-label">Created:</div>
+                                <div class="task-detail-value">${new Date(task.created_at).toLocaleString()}</div>
+                            </div>
+                            ${task.notes ? `
+                            <div class="task-detail-row">
+                                <div class="task-detail-label">Notes:</div>
+                                <div class="task-detail-value"><em>${task.notes}</em></div>
+                            </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="task-actions">
+                            <button class="btn btn-success" onclick="completeTask('${task.id}')">
+                                ✅ Complete Task
+                            </button>
+                            <button class="btn btn-primary" onclick="navigateToLocation('${task.location}')">
+                                🗺️ Navigate
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = tasksHtml;
+        }
+
+        function updateStats(tasks) {
+            const pending = tasks.filter(t => t.status === 'pending').length;
+            const priority = tasks.filter(t => t.priority === 1).length;
+            
+            document.getElementById('pendingCount').textContent = pending;
+            document.getElementById('priorityCount').textContent = priority;
+            // Completed today would need additional logic to track
+        }
+
+        async function completeTask(taskId) {
+            if (!confirm('Mark this task as complete?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/lift-drivers/tasks/${taskId}/complete`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Task completed successfully!');
+                    await loadTasks();
+                } else {
+                    alert('❌ Error completing task: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error completing task:', error);
+                alert('❌ Error completing task');
+            }
+        }
+
+        function navigateToLocation(location) {
+            alert(`🗺️ Navigation to ${location}\n\nIn production, this would open warehouse navigation with optimal route.`);
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadDriverInfo();
+            await loadTasks();
+            
+            // Auto-refresh every 10 seconds
+            setInterval(loadTasks, 10000);
+            
+            console.log('✅ Lift Driver Dashboard loaded');
+        });
+    </script>
+
+    <!-- Include widgets -->
+    <script src="/qr_camera_scanner.js"></script>
+    <script src="/copyright_notice.js"></script>
+    <script src="/floating_chat_widget.js"></script>
+    <script src="/employee_messaging_widget.js"></script>
+    <script src="/universal_dashboard_button.js"></script>
+</body>
+</html>

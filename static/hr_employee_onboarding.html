@@ -1,0 +1,335 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Employee - HR Portal</title>
+    <link rel="stylesheet" href="qr_legends_dark_theme.css">
+    <style>
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--ql-card);
+            border: 1px solid var(--ql-border);
+            border-radius: 16px;
+            padding: 30px;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--ql-text);
+            margin-bottom: 16px;
+            border-bottom: 2px solid var(--ql-primary);
+            padding-bottom: 8px;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--ql-text);
+            font-weight: 500;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--ql-border);
+            border-radius: 8px;
+            background: var(--ql-surface);
+            color: var(--ql-text);
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--ql-primary), var(--ql-accent));
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: var(--ql-surface);
+            color: var(--ql-text);
+            border: 1px solid var(--ql-border);
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
+        
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .progress-step {
+            padding: 8px 16px;
+            margin: 0 4px;
+            border-radius: 20px;
+            background: var(--ql-surface);
+            color: var(--ql-sub);
+            font-size: 0.9rem;
+        }
+        
+        .progress-step.active {
+            background: var(--ql-primary);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header class="ql-header">
+        <div class="ql-header-inner">
+            <div class="ql-title">
+                <span class="ql-logo">👤</span>
+                <h1 class="ql-h1">Add New Employee</h1>
+            </div>
+            <nav class="ql-nav">
+                <a class="ql-btn" href="/erp_hr">👥 HR Portal</a>
+                <a class="ql-btn ql-secondary" href="/hr_employee_directory">📋 Employee Directory</a>
+            </nav>
+            <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+        </div>
+    </header>
+
+    <div class="ql-container">
+        <div class="form-container">
+            <div class="progress-indicator">
+                <div class="progress-step active">Personal Info</div>
+                <div class="progress-step">Employment Details</div>
+                <div class="progress-step">Benefits & Access</div>
+            </div>
+
+            <form id="addEmployeeForm">
+                <!-- Personal Information Section -->
+                <div class="form-section">
+                    <h2 class="section-title">📋 Personal Information</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="firstName">First Name *</label>
+                            <input type="text" id="firstName" name="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name *</label>
+                            <input type="text" id="lastName" name="lastName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="address">Home Address</label>
+                            <textarea id="address" name="address" placeholder="Street address, city, state, zip code"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Employment Information Section -->
+                <div class="form-section">
+                    <h2 class="section-title">💼 Employment Information</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="employeeId">Employee ID *</label>
+                            <input type="text" id="employeeId" name="employeeId" required placeholder="e.g., EMP001">
+                        </div>
+                        <div class="form-group">
+                            <label for="position">Job Title *</label>
+                            <input type="text" id="position" name="position" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="department">Department *</label>
+                            <select id="department" name="department" required>
+                                <option value="">Select Department</option>
+                                <option value="warehouse">Warehouse</option>
+                                <option value="administration">Administration</option>
+                                <option value="hr">Human Resources</option>
+                                <option value="it">Information Technology</option>
+                                <option value="finance">Finance</option>
+                                <option value="sales">Sales</option>
+                                <option value="operations">Operations</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="hireDate">Hire Date *</label>
+                            <input type="date" id="hireDate" name="hireDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="employmentType">Employment Type *</label>
+                            <select id="employmentType" name="employmentType" required>
+                                <option value="">Select Type</option>
+                                <option value="full_time">Full Time</option>
+                                <option value="part_time">Part Time</option>
+                                <option value="contract">Contract</option>
+                                <option value="temporary">Temporary</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="salary">Annual Salary</label>
+                            <input type="number" id="salary" name="salary" placeholder="50000">
+                        </div>
+                        <div class="form-group">
+                            <label for="manager">Direct Manager</label>
+                            <select id="manager" name="manager">
+                                <option value="">Select Manager</option>
+                                <option value="john_doe">John Doe - Warehouse Supervisor</option>
+                                <option value="sarah_miller">Sarah Miller - HR Manager</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Access & Benefits Section -->
+                <div class="form-section">
+                    <h2 class="section-title">🔐 Access & Benefits</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="role">System Role *</label>
+                            <select id="role" name="role" required>
+                                <option value="">Select Role</option>
+                                <option value="admin">Administrator</option>
+                                <option value="manager">Manager</option>
+                                <option value="worker">Worker</option>
+                                <option value="client">Client</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tempPassword">Temporary Password *</label>
+                            <input type="password" id="tempPassword" name="tempPassword" required placeholder="Employee will change on first login">
+                        </div>
+                        <div class="form-group">
+                            <label for="vacationDays">Vacation Days</label>
+                            <input type="number" id="vacationDays" name="vacationDays" value="15" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="sickDays">Sick Days</label>
+                            <input type="number" id="sickDays" name="sickDays" value="10" min="0">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="emergencyContact">Emergency Contact</label>
+                            <textarea id="emergencyContact" name="emergencyContact" placeholder="Name, relationship, phone number"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <a href="/hr_employee_directory" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Add Employee</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('ql-theme-toggle');
+            const savedTheme = localStorage.getItem('ql-theme');
+            
+            if (savedTheme === 'light') {
+                document.body.classList.add('light');
+                themeToggle.textContent = '☀️';
+            }
+            
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('light');
+                const isLight = document.body.classList.contains('light');
+                themeToggle.textContent = isLight ? '☀️' : '🌙';
+                localStorage.setItem('ql-theme', isLight ? 'light' : 'dark');
+            });
+
+            // Auto-generate employee ID
+            document.getElementById('firstName').addEventListener('input', generateEmployeeId);
+            document.getElementById('lastName').addEventListener('input', generateEmployeeId);
+
+            function generateEmployeeId() {
+                const firstName = document.getElementById('firstName').value;
+                const lastName = document.getElementById('lastName').value;
+                if (firstName && lastName) {
+                    const empId = 'EMP' + (firstName.charAt(0) + lastName.charAt(0)).toUpperCase() + 
+                                 Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+                    document.getElementById('employeeId').value = empId;
+                }
+            }
+
+            // Form submission
+            document.getElementById('addEmployeeForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const employeeData = Object.fromEntries(formData.entries());
+
+                try {
+                    const response = await fetch('/api/hr/employees', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(employeeData)
+                    });
+
+                    if (response.ok) {
+                        alert('Employee added successfully!');
+                        window.location.href = '/hr_employee_directory';
+                    } else {
+                        const error = await response.json();
+                        alert('Error adding employee: ' + (error.message || 'Unknown error'));
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error adding employee. Please try again.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

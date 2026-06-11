@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Putaway Management - QR Legends</title>
+    <style>
+/* === QRLegends Unified Theme (Dark/Light) === */
+:root{
+  --ql-bg: #0b1724;
+  --ql-panel: #0f2340;
+  --ql-card: #102846;
+  --ql-text: #dbe8ff;
+  --ql-sub: #97a6c1;
+  --ql-primary: #3b82f6;
+  --ql-success: #22c55e;
+  --ql-warning: #f59e0b;
+  --ql-danger: #ef4444;
+  --ql-accent: #6366f1;
+  --ql-border: rgba(255,255,255,.12);
+  --ql-surface: rgba(255,255,255,.06);
+}
+/* Light mode overrides */
+body.light{
+  --ql-bg: #f2f6fb;
+  --ql-panel: #ffffff;
+  --ql-card: #ffffff;
+  --ql-text: #1d2840;
+  --ql-sub: #51607c;
+  --ql-primary: #2563eb;
+  --ql-success: #16a34a;
+  --ql-warning: #d97706;
+  --ql-danger: #dc2626;
+  --ql-accent: #4f46e5;
+  --ql-border: rgba(0,0,0,.12);
+  --ql-surface: rgba(15,23,42,.04);
+}
+
+html,body{height:100%;}
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed;
+  color: var(--ql-text);
+  font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+  line-height: 1.45;
+}
+body.light{
+  background: linear-gradient(180deg,#f7faff,#eef3fb);
+}
+
+.ql-header{
+  position: sticky; top:0; z-index:1000;
+  background: rgba(8,27,46,.7);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--ql-border);
+}
+body.light .ql-header{
+  background: rgba(255,255,255,.75);
+}
+.ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
+.ql-title{display:flex; align-items:center; gap:10px;}
+.ql-h1{font-size:1.25rem; margin:0; letter-spacing:.2px;}
+.ql-nav{display:flex; gap:8px; flex-wrap:wrap;}
+.ql-btn{
+  display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
+  background: var(--ql-surface); border: 1px solid var(--ql-border);
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+  transition: transform .08s ease, background .2s ease, border-color .2s ease;
+}
+.ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+body.light .ql-btn:hover{ background: rgba(15,23,42,.08); }
+.ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
+
+.ql-theme-toggle{
+  margin-left:12px; cursor:pointer; border:1px solid var(--ql-border);
+  background: var(--ql-surface); color: var(--ql-text);
+  border-radius:10px; padding:8px 10px; font-size:16px;
+}
+
+.ql-container{ max-width:1200px; margin:22px auto; padding:0 20px; }
+.ql-grid{ display:grid; gap:16px; grid-template-columns: repeat(12, 1fr);}
+.ql-card{
+  grid-column: span 12;
+  background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+  border: 1px solid var(--ql-border);
+  box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+  border-radius:16px; padding:16px 16px;
+}
+body.light .ql-card{
+  background: var(--ql-card);
+  box-shadow: 0 10px 30px rgba(2,8,23,.08);
+}
+
+@media(min-width:900px){
+  .ql-card.half{ grid-column: span 6; }
+  .ql-card.third{ grid-column: span 4; }
+}
+
+.ql-card h2{ font-size:1.05rem; margin:0 0 10px 0; color: #bcd5ff; letter-spacing:.2px; }
+body.light .ql-card h2{ color:#234073; }
+
+.ql-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+.ql-input, .ql-select, input[type="text"], input[type="date"], textarea, select {
+  width:100%; background: var(--ql-surface); color: var(--ql-text); border: 1px solid var(--ql-border);
+  padding:10px 12px; border-radius:10px; outline:none;
+}
+.ql-input::placeholder{ color: #9fb0cc; }
+body.light .ql-input::placeholder{ color: #6b7b92; }
+
+/* dashboard bubble */
+.ql-fab{ position: fixed; right: 18px; bottom: 18px; background: var(--ql-accent); color:white; border:none;
+  border-radius:999px; padding:10px 14px; font-weight:600; box-shadow: 0 14px 30px rgba(0,0,0,.35);}
+
+        .page-header {
+            background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+            border: 1px solid var(--ql-border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #bcd5ff;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: var(--ql-sub);
+            font-size: 16px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .scan-section {
+            text-align: center;
+            padding: 40px 20px;
+            border: 2px dashed var(--ql-border);
+            border-radius: 12px;
+            background: var(--ql-surface);
+            transition: all 0.3s ease;
+        }
+
+        .scan-section.active {
+            border-color: var(--ql-primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .scan-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .scan-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--ql-border);
+            border-radius: 8px;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 16px;
+            background: var(--ql-surface);
+            color: var(--ql-text);
+        }
+
+        .scan-input:focus {
+            outline: none;
+            border-color: var(--ql-primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12));
+            border: 1px solid rgba(59,130,246,.35);
+            color: var(--ql-text);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--ql-primary), #1d4ed8);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--ql-success), #047857);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--ql-warning), #b45309);
+            color: white;
+        }
+
+        .task-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .task-item {
+            background: var(--ql-surface);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--ql-border);
+            transition: all 0.2s ease;
+        }
+
+        .task-item.pending {
+            border-left-color: var(--ql-warning);
+        }
+
+        .task-item.in-progress {
+            border-left-color: var(--ql-primary);
+        }
+
+        .task-item.completed {
+            border-left-color: var(--ql-success);
+            opacity: 0.7;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .task-id {
+            font-weight: 600;
+            color: var(--ql-text);
+        }
+
+        .task-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--ql-warning);
+        }
+
+        .status-progress {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--ql-primary);
+        }
+
+        .status-completed {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--ql-success);
+        }
+
+        .location-info {
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .stat-card {
+            background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+            border: 1px solid var(--ql-border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--ql-primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: var(--ql-sub);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .ql-container {
+                padding: 10px;
+            }
+
+            .ql-nav {
+                display: none;
+            }
+        }
+    </style>
+<script>
+(function(){
+  try {
+    const saved = localStorage.getItem('ql-theme');
+    if(saved === 'light'){ document.addEventListener('DOMContentLoaded', ()=> document.body.classList.add('light')); }
+  } catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const btn = document.getElementById('ql-theme-toggle');
+    if(btn){
+      btn.addEventListener('click', function(){
+        document.body.classList.toggle('light');
+        const isLight = document.body.classList.contains('light');
+        btn.textContent = isLight ? '☀️' : '🌙';
+        try { localStorage.setItem('ql-theme', isLight ? 'light' : 'dark'); } catch(e){}
+      });
+      if(document.body.classList.contains('light')) btn.textContent = '☀️';
+    }
+    document.querySelectorAll('button:not([type])').forEach(b=> b.setAttribute('type','button'));
+  });
+})();
+</script>
+</head>
+<body>
+<!-- Unified QR Legends Header -->
+<header class="ql-header">
+  <div class="ql-header-inner">
+    <div class="ql-title">
+      <span class="ql-logo">🟦</span>
+      <h1 class="ql-h1">Putaway Management - QR Legends</h1>
+    </div>
+    <nav class="ql-nav">
+      <a class="ql-btn ql-secondary" href="main_dashboard.html">🏠 Dashboard</a>
+      <a class="ql-btn" href="receiving.html">📦 Receiving</a>
+      <a class="ql-btn" href="putaway.html">📥 Putaway</a>
+      <a class="ql-btn" href="inventory.html">📊 Inventory</a>
+      <a class="ql-btn" href="transfers.html">🔄 Transfers</a>
+      <a class="ql-btn" href="erp_dashboard.html">💼 ERP Dashboard</a>
+    </nav>
+    <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<div class="ql-container">
+    <div class="page-header">
+        <h1 class="page-title">📥 Putaway Management</h1>
+        <p class="page-subtitle">Efficiently store received items in their designated locations</p>
+    </div>
+
+    <div class="ql-grid">
+        <div class="ql-card half">
+            <h2>📱 Scan Item for Putaway</h2>
+            <div class="scan-section" id="scanSection">
+                <div class="scan-icon">📱</div>
+                <h4 style="margin-bottom: 16px; color: var(--ql-text);">Scan Item QR Code</h4>
+                <input type="text" class="scan-input" id="scanInput" placeholder="Scan or enter QR code" autofocus>
+                <button class="btn btn-primary" onclick="processItem()">🔍 Process Item</button>
+                <button class="btn" style="background: #ff6b35; color: white; margin-left: 10px;" onclick="openItemCameraScanner()">📷 Scan Camera</button>
+            </div>
+
+            <div class="location-info" id="locationInfo" style="display: none;">
+                <h4 style="margin-bottom: 12px; color: var(--ql-text);">📍 Suggested Location</h4>
+                <div id="locationDetails"></div>
+                <div style="margin-top: 16px;">
+                    <button class="btn btn-success" onclick="confirmPutaway()">✅ Confirm Putaway</button>
+                    <button class="btn btn-warning" onclick="suggestAlternate()">🔄 Suggest Alternate</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="ql-card half">
+            <h2>📋 Putaway Tasks</h2>
+            <div class="task-list" id="taskList">
+                <div class="task-item pending">
+                    <div class="task-header">
+                        <span class="task-id">PO-2024-001</span>
+                        <span class="task-status status-pending">Pending</span>
+                    </div>
+                    <div style="color: var(--ql-text);">Computer Monitors x5</div>
+                    <div style="font-size: 14px; color: var(--ql-sub);">Destination: A1-B2-C3</div>
+                </div>
+                <div class="task-item in-progress">
+                    <div class="task-header">
+                        <span class="task-id">PO-2024-002</span>
+                        <span class="task-status status-progress">In Progress</span>
+                    </div>
+                    <div style="color: var(--ql-text);">Office Chairs x10</div>
+                    <div style="font-size: 14px; color: var(--ql-sub);">Destination: B2-A1-D4</div>
+                </div>
+                <div class="task-item completed">
+                    <div class="task-header">
+                        <span class="task-id">PO-2024-003</span>
+                        <span class="task-status status-completed">Completed</span>
+                    </div>
+                    <div style="color: var(--ql-text);">Desk Lamps x20</div>
+                    <div style="font-size: 14px; color: var(--ql-sub);">Location: C3-D4-A1</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Container-Based Putaway Section -->
+        <div class="ql-card" style="border: 2px solid #007bff; border-radius: 16px;">
+            <h2 style="color: #007bff; display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+                📦 Container-Based Putaway
+            </h2>
+            <p style="color: var(--ql-sub); margin-bottom: 24px; font-size: 14px;">
+                First scan container QR code, then scan items within that container to move them to their designated slots
+            </p>
+
+            <!-- Step 1: Container Validation -->
+            <div id="containerValidationStep" style="background: var(--ql-surface); padding: 20px; border-radius: 12px; margin-bottom: 16px;">
+                <h3 style="color: #28a745; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                    <span style="background: #28a745; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">1</span>
+                    Scan Container QR Code
+                </h3>
+
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="color: var(--ql-text); font-weight: 500; margin-bottom: 8px; display: block;">Container QR Code</label>
+                    <input type="text"
+                           id="putawayContainerScan"
+                           class="ql-input"
+                           placeholder="Scan or enter container QR code"
+                           style="font-size: 16px; padding: 12px 16px;">
+                </div>
+
+                <div class="ql-actions" style="gap: 12px;">
+                    <button class="ql-btn"
+                            style="background: linear-gradient(135deg, #ff6b35, #ff5722); color: white; padding: 12px 20px;"
+                            onclick="openPutawayCameraScanner()">
+                        📷 Scan Container
+                    </button>
+                    <button class="ql-btn ql-secondary"
+                            style="padding: 12px 20px;"
+                            onclick="loadContainerForPutaway()">
+                        📋 Load Container
+                    </button>
+                </div>
+
+                <div id="containerValidationResult" style="margin-top: 16px;"></div>
+            </div>
+
+            <!-- Step 2: Container Items Display (Hidden initially) -->
+            <div id="containerItemsSection" style="display: none; background: var(--ql-surface); padding: 20px; border-radius: 12px; margin-bottom: 16px;">
+                <h3 style="color: #17a2b8; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                    <span style="background: #17a2b8; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">2</span>
+                    Container Items Available for Putaway
+                </h3>
+                <div id="containerItemsList"></div>
+            </div>
+
+            <!-- Step 3: Item Putaway Form (Hidden initially) -->
+            <div id="itemPutawaySection" style="display: none; background: var(--ql-surface); padding: 20px; border-radius: 12px;">
+                <h3 style="color: #ffc107; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                    <span style="background: #ffc107; color: black; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">3</span>
+                    Move Item to Location
+                </h3>
+
+                <div id="selectedItemInfo" style="background: rgba(40, 167, 69, 0.1); border: 2px solid #28a745; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                    <!-- Selected item details will be populated here -->
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                    <div class="form-group">
+                        <label style="color: var(--ql-text); font-weight: 500; margin-bottom: 8px; display: block;">Destination Location QR</label>
+                        <input type="text"
+                               id="destinationLocationQR"
+                               class="ql-input"
+                               placeholder="Scan destination location"
+                               style="font-size: 16px; padding: 12px 16px;">
+                    </div>
+                    <div class="form-group">
+                        <label style="color: var(--ql-text); font-weight: 500; margin-bottom: 8px; display: block;">Quantity to Move</label>
+                        <input type="number"
+                               id="quantityToMove"
+                               class="ql-input"
+                               placeholder="Quantity"
+                               min="1"
+                               style="font-size: 16px; padding: 12px 16px;">
+                    </div>
+                </div>
+
+                <div class="ql-actions" style="gap: 12px;">
+                    <button class="ql-btn"
+                            style="background: linear-gradient(135deg, #ff6b35, #ff5722); color: white; padding: 12px 20px;"
+                            onclick="scanDestinationLocation()">
+                        📷 Scan Location
+                    </button>
+                    <button class="ql-btn"
+                            style="background: linear-gradient(135deg, #28a745, #22c55e); color: white; padding: 12px 20px;"
+                            onclick="processPutawayMove()">
+                        ✅ Move Item
+                    </button>
+                    <button class="ql-btn"
+                            style="background: linear-gradient(135deg, #ffc107, #f59e0b); color: white; padding: 12px 20px;"
+                            onclick="cancelItemSelection()">
+                        ❌ Cancel
+                    </button>
+                </div>
+
+                <div id="putawayMoveResult" style="margin-top: 16px;"></div>
+            </div>
+        </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">24</div>
+            <div class="stat-label">Items Today</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">8</div>
+            <div class="stat-label">Pending Tasks</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">96%</div>
+            <div class="stat-label">Accuracy Rate</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">12.5</div>
+            <div class="stat-label">Avg Time (min)</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentItem = null;
+    let currentPutawayContainer = null;
+    let selectedPutawayItem = null;
+    let containerPutawayHistory = [];
+
+    // Item Scan Section Functions
+    function displayLocationInfo() {
+        const locationInfo = document.getElementById('locationInfo');
+        const locationDetails = document.getElementById('locationDetails');
+
+        locationDetails.innerHTML = `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div>
+                    <strong>Item:</strong> ${currentItem.name}<br>
+                    <strong>Quantity:</strong> ${currentItem.quantity}<br>
+                    <strong>Zone:</strong> ${currentItem.zone}
+                </div>
+                <div>
+                    <strong>Location:</strong> ${currentItem.suggestedLocation}<br>
+                    <strong>Priority:</strong> ${currentItem.priority}<br>
+                    <strong>Status:</strong> <span style="color: var(--ql-success);">Available</span>
+                </div>
+            </div>
+        `;
+
+        locationInfo.style.display = 'block';
+
+        // Highlight scan section as active
+        const scanSection = document.getElementById('scanSection');
+        if (scanSection) {
+            scanSection.classList.add('active');
+        }
+    }
+
+    function confirmPutaway() {
+        if (!currentItem) return;
+
+        // Simulate putaway confirmation
+        alert(`✅ Item "${currentItem.name}" has been successfully stored at location ${currentItem.suggestedLocation}`);
+
+        // Reset form
+        resetScanSection();
+
+        // Focus back on scan input
+        document.getElementById('scanInput').focus();
+    }
+
+    function suggestAlternate() {
+        if (!currentItem) return;
+
+        // Simulate alternate location suggestion
+        const alternateLocations = ['A2-B1-C4', 'B3-A4-D2', 'C1-D3-B2'];
+        const randomLocation = alternateLocations[Math.floor(Math.random() * alternateLocations.length)];
+
+        currentItem.suggestedLocation = randomLocation;
+        displayLocationInfo();
+    }
+
+    function resetScanSection() {
+        const locationInfo = document.getElementById('locationInfo');
+        const scanSection = document.getElementById('scanSection');
+        
+        if (locationInfo) locationInfo.style.display = 'none';
+        if (scanSection) scanSection.classList.remove('active');
+        currentItem = null;
+    }
+
+    // Fixed functions for putaway page
+    function openItemCameraScanner() {
+        console.log('📷 Opening item camera scanner...');
+        if (window.QRCameraScanner && window.QRCameraScanner.openScanner) {
+            window.QRCameraScanner.openScanner(function(qrData) {
+                console.log('Item QR scanned:', qrData);
+                const scanInput = document.getElementById('scanInput');
+                if (scanInput) {
+                    scanInput.value = qrData;
+                    processItem();
+                }
+            });
+        } else {
+            console.error('QR Scanner not available');
+            const qrCode = prompt('Camera scanner not available. Please enter item QR code manually:');
+            if (qrCode && qrCode.trim()) {
+                const scanInput = document.getElementById('scanInput');
+                if (scanInput) {
+                    scanInput.value = qrCode.trim();
+                    processItem();
+                }
+            }
+        }
+    }
+
+    function processItem() {
+        const scanInput = document.getElementById('scanInput');
+        if (!scanInput) {
+            console.error('Scan input field not found');
+            alert('Scan input field not found');
+            return;
+        }
+
+        const qrValue = scanInput.value.trim();
+        if (!qrValue) {
+            alert('Please scan or enter an item QR code first');
+            return;
+        }
+
+        console.log('Processing item QR:', qrValue);
+
+        // Simulate item lookup
+        currentItem = {
+            id: qrValue,
+            name: 'Scanned Item: ' + qrValue,
+            quantity: 1,
+            suggestedLocation: 'A1-B2-C3',
+            zone: 'Electronics',
+            priority: 'Normal'
+        };
+
+        displayLocationInfo();
+
+        // Clear the input for next scan
+        scanInput.value = '';
+        scanInput.focus();
+    }
+
+    function openPutawayCameraScanner() {
+        console.log('📷 Opening container camera scanner...');
+        if (window.QRCameraScanner && window.QRCameraScanner.openScanner) {
+            window.QRCameraScanner.openScanner(function(qrData) {
+                console.log('Container QR scanned:', qrData);
+                document.getElementById('putawayContainerScan').value = qrData;
+                validateContainerForPutaway(qrData);
+            });
+        } else {
+            console.error('QR Scanner not available');
+            const qrCode = prompt('Camera scanner not available. Please enter container QR code manually:');
+            if (qrCode && qrCode.trim()) {
+                document.getElementById('putawayContainerScan').value = qrCode.trim();
+                validateContainerForPutaway(qrCode.trim());
+            }
+        }
+    }
+
+    function loadContainerForPutaway() {
+        const containerQR = document.getElementById('putawayContainerScan').value.trim();
+        if (!containerQR) {
+            alert('Please enter or scan a container QR code first');
+            return;
+        }
+        validateContainerForPutaway(containerQR);
+    }
+
+    function validateContainerForPutaway(containerQR) {
+        if (!containerQR || !containerQR.trim()) {
+            alert('Please scan or enter a container QR code');
+            return;
+        }
+
+        console.log('Validating container:', containerQR);
+        const resultDiv = document.getElementById('containerValidationResult');
+
+        if (!resultDiv) {
+            console.error('Container validation result div not found');
+            return;
+        }
+
+        resultDiv.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--ql-sub);">🔄 Validating container...</div>';
+
+        // Simulate container validation
+        setTimeout(() => {
+            try {
+                const mockContainerData = {
+                    id: containerQR,
+                    name: `Container-${containerQR.slice(-6)}`,
+                    status: 'received',
+                    location: 'Receiving Dock A',
+                    items: [
+                        {
+                            itemNumber: 'ITM-001',
+                            description: 'Wireless Mouse',
+                            quantity: 25,
+                            suggestedLocation: 'A01-B02-C03',
+                            priority: 'Normal',
+                            status: 'pending_putaway'
+                        },
+                        {
+                            itemNumber: 'ITM-002',
+                            description: 'Mechanical Keyboard',
+                            quantity: 15,
+                            suggestedLocation: 'A01-B03-C02',
+                            priority: 'High',
+                            status: 'pending_putaway'
+                        }
+                    ],
+                    receivedDate: new Date().toISOString(),
+                    totalItems: 2
+                };
+
+                currentPutawayContainer = mockContainerData;
+
+                resultDiv.innerHTML = `
+                    <div style="background: rgba(40, 167, 69, 0.1); border: 2px solid #28a745; padding: 16px; border-radius: 8px;">
+                        <h4 style="color: #28a745; margin: 0 0 12px 0;">✅ Container Validated Successfully</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 14px;">
+                            <div>
+                                <strong>Container ID:</strong> ${mockContainerData.id}<br>
+                                <strong>Status:</strong> <span style="color: #28a745;">${mockContainerData.status}</span><br>
+                                <strong>Location:</strong> ${mockContainerData.location}
+                            </div>
+                            <div>
+                                <strong>Total Items:</strong> ${mockContainerData.totalItems}<br>
+                                <strong>Received:</strong> ${new Date(mockContainerData.receivedDate).toLocaleString()}<br>
+                                <strong>Ready for Putaway:</strong> <span style="color: #28a745; font-weight: bold;">Yes</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Show container items section
+                displayContainerItems(mockContainerData.items);
+                const itemsSection = document.getElementById('containerItemsSection');
+                if (itemsSection) {
+                    itemsSection.style.display = 'block';
+                }
+
+            } catch (error) {
+                console.error('Container validation error:', error);
+                resultDiv.innerHTML = `
+                    <div style="background: rgba(239, 68, 68, 0.1); border: 2px solid #ef4444; padding: 16px; border-radius: 8px;">
+                        <h4 style="color: #ef4444; margin: 0 0 8px 0;">❌ Container Validation Failed</h4>
+                        <p style="margin: 0; color: var(--ql-text);">Container not found or not ready for putaway.</p>
+                    </div>
+                `;
+            }
+        }, 1000);
+    }
+
+    function displayContainerItems(items) {
+        const listDiv = document.getElementById('containerItemsList');
+
+        if (!items || items.length === 0) {
+            listDiv.innerHTML = '<p style="text-align: center; color: var(--ql-sub); padding: 20px;">No items found in container</p>';
+            return;
+        }
+
+        let itemsHTML = '<div style="display: grid; gap: 12px;">';
+
+        items.forEach((item, index) => {
+            const priorityColor = item.priority === 'High' ? '#ef4444' : item.priority === 'Medium' ? '#f59e0b' : '#22c55e';
+
+            itemsHTML += `
+                <div style="background: var(--ql-card); border: 1px solid var(--ql-border); border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.2s ease;"
+                     onclick="selectItemForPutaway(${index})">
+                    <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: center;">
+                        <div>
+                            <h4 style="margin: 0 0 4px 0; color: var(--ql-text); font-size: 16px;">${item.description}</h4>
+                            <p style="margin: 0 0 4px 0; color: var(--ql-sub); font-size: 14px;">Item #: ${item.itemNumber}</p>
+                            <p style="margin: 0; color: var(--ql-sub); font-size: 14px;">Suggested: ${item.suggestedLocation}</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 18px; font-weight: bold; color: var(--ql-text);">${item.quantity}</div>
+                            <div style="font-size: 12px; color: var(--ql-sub);">units</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <span style="background: ${priorityColor}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 500;">
+                                ${item.priority}
+                            </span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--ql-border); text-align: center;">
+                        <span style="color: var(--ql-primary); font-weight: 500; font-size: 14px;">
+                            👆 Click to select for putaway
+                        </span>
+                    </div>
+                </div>
+            `;
+        });
+
+        itemsHTML += '</div>';
+        listDiv.innerHTML = itemsHTML;
+    }
+
+    function selectItemForPutaway(itemIndex) {
+        if (!currentPutawayContainer || !currentPutawayContainer.items[itemIndex]) {
+            alert('Invalid item selection');
+            return;
+        }
+
+        selectedPutawayItem = currentPutawayContainer.items[itemIndex];
+
+        // Update selected item info
+        document.getElementById('selectedItemInfo').innerHTML = `
+            <h4 style="color: #28a745; margin: 0 0 12px 0;">📦 Selected Item for Putaway</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div>
+                    <p style="margin: 0;"><strong>Item:</strong> ${selectedPutawayItem.description}</p>
+                    <p style="margin: 0;"><strong>Item Number:</strong> ${selectedPutawayItem.itemNumber}</p>
+                    <p style="margin: 0;"><strong>Available Quantity:</strong> ${selectedPutawayItem.quantity}</p>
+                </div>
+                <div>
+                    <p style="margin: 0;"><strong>Priority:</strong> ${selectedPutawayItem.priority}</p>
+                    <p style="margin: 0;"><strong>Suggested Location:</strong> ${selectedPutawayItem.suggestedLocation}</p>
+                    <p style="margin: 0;"><strong>Status:</strong> ${selectedPutawayItem.status.replace('_', ' ').toUpperCase()}</p>
+                </div>
+            </div>
+        `;
+
+        // Set default values
+        document.getElementById('quantityToMove').value = selectedPutawayItem.quantity;
+        document.getElementById('quantityToMove').max = selectedPutawayItem.quantity;
+        document.getElementById('destinationLocationQR').value = selectedPutawayItem.suggestedLocation;
+
+        // Show putaway section
+        document.getElementById('itemPutawaySection').style.display = 'block';
+        document.getElementById('containerItemsSection').style.opacity = '0.5';
+    }
+
+    function scanDestinationLocation() {
+        console.log('📷 Opening destination location scanner...');
+        if (window.QRCameraScanner && window.QRCameraScanner.openScanner) {
+            window.QRCameraScanner.openScanner(function(qrData) {
+                console.log('Destination location scanned:', qrData);
+                document.getElementById('destinationLocationQR').value = qrData;
+            });
+        } else {
+            console.error('QR Scanner not available');
+            const qrCode = prompt('Camera scanner not available. Please enter location QR code manually:');
+            if (qrCode && qrCode.trim()) {
+                document.getElementById('destinationLocationQR').value = qrCode.trim();
+            }
+        }
+    }
+
+    function processPutawayMove() {
+        if (!currentPutawayContainer || !selectedPutawayItem) {
+            alert('No container or item selected');
+            return;
+        }
+
+        const locationQR = document.getElementById('destinationLocationQR').value.trim();
+        const quantity = parseInt(document.getElementById('quantityToMove').value);
+
+        if (!locationQR) {
+            alert('Please scan or enter destination location');
+            return;
+        }
+
+        if (!quantity || quantity <= 0 || quantity > selectedPutawayItem.quantity) {
+            alert('Please enter a valid quantity');
+            return;
+        }
+
+        const resultDiv = document.getElementById('putawayMoveResult');
+        resultDiv.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--ql-sub);">🔄 Processing putaway move...</div>';
+
+        setTimeout(() => {
+            resultDiv.innerHTML = `
+                <div style="background: rgba(34, 197, 94, 0.1); border: 2px solid #22c55e; padding: 16px; border-radius: 8px;">
+                    <h4 style="color: #22c55e; margin: 0 0 12px 0;">✅ Putaway Move Completed Successfully</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 14px;">
+                        <div>
+                            <strong>Item:</strong> ${selectedPutawayItem.description}<br>
+                            <strong>Quantity Moved:</strong> ${quantity}<br>
+                            <strong>From:</strong> ${currentPutawayContainer.location}
+                        </div>
+                        <div>
+                            <strong>To Location:</strong> ${locationQR}<br>
+                            <strong>Time:</strong> ${new Date().toLocaleString()}<br>
+                            <strong>Status:</strong> <span style="color: #22c55e; font-weight: bold;">Completed</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            setTimeout(() => {
+                cancelItemSelection();
+            }, 3000);
+        }, 1500);
+    }
+
+    function cancelItemSelection() {
+        selectedPutawayItem = null;
+        const itemSection = document.getElementById('itemPutawaySection');
+        const containerSection = document.getElementById('containerItemsSection');
+
+        if (itemSection) itemSection.style.display = 'none';
+        if (containerSection) containerSection.style.opacity = '1';
+
+        const destInput = document.getElementById('destinationLocationQR');
+        const qtyInput = document.getElementById('quantityToMove');
+        const resultDiv = document.getElementById('putawayMoveResult');
+
+        if (destInput) destInput.value = '';
+        if (qtyInput) qtyInput.value = '';
+        if (resultDiv) resultDiv.innerHTML = '';
+    }
+
+    // Missing functions for putaway page
+    function processScannedQR() {
+        const scanInput = document.getElementById('qrScanInput') || document.getElementById('scanInput');
+        if (!scanInput) {
+            console.error('No scan input found');
+            return;
+        }
+        
+        const qrValue = scanInput.value.trim();
+        if (!qrValue) {
+            alert('Please scan or enter a QR code first');
+            return;
+        }
+        
+        console.log('Processing scanned QR:', qrValue);
+        
+        // Process the QR code based on context
+        if (scanInput.id === 'scanInput') {
+            processItem();
+        } else {
+            // Handle other QR types
+            alert('QR Code processed: ' + qrValue);
+        }
+    }
+    
+    function focusScanner() {
+        const scanInput = document.getElementById('qrScanInput') || document.getElementById('scanInput');
+        if (scanInput) {
+            scanInput.focus();
+            console.log('Scanner focused');
+        } else {
+            console.error('Scanner input not found');
+        }
+    }
+    
+    // Cycle counting functions
+    function completeCount() {
+        console.log('Complete Count button clicked');
+        alert('✅ Count session completed successfully!');
+        
+        // Reset any active count session
+        const countDisplay = document.querySelector('.count-session, [data-count-session]');
+        if (countDisplay) {
+            countDisplay.style.display = 'none';
+        }
+    }
+    
+    function cancelCount() {
+        console.log('Cancel Count button clicked');
+        const confirmed = confirm('❌ Are you sure you want to cancel the count session?');
+        if (confirmed) {
+            alert('Count session cancelled');
+            
+            // Reset any active count session
+            const countDisplay = document.querySelector('.count-session, [data-count-session]');
+            if (countDisplay) {
+                countDisplay.style.display = 'none';
+            }
+        }
+    }
+
+    // Auto-focus scan input and handle Enter key
+    document.addEventListener('DOMContentLoaded', function() {
+        const scanInput = document.getElementById('scanInput');
+        if (scanInput) {
+            scanInput.focus();
+            scanInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    processItem();
+                }
+            });
+        }
+        
+        // Also handle qrScanInput if it exists
+        const qrScanInput = document.getElementById('qrScanInput');
+        if (qrScanInput) {
+            qrScanInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    processScannedQR();
+                }
+            });
+        }
+
+        // Ensure all buttons have proper type attributes
+        document.querySelectorAll('button:not([type])').forEach(button => {
+            button.setAttribute('type', 'button');
+        });
+        
+        // Add click handlers for buttons that might not have them
+        const completeBtn = document.querySelector('button[onclick*="completeCount"], button:contains("Complete Count")');
+        const cancelBtn = document.querySelector('button[onclick*="cancelCount"], button:contains("Cancel Count")');
+        
+        // Find buttons by text content if onclick doesn't exist
+        document.querySelectorAll('button').forEach(button => {
+            const text = button.textContent.trim();
+            if (text.includes('Complete Count') && !button.onclick) {
+                button.onclick = completeCount;
+                console.log('✅ Complete Count button handler added');
+            }
+            if (text.includes('Cancel Count') && !button.onclick) {
+                button.onclick = cancelCount;
+                console.log('✅ Cancel Count button handler added');
+            }
+        });
+
+        console.log('✅ Putaway page initialized with all button handlers');
+    });
+
+
+
+</script>
+
+<!-- Include QR Camera Scanner -->
+<script src="/static/qr_camera_scanner.js"></script>
+<!-- Include Universal Dashboard Button -->
+<script src="/static/universal_dashboard_button.js"></script>
+<!-- Include Floating Chat Widget -->
+<script src="/static/floating_chat_widget.js"></script>
+<!-- Include Employee Messaging Widget -->
+<script src="/static/employee_messaging_widget.js"></script>
+
+<button class="ql-fab" onclick="location.href='main_dashboard.html'">🏠 Dashboard</button>
+</body>
+</html>

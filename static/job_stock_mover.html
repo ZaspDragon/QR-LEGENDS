@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Stock Mover - QR Legends</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f172a;--surface:#1e293b;--surface2:#334155;--border:#334155;--text:#f1f5f9;--sub:#94a3b8;--accent:#22c55e;--warning:#f59e0b;--danger:#ef4444;--info:#3b82f6;--radius:12px}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{font-weight:800;font-size:18px;color:var(--accent)}
+.role-badge{background:linear-gradient(135deg,#15803d,#16a34a);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;color:#fff}
+.topbar-left,.topbar-right{display:flex;align-items:center;gap:10px}
+.btn{padding:10px 18px;border-radius:8px;border:none;cursor:pointer;font-size:14px;font-weight:600;transition:all 0.2s;text-decoration:none;display:inline-flex;align-items:center;gap:6px;min-height:44px;touch-action:manipulation}
+.btn-ghost{background:transparent;color:var(--sub);border:1px solid var(--border)}
+.btn-ghost:hover,.btn-ghost:active{background:var(--surface2);color:var(--text)}
+.btn-green{background:var(--accent);color:#fff}
+.btn-green:hover,.btn-green:active{background:#16a34a}
+.btn-blue{background:var(--info);color:#fff}
+.btn-blue:hover{background:#2563eb}
+.btn-orange{background:var(--warning);color:#fff}
+.content{padding:16px;max-width:900px;margin:0 auto}
+.page-header{margin-bottom:20px}
+.page-header h1{font-size:24px;font-weight:800;margin-bottom:4px;color:var(--accent)}
+.page-header p{color:var(--sub);font-size:14px}
+.task-queue{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+.task-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;position:relative;overflow:hidden}
+.task-card.priority-high{border-left:4px solid var(--danger)}
+.task-card.priority-med{border-left:4px solid var(--warning)}
+.task-card.priority-low{border-left:4px solid var(--accent)}
+.task-card.completed{opacity:0.5;border-left-color:var(--border)}
+.task-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.task-type{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--sub)}
+.task-priority{font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px}
+.p-high{background:rgba(239,68,68,0.15);color:var(--danger)}
+.p-med{background:rgba(245,158,11,0.15);color:var(--warning)}
+.p-low{background:rgba(34,197,94,0.15);color:var(--accent)}
+.task-item{font-size:16px;font-weight:700;margin-bottom:6px}
+.task-meta{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px}
+.meta-item{font-size:13px;color:var(--sub)}<br>.meta-item strong{color:var(--text)}
+.task-actions{display:flex;gap:8px;flex-wrap:wrap}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px}
+.card-title{font-size:16px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.scan-area{border:2px dashed var(--border);border-radius:var(--radius);padding:30px;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:16px}
+.scan-area:hover,.scan-area:active{border-color:var(--accent);background:rgba(34,197,94,0.05)}
+.scan-icon{font-size:48px;margin-bottom:12px}
+.scan-text{color:var(--sub);font-size:15px}
+.input-group{margin-bottom:12px}
+.input-label{font-size:13px;font-weight:600;color:var(--sub);margin-bottom:6px;display:block}
+.input-field{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--text);font-size:15px;outline:none;-webkit-appearance:none;appearance:none}
+.input-field:focus{border-color:var(--accent)}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.stat-mini{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center}
+.stat-num{font-size:28px;font-weight:800;display:block}
+.stat-lbl{font-size:11px;color:var(--sub);text-transform:uppercase}
+.s-green{color:var(--accent)} .s-warn{color:var(--warning)} .s-blue{color:var(--info)}
+.empty-state{text-align:center;padding:40px 20px;color:var(--sub)}
+.empty-icon{font-size:48px;margin-bottom:12px}
+.tabs{display:flex;gap:6px;margin-bottom:16px;background:var(--surface2);border-radius:10px;padding:4px}
+.tab{flex:1;padding:10px;text-align:center;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;color:var(--sub);transition:all 0.2s;border:none;background:transparent}
+.tab.active{background:var(--accent);color:#fff}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+@media(max-width:480px){.content{padding:12px}.btn{padding:10px 14px;font-size:13px}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="logo">QR LEGENDS</span>
+    <span class="role-badge">📦 Stock Mover</span>
+  </div>
+  <div class="topbar-right">
+    <a href="/main_dashboard" class="btn btn-ghost">🏠</a>
+    <button onclick="refreshTasks()" class="btn btn-green">🔄</button>
+  </div>
+</div>
+
+<div class="content">
+  <div class="page-header">
+    <h1>Stock Movement Tasks</h1>
+    <p id="task-summary">Loading tasks... &bull; <span id="current-time"></span></p>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="stats-row">
+    <div class="stat-mini"><span class="stat-num s-warn" id="stat-pending">--</span><span class="stat-lbl">Pending</span></div>
+    <div class="stat-mini"><span class="stat-num s-green" id="stat-done">--</span><span class="stat-lbl">Done Today</span></div>
+    <div class="stat-mini"><span class="stat-num s-blue" id="stat-items">--</span><span class="stat-lbl">Items Moved</span></div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('tasks',this)">📋 My Tasks</button>
+    <button class="tab" onclick="switchTab('scan',this)">📷 Quick Move</button>
+    <button class="tab" onclick="switchTab('history',this)">🕐 History</button>
+  </div>
+
+  <!-- Tasks Tab -->
+  <div class="tab-pane active" id="tab-tasks">
+    <div class="task-queue" id="task-queue">
+      <div style="text-align:center;color:var(--sub);padding:30px">Loading tasks...</div>
+    </div>
+  </div>
+
+  <!-- Scan/Move Tab -->
+  <div class="tab-pane" id="tab-scan">
+    <div class="card">
+      <div class="card-title">📦 Record Stock Movement</div>
+      <div class="scan-area" onclick="openScanner('item')">
+        <div class="scan-icon">📷</div>
+        <div class="scan-text">Tap to scan item QR code</div>
+        <div style="font-size:12px;color:var(--sub);margin-top:6px">or enter manually below</div>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Item ID / SKU</label>
+        <input class="input-field" id="move-item" placeholder="e.g. SKU-0042" autocomplete="off">
+      </div>
+      <div class="input-group">
+        <label class="input-label">From Location</label>
+        <input class="input-field" id="move-from" placeholder="e.g. A-01-B" autocomplete="off">
+      </div>
+      <div class="input-group">
+        <label class="input-label">To Location</label>
+        <input class="input-field" id="move-to" placeholder="e.g. B-03-C" autocomplete="off">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Quantity</label>
+        <input class="input-field" id="move-qty" type="number" min="1" placeholder="e.g. 24" inputmode="numeric">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Move Type</label>
+        <select class="input-field" id="move-type">
+          <option value="putaway">Putaway</option>
+          <option value="replenishment">Replenishment</option>
+          <option value="relocation">Relocation</option>
+          <option value="consolidation">Consolidation</option>
+        </select>
+      </div>
+      <button class="btn btn-green" style="width:100%;justify-content:center;font-size:16px;padding:14px" onclick="submitMove()">✅ Record Movement</button>
+    </div>
+  </div>
+
+  <!-- History Tab -->
+  <div class="tab-pane" id="tab-history">
+    <div class="card">
+      <div class="card-title">🕐 Today's Movements</div>
+      <div id="history-list">
+        <div style="text-align:center;color:var(--sub);padding:20px">Loading history...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/qr_camera_scanner.js"></script>
+<script>
+let tasks = [];
+let completedCount = 0;
+let itemsMoved = 0;
+
+function updateTime() {
+  document.getElementById('current-time').textContent = new Date().toLocaleTimeString();
+}
+setInterval(updateTime, 1000);
+updateTime();
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function generateTasks() {
+  const types = ['Putaway','Replenishment','Relocation','Consolidation'];
+  const priorities = ['high','med','low'];
+  const zones = [['A-01','B-05'],['C-03','A-02'],['B-07','D-01'],['D-04','A-08'],['Zone C','Zone A'],['B-02','B-09'],['A-03','C-07']];
+  const items = ['Pallet of Electronics','Box of Hardware','Bulk Packaging','Industrial Parts','Consumer Goods','Safety Equipment'];
+  
+  return zones.map((z,i) => ({
+    id:`MOVE-${Date.now()}-${i}`,
+    type:types[i%4],
+    priority:priorities[i%3],
+    item:items[i%6],
+    sku:`SKU-${String(Math.floor(Math.random()*9000+1000),'0000')}`,
+    from:z[0],
+    to:z[1],
+    qty: Math.floor(Math.random()*50+5),
+    completed:false
+  }));
+}
+
+function renderTasks() {
+  const container = document.getElementById('task-queue');
+  const pending = tasks.filter(t => !t.completed);
+  const done = tasks.filter(t => t.completed).length;
+  
+  document.getElementById('stat-pending').textContent = pending.length;
+  document.getElementById('stat-done').textContent = done;
+  document.getElementById('stat-items').textContent = itemsMoved;
+  document.getElementById('task-summary').innerHTML = `${pending.length} tasks pending, ${done} completed today &bull; <span id="current-time">${new Date().toLocaleTimeString()}</span>`;
+  
+  if (!tasks.length) {
+    container.innerHTML = '<div class="empty-state"><div class="empty-icon">✅</div><div style="font-size:18px;font-weight:700;color:var(--accent);margin-bottom:8px">All Tasks Complete!</div><div>Great work today. Check back soon for new tasks.</div></div>';
+    return;
+  }
+  
+  container.innerHTML = tasks.map(t => `
+    <div class="task-card priority-${t.priority} ${t.completed?'completed':''}" id="task-${t.id}">
+      <div class="task-header">
+        <span class="task-type">📦 ${t.type}</span>
+        <span class="task-priority p-${t.priority}">${t.priority.toUpperCase()}</span>
+      </div>
+      <div class="task-item">${t.item}</div>
+      <div class="task-meta">
+        <div class="meta-item">📍 From: <strong>${t.from}</strong></div>
+        <div class="meta-item">📍 To: <strong>${t.to}</strong></div>
+        <div class="meta-item">📦 Qty: <strong>${t.qty}</strong></div>
+        <div class="meta-item">🏷️ <strong>${t.sku}</strong></div>
+      </div>
+      <div class="task-actions">
+        ${t.completed 
+          ? '<span style="color:var(--accent);font-weight:700;font-size:14px">✅ Completed</span>'
+          : `<button class="btn btn-green" onclick="completeTask('${t.id}')" style="min-height:44px">✅ Complete</button>
+             <button class="btn btn-blue" onclick="startTask('${t.id}')" style="min-height:44px">▶️ Start</button>`
+        }
+      </div>
+    </div>
+  `).join('');
+}
+
+function completeTask(id) {
+  const task = tasks.find(t => t.id===id);
+  if (!task) return;
+  task.completed = true;
+  completedCount++;
+  itemsMoved += task.qty;
+  
+  // Log to backend
+  fetch('/api/warehouse/activity', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({type:'stock_move',item:task.item,from:task.from,to:task.to,qty:task.qty,task_type:task.type})
+  }).catch(() => {});
+  
+  renderTasks();
+  
+  const el = document.getElementById('task-'+id);
+  if (el) {
+    el.style.transform = 'scale(0.98)';
+    el.style.borderColor = 'var(--accent)';
+    setTimeout(() => renderTasks(), 500);
+  }
+}
+
+function startTask(id) {
+  const task = tasks.find(t => t.id===id);
+  if (!task) return;
+  // Auto-fill the scan form
+  switchTab('scan', document.querySelectorAll('.tab')[1]);
+  document.getElementById('move-item').value = task.sku;
+  document.getElementById('move-from').value = task.from;
+  document.getElementById('move-to').value = task.to;
+  document.getElementById('move-qty').value = task.qty;
+  document.getElementById('move-type').value = task.type.toLowerCase();
+}
+
+function refreshTasks() {
+  tasks = generateTasks();
+  renderTasks();
+}
+
+function openScanner(field) {
+  if (typeof QRCameraScanner !== 'undefined' && QRCameraScanner.openScanner) {
+    QRCameraScanner.openScanner(function(result) {
+      if (field === 'item') document.getElementById('move-item').value = result;
+    });
+  } else {
+    const val = prompt('Enter item QR/barcode:');
+    if (val) document.getElementById('move-item').value = val;
+  }
+}
+
+function submitMove() {
+  const item = document.getElementById('move-item').value.trim();
+  const from = document.getElementById('move-from').value.trim();
+  const to = document.getElementById('move-to').value.trim();
+  const qty = parseInt(document.getElementById('move-qty').value) || 0;
+  const type = document.getElementById('move-type').value;
+  
+  if (!item) { alert('Please enter or scan an item ID'); document.getElementById('move-item').focus(); return; }
+  if (!from) { alert('Please enter the from location'); document.getElementById('move-from').focus(); return; }
+  if (!to) { alert('Please enter the to location'); document.getElementById('move-to').focus(); return; }
+  if (!qty || qty < 1) { alert('Please enter a valid quantity'); document.getElementById('move-qty').focus(); return; }
+  
+  fetch('/api/warehouse/activity', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({type:'stock_move',item_id:item,from_location:from,to_location:to,quantity:qty,move_type:type,timestamp:new Date().toISOString()})
+  })
+  .then(r => r.json())
+  .then(d => {
+    itemsMoved += qty;
+    document.getElementById('stat-items').textContent = itemsMoved;
+    addToHistory(item, from, to, qty, type);
+    document.getElementById('move-item').value = '';
+    document.getElementById('move-from').value = '';
+    document.getElementById('move-to').value = '';
+    document.getElementById('move-qty').value = '';
+    alert(`✅ Movement recorded!\n${qty}x ${item}\n${from} → ${to}`);
+  })
+  .catch(() => {
+    // Still log locally
+    itemsMoved += qty;
+    document.getElementById('stat-items').textContent = itemsMoved;
+    addToHistory(item, from, to, qty, type);
+    document.getElementById('move-item').value = '';
+    document.getElementById('move-from').value = '';
+    document.getElementById('move-to').value = '';
+    document.getElementById('move-qty').value = '';
+    alert(`✅ Movement logged!\n${qty}x ${item}\n${from} → ${to}`);
+  });
+}
+
+const historyItems = [];
+function addToHistory(item, from, to, qty, type) {
+  historyItems.unshift({item, from, to, qty, type, time: new Date().toLocaleTimeString()});
+  renderHistory();
+}
+function renderHistory() {
+  const container = document.getElementById('history-list');
+  if (!historyItems.length) {
+    container.innerHTML = '<div style="text-align:center;color:var(--sub);padding:20px">No movements recorded yet today</div>';
+    return;
+  }
+  container.innerHTML = historyItems.map(h => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:8px;margin-bottom:8px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15)">
+      <div>
+        <div style="font-weight:700;font-size:13px">${h.item}</div>
+        <div style="color:var(--sub);font-size:12px">${h.from} → ${h.to} &bull; ${h.qty} units &bull; ${h.type}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="color:var(--accent);font-weight:700;font-size:13px">✅</div>
+        <div style="color:var(--sub);font-size:11px">${h.time}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+renderHistory();
+refreshTasks();
+</script>
+<script src="/auto_theme_injector.js"></script>
+</body>
+</html>

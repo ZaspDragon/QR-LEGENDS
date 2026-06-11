@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASN Details - QR Legends</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #2d3748;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 20px;
+            color: #2d3748;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .info-label {
+            font-size: 13px;
+            color: #718096;
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 16px;
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        .status-pill {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-draft {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-sent {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-received {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .pallet-card {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .pallet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .pallet-header h3 {
+            font-size: 18px;
+            color: #2d3748;
+        }
+
+        .pallet-info {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        thead {
+            background: #f7fafc;
+        }
+
+        th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #4a5568;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #2d3748;
+            font-size: 14px;
+        }
+
+        .send-section {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .send-form {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            color: #4a5568;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            padding: 12px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .comm-log {
+            margin-top: 15px;
+        }
+
+        .comm-item {
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        .comm-tag {
+            background: #667eea;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #718096;
+        }
+
+        .qr-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .qr-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 id="asnTitle">ASN Details</h1>
+            <div class="header-actions">
+                <a href="/asn_list" class="btn btn-secondary">← Back to List</a>
+                <button onclick="editAsn()" class="btn btn-secondary">Edit</button>
+                <button onclick="downloadCSV()" class="btn btn-primary">📥 Download CSV</button>
+            </div>
+        </div>
+
+        <div id="content">
+            <div class="loading">Loading ASN details...</div>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const asnId = urlParams.get('id');
+        let currentAsn = null;
+
+        async function loadAsn() {
+            if (!asnId) {
+                showError('No ASN ID provided');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/asns/${asnId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    currentAsn = data.asn;
+                    renderAsn();
+                } else {
+                    showError(data.error || 'Failed to load ASN');
+                }
+            } catch (error) {
+                console.error('Error loading ASN:', error);
+                showError('Failed to load ASN');
+            }
+        }
+
+        function renderAsn() {
+            document.getElementById('asnTitle').textContent = `ASN ${currentAsn.asn_id}`;
+
+            const content = `
+                <div class="card">
+                    <h2>📋 ASN Information</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">PO Number</div>
+                            <div class="info-value">${currentAsn.po_number}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Vendor</div>
+                            <div class="info-value">${currentAsn.vendor}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Vendor Email</div>
+                            <div class="info-value">${currentAsn.vendor_email || '—'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Status</div>
+                            <div class="info-value"><span class="status-pill status-${currentAsn.status.toLowerCase()}">${currentAsn.status}</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>🚚 Shipping Information</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Ship From</div>
+                            <div class="info-value">${currentAsn.ship_from || '—'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Ship To</div>
+                            <div class="info-value">${currentAsn.ship_to || '—'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">ETA</div>
+                            <div class="info-value">${currentAsn.eta || '—'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Carrier</div>
+                            <div class="info-value">${currentAsn.carrier || '—'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">PRO/Tracking</div>
+                            <div class="info-value">${currentAsn.pro || '—'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>📦 Pallets (${(currentAsn.pallets || []).length})</h2>
+                    ${(currentAsn.pallets || []).map(pallet => renderPallet(pallet)).join('')}
+                </div>
+
+                <div class="card">
+                    <h2>📧 Send ASN</h2>
+                    <div class="send-section">
+                        <div class="send-form">
+                            <div class="form-group">
+                                <label>Send To (Email)</label>
+                                <input type="email" id="sendToEmail" placeholder="${currentAsn.vendor_email || 'vendor@example.com'}" value="${currentAsn.vendor_email || ''}">
+                            </div>
+                            <button onclick="sendAsn()" class="btn btn-success">Send ASN</button>
+                        </div>
+                        <p style="font-size: 13px; color: #718096;">This will send the ASN notification to the vendor and mark it as sent.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>📞 Communication Log</h2>
+                    <div class="comm-log">
+                        ${(currentAsn.comms || []).length === 0 ? 
+                            '<p style="color: #718096;">No communications yet.</p>' :
+                            (currentAsn.comms || []).map(comm => `
+                                <div class="comm-item">
+                                    <span class="comm-tag">${new Date(comm.ts).toLocaleString()}</span> — 
+                                    ${comm.type} via ${comm.channel} to ${comm.to}
+                                    ${comm.sent_by ? ` by ${comm.sent_by}` : ''}
+                                </div>
+                            `).join('')
+                        }
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('content').innerHTML = content;
+        }
+
+        function renderPallet(pallet) {
+            return `
+                <div class="pallet-card">
+                    <div class="pallet-header">
+                        <h3>Pallet ${pallet.sequence}</h3>
+                        <div class="pallet-info">
+                            <span><strong>Weight:</strong> ${pallet.weight_lb || '—'} lb</span>
+                            <span><strong>Dims:</strong> ${(pallet.dims_in || []).join('×')} in</span>
+                            <span><a href="${pallet.link}" target="_blank" class="qr-link">QR Link ↗</a></span>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SKU</th>
+                                <th>Description</th>
+                                <th>Cases</th>
+                                <th>Units</th>
+                                <th>Lot</th>
+                                <th>Exp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${(pallet.lines || []).map(line => `
+                                <tr>
+                                    <td><strong>${line.sku}</strong></td>
+                                    <td>${line.desc}</td>
+                                    <td>${line.cases}</td>
+                                    <td>${line.units}</td>
+                                    <td>${line.lot || '—'}</td>
+                                    <td>${line.exp || '—'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        async function sendAsn() {
+            const email = document.getElementById('sendToEmail').value || currentAsn.vendor_email || 'vendor@example.com';
+
+            if (!confirm(`Send ASN to ${email}?`)) return;
+
+            try {
+                const response = await fetch(`/api/asns/${asnId}/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ to: email, channel: 'email' })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`ASN sent successfully!\n\nSubject: ${data.subject}\n\n${data.body}`);
+                    loadAsn();
+                } else {
+                    alert('Failed to send ASN: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error sending ASN:', error);
+                alert('Failed to send ASN');
+            }
+        }
+
+        function downloadCSV() {
+            window.open(`/api/asns/${asnId}/csv`, '_blank');
+        }
+
+        function editAsn() {
+            window.location.href = `/asn_vendor_form?id=${asnId}`;
+        }
+
+        function showError(message) {
+            document.getElementById('content').innerHTML = `
+                <div class="card">
+                    <div class="loading">Error: ${message}</div>
+                </div>
+            `;
+        }
+
+        loadAsn();
+    </script>
+</body>
+</html>

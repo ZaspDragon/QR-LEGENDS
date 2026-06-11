@@ -1,0 +1,716 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yard Management - QR Legends</title>
+    <style>
+        * {margin: 0 padding: 0 box-sizing: border-box}
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif background: #f5f7fa}
+        .container {max-width: 1400px margin: 0 auto padding: 20px}
+        .back-button {display: inline-block margin-bottom: 20px padding: 10px 20px background: #6c757d; color: white; text-decoration: none; border-radius: 5px}
+        h1 {color: #2c3e50 margin-bottom: 30px display: flex align-items: center; gap: 10px}
+        .yard-grid {display: grid grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)) gap: 20px margin-bottom: 30px}
+        .yard-card {background: white padding: 20px border-radius: 10px box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-left: 5px solid #007bff}
+        .form-group {margin-bottom: 15px}
+        .form-group label {display: block margin-bottom: 5px font-weight: 600}
+        .form-group input, .form-group select {width: 100% padding: 10px border: 1px solid #ddd border-radius: 5px; font-size: 14px}
+        .btn {padding: 10px 20px border: none border-radius: 5px cursor: pointer; font-weight: 600; text-decoration: none; display: inline-block; text-align: center}
+        .btn-primary {background: #007bff color: white}
+        .btn-success {background: #28a745 color: white}
+        .btn-warning {background: #ffc107 color: #212529}
+        .btn-danger {background: #dc3545 color: white}
+        .btn-secondary {background: #6c757d color: white}
+        .qr-display {text-align: center margin: 20px 0}
+        .qr-display img {max-width: 200px border: 2px solid #ddd border-radius: 5px}
+        .yard-layout {display: grid grid-template-columns: repeat(10, 1fr) gap: 5px margin: 20px 0}
+        .yard-spot {width: 40px height: 60px border: 2px solid #ddd border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; position: relative}
+        .spot-available {background: #d4edda border-color: #28a745}
+        .spot-occupied {background: #f8d7da border-color: #dc3545}
+        .spot-reserved {background: #fff3cd border-color: #ffc107}
+        .spot-maintenance {background: #e2e3e5 border-color: #6c757d}
+        .trailer-list {max-height: 400px overflow-y: auto}
+        .trailer-item {background: #f8f9fa padding: 15px margin-bottom: 10px border-radius: 5px; border-left: 4px solid #007bff}
+        .trailer-status {display: inline-block padding: 3px 8px border-radius: 3px font-size: 12px; font-weight: bold}
+        .status-parked {background: #d4edda color: #155724}
+        .status-loading {background: #fff3cd color: #856404}
+        .status-departing {background: #f8d7da color: #721c24}
+        .legend {display: flex gap: 20px margin: 10px 0}
+        .legend-item {display: flex align-items: center gap: 5px}
+        .legend-color {width: 20px height: 15px border-radius: 3px}
+        .stats-grid {display: grid grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) gap: 15px margin-bottom: 20px}
+        .stat-card {background: white padding: 15px border-radius: 8px text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
+        .stat-number {font-size: 24px font-weight: bold color: #007bff}
+        .stat-label {color: #666 font-size: 14px}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/admin_hub" class="back-button">← Back to Admin Hub</a>
+        
+        <h1>🏭 Yard Management System</h1>
+        <p style="color: #666; margin-bottom: 30px;">Manage trailers, yard spots, and QR code tracking</p>
+
+        <!-- Statistics Dashboard -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="total-spots">100</div>
+                <div class="stat-label">Total Yard Spots</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="occupied-spots">23</div>
+                <div class="stat-label">Occupied Spots</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="active-trailers">18</div>
+                <div class="stat-label">Active Trailers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="avg-dwell-time">4.2</div>
+                <div class="stat-label">Avg Dwell Time (hours)</div>
+            </div>
+        </div>
+
+        <div class="yard-grid">
+            <!-- Trailer Registration -->
+            <div class="yard-card">
+                <h3>🚛 Register New Trailer</h3>
+                <div class="form-group">
+                    <label for="trailer-number">Trailer Number</label>
+                    <input type="text" id="trailer-number" placeholder="e.g., TRL-001">
+                </div>
+                <div class="form-group">
+                    <label for="carrier-name">Carrier Company</label>
+                    <input type="text" id="carrier-name" placeholder="e.g., Express Logistics">
+                </div>
+                <div class="form-group">
+                    <label for="driver-name">Driver Name</label>
+                    <input type="text" id="driver-name" placeholder="Driver name">
+                </div>
+                <div class="form-group">
+                    <label for="trailer-type">Trailer Type</label>
+                    <select id="trailer-type">
+                        <option value="dry_van">Dry Van</option>
+                        <option value="refrigerated">Refrigerated</option>
+                        <option value="flatbed">Flatbed</option>
+                        <option value="container">Container</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="arrival-time">Arrival Time</label>
+                    <input type="datetime-local" id="arrival-time">
+                </div>
+                <button onclick="registerTrailer()" class="btn btn-primary" style="width: 100%;">Register & Generate QR</button>
+                
+                <div id="trailer-qr-result" style="display: none;">
+                    <div class="qr-display">
+                        <img id="trailer-qr-image" src="" alt="Trailer QR Code">
+                        <p><strong>Trailer QR Generated</strong></p>
+                        <button onclick="printTrailerQR()" class="btn btn-success">🖨️ Print QR Label</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Yard Spot Management -->
+            <div class="yard-card">
+                <h3>📍 Yard Spot Setup</h3>
+                <div class="form-group">
+                    <label for="spot-number">Spot Number</label>
+                    <input type="text" id="spot-number" placeholder="e.g., A-01, B-15">
+                </div>
+                <div class="form-group">
+                    <label for="spot-type">Spot Type</label>
+                    <select id="spot-type">
+                        <option value="standard">Standard</option>
+                        <option value="oversized">Oversized</option>
+                        <option value="refrigerated">Refrigerated</option>
+                        <option value="staging">Staging Area</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="spot-zone">Zone</label>
+                    <select id="spot-zone">
+                        <option value="A">Zone A - Inbound</option>
+                        <option value="B">Zone B - Outbound</option>
+                        <option value="C">Zone C - Storage</option>
+                        <option value="D">Zone D - Maintenance</option>
+                    </select>
+                </div>
+                <button onclick="createYardSpot()" class="btn btn-primary" style="width: 100%;">Create Spot & QR</button>
+                
+                <div id="spot-qr-result" style="display: none;">
+                    <div class="qr-display">
+                        <img id="spot-qr-image" src="" alt="Spot QR Code">
+                        <p><strong>Spot QR Generated</strong></p>
+                        <button onclick="printSpotQR()" class="btn btn-success">🖨️ Print Spot QR</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QR Scanner for Movements -->
+            <div class="yard-card">
+                <h3>📱 QR Scanner - Trailer Movements</h3>
+                <div class="form-group">
+                    <label for="scan-input">Scan QR Code or Enter Manually</label>
+                    <input type="text" id="scan-input" placeholder="Scan trailer or spot QR code">
+                </div>
+                <div class="form-group">
+                    <label for="movement-action">Action</label>
+                    <select id="movement-action">
+                        <option value="check_in">Check In to Yard</option>
+                        <option value="move_to_spot">Move to Spot</option>
+                        <option value="start_loading">Start Loading</option>
+                        <option value="complete_loading">Complete Loading</option>
+                        <option value="check_out">Check Out of Yard</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="target-spot">Target Spot (if moving)</label>
+                    <input type="text" id="target-spot" placeholder="Enter spot number">
+                </div>
+                <button onclick="processMovement()" class="btn btn-warning" style="width: 100%;">Process Movement</button>
+            </div>
+        </div>
+
+        <!-- Yard Layout Visualization -->
+        <div class="yard-card">
+            <h3>🗺️ Yard Layout</h3>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color spot-available"></div>
+                    <span>Available</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color spot-occupied"></div>
+                    <span>Occupied</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color spot-reserved"></div>
+                    <span>Reserved</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color spot-maintenance"></div>
+                    <span>Maintenance</span>
+                </div>
+            </div>
+            <div id="yard-layout" class="yard-layout"></div>
+        </div>
+
+        <!-- Active Trailers List -->
+        <div class="yard-card">
+            <h3>📋 Active Trailers in Yard</h3>
+            <div id="active-trailers-list" class="trailer-list">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Movement History -->
+        <div class="yard-card">
+            <h3>📝 Recent Movements</h3>
+            <div id="movement-history" style="max-height: 300px; overflow-y: auto;">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global data storage
+        let yardSpots = {};
+        let activeTrailers = {};
+        let movementHistory = [];
+        let currentTrailerQR = null;
+        let currentSpotQR = null;
+
+        // Initialize the yard layout
+        function initializeYard() {createYardLayout()
+            loadDemoData()
+            updateStats()
+            updateActiveTrailersList();
+            updateMovementHistory();
+            
+            // Set current time for arrival time input
+            document.getElementById('arrival-time').value = new Date().toISOString().slice(0, 16);}
+
+        function createYardLayout() {const layout = document.getElementById('yard-layout')
+            layout.innerHTML = ''
+            
+            // Create 100 spots (10x10 grid)
+            for (let i = 1 i <= 100; i++) {
+                const spot = document.createElement('div');
+                spot.className = 'yard-spot spot-available';
+                spot.id = `spot-${i}`;
+                spot.textContent = i.toString().padStart(2, '0');
+                spot.onclick = () => selectSpot(i);
+                layout.appendChild(spot);
+                
+                // Initialize spot data
+                if (!yardSpots[i]) {
+                    yardSpots[i] = {
+                        number: i.toString().padStart(2, '0'),
+                        zone: i <= 25 ? 'A' : i <= 50 ? 'B' : i <= 75 ? 'C' : 'D',
+                        type: 'standard',
+                        status: 'available',
+                        trailer: null
+                    };
+                }
+            }
+        }
+
+        function loadDemoData() {
+            // Load some demo trailers
+            const demoTrailers = [
+                { number: 'TRL-001', carrier: 'Express Logistics', driver: 'John Smith', type: 'dry_van', spot: 15 },
+                { number: 'TRL-002', carrier: 'Fast Freight', driver: 'Mike Johnson', type: 'refrigerated', spot: 32 },
+                { number: 'TRL-003', carrier: 'Quick Haul', driver: 'Sarah Wilson', type: 'flatbed', spot: 67 }
+            ];
+
+            demoTrailers.forEach(trailer => {const trailerId = generateId()
+                activeTrailers[trailerId] = {
+                    id: trailerId,
+                    number: trailer.number,
+                    carrier: trailer.carrier,
+                    driver: trailer.driver,
+                    type: trailer.type,
+                    arrivalTime: new Date(Date.now() - Math.random() * 86400000).toISOString(),
+                    currentSpot: trailer.spot,
+                    status: 'parked',
+                    qrCode: `TRAILER:${trailerId}:${trailer.number}`
+                };
+                
+                // Occupy the spot
+                yardSpots[trailer.spot].status = 'occupied';
+                yardSpots[trailer.spot].trailer = trailerId;
+                document.getElementById(`spot-${trailer.spot}`).className = 'yard-spot spot-occupied';
+            });
+        }
+
+        function registerTrailer() {const trailerNumber = document.getElementById('trailer-number').value
+            const carrierName = document.getElementById('carrier-name').value
+            const driverName = document.getElementById('driver-name').value
+            const trailerType = document.getElementById('trailer-type').value;
+            const arrivalTime = document.getElementById('arrival-time').value;
+
+            if (!trailerNumber || !carrierName || !driverName) {
+                alert('Please fill in all required fields');
+                return;}
+
+            const trailerId = generateId();
+            const qrData = `TRAILER:${trailerId}:${trailerNumber}:${carrierName}`;
+
+            activeTrailers[trailerId] = {
+                id: trailerId,
+                number: trailerNumber,
+                carrier: carrierName,
+                driver: driverName,
+                type: trailerType,
+                arrivalTime: arrivalTime || new Date().toISOString(),
+                currentSpot: null,
+                status: 'checked_in',
+                qrCode: qrData
+            };
+
+            // Generate QR code
+            generateQRCode(qrData, 'trailer-qr-image').then(() => {
+                currentTrailerQR = { id: trailerId, data: qrData };
+                document.getElementById('trailer-qr-result').style.display = 'block';
+            });
+
+            // Log movement
+            logMovement(trailerId, 'check_in', null, 'Trailer checked into yard');
+
+            // Clear form
+            clearTrailerForm();
+            updateActiveTrailersList();
+            updateStats();
+        }
+
+        function createYardSpot() {const spotNumber = document.getElementById('spot-number').value
+            const spotType = document.getElementById('spot-type').value
+            const spotZone = document.getElementById('spot-zone').value
+
+            if (!spotNumber) {
+                alert('Please enter a spot number');
+                return;}
+
+            const spotId = generateId();
+            const qrData = `SPOT:${spotId}:${spotNumber}:${spotZone}`;
+
+            // Generate QR code
+            generateQRCode(qrData, 'spot-qr-image').then(() => {
+                currentSpotQR = { id: spotId, number: spotNumber, data: qrData };
+                document.getElementById('spot-qr-result').style.display = 'block';
+            });
+
+            // Clear form
+            clearSpotForm();
+        }
+
+        function processMovement() {const scanInput = document.getElementById('scan-input').value
+            const action = document.getElementById('movement-action').value
+            const targetSpot = document.getElementById('target-spot').value
+
+            if (!scanInput) {
+                alert('Please scan or enter a QR code');
+                return;}
+
+            // Parse QR code
+            const qrParts = scanInput.split(':');
+            if (qrParts.length < 3) {alert('Invalid QR code format')
+                return}
+
+            const type = qrParts[0];
+            const id = qrParts[1];
+
+            if (type === 'TRAILER') {processTrailerMovement(id, action, targetSpot)} else if (type === 'SPOT') {processSpotScan(id, action)} else {alert('Unknown QR code type')}
+
+            // Clear input
+            document.getElementById('scan-input').value = '';
+            document.getElementById('target-spot').value = '';
+        }
+
+        function processTrailerMovement(trailerId, action, targetSpot) {const trailer = activeTrailers[trailerId]
+            if (!trailer) {
+                alert('Trailer not found')
+                return}
+
+            let message = '';
+            switch (action) {case 'move_to_spot':
+                    if (!targetSpot) {
+                        alert('Please specify target spot')
+                        return}
+                    if (moveTrailerToSpot(trailerId, targetSpot)) {
+                        message = `Moved to spot ${targetSpot}`;
+                        trailer.status = 'parked';
+                    } else {alert('Failed to move trailer to spot')
+                        return}
+                    break;
+                case 'start_loading':
+                    trailer.status = 'loading';
+                    message = 'Loading started';
+                    break;
+                case 'complete_loading':
+                    trailer.status = 'loaded';
+                    message = 'Loading completed';
+                    break;
+                case 'check_out':
+                    if (trailer.currentSpot) {yardSpots[trailer.currentSpot].status = 'available'
+                        yardSpots[trailer.currentSpot].trailer = null
+                        updateSpotDisplay(trailer.currentSpot)}
+                    delete activeTrailers[trailerId];
+                    message = 'Checked out of yard';
+                    break;
+            }
+
+            logMovement(trailerId, action, trailer.currentSpot, message);
+            updateActiveTrailersList();
+            updateStats();
+            alert(`Trailer ${trailer.number}: ${message}`);
+        }
+
+        function moveTrailerToSpot(trailerId, spotNumber) {const trailer = activeTrailers[trailerId]
+            const spot = findSpotByNumber(spotNumber)
+
+            if (!spot) {
+                alert('Spot not found')
+                return false;}
+
+            if (spot.status === 'occupied') {alert('Spot is already occupied')
+                return false}
+
+            // Free current spot if any
+            if (trailer.currentSpot) {yardSpots[trailer.currentSpot].status = 'available'
+                yardSpots[trailer.currentSpot].trailer = null
+                updateSpotDisplay(trailer.currentSpot)}
+
+            // Occupy new spot
+            spot.status = 'occupied';
+            spot.trailer = trailerId;
+            trailer.currentSpot = getSpotKey(spot);
+            updateSpotDisplay(trailer.currentSpot);
+
+            return true;
+        }
+
+        function findSpotByNumber(spotNumber) {for (let key in yardSpots) {
+                if (yardSpots[key].number === spotNumber.padStart(2, '0')) {
+                    return yardSpots[key]}
+            }
+            return null;
+        }
+
+        function getSpotKey(spot) {for (let key in yardSpots) {
+                if (yardSpots[key] === spot) {
+                    return parseInt(key)}
+            }
+            return null;
+        }
+
+        function updateSpotDisplay(spotNumber) {
+            const spotElement = document.getElementById(`spot-${spotNumber}`);
+            const spot = yardSpots[spotNumber];
+            
+            spotElement.className = `yard-spot spot-${spot.status}`;
+        }
+
+        function logMovement(trailerId, action, spot, description) {
+            const movement = {
+                id: generateId(),
+                trailerId: trailerId,
+                trailerNumber: activeTrailers[trailerId]?.number || 'Unknown',
+                action: action,
+                spot: spot,
+                description: description,
+                timestamp: new Date().toISOString(),
+                user: 'Current User'
+            };
+
+            movementHistory.unshift(movement);
+            updateMovementHistory();
+        }
+
+        function updateActiveTrailersList() {const container = document.getElementById('active-trailers-list')
+            container.innerHTML = ''
+
+            if (Object.keys(activeTrailers).length === 0) {
+                container.innerHTML = '<p style="text-align: center color: #666;">No active trailers in yard</p>';
+                return}
+
+            Object.values(activeTrailers).forEach(trailer => {const dwellTime = Math.floor((new Date() - new Date(trailer.arrivalTime)) / (1000 * 60 * 60))
+                const div = document.createElement('div')
+                div.className = 'trailer-item'
+                div.innerHTML = `
+                    <div style="display: flex justify-content: space-between align-items: center">
+                        <div>
+                            <strong>${trailer.number}</strong> - ${trailer.carrier}
+                            <br><small>Driver: ${trailer.driver} | Type: ${trailer.type}</small>
+                            <br><small>Spot: ${trailer.currentSpot || 'Not assigned'} | Dwell: ${dwellTime}h</small>
+                        </div>
+                        <div>
+                            <span class="trailer-status status-${trailer.status}">${trailer.status.toUpperCase()}</span>
+                            <br><small style="color: #666;">${new Date(trailer.arrivalTime).toLocaleString()}</small>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function updateMovementHistory() {const container = document.getElementById('movement-history')
+            container.innerHTML = ''
+
+            if (movementHistory.length === 0) {
+                container.innerHTML = '<p style="text-align: center color: #666;">No recent movements</p>';
+                return}
+
+            movementHistory.slice(0, 10).forEach(movement => {const div = document.createElement('div')
+                div.style.cssText = 'padding: 10px border-bottom: 1px solid #eee background: #f8f9fa; margin-bottom: 5px; border-radius: 3px;';
+                div.innerHTML = `
+                    <strong>${movement.trailerNumber}</strong> - ${movement.description}
+                    <br><small style="color: #666">${new Date(movement.timestamp).toLocaleString()} | ${movement.user}</small>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function updateStats() {const totalSpots = Object.keys(yardSpots).length
+            const occupiedSpots = Object.values(yardSpots).filter(spot => spot.status === 'occupied').length
+            const activeTrailerCount = Object.keys(activeTrailers).length
+            
+            // Calculate average dwell time
+            const totalDwellTime = Object.values(activeTrailers).reduce((sum, trailer) => {
+                return sum + Math.floor((new Date() - new Date(trailer.arrivalTime)) / (1000 * 60 * 60));}, 0);
+            const avgDwellTime = activeTrailerCount > 0 ? (totalDwellTime / activeTrailerCount).toFixed(1) : 0;
+
+            document.getElementById('total-spots').textContent = totalSpots;
+            document.getElementById('occupied-spots').textContent = occupiedSpots;
+            document.getElementById('active-trailers').textContent = activeTrailerCount;
+            document.getElementById('avg-dwell-time').textContent = avgDwellTime;
+        }
+
+        function generateQRCode(data, imageElementId) {return new Promise((resolve) => {
+                // Create a simple QR-like pattern using canvas
+                const canvas = document.createElement('canvas')
+                const ctx = canvas.getContext('2d')
+                canvas.width = 200
+                canvas.height = 200;
+
+                // Draw QR pattern
+                ctx.fillStyle = '#000';
+                for (let i = 0; i < 20; i++) {
+                    for (let j = 0; j < 20; j++) {
+                        if (Math.random() > 0.5) {
+                            ctx.fillRect(i * 10, j * 10, 10, 10);}
+                    }
+                }
+
+                // Add corner markers
+                ctx.fillRect(0, 0, 60, 60);
+                ctx.fillRect(140, 0, 60, 60);
+                ctx.fillRect(0, 140, 60, 60);
+
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(10, 10, 40, 40);
+                ctx.fillRect(150, 10, 40, 40);
+                ctx.fillRect(10, 150, 40, 40);
+
+                ctx.fillStyle = '#000';
+                ctx.fillRect(20, 20, 20, 20);
+                ctx.fillRect(160, 20, 20, 20);
+                ctx.fillRect(20, 160, 20, 20);
+
+                document.getElementById(imageElementId).src = canvas.toDataURL();
+                resolve();
+            });
+        }
+
+        function printTrailerQR() {if (!currentTrailerQR) return
+            
+            const trailer = activeTrailers[currentTrailerQR.id]
+            const printWindow = window.open('', '_blank')
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Trailer QR Label - ${trailer.number}</title>
+                    <style>
+                        body {font-family: Arial, sans-serif margin: 20px}
+                        .label {border: 3px solid #000 padding: 20px text-align: center}
+                        .header {font-size: 24px font-weight: bold margin-bottom: 15px}
+                        .qr-code {margin: 15px 0}
+                        .info {text-align: left margin: 10px 0}
+                    </style>
+                </head>
+                <body>
+                    <div class="label">
+                        <div class="header">🚛 TRAILER QR CODE</div>
+                        <div class="qr-code">
+                            <img src="${document.getElementById('trailer-qr-image').src}" style="width: 150px;">
+                        </div>
+                        <div class="info">
+                            <div><strong>Trailer:</strong> ${trailer.number}</div>
+                            <div><strong>Carrier:</strong> ${trailer.carrier}</div>
+                            <div><strong>Driver:</strong> ${trailer.driver}</div>
+                            <div><strong>Type:</strong> ${trailer.type}</div>
+                        </div>
+                        <div style="font-size: 12px; margin-top: 15px;">
+                            QR Legends Yard Management<br>
+                            Generated: ${new Date().toLocaleString()}
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function printSpotQR() {if (!currentSpotQR) return
+            
+            const printWindow = window.open('', '_blank')
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Yard Spot QR Label - ${currentSpotQR.number}</title>
+                    <style>
+                        body {font-family: Arial, sans-serif margin: 20px}
+                        .label {border: 3px solid #000 padding: 20px text-align: center}
+                        .header {font-size: 24px font-weight: bold margin-bottom: 15px}
+                        .qr-code {margin: 15px 0}
+                    </style>
+                </head>
+                <body>
+                    <div class="label">
+                        <div class="header">📍 YARD SPOT</div>
+                        <div style="font-size: 32px font-weight: bold; margin: 15px 0;">${currentSpotQR.number}</div>
+                        <div class="qr-code">
+                            <img src="${document.getElementById('spot-qr-image').src}" style="width: 150px;">
+                        </div>
+                        <div style="font-size: 12px; margin-top: 15px;">
+                            QR Legends Yard Management<br>
+                            Generated: ${new Date().toLocaleString()}
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function selectSpot(spotNumber) {const spot = yardSpots[spotNumber]
+            const info = `Spot ${spot.number} - Zone ${spot.zone} - ${spot.status}`;
+            if (spot.trailer) {const trailer = activeTrailers[spot.trailer]
+                alert(`${info}\nOccupied by: ${trailer.number} (${trailer.carrier})`);
+            } else {alert(info)}
+        }
+
+        function clearTrailerForm() {document.getElementById('trailer-number').value = ''
+            document.getElementById('carrier-name').value = ''
+            document.getElementById('driver-name').value = ''
+            document.getElementById('trailer-type').value = 'dry_van';
+            document.getElementById('arrival-time').value = new Date().toISOString().slice(0, 16);}
+
+        function clearSpotForm() {document.getElementById('spot-number').value = ''
+            document.getElementById('spot-type').value = 'standard'
+            document.getElementById('spot-zone').value = 'A'}
+
+        function generateId() {return Date.now().toString(36) + Math.random().toString(36).substr(2)}
+
+        // Initialize the yard when page loads
+        window.onload = initializeYard;
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yard Management - QR Legends</title>
+    <style>
+        body {font-family: Arial, sans-serif margin: 20px background-color: #f5f5f5}
+        .container {max-width: 1200px margin: 0 auto background: white padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+        .header {text-align: center margin-bottom: 30px padding: 20px background: linear-gradient(135deg, #2c3e50, #3498db); color: white; border-radius: 10px}
+        .back-btn {display: inline-block padding: 10px 20px background: #6c757d color: white; text-decoration: none; border-radius: 5px; margin-bottom: 20px}
+        .yard-grid {display: grid grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) gap: 20px}
+        .yard-section {padding: 20px border: 2px solid #ddd border-radius: 10px background: #f8f9fa}
+        .status-active {border-color: #28a745}
+        .status-occupied {border-color: #ffc107}
+        .status-maintenance {border-color: #dc3545}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/tools_hub" class="back-btn">← Back to Tools Hub</a>
+        
+        <div class="header">
+            <h1>🚛 Yard Management System</h1>
+            <p>Manage dock doors, trailer positions, and yard operations</p>
+        </div>
+
+        <div class="yard-grid">
+            <div class="yard-section status-active">
+                <h3>🚪 Dock Door 1</h3>
+                <p><strong>Status:</strong> Available</p>
+                <p><strong>Next Scheduled:</strong> 2:00 PM</p>
+                <button class="btn">Assign Trailer</button>
+            </div>
+            
+            <div class="yard-section status-occupied">
+                <h3>🚪 Dock Door 2</h3>
+                <p><strong>Status:</strong> Occupied</p>
+                <p><strong>Trailer ID:</strong> TRL-001</p>
+                <p><strong>Est. Complete:</strong> 1:30 PM</p>
+                <button class="btn">View Details</button>
+            </div>
+            
+            <div class="yard-section status-maintenance">
+                <h3>🚪 Dock Door 3</h3>
+                <p><strong>Status:</strong> Maintenance</p>
+                <p><strong>Issue:</strong> Hydraulic repair</p>
+                <button class="btn">Schedule Repair</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

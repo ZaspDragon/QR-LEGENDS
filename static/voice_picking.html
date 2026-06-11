@@ -1,0 +1,463 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Picking - QR Legends WMS</title>
+    <style>
+/* === QRLegends Unified Theme (Dark/Light) === */
+:root{
+  --ql-bg: #0b1724;
+  --ql-panel: #0f2340;
+  --ql-card: #102846;
+  --ql-text: #dbe8ff;
+  --ql-sub: #97a6c1;
+  --ql-primary: #3b82f6;
+  --ql-success: #22c55e;
+  --ql-warning: #f59e0b;
+  --ql-danger: #ef4444;
+  --ql-accent: #6366f1;
+  --ql-border: rgba(255,255,255,.12);
+  --ql-surface: rgba(255,255,255,.06);
+}
+/* Light mode overrides */
+body.light{
+  --ql-bg: #f2f6fb;
+  --ql-panel: #ffffff;
+  --ql-card: #ffffff;
+  --ql-text: #1d2840;
+  --ql-sub: #51607c;
+  --ql-primary: #2563eb;
+  --ql-success: #16a34a;
+  --ql-warning: #d97706;
+  --ql-danger: #dc2626;
+  --ql-accent: #4f46e5;
+  --ql-border: rgba(0,0,0,.12);
+  --ql-surface: rgba(15,23,42,.04);
+}
+
+html,body{height:100%;}
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed;
+  color: var(--ql-text);
+  font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+  line-height: 1.45;
+  padding: 20px;
+  padding-bottom: 100px;
+}
+body.light{
+  background: linear-gradient(180deg,#f7faff,#eef3fb);
+}
+
+.ql-header{
+  position: sticky; top:0; z-index:1000;
+  background: rgba(8,27,46,.7);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--ql-border);
+}
+body.light .ql-header{
+  background: rgba(255,255,255,.75);
+}
+.ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
+.ql-title{display:flex; align-items:center; gap:10px;}
+.ql-h1{font-size:1.25rem; margin:0; letter-spacing:.2px;}
+.ql-nav{display:flex; gap:8px; flex-wrap:wrap;}
+.ql-btn{
+  display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
+  background: var(--ql-surface); border: 1px solid var(--ql-border);
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+  transition: transform .08s ease, background .2s ease, border-color .2s ease;
+}
+.ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+body.light .ql-btn:hover{ background: rgba(15,23,42,.08); }
+.ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
+
+.ql-theme-toggle{
+  margin-left:12px; cursor:pointer; border:1px solid var(--ql-border);
+  background: var(--ql-surface); color: var(--ql-text);
+  border-radius:10px; padding:8px 10px; font-size:16px;
+}
+
+.container { max-width: 1200px; margin: 0 auto; }
+.card { 
+    background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+    border: 1px solid var(--ql-border);
+    box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+    border-radius:16px; padding:20px;
+    margin: 10px 0;
+}
+body.light .card{
+  background: var(--ql-card);
+  box-shadow: 0 10px 30px rgba(2,8,23,.08);
+}
+
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+
+.btn { 
+    padding: 12px 24px; 
+    margin: 5px; 
+    border: none; 
+    border-radius: 10px; 
+    cursor: pointer; 
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+.btn-primary { background: var(--ql-primary); color: white; }
+.btn-success { background: var(--ql-success); color: white; }
+.btn-danger { background: var(--ql-danger); color: white; }
+.btn-warning { background: var(--ql-warning); color: white; }
+.btn:hover { transform: translateY(-1px); opacity: 0.9; }
+
+.voice-status {
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 15px 0;
+}
+.voice-listening { 
+    background: var(--ql-success); 
+    color: white;
+    animation: pulse 2s infinite;
+}
+.voice-processing { 
+    background: var(--ql-warning); 
+    color: white;
+}
+.voice-inactive { 
+    background: var(--ql-surface); 
+    color: var(--ql-text);
+    border: 1px solid var(--ql-border);
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+.pick-instruction {
+    background: linear-gradient(135deg, var(--ql-success), var(--ql-primary));
+    color: white;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 24px;
+    margin: 20px 0;
+}
+
+.voice-command {
+    background: var(--ql-surface);
+    border-left: 4px solid var(--ql-primary);
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    color: var(--ql-text);
+}
+
+.audio-feedback {
+    background: var(--ql-surface);
+    border: 1px solid var(--ql-border);
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    color: var(--ql-text);
+}
+
+.performance-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.stat-card {
+    background: var(--ql-surface);
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid var(--ql-border);
+}
+
+.microphone-indicator {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 10px;
+    position: relative;
+}
+
+.mic-active {
+    background: radial-gradient(circle, var(--ql-success), var(--ql-primary));
+    animation: micPulse 1.5s infinite;
+}
+
+.mic-inactive {
+    background: var(--ql-sub);
+}
+
+@keyframes micPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.voice-history {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--ql-border);
+    padding: 15px;
+    border-radius: 8px;
+    background: var(--ql-surface);
+    color: var(--ql-text);
+}
+
+.command-entry {
+    padding: 5px 0;
+    border-bottom: 1px solid var(--ql-border);
+}
+
+.command-entry:last-child {
+    border-bottom: none;
+}
+
+.error-message {
+    background: var(--ql-danger);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+</style>
+<script>
+(function(){
+  try {
+    const saved = localStorage.getItem('ql-theme');
+    if(saved === 'light'){ document.addEventListener('DOMContentLoaded', ()=> document.body.classList.add('light')); }
+  } catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const btn = document.getElementById('ql-theme-toggle');
+    if(btn){
+      btn.addEventListener('click', function(){
+        document.body.classList.toggle('light');
+        const isLight = document.body.classList.contains('light');
+        btn.textContent = isLight ? '☀️' : '🌙';
+        try { localStorage.setItem('ql-theme', isLight ? 'light' : 'dark'); } catch(e){}
+      });
+      if(document.body.classList.contains('light')) btn.textContent = '☀️';
+    }
+    document.querySelectorAll('button:not([type])').forEach(b=> b.setAttribute('type','button'));
+  });
+})();
+</script>
+</head>
+<body>
+<!-- Unified QR Legends Header -->
+<header class="ql-header">
+  <div class="ql-header-inner">
+    <div class="ql-title">
+      <span class="ql-logo">🟦</span>
+      <h1 class="ql-h1">Voice Picking - QR Legends WMS</h1>
+    </div>
+    <nav class="ql-nav">
+      <a class="ql-btn ql-secondary" href="/main_dashboard">🏠 Dashboard</a>
+      <a class="ql-btn" href="/order_picking">📦 Order Picking</a>
+      <a class="ql-btn" href="/tools_hub">🛠️ Tools</a>
+    </nav>
+    <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<div class="container">
+    <h1 style="text-align: center; color: var(--ql-text); margin-bottom: 20px;">🎙️ Voice Picking System</h1>
+    <p style="color: var(--ql-sub); margin-bottom: 20px; text-align: center;">Hands-free picking with voice commands and audio feedback</p>
+
+    <!-- Voice Status Display -->
+    <div class="card">
+        <h3 style="color: var(--ql-text);">Voice Recognition Status</h3>
+        <div id="voiceStatus" class="voice-status voice-inactive">
+            🎙️ Voice Recognition Inactive
+        </div>
+        <div class="microphone-indicator mic-inactive" id="micIndicator"></div>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <button class="btn btn-success" id="startVoiceBtn" onclick="startVoiceRecognition()">
+                🎙️ Start Voice Picking
+            </button>
+            <button class="btn btn-danger" id="stopVoiceBtn" onclick="stopVoiceRecognition()" disabled>
+                🛑 Stop Voice Picking
+            </button>
+            <button class="btn btn-primary" onclick="testVoiceCommands()">
+                🧪 Test Commands
+            </button>
+        </div>
+    </div>
+
+    <div class="grid">
+        <!-- Current Pick Task -->
+        <div class="card">
+            <h3 style="color: var(--ql-text);">📋 Current Pick Task</h3>
+            <div id="currentTask" class="pick-instruction">
+                No active pick task. Say "Start picking" to begin.
+            </div>
+            
+            <div id="taskDetails" style="display: none; color: var(--ql-text);">
+                <p><strong>Item:</strong> <span id="currentItem">-</span></p>
+                <p><strong>Location:</strong> <span id="currentLocation">-</span></p>
+                <p><strong>Quantity:</strong> <span id="currentQuantity">-</span></p>
+                <p><strong>Order:</strong> <span id="currentOrder">-</span></p>
+            </div>
+            
+            <div class="audio-feedback">
+                <strong>🔊 Last Audio Feedback:</strong>
+                <div id="lastAudioFeedback">Ready for voice commands</div>
+            </div>
+        </div>
+
+        <!-- Voice Commands Guide -->
+        <div class="card">
+            <h3 style="color: var(--ql-text);">📢 Voice Commands</h3>
+            <div class="voice-command">
+                <strong>"Start picking"</strong> - Begin a new pick session
+            </div>
+            <div class="voice-command">
+                <strong>"Confirm [number]"</strong> - Confirm quantity picked
+            </div>
+            <div class="voice-command">
+                <strong>"Short pick [number]"</strong> - Report partial pick
+            </div>
+            <div class="voice-command">
+                <strong>"Skip item"</strong> - Skip current item
+            </div>
+            <div class="voice-command">
+                <strong>"Repeat"</strong> - Repeat last instruction
+            </div>
+            <div class="voice-command">
+                <strong>"Next location"</strong> - Move to next pick
+            </div>
+            <div class="voice-command">
+                <strong>"Help"</strong> - List available commands
+            </div>
+            <div class="voice-command">
+                <strong>"Complete order"</strong> - Finish current order
+            </div>
+        </div>
+
+        <!-- Voice History -->
+        <div class="card">
+            <h3 style="color: var(--ql-text);">🗣️ Voice Command History</h3>
+            <div id="voiceHistory" class="voice-history">
+                <div class="command-entry">Voice commands will appear here...</div>
+            </div>
+            <button class="btn btn-warning" onclick="clearVoiceHistory()">Clear History</button>
+        </div>
+    </div>
+
+    <!-- Performance Statistics -->
+    <div class="card">
+        <h3 style="color: var(--ql-text);">📊 Voice Picking Performance</h3>
+        <div class="performance-stats">
+            <div class="stat-card">
+                <h4 style="color: var(--ql-text);">Items Picked</h4>
+                <div id="itemsPicked" style="font-size: 24px; color: var(--ql-success);">0</div>
+            </div>
+            <div class="stat-card">
+                <h4 style="color: var(--ql-text);">Recognition Accuracy</h4>
+                <div id="recognitionAccuracy" style="font-size: 24px; color: var(--ql-primary);">0%</div>
+            </div>
+            <div class="stat-card">
+                <h4 style="color: var(--ql-text);">Commands Today</h4>
+                <div id="commandsToday" style="font-size: 24px; color: var(--ql-warning);">0</div>
+            </div>
+            <div class="stat-card">
+                <h4 style="color: var(--ql-text);">Avg Response Time</h4>
+                <div id="avgResponseTime" style="font-size: 24px; color: var(--ql-accent);">0s</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isVoiceActive = false;
+        let voiceCommands = [];
+        let currentPickSession = null;
+
+        // Mock voice recognition functionality
+        function startVoiceRecognition() {
+            isVoiceActive = true;
+            document.getElementById('voiceStatus').className = 'voice-status voice-listening';
+            document.getElementById('voiceStatus').textContent = '🎙️ Listening for voice commands...';
+            document.getElementById('micIndicator').className = 'microphone-indicator mic-active';
+            document.getElementById('startVoiceBtn').disabled = true;
+            document.getElementById('stopVoiceBtn').disabled = false;
+            
+            updateAudioFeedback('Voice picking activated. Say "Start picking" to begin.');
+        }
+
+        function stopVoiceRecognition() {
+            isVoiceActive = false;
+            document.getElementById('voiceStatus').className = 'voice-status voice-inactive';
+            document.getElementById('voiceStatus').textContent = '🎙️ Voice Recognition Inactive';
+            document.getElementById('micIndicator').className = 'microphone-indicator mic-inactive';
+            document.getElementById('startVoiceBtn').disabled = false;
+            document.getElementById('stopVoiceBtn').disabled = true;
+            
+            updateAudioFeedback('Voice picking deactivated.');
+        }
+
+        function testVoiceCommands() {
+            const testCommands = ['Start picking', 'Confirm 5', 'Next location', 'Complete order'];
+            const randomCommand = testCommands[Math.floor(Math.random() * testCommands.length)];
+            
+            addVoiceCommand(randomCommand);
+            updateAudioFeedback(`Test command processed: "${randomCommand}"`);
+            
+            // Update mock stats
+            updatePerformanceStats();
+        }
+
+        function addVoiceCommand(command) {
+            const history = document.getElementById('voiceHistory');
+            const entry = document.createElement('div');
+            entry.className = 'command-entry';
+            entry.innerHTML = `<strong>${new Date().toLocaleTimeString()}:</strong> "${command}"`;
+            history.appendChild(entry);
+            history.scrollTop = history.scrollHeight;
+            
+            voiceCommands.push({
+                command: command,
+                timestamp: new Date(),
+                processed: true
+            });
+        }
+
+        function updateAudioFeedback(message) {
+            document.getElementById('lastAudioFeedback').textContent = message;
+        }
+
+        function clearVoiceHistory() {
+            document.getElementById('voiceHistory').innerHTML = 
+                '<div class="command-entry">Voice commands will appear here...</div>';
+            voiceCommands = [];
+        }
+
+        function updatePerformanceStats() {
+            document.getElementById('itemsPicked').textContent = Math.floor(Math.random() * 50);
+            document.getElementById('recognitionAccuracy').textContent = (95 + Math.random() * 5).toFixed(1) + '%';
+            document.getElementById('commandsToday').textContent = voiceCommands.length;
+            document.getElementById('avgResponseTime').textContent = (0.5 + Math.random() * 1).toFixed(1) + 's';
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePerformanceStats();
+        });
+    </script>
+</div>
+</body>
+</html>

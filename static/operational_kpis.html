@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operational KPIs - QR Legends</title>
+    <style>
+        * {margin: 0 padding: 0 box-sizing: border-box}
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif background: #f5f7fa}
+        .container {max-width: 1400px margin: 0 auto padding: 20px}
+        .back-button {display: inline-block margin-bottom: 20px padding: 10px 20px background: #6c757d; color: white; text-decoration: none; border-radius: 5px}
+        h1 {color: #2c3e50 margin-bottom: 30px display: flex align-items: center; gap: 10px}
+        .metrics-grid {display: grid grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) gap: 20px margin-bottom: 30px}
+        .metric-card {background: white padding: 20px border-radius: 10px box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+        .metric-title {color: #666 font-size: 14px margin-bottom: 10px}
+        .metric-value {font-size: 2.5em font-weight: bold margin-bottom: 5px}
+        .metric-change {font-size: 14px padding: 4px 8px border-radius: 20px}
+        .positive {color: #27ae60 background: #d5f4e6}
+        .negative {color: #e74c3c background: #fdf2f2}
+        .chart-container {background: white padding: 20px border-radius: 10px box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px}
+        .throughput {color: #3498db}
+        .accuracy {color: #27ae60}
+        .productivity {color: #f39c12}
+        .efficiency {color: #9b59b6}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/reports_hub" class="back-button">← Back to Reports Hub</a>
+        
+        <h1>📊 Operational KPIs Dashboard</h1>
+        <p style="color: #666; margin-bottom: 30px;">Monitor key performance indicators for throughput, accuracy, and productivity metrics</p>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-title">Daily Throughput</div>
+                <div class="metric-value throughput">2,847</div>
+                <div class="metric-change positive">+12.4% vs yesterday</div>
+                <small style="color: #666;">Items processed today</small>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-title">Pick Accuracy</div>
+                <div class="metric-value accuracy">99.7%</div>
+                <div class="metric-change positive">+0.3% this week</div>
+                <small style="color: #666;">Error-free picks</small>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-title">Labor Productivity</div>
+                <div class="metric-value productivity">127</div>
+                <div class="metric-change positive">+8.2% vs target</div>
+                <small style="color: #666;">Items per labor hour</small>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-title">Order Fulfillment</div>
+                <div class="metric-value efficiency">94.2%</div>
+                <div class="metric-change negative">-1.8% this week</div>
+                <small style="color: #666;">On-time shipments</small>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-title">Cycle Time</div>
+                <div class="metric-value" style="color: #e67e22;">18.4</div>
+                <div class="metric-change positive">-2.1 min improvement</div>
+                <small style="color: #666;">Average order cycle time</small>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-title">Space Utilization</div>
+                <div class="metric-value" style="color: #34495e;">82.5%</div>
+                <div class="metric-change positive">+5.3% optimized</div>
+                <small style="color: #666;">Warehouse capacity used</small>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h3 style="margin-bottom: 20px;">📈 Performance Trends (Last 30 Days)</h3>
+            <div style="display: flex; justify-content: space-between; align-items: end; height: 200px; border-bottom: 2px solid #ecf0f1; padding-bottom: 20px;">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div style="width: 30px; height: 120px; background: #3498db; margin-bottom: 10px;"></div>
+                    <small>Week 1</small>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div style="width: 30px; height: 140px; background: #3498db; margin-bottom: 10px;"></div>
+                    <small>Week 2</small>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div style="width: 30px; height: 165px; background: #3498db; margin-bottom: 10px;"></div>
+                    <small>Week 3</small>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div style="width: 30px; height: 180px; background: #27ae60; margin-bottom: 10px;"></div>
+                    <small>Week 4</small>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 15px; color: #666;">Weekly Throughput Trends</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="chart-container">
+                <h3 style="margin-bottom: 15px;">🎯 Daily Targets vs Actual</h3>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span>Pick Rate:</span>
+                    <span style="color: #27ae60; font-weight: bold;">127 (Target: 120)</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span>Pack Rate:</span>
+                    <span style="color: #27ae60; font-weight: bold;">89 (Target: 85)</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span>Ship Rate:</span>
+                    <span style="color: #e74c3c; font-weight: bold;">72 (Target: 80)</span>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3 style="margin-bottom: 15px;">⚠️ Top Issues Today</h3>
+                <div style="margin-bottom: 10px; padding: 10px; background: #fef9e7; border-left: 4px solid #f1c40f;">
+                    <strong>Late Shipments:</strong> 8 orders delayed
+                </div>
+                <div style="margin-bottom: 10px; padding: 10px; background: #fdf2f2; border-left: 4px solid #e74c3c;">
+                    <strong>Pick Errors:</strong> 3 mispicks reported
+                </div>
+                <div style="margin-bottom: 10px; padding: 10px; background: #ebf3ff; border-left: 4px solid #3498db;">
+                    <strong>Inventory Low:</strong> 12 items below reorder
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

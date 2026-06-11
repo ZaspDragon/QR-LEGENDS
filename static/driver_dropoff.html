@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Drop-off Portal - QR Legends</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <script src="qr_camera_scanner.js"></script>
+    <script src="copyright_notice.js"></script>
+    <style>
+        body {font-family: Arial, sans-serif margin: 20px background-color: #f5f5f5}
+        .container {max-width: 800px margin: 0 auto}
+        .card {background: white padding: 20px margin: 10px 0 border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+        .btn {padding: 12px 20px margin: 5px border: none border-radius: 5px; cursor: pointer; font-weight: bold}
+        .btn-primary {background: #007bff color: white}
+        .btn-success {background: #28a745 color: white}
+        .btn-warning {background: #ffc107 color: #212529}
+        .form-group {margin: 15px 0}
+        .form-group label {display: block margin-bottom: 5px font-weight: bold}
+        .form-group input, .form-group select, .form-group textarea {width: 100% padding: 10px border: 1px solid #ddd border-radius: 4px; box-sizing: border-box}
+        .header {background: linear-gradient(135deg, #007bff, #0056b3) color: white padding: 20px border-radius: 8px; margin-bottom: 20px; text-align: center}
+        .success-message {background: #d4edda border: 1px solid #c3e6cb color: #155724 padding: 15px; border-radius: 5px; margin: 10px 0}
+        .warning-message {background: #fff3cd border: 1px solid #ffeaa7 color: #856404 padding: 15px; border-radius: 5px; margin: 10px 0}
+        .signature-pad {border: 2px solid #ddd border-radius: 5px cursor: crosshair}
+        .document-preview {background: #f8f9fa border: 1px solid #dee2e6 border-radius: 5px padding: 15px; margin: 15px 0}
+        .truck-info {background: linear-gradient(135deg, #28a745, #20c997) color: white padding: 15px border-radius: 8px; margin: 15px 0}
+        .photo-preview {text-align: center margin: 15px 0}
+        .photo-preview img {max-width: 300px border-radius: 8px}
+    </style>
+<style>
+/* === QRLegends Unified Theme (Dark/Light) === */
+:root{
+  --ql-bg: #0b1724;
+  --ql-panel: #0f2340;
+  --ql-card: #102846;
+  --ql-text: #dbe8ff;
+  --ql-sub: #97a6c1;
+  --ql-primary: #3b82f6;
+  --ql-success: #22c55e;
+  --ql-warning: #f59e0b;
+  --ql-danger: #ef4444;
+  --ql-accent: #6366f1;
+  --ql-border: rgba(255,255,255,.12);
+  --ql-surface: rgba(255,255,255,.06);
+}
+/* Light mode overrides */
+body.light{
+  --ql-bg: #f2f6fb;
+  --ql-panel: #ffffff;
+  --ql-card: #ffffff;
+  --ql-text: #1d2840;
+  --ql-sub: #51607c;
+  --ql-primary: #2563eb;
+  --ql-success: #16a34a;
+  --ql-warning: #d97706;
+  --ql-danger: #dc2626;
+  --ql-accent: #4f46e5;
+  --ql-border: rgba(0,0,0,.12);
+  --ql-surface: rgba(15,23,42,.04);
+}
+
+html,body{height:100%;}
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed;
+  color: var(--ql-text);
+  font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+  line-height: 1.45;
+}
+body.light{
+  background: linear-gradient(180deg,#f7faff,#eef3fb);
+}
+
+.ql-header{
+  position: sticky; top:0; z-index:1000;
+  background: rgba(8,27,46,.7);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--ql-border);
+}
+body.light .ql-header{
+  background: rgba(255,255,255,.75);
+}
+.ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
+.ql-title{display:flex; align-items:center; gap:10px;}
+.ql-h1{font-size:1.25rem; margin:0; letter-spacing:.2px;}
+.ql-nav{display:flex; gap:8px; flex-wrap:wrap;}
+.ql-btn{
+  display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
+  background: var(--ql-surface); border: 1px solid var(--ql-border);
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+  transition: transform .08s ease, background .2s ease, border-color .2s ease;
+}
+.ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+body.light .ql-btn:hover{ background: rgba(15,23,42,.08); }
+.ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
+
+.ql-theme-toggle{
+  margin-left:12px; cursor:pointer; border:1px solid var(--ql-border);
+  background: var(--ql-surface); color: var(--ql-text);
+  border-radius:10px; padding:8px 10px; font-size:16px;
+}
+
+.ql-container{ max-width:1200px; margin:22px auto; padding:0 20px; }
+.ql-grid{ display:grid; gap:16px; grid-template-columns: repeat(12, 1fr);}
+.ql-card{
+  grid-column: span 12;
+  background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+  border: 1px solid var(--ql-border);
+  box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+  border-radius:16px; padding:16px 16px;
+}
+body.light .ql-card{
+  background: var(--ql-card);
+  box-shadow: 0 10px 30px rgba(2,8,23,.08);
+}
+
+@media(min-width:900px){
+  .ql-card.half{ grid-column: span 6; }
+  .ql-card.third{ grid-column: span 4; }
+}
+
+.ql-card h2{ font-size:1.05rem; margin:0 0 10px 0; color: #bcd5ff; letter-spacing:.2px; }
+body.light .ql-card h2{ color:#234073; }
+
+.ql-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+.ql-input, .ql-select, input[type="text"], input[type="date"], textarea, select {
+  width:100%; background: var(--ql-surface); color: var(--ql-text); border: 1px solid var(--ql-border);
+  padding:10px 12px; border-radius:10px; outline:none;
+}
+.ql-input::placeholder{ color: #9fb0cc; }
+body.light .ql-input::placeholder{ color: #6b7b92; }
+
+/* dashboard bubble */
+.ql-fab{ position: fixed; right: 18px; bottom: 18px; background: var(--ql-accent); color:white; border:none;
+  border-radius:999px; padding:10px 14px; font-weight:600; box-shadow: 0 14px 30px rgba(0,0,0,.35);}
+</style>
+<script>
+(function(){
+  try {
+    const saved = localStorage.getItem('ql-theme');
+    if(saved === 'light'){ document.addEventListener('DOMContentLoaded', ()=> document.body.classList.add('light')); }
+  } catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const btn = document.getElementById('ql-theme-toggle');
+    if(btn){
+      btn.addEventListener('click', function(){
+        document.body.classList.toggle('light');
+        const isLight = document.body.classList.contains('light');
+        btn.textContent = isLight ? '☀️' : '🌙';
+        try { localStorage.setItem('ql-theme', isLight ? 'light' : 'dark'); } catch(e){}
+      });
+      if(document.body.classList.contains('light')) btn.textContent = '☀️';
+    }
+    document.querySelectorAll('button:not([type])').forEach(b=> b.setAttribute('type','button'));
+  });
+})();
+</script>
+</head>
+<body>
+<!-- Unified QR Legends Header -->
+<header class="ql-header">
+  <div class="ql-header-inner">
+    <div class="ql-title">
+      <span class="ql-logo">🟦</span>
+      <h1 class="ql-h1">Driver Drop-off Portal - QR Legends</h1>
+    </div>
+    <nav class="ql-nav">
+      <a class="ql-btn ql-secondary" href="main_dashboard.html">🏠 Dashboard</a>
+      <a class="ql-btn ql-tertiary" href="order_picking.html">📦 Order Picking</a>
+      <a class="ql-btn ql-tertiary" href="inbound_hub.html">⬅️ Inbound</a>
+      <a class="ql-btn ql-tertiary" href="outbound_hub.html">➡️ Outbound</a>
+      <a class="ql-btn ql-tertiary" href="putaway.html">🧱 Putaway</a>
+      <a class="ql-btn ql-tertiary" href="inventory_management.html">📊 Inventory</a>
+    </nav>
+    <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<div class='ql-container'>
+    <div class="container">
+        <div class="header">
+            <h1>🚛 Driver Drop-off Portal</h1>
+            <p>Scan your delivery QR code to complete drop-off and generate BOL</p>
+        </div>
+
+        <!-- QR Code Scanner Section -->
+        <div class="card">
+            <h3>📱 Scan Your Delivery QR Code</h3>
+            <div class="form-group">
+                <label>Delivery QR Code Scanner</label>
+                <input type="text" id="deliveryQRInput" placeholder="QR code will appear here after scanning" readonly>
+            </div>
+            <div style="text-align: center; margin: 20px 0;">
+                <button class="btn" style="background: linear-gradient(135deg, #ff6b35, #f7931e); color: white; font-size: 18px; padding: 15px 30px;" onclick="scanDeliveryQR()">📷 Scan Delivery QR</button>
+                <button class="btn btn-primary" onclick="processDeliveryQR()" style="margin-left: 10px;">Process Drop-off</button>
+            </div>
+            <div id="qrScanResult"></div>
+        </div>
+
+        <!-- Driver Information Form -->
+        <div id="driverInfoSection" class="card" style="display: none;">
+            <h3>👤 Driver Information</h3>
+            <div class="truck-info" id="truckInfo"></div>
+            <div class="form-group">
+                <label>Driver Name *</label>
+                <input type="text" id="driverName" placeholder="Enter your full name" required>
+            </div>
+            <div class="form-group">
+                <label>Driver License Number *</label>
+                <input type="text" id="driverLicense" placeholder="Enter driver license number" required>
+            </div>
+            <div class="form-group">
+                <label>Phone Number *</label>
+                <input type="tel" id="driverPhone" placeholder="Enter phone number" required>
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="driverEmail" placeholder="Enter email for BOL copy">
+            </div>
+        </div>
+
+        <!-- Delivery Details Section -->
+        <div id="deliveryDetailsSection" class="card" style="display: none;">
+            <h3>📦 Delivery Details</h3>
+            <div id="deliveryInfo"></div>
+
+            <div class="form-group">
+                <label>Vendor Number</label>
+                <input type="text" id="vendor-number" placeholder="Enter vendor/supplier number">
+            </div>
+
+            <div class="form-group">
+                <label>Upload BOL (Bill of Lading) *</label>
+                <input type="file" id="bol-upload" accept="image/*,.pdf" required>
+                <small style="color: #666; display: block; margin-top: 5px;">Take a clear photo or upload PDF of your BOL</small>
+            </div>
+
+            <div class="form-group">
+                <label>Upload Packing Slip *</label>
+                <input type="file" id="packing-slip-upload" accept="image/*,.pdf" required>
+                <small style="color: #666; display: block; margin-top: 5px;">Take a clear photo or upload PDF of packing slip</small>
+            </div>
+
+            <div class="form-group">
+                <label>Delivery Condition *</label>
+                <select id="deliveryCondition" required>
+                    <option value="">Select condition...</option>
+                    <option value="good">Good - No damage</option>
+                    <option value="minor_damage">Minor damage noted</option>
+                    <option value="major_damage">Major damage - see photos</option>
+                    <option value="partial_delivery">Partial delivery</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Delivery Notes</label>
+                <textarea id="deliveryNotes" rows="3" placeholder="Any special notes or observations about the delivery"></textarea>
+            </div>
+            <div class="form-group">
+                <label>📷 Delivery Photos (Optional but Recommended)</label>
+                <input type="file" id="deliveryPhotos" accept="image/*" multiple capture="environment">
+                <small style="color: #666;">Take photos of packages, any damage, or delivery location</small>
+                <div id="photoPreview" class="photo-preview"></div>
+            </div>
+        </div>
+
+        <!-- Digital Signature Section -->
+        <div id="signatureSection" class="card" style="display: none;">
+            <h3>✍️ Digital Signature</h3>
+            <p>Please sign below to confirm delivery completion:</p>
+            <canvas id="signaturePad" class="signature-pad" width="600" height="200" style="width: 100%; max-width: 600px;"></canvas>
+            <div style="margin-top: 10px;">
+                <button class="btn btn-warning" onclick="clearSignature()">Clear Signature</button>
+                <button class="btn btn-success" onclick="validateSignature()" style="margin-left: 10px;">Validate Signature</button>
+            </div>
+            <div id="signatureValidation"></div>
+        </div>
+
+        <!-- Document Generation Section -->
+        <div id="documentSection" class="card" style="display: none;">
+            <h3>📄 Generated Documents</h3>
+            <div class="document-preview">
+                <h4>Bill of Lading (BOL)</h4>
+                <div id="bolPreview"></div>
+                <button class="btn btn-primary" onclick="downloadBOL()">📥 Download BOL</button>
+                <button class="btn btn-success" onclick="emailBOL()" style="margin-left: 10px;">📧 Email BOL</button>
+            </div>
+            <div class="document-preview">
+                <h4>Packing Slip</h4>
+                <div id="packingSlipPreview"></div>
+                <button class="btn btn-primary" onclick="downloadPackingSlip()">📥 Download Packing Slip</button>
+                <button class="btn btn-success" onclick="emailPackingSlip()" style="margin-left: 10px;">📧 Email Packing Slip</button>
+            </div>
+        </div>
+
+        <!-- Completion Section -->
+        <div id="completionSection" class="card" style="display: none;">
+            <h3>✅ Drop-off Complete</h3>
+            <div class="success-message">
+                <h4>Delivery Successfully Processed!</h4>
+                <p>Your drop-off has been completed and all documents have been generated.</p>
+                <div id="completionDetails"></div>
+            </div>
+            <button class="btn btn-primary" onclick="startNewDropoff()" style="width: 100%; padding: 15px; font-size: 16px;">🚛 Process Another Delivery</button>
+        </div>
+    </div>
+
+    <script>
+        let deliveryData = {};
+        let signaturePad = null;
+        let isDrawing = false;
+        let currentDelivery = {}; // Global variable to store current delivery info
+
+        // Initialize signature pad
+        function initializeSignaturePad() {const canvas = document.getElementById('signaturePad')
+            if (!canvas) return
+
+            signaturePad = canvas.getContext('2d')
+            signaturePad.strokeStyle = '#000';
+            signaturePad.lineWidth = 2;
+            signaturePad.lineCap = 'round';
+
+            // Mouse events
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing); // Stop drawing if mouse leaves canvas
+
+            // Touch events
+            canvas.addEventListener('touchstart', handleTouch);
+            canvas.addEventListener('touchmove', handleTouch);
+            canvas.addEventListener('touchend', handleTouch);}
+
+        function handleTouch(e) {e.preventDefault()
+            const rect = e.target.getBoundingClientRect()
+            const touch = e.touches[0]
+            const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 
+                                             e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
+                clientX: touch.clientX,
+                clientY: touch.clientY});
+            e.target.dispatchEvent(mouseEvent);
+        }
+
+        function startDrawing(e) {isDrawing = true
+            const rect = e.target.getBoundingClientRect()
+            const x = (e.clientX || e.touches[0].clientX) - rect.left
+            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+            signaturePad.beginPath();
+            signaturePad.moveTo(x, y);}
+
+        function draw(e) {if (!isDrawing) return
+            const rect = e.target.getBoundingClientRect()
+            const x = (e.clientX || e.touches[0].clientX) - rect.left
+            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+            signaturePad.lineTo(x, y);
+            signaturePad.stroke();}
+
+        function stopDrawing() {isDrawing = false}
+
+        function clearSignature() {const canvas = document.getElementById('signaturePad')
+            signaturePad.clearRect(0, 0, canvas.width, canvas.height)
+            document.getElementById('signatureValidation').innerHTML = ''}
+
+        function validateSignature() {const canvas = document.getElementById('signaturePad')
+            const imageData = signaturePad.getImageData(0, 0, canvas.width, canvas.height)
+            const hasSignature = imageData.data.some(pixel => pixel !== 0)
+
+            if (hasSignature) {
+                document.getElementById('signatureValidation').innerHTML = `
+                    <div class="success-message">
+                        ✅ Signature captured successfully!
+                        <button class="btn btn-primary" onclick="generateDocuments()" style="margin-left: 10px;">Generate BOL & Packing Slip</button>
+                    </div>
+                `} else {document.getElementById('signatureValidation').innerHTML = `
+                    <div class="warning-message">
+                        ⚠️ Please provide a signature before proceeding.
+                    </div>
+                `}
+        }
+
+        function scanDeliveryQR() {if (typeof QRCameraScanner !== 'undefined') {
+                const scanner = new QRCameraScanner()
+                scanner.initCamera(function(qrData) {
+                    document.getElementById('deliveryQRInput').value = qrData
+                    processDeliveryQR()}).catch(error => {console.error('QR scanner error:', error)
+                    document.getElementById('qrScanResult').innerHTML = `
+                        <div class="warning-message">
+                            Camera not available. Please enter delivery code manually:
+                            <input type="text" placeholder="Enter delivery code" onchange="document.getElementById('deliveryQRInput').value = this.value; processDeliveryQR();" style="margin-top: 10px; width: 100%; padding: 8px;">
+                        </div>
+                    `});
+            } else {const code = prompt('Enter your delivery QR code: ')
+                if (code) {
+                    document.getElementById('deliveryQRInput').value = code
+                    processDeliveryQR()}
+            }
+        }
+
+        async function processDeliveryQR() {const qrCode = document.getElementById('deliveryQRInput').value.trim()
+            if (!qrCode) {document.getElementById('qrScanResult').innerHTML = `
+                    <div class="warning-message">Please scan or enter your delivery QR code.</div>
+                `
+                return}
+
+            try {// Simulate API call to get delivery information
+                const result = {
+                    success: true,
+                    delivery: {
+                        id: 'DEL-' + Date.now(),
+                        po_number: 'PO-2025-' + Math.floor(Math.random() * 1000),
+                        shipper: 'QR Legends Warehouse',
+                        receiver: 'Customer Distribution Center',
+                        truck_number: 'TRK-' + Math.floor(Math.random() * 999),
+                        trailer_number: 'TRL-' + Math.floor(Math.random() * 999),
+                        carrier: 'Express Logistics',
+                        expected_items: [
+                            {name: 'Widget Set A', quantity: 50, weight: '125 lbs'},
+                            {name: 'Component Pack B', quantity: 25, weight: '75 lbs'},
+                            {name: 'Assembly Kit C', quantity: 10, weight: '200 lbs'}
+                        ],
+                        total_weight: '400 lbs',
+                        destination: '123 Business Park Dr, Commerce City, CO 80022'
+                    }
+                };
+
+                if (result.success) {currentDelivery = result.delivery
+                    showDriverForm()} else {document.getElementById('qrScanResult').innerHTML = `
+                        <div class="warning-message">
+                            ❌ Delivery not found. Please check your QR code and try again.
+                        </div>
+                    `}
+            } catch (error) {console.error('Error processing delivery QR:', error)
+                document.getElementById('qrScanResult').innerHTML = `
+                    <div class="warning-message">
+                        ⚠️ Unable to process delivery. Please try again or contact support.
+                    </div>
+                `;
+            }
+        }
+
+        function showDriverForm() {
+            // Show truck information
+            document.getElementById('truckInfo').innerHTML = `
+                <h4>🚛 Delivery Information</h4>
+                <p><strong>PO Number:</strong> ${currentDelivery.po_number}</p>
+                <p><strong>Truck:</strong> ${currentDelivery.truck_number} | <strong>Trailer:</strong> ${currentDelivery.trailer_number}</p>
+                <p><strong>Carrier:</strong> ${currentDelivery.carrier}</p>
+            `;
+
+            document.getElementById('driverInfoSection').style.display = 'block';
+            document.getElementById('deliveryDetailsSection').style.display = 'block';
+            document.getElementById('signatureSection').style.display = 'block';
+            initializeSignaturePad();
+        }
+
+        // Additional functions for the driver dropoff workflow would go here
+        function generateDocuments() {
+            document.getElementById('documentSection').style.display = 'block';
+            document.getElementById('completionSection').style.display = 'block';
+        }
+
+        function downloadBOL() {
+            alert('BOL download functionality would be implemented here');
+        }
+
+        function emailBOL() {
+            alert('BOL email functionality would be implemented here');
+        }
+
+        function downloadPackingSlip() {
+            alert('Packing slip download functionality would be implemented here');
+        }
+
+        function emailPackingSlip() {
+            alert('Packing slip email functionality would be implemented here');
+        }
+
+        function startNewDropoff() {
+            location.reload();
+        }
+    </script>
+</div>
+<button class='ql-fab' onclick="location.href='main_dashboard.html'">🏠 Dashboard</button>
+</body>
+</html>

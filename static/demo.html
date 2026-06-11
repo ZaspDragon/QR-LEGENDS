@@ -1,0 +1,488 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Legends - Exclusive Demo</title>
+    <style>
+        :root {--primary-color: #667eea
+            --secondary-color: #764ba2
+            --success-color: #28a745
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40}
+
+        * {margin: 0
+            padding: 0
+            box-sizing: border-box}
+
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%)
+            min-height: 100vh
+            color: #333}
+
+        .demo-container {max-width: 1200px
+            margin: 0 auto
+            padding: 20px}
+
+        .demo-header {background: white
+            border-radius: 20px
+            padding: 40px
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);}
+
+        .demo-badge {display: inline-block
+            background: linear-gradient(45deg, #ff6b35, #f7931e)
+            color: white
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite}
+
+        @keyframes pulse {0%, 100% { transform: scale(1)}
+            50% {transform: scale(1.05)}
+        }
+
+        .demo-title {font-size: 3rem
+            color: var(--primary-color)
+            margin-bottom: 15px
+            font-weight: bold}
+
+        .demo-subtitle {font-size: 1.3rem
+            color: #666
+            margin-bottom: 30px
+            line-height: 1.6}
+
+        .demo-features {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
+            gap: 25px
+            margin-bottom: 40px}
+
+        .feature-card {background: white
+            border-radius: 15px
+            padding: 30px
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer}
+
+        .feature-card:hover {transform: translateY(-5px)
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15)}
+
+        .feature-icon {font-size: 3rem
+            margin-bottom: 20px
+            display: block}
+
+        .feature-title {font-size: 1.4rem
+            font-weight: bold
+            color: var(--primary-color)
+            margin-bottom: 15px}
+
+        .feature-description {color: #666
+            line-height: 1.6
+            margin-bottom: 20px}
+
+        .feature-btn {background: linear-gradient(135deg, var(--primary-color), var(--secondary-color))
+            color: white
+            border: none
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block}
+
+        .feature-btn:hover {transform: translateY(-2px)
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2)}
+
+        .login-section {background: white
+            border-radius: 15px
+            padding: 30px
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);}
+
+        .login-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr))
+            gap: 20px}
+
+        .login-card {background: var(--light-color)
+            border-radius: 10px
+            padding: 25px
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease}
+
+        .login-card: hover {border-color: var(--primary-color)
+            transform: scale(1.02)}
+
+        .login-title {font-size: 1.2rem
+            font-weight: bold
+            color: var(--primary-color)
+            margin-bottom: 15px}
+
+        .credentials {background: white
+            border-radius: 8px
+            padding: 15px
+            margin: 10px 0;
+            border-left: 4px solid var(--info-color)}
+
+        .credentials strong {color: var(--dark-color)}
+
+        .demo-timer {position: fixed
+            top: 20px
+            right: 20px
+            background: rgba(255, 107, 53, 0.9);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            z-index: 1000;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);}
+
+        .demo-info {background: linear-gradient(135deg, #e3f2fd, #f3e5f5)
+            border-radius: 15px
+            padding: 25px
+            margin-bottom: 30px;
+            border: 2px solid var(--info-color)}
+
+        .demo-warning {background: linear-gradient(135deg, #fff3cd, #ffeeba)
+            border-radius: 15px
+            padding: 25px
+            margin-bottom: 30px;
+            border: 2px solid var(--warning-color)}
+
+        @media (max-width: 768px) {.demo-title {
+                font-size: 2rem}
+            
+            .demo-timer {top: 10px
+                right: 10px
+                padding: 10px 15px
+                font-size: 0.9rem}
+            
+            .demo-features {grid-template-columns: 1fr}
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-timer" id="demoTimer">
+        Demo Time Remaining: Loading...
+    </div>
+
+    <div class="demo-container">
+        <div class="demo-header">
+            <div class="demo-badge">🌟 EXCLUSIVE 24-HOUR DEMO</div>
+            <h1 class="demo-title">🏭 QR Legends</h1>
+            <p class="demo-subtitle">
+                Experience the complete warehouse management solution with full access to all features,
+                real data examples, and comprehensive functionality demonstrations.
+            </p>
+        </div>
+
+        <div class="demo-info">
+            <h3 style="color: var(--info-color); margin-bottom: 15px;">📋 Demo Overview</h3>
+            <p>This exclusive demo provides complete access to QR Legends for 24 hours. You can explore all features, create test data, and experience the full workflow from receiving to shipping. The demo includes pre-loaded sample companies, employees, and inventory data.</p>
+        </div>
+
+        <div class="demo-warning">
+            <h3 style="color: var(--warning-color); margin-bottom: 15px;">⚠️ Demo Guidelines</h3>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+                <li>All data in this demo is temporary and will be reset after 24 hours</li>
+                <li>Payment processing is simulated - no real charges will occur</li>
+                <li>Email notifications are disabled in demo mode</li>
+                <li>Some integrations may show demo data instead of live connections</li>
+            </ul>
+        </div>
+
+        <div class="login-section">
+            <h2 style="text-align: center; margin-bottom: 30px; color: var(--primary-color);">🔑 Demo Login Credentials</h2>
+            <div class="login-grid">
+                <div class="login-card">
+                    <div class="login-title">🏢 Company Administrator</div>
+                    <div class="credentials">
+                        <strong>Username:</strong> qrlegends22<br>
+                        <strong>Password:</strong> Luffy22!
+                    </div>
+                    <p style="margin-top: 15px; color: #666;">Full admin access to all company features and settings.</p>
+                    <a href="/demo_login" class="feature-btn" style="margin-top: 15px;">Login as Admin</a>
+                </div>
+
+                <div class="login-card">
+                    <div class="login-title">👥 Sample Employee</div>
+                    <div class="credentials">
+                        <strong>Employee ID:</strong> TF001<br>
+                        <strong>Password:</strong> demo123
+                    </div>
+                    <p style="margin-top: 15px; color: #666;">Manager role with access to receiving and inventory departments.</p>
+                    <a href="/employee_login" class="feature-btn" style="margin-top: 15px;">Login as Employee</a>
+                </div>
+
+                <div class="login-card">
+                    <div class="login-title">🔧 Super Admin</div>
+                    <div class="credentials">
+                        <strong>Username:</strong> super_admin<br>
+                        <strong>Password:</strong> Luffy22!
+                    </div>
+                    <p style="margin-top: 15px; color: #666;">System-wide access for technical demonstrations.</p>
+                    <a href="/super_admin_login" class="feature-btn" style="margin-top: 15px;">Super Admin</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-features">
+            <div class="feature-card" onclick="window.location.href='/main_dashboard'">
+                <span class="feature-icon">📊</span>
+                <h3 class="feature-title">Main Dashboard</h3>
+                <p class="feature-description">
+                    View real-time warehouse operations, employee activity, and system analytics with interactive charts and live data updates.
+                </p>
+                <button class="feature-btn">Explore Dashboard</button>
+            </div>
+
+            <div class="feature-card" onclick="window.location.href='/company_inventory'">
+                <span class="feature-icon">📦</span>
+                <h3 class="feature-title">Inventory Management</h3>
+                <p class="feature-description">
+                    Manage 500+ pre-loaded inventory items with QR code generation, location tracking, and cycle counting features.
+                </p>
+                <button class="feature-btn">View Inventory</button>
+            </div>
+
+            <div class="feature-card" onclick="window.location.href='/receiving'">
+                <span class="feature-icon">🚚</span>
+                <h3 class="feature-title">Receiving Operations</h3>
+                <p class="feature-description">
+                    Experience complete receiving workflow from PO validation to container assignment with real-time scanning.
+                </p>
+                <button class="feature-btn">Try Receiving</button>
+            </div>
+
+            <div class="feature-card" onclick="window.location.href='/order_picking'">
+                <span class="feature-icon">📋</span>
+                <h3 class="feature-title">Order Picking</h3>
+                <p class="feature-description">
+                    Test advanced picking workflows with route optimization, batch processing, and can't-find ticket generation.
+                </p>
+                <button class="feature-btn">Start Picking</button>
+            </div>
+
+            <div class="feature-card" onclick="window.location.href='/shipping'">
+                <span class="feature-icon">🚛</span>
+                <h3 class="feature-title">Shipping Module</h3>
+                <p class="feature-description">
+                    Complete shipping operations including ER driver management, dock assignments, and manifest generation.
+                </p>
+                <button class="feature-btn">Manage Shipping</button>
+            </div>
+
+            <div class="feature-card" onclick="window.location.href='/analytics_dashboard'">
+                <span class="feature-icon">📈</span>
+                <h3 class="feature-title">Advanced Analytics</h3>
+                <p class="feature-description">
+                    View comprehensive performance metrics, productivity tracking, and detailed reporting with export capabilities.
+                </p>
+                <button class="feature-btn">View Analytics</button>
+            </div>
+
+            <div class="feature-card" onclick="window.location.href='/company_integrations'">
+                <span class="feature-icon">🔄</span>
+                <h3 class="feature-title">ERP Integration</h3>
+                <p class="feature-description">
+                    Explore integrations with SAP, Oracle, QuickBooks, SalesPad, and custom API connections with demo data.
+                </p>
+                <button class="feature-btn">Setup Integration</button>
+            </div>
+
+            <div class="feature-card" onclick="window.location.href='/billing_dashboard'">
+                <span class="feature-icon">💳</span>
+                <h3 class="feature-title">Billing & Subscription</h3>
+                <p class="feature-description">
+                    Test subscription management, usage tracking, and payment processing with simulated billing scenarios.
+                </p>
+                <button class="feature-btn">View Billing</button>
+            </div>
+
+            <div class="feature-card" onclick="window.location.href='/user_management'">
+                <span class="feature-icon">👥</span>
+                <h3 class="feature-title">User Management</h3>
+                <p class="feature-description">
+                    Manage employee accounts, roles, permissions, and department restrictions with pre-configured users.
+                </p>
+                <button class="feature-btn">Manage Users</button>
+            </div>
+
+            <div class="feature-card" onclick="window.location.href='/warehouse_video_scanner'">
+                <span class="feature-icon">📱</span>
+                <h3 class="feature-title">Mobile Scanning</h3>
+                <p class="feature-description">
+                    Test mobile QR code scanning with camera integration, barcode recognition, and real-time validation.
+                </p>
+                <button class="feature-btn">Test Scanner</button>
+            </div>
+
+            <div class="feature-card" onclick="window.location.href='/backup_management'">
+                <span class="feature-icon">🛡️</span>
+                <h3 class="feature-title">Backup & Recovery</h3>
+                <p class="feature-description">
+                    Explore automated backup features, cloud storage integration, and data recovery capabilities.
+                </p>
+                <button class="feature-btn">Manage Backups</button>
+            </div>
+
+            <div class="feature-card" onclick="window.location.href='/messaging_system'">
+                <span class="feature-icon">💬</span>
+                <h3 class="feature-title">Team Communication</h3>
+                <p class="feature-description">
+                    Test department group chat, direct messaging, and real-time communication features with demo conversations.
+                </p>
+                <button class="feature-btn">Open Messages</button>
+            </div>
+        </div>
+
+        <div style="text-align: center; background: white; border-radius: 15px; padding: 30px; margin-top: 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
+            <h3 style="color: var(--primary-color); margin-bottom: 20px;">🚀 Ready to Get Started?</h3>
+            <p style="margin-bottom: 25px; color: #666; font-size: 1.1rem;">
+                Begin your exclusive 24-hour demo experience and discover how QR Legends can transform your warehouse operations.
+            </p>
+            <a href="/main_dashboard" class="feature-btn" style="font-size: 1.2rem; padding: 15px 30px;">
+                Launch QR Legends Demo
+            </a>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px; padding: 20px; color: rgba(255,255,255,0.8);">
+            <p>© 2025 QR LEGENDS by Brandon Evanshine. All rights reserved.</p>
+            <p style="font-size: 0.9rem; margin-top: 5px;">Demo Environment - Not for Production Use</p>
+        </div>
+    </div>
+
+    <script>
+        // Demo timer functionality
+        const DEMO_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+        
+        function initDemoTimer() {const demoStart = localStorage.getItem('demoStartTime')
+            let startTime
+            
+            if (!demoStart) {
+                startTime = new Date().getTime()
+                localStorage.setItem('demoStartTime', startTime.toString());} else {startTime = parseInt(demoStart)}
+            
+            updateTimer(startTime);
+            setInterval(() => updateTimer(startTime), 1000);
+        }
+        
+        function updateTimer(startTime) {const now = new Date().getTime()
+            const elapsed = now - startTime
+            const remaining = Math.max(0, DEMO_DURATION - elapsed)
+            
+            if (remaining === 0) {
+                document.getElementById('demoTimer').innerHTML = '⏰ Demo Expired';
+                document.getElementById('demoTimer').style.background = 'rgba(220, 53, 69, 0.9)';
+                return;}
+            
+            const hours = Math.floor(remaining / (1000 * 60 * 60));
+            const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+            
+            document.getElementById('demoTimer').innerHTML = 
+                `⏱️ ${hours}h ${minutes}m ${seconds}s remaining`;
+        }
+        
+        // Track demo interactions
+        function trackDemoInteraction(feature) {
+            fetch('/api/demo/track', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    feature: feature,
+                    timestamp: new Date().toISOString(),
+                    demo_session: localStorage.getItem('demoStartTime')
+                })
+            }).catch(error => {console.log('Demo tracking failed:', error)});
+        }
+        
+        // Add click tracking to feature cards
+        document.querySelectorAll('.feature-card').forEach(card => {card.addEventListener('click', function() {
+                const featureTitle = this.querySelector('.feature-title').textContent
+                trackDemoInteraction(featureTitle)});
+        });
+        
+        // Initialize demo
+        document.addEventListener('DOMContentLoaded', function() {initDemoTimer()
+            trackDemoInteraction('Demo Page Loaded')
+            
+            // Welcome message
+            setTimeout(() => {
+                if (!localStorage.getItem('demoWelcomeShown')) {
+                    alert('🎉 Welcome to your exclusive QR Legends demo! You have 24 hours to explore all features. Use the credentials provided to login and test the complete system.')
+                    localStorage.setItem('demoWelcomeShown', 'true');}
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Legends Demo</title>
+    <style>
+        body {font-family: Arial, sans-serif
+            margin: 0
+            padding: 20px
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white}
+        .container {max-width: 800px
+            margin: 0 auto
+            text-align: center}
+        .demo-card {background: rgba(255,255,255,0.1)
+            border-radius: 15px
+            padding: 30px
+            margin: 20px 0;
+            backdrop-filter: blur(10px)}
+        .btn {background: #4CAF50
+            color: white
+            padding: 15px 30px
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block}
+        .btn:hover {background: #45a049}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 QR Legends Demo</h1>
+        <div class="demo-card">
+            <h2>Experience the Future of Warehouse Management</h2>
+            <p>Try our complete warehouse management system with QR code scanning, inventory tracking, and real-time analytics.</p>
+            
+            <a href="/company_login" class="btn">Start Demo</a>
+            <a href="/employee_login" class="btn">Employee Access</a>
+        </div>
+        
+        <div class="demo-card">
+            <h3>Demo Features</h3>
+            <ul style="text-align: left; display: inline-block;">
+                <li>QR Code Scanning & Generation</li>
+                <li>Inventory Management</li>
+                <li>Order Processing</li>
+                <li>Analytics Dashboard</li>
+                <li>ERP Integration</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

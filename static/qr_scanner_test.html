@@ -1,0 +1,377 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Scanner Test - QR Legends</title>
+    <style>
+/* === QRLegends Unified Theme (Dark/Light) === */
+:root{
+  --ql-bg: #0b1724;
+  --ql-panel: #0f2340;
+  --ql-card: #102846;
+  --ql-text: #dbe8ff;
+  --ql-sub: #97a6c1;
+  --ql-primary: #3b82f6;
+  --ql-success: #22c55e;
+  --ql-warning: #f59e0b;
+  --ql-danger: #ef4444;
+  --ql-accent: #6366f1;
+  --ql-border: rgba(255,255,255,.12);
+  --ql-surface: rgba(255,255,255,.06);
+}
+/* Light mode overrides */
+body.light{
+  --ql-bg: #f2f6fb;
+  --ql-panel: #ffffff;
+  --ql-card: #ffffff;
+  --ql-text: #1d2840;
+  --ql-sub: #51607c;
+  --ql-primary: #2563eb;
+  --ql-success: #16a34a;
+  --ql-warning: #d97706;
+  --ql-danger: #dc2626;
+  --ql-accent: #4f46e5;
+  --ql-border: rgba(0,0,0,.12);
+  --ql-surface: rgba(15,23,42,.04);
+}
+
+html,body{height:100%;}
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed;
+  color: var(--ql-text);
+  font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+  line-height: 1.45;
+}
+body.light{
+  background: linear-gradient(180deg,#f7faff,#eef3fb);
+}
+
+.ql-header{
+  position: sticky; top:0; z-index:1000;
+  background: rgba(8,27,46,.7);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--ql-border);
+}
+body.light .ql-header{
+  background: rgba(255,255,255,.75);
+}
+.ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
+.ql-title{display:flex; align-items:center; gap:10px;}
+.ql-h1{font-size:1.25rem; margin:0; letter-spacing:.2px;}
+.ql-nav{display:flex; gap:8px; flex-wrap:wrap;}
+.ql-btn{
+  display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
+  background: var(--ql-surface); border: 1px solid var(--ql-border);
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+  transition: transform .08s ease, background .2s ease, border-color .2s ease;
+}
+.ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+body.light .ql-btn:hover{ background: rgba(15,23,42,.08); }
+.ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
+
+.ql-theme-toggle{
+  margin-left:12px; cursor:pointer; border:1px solid var(--ql-border);
+  background: var(--ql-surface); color: var(--ql-text);
+  border-radius:10px; padding:8px 10px; font-size:16px;
+}
+
+.ql-container{ max-width:1200px; margin:22px auto; padding:0 20px; }
+.ql-grid{ display:grid; gap:16px; grid-template-columns: repeat(12, 1fr);}
+.ql-card{
+  grid-column: span 12;
+  background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+  border: 1px solid var(--ql-border);
+  box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+  border-radius:16px; padding:20px;
+}
+body.light .ql-card{
+  background: var(--ql-card);
+  box-shadow: 0 10px 30px rgba(2,8,23,.08);
+}
+
+.ql-card h2{ font-size:1.05rem; margin:0 0 10px 0; color: #bcd5ff; letter-spacing:.2px; }
+body.light .ql-card h2{ color:#234073; }
+
+.ql-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+.ql-input, input[type="text"], input[type="number"], select {
+  width:100%; background: var(--ql-surface); color: var(--ql-text); border: 1px solid var(--ql-border);
+  padding:10px 12px; border-radius:10px; outline:none;
+}
+.ql-input::placeholder{ color: #9fb0cc; }
+body.light .ql-input::placeholder{ color: #6b7b92; }
+
+.scanner-btn{
+  padding: 12px 20px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer;
+  transition: all 0.3s ease; margin: 5px; text-decoration: none; display: inline-block;
+}
+.btn-primary{ background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
+.btn-success{ background: linear-gradient(135deg, #22c55e, #16a34a); color: white; }
+.btn-camera{ background: linear-gradient(135deg, #ff6b35, #f7931e); color: white; }
+.scanner-btn:hover{ transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+
+.scan-result{
+  margin-top: 15px; padding: 15px; border-radius: 10px; min-height: 50px;
+  background: var(--ql-surface); border: 1px solid var(--ql-border);
+}
+
+.ql-fab{ position: fixed; right: 18px; bottom: 18px; background: var(--ql-accent); color:white; border:none;
+  border-radius:999px; padding:12px 16px; font-weight:600; box-shadow: 0 14px 30px rgba(0,0,0,.35);
+  text-decoration: none; cursor: pointer;}
+</style>
+<script>
+(function(){
+  try {
+    const saved = localStorage.getItem('ql-theme');
+    if(saved === 'light'){ document.addEventListener('DOMContentLoaded', ()=> document.body.classList.add('light')); }
+  } catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const btn = document.getElementById('ql-theme-toggle');
+    if(btn){
+      btn.addEventListener('click', function(){
+        document.body.classList.toggle('light');
+        const isLight = document.body.classList.contains('light');
+        btn.textContent = isLight ? '☀️' : '🌙';
+        try { localStorage.setItem('ql-theme', isLight ? 'light' : 'dark'); } catch(e){}
+      });
+      if(document.body.classList.contains('light')) btn.textContent = '☀️';
+    }
+    document.querySelectorAll('button:not([type])').forEach(b=> b.setAttribute('type','button'));
+  });
+})();
+</script>
+</head>
+<body>
+<!-- Unified QR Legends Header -->
+<header class="ql-header">
+  <div class="ql-header-inner">
+    <div class="ql-title">
+      <span class="ql-logo">🟦</span>
+      <h1 class="ql-h1">QR Scanner Test - QR LEGENDS</h1>
+    </div>
+    <nav class="ql-nav">
+      <a class="ql-btn ql-secondary" href="main_dashboard.html">🏠 Dashboard</a>
+      <a class="ql-btn" href="order_picking.html">📦 Order Picking</a>
+      <a class="ql-btn" href="receiving.html">⬅️ Receiving</a>
+      <a class="ql-btn" href="putaway.html">🧱 Putaway</a>
+      <a class="ql-btn" href="cycle_counting.html">🔢 Cycle Count</a>
+    </nav>
+    <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<div class='ql-container'>
+  <div class="ql-grid">
+    <!-- Main QR Scanner Card -->
+    <div class="ql-card">
+      <h2>📱 Universal QR Scanner</h2>
+      <p>Scan any QR code for items, locations, containers, or workflows</p>
+      
+      <div style="margin: 20px 0;">
+        <label style="display: block; margin-bottom: 8px; color: var(--ql-sub);">QR Code Input</label>
+        <input type="text" id="qrScanInput" class="ql-input" 
+               placeholder="Click here and scan QR code or use camera button" 
+               autofocus style="margin-bottom: 15px;">
+      </div>
+
+      <div class="ql-actions">
+        <button class="scanner-btn btn-primary" onclick="processScannedQR()">
+          🔍 Process QR Code
+        </button>
+        <button class="scanner-btn btn-success" onclick="focusScanner()">
+          🎯 Focus Scanner
+        </button>
+        <button class="scanner-btn btn-camera" onclick="openCameraScanner()">
+          📷 Camera Scanner
+        </button>
+      </div>
+
+      <div id="scanResult" class="scan-result">
+        <p style="color: var(--ql-sub); margin: 0;">Scan a QR code to see results here...</p>
+      </div>
+    </div>
+
+    <!-- Scanner Instructions -->
+    <div class="ql-card">
+      <h2>📋 QR Scanning Instructions</h2>
+      <div style="color: var(--ql-sub); line-height: 1.6;">
+        <p><strong>Camera Scanner:</strong> Click "📷 Camera Scanner" to use your device camera</p>
+        <p><strong>Manual Entry:</strong> Type or paste QR codes directly into the input field</p>
+        <p><strong>Focus Scanner:</strong> Click to focus the input field for quick scanning</p>
+        <p><strong>Supported QR Types:</strong></p>
+        <ul>
+          <li>• Location codes (LOC:A1-B2-C3)</li>
+          <li>• Item barcodes (ITEM:12345)</li>
+          <li>• Container IDs (CONT:CON-001)</li>
+          <li>• Workflow triggers (WF:RECEIVING)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="ql-card">
+      <h2>⚡ Quick QR Actions</h2>
+      <div class="ql-actions">
+        <button class="scanner-btn btn-primary" onclick="generateTestQR('location')">
+          📍 Generate Location QR
+        </button>
+        <button class="scanner-btn btn-success" onclick="generateTestQR('item')">
+          📦 Generate Item QR
+        </button>
+        <button class="scanner-btn btn-camera" onclick="generateTestQR('container')">
+          🗃️ Generate Container QR
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<a href="main_dashboard.html" class="ql-fab">🏠 Dashboard</a>
+
+<script>
+// QR Scanner Functions
+function focusScanner() {
+    const scanInput = document.getElementById('qrScanInput');
+    scanInput.focus();
+    scanInput.select();
+    updateScanResult('🎯 Scanner focused - ready for input', 'info');
+}
+
+function processScannedQR() {
+    const qrData = document.getElementById('qrScanInput').value.trim();
+    const resultDiv = document.getElementById('scanResult');
+
+    if (!qrData) {
+        updateScanResult('⚠️ Please scan or enter a QR code first', 'warning');
+        return;
+    }
+
+    // Process different QR code types
+    let resultMessage = '';
+    let resultType = 'success';
+
+    if (qrData.startsWith('LOC:')) {
+        resultMessage = `📍 Location scanned: ${qrData.replace('LOC:', '')} - Ready for operations`;
+    } else if (qrData.startsWith('ITEM:')) {
+        resultMessage = `📦 Item scanned: ${qrData.replace('ITEM:', '')} - Loading item details`;
+    } else if (qrData.startsWith('CONT:')) {
+        resultMessage = `🗃️ Container scanned: ${qrData.replace('CONT:', '')} - Tracking container`;
+    } else if (qrData.startsWith('WF:')) {
+        resultMessage = `⚡ Workflow triggered: ${qrData.replace('WF:', '')} - Starting process`;
+    } else {
+        resultMessage = `✅ QR Code scanned: ${qrData} - Processing...`;
+    }
+
+    updateScanResult(resultMessage, resultType);
+    
+    // Clear input for next scan
+    document.getElementById('qrScanInput').value = '';
+    setTimeout(() => {
+        document.getElementById('qrScanInput').focus();
+    }, 500);
+}
+
+function openCameraScanner() {
+    console.log('Opening camera scanner...');
+    
+    // Try to use the QR camera scanner if available
+    if (typeof QRCameraScanner !== 'undefined') {
+        try {
+            const scanner = new QRCameraScanner();
+            scanner.initCamera(function(qrData) {
+                console.log('QR Data received:', qrData);
+                document.getElementById('qrScanInput').value = qrData;
+                processScannedQR();
+            }).catch(error => {
+                console.error('Camera scanner error:', error);
+                fallbackToManualEntry();
+            });
+        } catch (error) {
+            console.error('QRCameraScanner failed:', error);
+            fallbackToManualEntry();
+        }
+    } else {
+        console.error('QRCameraScanner not available');
+        fallbackToManualEntry();
+    }
+}
+
+function fallbackToManualEntry() {
+    const qrCode = prompt('Camera scanner not available. Please enter QR code manually:');
+    if (qrCode && qrCode.trim()) {
+        document.getElementById('qrScanInput').value = qrCode.trim();
+        processScannedQR();
+    }
+}
+
+function generateTestQR(type) {
+    let qrData = '';
+    let description = '';
+    
+    switch(type) {
+        case 'location':
+            qrData = 'LOC:A1-B2-C3';
+            description = 'Location QR Code Generated';
+            break;
+        case 'item':
+            qrData = 'ITEM:SKU-12345';
+            description = 'Item QR Code Generated';
+            break;
+        case 'container':
+            qrData = 'CONT:CON-001';
+            description = 'Container QR Code Generated';
+            break;
+    }
+    
+    document.getElementById('qrScanInput').value = qrData;
+    updateScanResult(`✅ ${description}: ${qrData}`, 'success');
+}
+
+function updateScanResult(message, type) {
+    const resultDiv = document.getElementById('scanResult');
+    let bgColor = '';
+    
+    switch(type) {
+        case 'success':
+            bgColor = 'background: rgba(34, 197, 94, 0.1); border-color: #22c55e; color: #22c55e;';
+            break;
+        case 'warning':
+            bgColor = 'background: rgba(245, 158, 11, 0.1); border-color: #f59e0b; color: #f59e0b;';
+            break;
+        case 'error':
+            bgColor = 'background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444;';
+            break;
+        case 'info':
+            bgColor = 'background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; color: #3b82f6;';
+            break;
+        default:
+            bgColor = 'background: var(--ql-surface); border-color: var(--ql-border); color: var(--ql-text);';
+    }
+    
+    resultDiv.innerHTML = `<p style="margin: 0; ${bgColor}">${message}</p>`;
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    focusScanner();
+});
+
+// Load QR Camera Scanner if available
+if (typeof QRCameraScanner === 'undefined') {
+    const script = document.createElement('script');
+    script.src = '/static/qr_camera_scanner.js';
+    script.onload = function() {
+        console.log('QR Camera Scanner loaded');
+    };
+    script.onerror = function() {
+        console.log('QR Camera Scanner not found - manual entry only');
+    };
+    document.head.appendChild(script);
+}
+</script>
+
+</body>
+</html>

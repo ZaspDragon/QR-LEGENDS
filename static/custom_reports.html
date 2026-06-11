@@ -1,0 +1,509 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Reports - QR Legends</title>
+    <style>
+        * {margin: 0; padding: 0; box-sizing: border-box;}
+        body {font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif; background: radial-gradient(1200px 600px at 60% -100px, #1a2942 0%, #0f1b2e 45%, #0a1220 100%) fixed; padding: 20px; min-height: 100vh; color: #dbe8ff;}
+        .container {max-width: 1400px; margin: 0 auto; background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92)); border-radius: 15px; padding: 30px; box-shadow: 0 15px 40px rgba(2,8,23,.45); border: 1px solid rgba(255,255,255,.12);}
+        .header {text-align: center; margin-bottom: 30px; background: linear-gradient(135deg, #3b82f6, #6366f1); color: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(59,130,246,0.3);}
+        .builder-grid {display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;}
+        .builder-panel {background: rgba(15,23,42,.5); border-radius: 10px; padding: 20px; border: 1px solid rgba(255,255,255,.12);}
+        .builder-panel h3 {color: #bcd5ff; margin-bottom: 15px;}
+        .form-group {margin-bottom: 15px;}
+        .form-group label {display: block; margin-bottom: 5px; font-weight: 600; color: #bcd5ff;}
+        .form-group input, .form-group select, .form-group textarea {width: 100%; padding: 10px; border: 1px solid rgba(255,255,255,.2); border-radius: 5px; background: rgba(10,18,32,.6); color: #dbe8ff;}
+        .form-group input::placeholder, .form-group textarea::placeholder {color: #7e8fa8;}
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1);}
+        #fieldSelector {background: rgba(10,18,32,.6); border: 1px solid rgba(255,255,255,.12) !important; color: #dbe8ff;}
+        #fieldSelector label {color: #dbe8ff;}
+        #fieldSelector input[type="checkbox"] {accent-color: #3b82f6;}
+        .btn {padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; margin: 5px; transition: all 0.2s ease;}
+        .btn-primary {background: #3b82f6; color: white;}
+        .btn-primary:hover {background: #2563eb; transform: translateY(-1px);}
+        .btn-success {background: #22c55e; color: white;}
+        .btn-success:hover {background: #16a34a; transform: translateY(-1px);}
+        .btn-warning {background: #f59e0b; color: white;}
+        .btn-warning:hover {background: #d97706; transform: translateY(-1px);}
+        .btn-info {background: #06b6d4; color: white;}
+        .btn-info:hover {background: #0891b2; transform: translateY(-1px);}
+        .template-grid {display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;}
+        .template-card {background: rgba(15,23,42,.5); border: 1px solid rgba(255,255,255,.12); border-radius: 10px; padding: 20px; cursor: pointer; transition: all 0.3s; color: #dbe8ff;}
+        .template-card h4 {color: #bcd5ff; margin-bottom: 8px;}
+        .template-card p {color: #97a6c1; margin-bottom: 8px;}
+        .template-card small {color: #7e8fa8;}
+        .template-card:hover {transform: translateY(-2px); box-shadow: 0 5px 15px rgba(59,130,246,0.3); border-color: #3b82f6;}
+        .template-card.selected {border-color: #3b82f6; background: rgba(59,130,246,.15); box-shadow: 0 0 20px rgba(59,130,246,0.3);}
+        .preview-panel {background: rgba(10,18,32,.6); border: 1px solid rgba(255,255,255,.12); border-radius: 10px; padding: 20px; min-height: 400px;}
+        .chart-placeholder {background: rgba(15,23,42,.4); border: 2px dashed rgba(255,255,255,.2); border-radius: 10px; padding: 40px; text-align: center; color: #97a6c1;}
+        .saved-reports {background: rgba(15,23,42,.5); border-radius: 10px; padding: 20px; border: 1px solid rgba(255,255,255,.12);}
+        .saved-reports h3 {color: #bcd5ff; margin-bottom: 15px;}
+        .report-item {background: rgba(10,18,32,.6); border: 1px solid rgba(255,255,255,.12); border-radius: 8px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;}
+        .report-item h4 {color: #dbe8ff; margin-bottom: 4px;}
+        .report-item small {color: #97a6c1;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Custom Reports Builder</h1>
+            <p>Create custom reports and analytics for your warehouse operations</p>
+        </div>
+        <div style="margin-bottom: 20px;">
+            <a href="/reports" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(30,41,59,0.4); color: #dbe8ff; border: 1px solid rgba(71,85,105,0.3); text-decoration: none;">
+                ← Back to Reports Hub
+            </a>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <h3 style="color: #bcd5ff; margin-bottom: 15px;">📋 Report Templates</h3>
+            <div class="template-grid">
+                <div class="template-card" onclick="selectTemplate('inventory')">
+                    <h4>📦 Inventory Report</h4>
+                    <p>Stock levels, movements, and valuations</p>
+                    <small>Fields: Item, Location, Quantity, Value</small>
+                </div>
+                <div class="template-card" onclick="selectTemplate('sales')">
+                    <h4>💰 Sales Performance</h4>
+                    <p>Sales data, trends, and customer analysis</p>
+                    <small>Fields: Customer, Orders, Revenue, Growth</small>
+                </div>
+                <div class="template-card" onclick="selectTemplate('operations')">
+                    <h4>🏭 Operations Report</h4>
+                    <p>Productivity, efficiency, and KPIs</p>
+                    <small>Fields: Throughput, Accuracy, Labor</small>
+                </div>
+                <div class="template-card" onclick="selectTemplate('financial')">
+                    <h4>💼 Financial Summary</h4>
+                    <p>Cost analysis and financial metrics</p>
+                    <small>Fields: Costs, Profits, Margins</small>
+                </div>
+                <div class="template-card" onclick="selectTemplate('custom')">
+                    <h4>🛠️ Custom Report</h4>
+                    <p>Build from scratch with any data</p>
+                    <small>Fields: Choose your own</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="builder-grid">
+            <div class="builder-panel">
+                <h3>🔧 Report Builder</h3>
+                
+                <div class="form-group">
+                    <label>Report Name</label>
+                    <input type="text" id="reportName" placeholder="Enter report name">
+                </div>
+
+                <div class="form-group">
+                    <label>Report Type</label>
+                    <select id="reportType">
+                        <option value="table">Table Report</option>
+                        <option value="chart">Chart Report</option>
+                        <option value="dashboard">Dashboard</option>
+                        <option value="summary">Summary Report</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Data Source</label>
+                    <select id="dataSource">
+                        <option value="inventory">Inventory Data</option>
+                        <option value="orders">Orders Data</option>
+                        <option value="customers">Customer Data</option>
+                        <option value="transactions">Transaction Data</option>
+                        <option value="employees">Employee Data</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Date Range</label>
+                    <select id="dateRange">
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                        <option value="quarter">This Quarter</option>
+                        <option value="year">This Year</option>
+                        <option value="custom">Custom Range</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Fields to Include</label>
+                    <div id="fieldSelector" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+                        <!-- Fields will be populated based on data source -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Filters</label>
+                    <textarea id="reportFilters" placeholder="Enter filter conditions (e.g., location = 'A', quantity > 0)" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Sort By</label>
+                    <select id="sortBy">
+                        <option value="date_desc">Date (Newest First)</option>
+                        <option value="date_asc">Date (Oldest First)</option>
+                        <option value="name_asc">Name (A-Z)</option>
+                        <option value="name_desc">Name (Z-A)</option>
+                        <option value="value_desc">Value (High to Low)</option>
+                        <option value="value_asc">Value (Low to High)</option>
+                    </select>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="generateReport()">📊 Generate Report</button>
+                    <button class="btn btn-success" onclick="saveReport()">💾 Save Report</button>
+                    <button class="btn btn-warning" onclick="scheduleReport()">⏰ Schedule</button>
+                </div>
+            </div>
+
+            <div class="builder-panel">
+                <h3>👁️ Report Preview</h3>
+                <div class="preview-panel" id="reportPreview">
+                    <div class="chart-placeholder">
+                        <p>📊 Report preview will appear here</p>
+                        <p>Configure your report settings and click "Generate Report"</p>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-success" onclick="exportReport('pdf')">📄 Export PDF</button>
+                    <button class="btn btn-info" onclick="exportReport('excel')">📈 Export Excel</button>
+                    <button class="btn btn-warning" onclick="exportReport('csv')">📋 Export CSV</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="saved-reports">
+            <h3>💾 Saved Reports</h3>
+            <div id="savedReportsList">
+                <div class="report-item">
+                    <div>
+                        <h4>Weekly Inventory Summary</h4>
+                        <small>Last run: January 15, 2025 | Type: Table | Schedule: Weekly</small>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="runReport('weekly_inventory')">▶️ Run</button>
+                        <button class="btn btn-warning" onclick="editReport('weekly_inventory')">✏️ Edit</button>
+                        <button class="btn btn-info" onclick="duplicateReport('weekly_inventory')">📋 Duplicate</button>
+                    </div>
+                </div>
+
+                <div class="report-item">
+                    <div>
+                        <h4>Sales Performance Dashboard</h4>
+                        <small>Last run: January 14, 2025 | Type: Dashboard | Schedule: Daily</small>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="runReport('sales_dashboard')">▶️ Run</button>
+                        <button class="btn btn-warning" onclick="editReport('sales_dashboard')">✏️ Edit</button>
+                        <button class="btn btn-info" onclick="duplicateReport('sales_dashboard')">📋 Duplicate</button>
+                    </div>
+                </div>
+
+                <div class="report-item">
+                    <div>
+                        <h4>Exception Reports Analysis</h4>
+                        <small>Last run: January 13, 2025 | Type: Summary | Schedule: On-demand</small>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="runReport('exceptions')">▶️ Run</button>
+                        <button class="btn btn-warning" onclick="editReport('exceptions')">✏️ Edit</button>
+                        <button class="btn btn-info" onclick="duplicateReport('exceptions')">📋 Duplicate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedTemplate = null;
+        let currentReport = null;
+
+        function selectTemplate(templateType) {// Remove previous selection
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.classList.remove('selected')});
+
+            // Select current template
+            event.target.classList.add('selected');
+            selectedTemplate = templateType;
+
+            // Load template configuration
+            loadTemplateConfig(templateType);
+        }
+
+        function loadTemplateConfig(templateType) {
+            const configs = {
+                inventory: {
+                    name: 'Inventory Report',
+                    type: 'table',
+                    source: 'inventory',
+                    fields: ['item_id', 'item_name', 'location', 'quantity', 'value', 'last_updated']
+                },
+                sales: {
+                    name: 'Sales Performance Report',
+                    type: 'chart',
+                    source: 'orders',
+                    fields: ['customer', 'order_date', 'total_amount', 'status', 'sales_rep']
+                },
+                operations: {
+                    name: 'Operations Report',
+                    type: 'dashboard',
+                    source: 'transactions',
+                    fields: ['operation_type', 'employee', 'duration', 'accuracy', 'timestamp']
+                },
+                financial: {
+                    name: 'Financial Summary',
+                    type: 'summary',
+                    source: 'transactions',
+                    fields: ['transaction_type', 'amount', 'cost', 'profit', 'date']
+                }
+            };
+
+            const config = configs[templateType];
+            if (config) {document.getElementById('reportName').value = config.name
+                document.getElementById('reportType').value = config.type
+                document.getElementById('dataSource').value = config.source
+                updateFieldSelector(config.source, config.fields);}
+        }
+
+        function updateFieldSelector(dataSource, selectedFields = []) {
+            const fieldOptions = {
+                inventory: [
+                    'item_id', 'item_name', 'category', 'location', 'quantity', 'value', 
+                    'cost', 'supplier', 'last_updated', 'reorder_point'
+                ],
+                orders: [
+                    'order_id', 'customer', 'order_date', 'total_amount', 'status', 
+                    'sales_rep', 'shipping_address', 'items_count'
+                ],
+                customers: [
+                    'customer_id', 'company_name', 'contact_person', 'email', 'phone',
+                    'address', 'total_orders', 'total_spent'
+                ],
+                transactions: [
+                    'transaction_id', 'type', 'employee', 'timestamp', 'duration',
+                    'accuracy', 'location', 'items_processed'
+                ],
+                employees: [
+                    'employee_id', 'name', 'department', 'role', 'performance_score',
+                    'hours_worked', 'tasks_completed'
+                ]
+            };
+
+            const fields = fieldOptions[dataSource] || [];
+            const container = document.getElementById('fieldSelector');
+            
+            container.innerHTML = fields.map(field => `
+                <label style="display: block margin: 5px 0">
+                    <input type="checkbox" value="${field}" ${selectedFields.includes(field) ? 'checked' : ''}>
+                    ${field.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                </label>
+            `).join('');
+        }
+
+        // Update field selector when data source changes
+        document.getElementById('dataSource').addEventListener('change', function() {updateFieldSelector(this.value)});
+
+        function generateReport() {const reportName = document.getElementById('reportName').value
+            const reportType = document.getElementById('reportType').value
+            const dataSource = document.getElementById('dataSource').value
+            const dateRange = document.getElementById('dateRange').value;
+            
+            if (!reportName) {
+                alert('Please enter a report name');
+                return;}
+
+            // Get selected fields
+            const selectedFields = Array.from(document.querySelectorAll('#fieldSelector input: checked'))
+                .map(cb => cb.value);
+
+            if (selectedFields.length === 0) {alert('Please select at least one field')
+                return}
+
+            // Generate sample report preview
+            const preview = generateReportPreview(reportType, selectedFields, dataSource);
+            document.getElementById('reportPreview').innerHTML = preview;
+
+            currentReport = {
+                name: reportName,
+                type: reportType,
+                source: dataSource,
+                fields: selectedFields,
+                dateRange: dateRange,
+                generatedAt: new Date().toISOString()
+            };
+
+            alert('Report generated successfully!');
+        }
+
+        function generateReportPreview(type, fields, source) {switch (type) {
+                case 'table':
+                    return generateTablePreview(fields, source)
+                case 'chart':
+                    return generateChartPreview(fields, source)
+                case 'dashboard':
+                    return generateDashboardPreview(fields, source)
+                case 'summary':
+                    return generateSummaryPreview(fields, source);
+                default: return '<p>Unknown report type</p>'}
+        }
+
+        function generateTablePreview(fields, source) {const sampleData = getSampleData(source)
+            
+            let html = '<table style="width: 100% border-collapse: collapse">';
+            html += '<thead><tr>';
+            fields.forEach(field => {
+                html += `<th style="border: 1px solid #ddd padding: 8px background: #f8f9fa">${field.replace(/_/g, ' ')}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+            
+            sampleData.slice(0, 5).forEach(row => {html += '<tr>'
+                fields.forEach(field => {
+                    html += `<td style="border: 1px solid #ddd padding: 8px">${row[field] || 'N/A'}</td>`
+                });
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            html += `<p style="margin-top: 10px; color: #666;">Showing 5 of ${sampleData.length} records</p>`;
+            
+            return html;
+        }
+
+        function generateChartPreview(fields, source) {
+            return `
+                <div class="chart-placeholder">
+                    <h4>📈 Chart Preview</h4>
+                    <p>Chart Type: Bar Chart</p>
+                    <p>X-Axis: ${fields[0] || 'Date'}</p>
+                    <p>Y-Axis: ${fields[1] || 'Value'}</p>
+                    <div style="background: #e3f2fd; height: 200px; margin: 20px 0; border-radius: 5px; display: flex; align-items: center; justify-content: center;">
+                        Chart visualization would appear here
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateDashboardPreview(fields, source) {return `
+                <div>
+                    <h4>📊 Dashboard Preview</h4>
+                    <div style="display: grid grid-template-columns: repeat(2, 1fr) gap: 15px margin: 20px 0;">
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; text-align: center;">
+                            <h3 style="color: #28a745;">1,234</h3>
+                            <p>Total Records</p>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; text-align: center;">
+                            <h3 style="color: #dc3545;">56</h3>
+                            <p>Exceptions</p>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; text-align: center;">
+                            <h3 style="color: #ffc107;">89%</h3>
+                            <p>Accuracy</p>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; text-align: center;">
+                            <h3 style="color: #17a2b8;">$12,345</h3>
+                            <p>Total Value</p>
+                        </div>
+                    </div>
+                </div>
+            `;}
+
+        function generateSummaryPreview(fields, source) {return `
+                <div>
+                    <h4>📋 Summary Preview</h4>
+                    <div style="margin: 20px 0">
+                        <h5>Key Metrics:</h5>
+                        <ul style="margin: 10px 0 padding-left: 20px">
+                            <li>Total Records: 1,234</li>
+                            <li>Average Value: $156.78</li>
+                            <li>Top Category: Electronics (45%)</li>
+                            <li>Performance Score: 89.2%</li>
+                        </ul>
+                        <h5>Trends:</h5>
+                        <ul style="margin: 10px 0; padding-left: 20px;">
+                            <li>📈 15% increase from last month</li>
+                            <li>📊 Peak activity on Tuesdays</li>
+                            <li>⚠️ 3 items below reorder point</li>
+                        </ul>
+                    </div>
+                </div>
+            `}
+
+        function getSampleData(source) {
+            const sampleData = {
+                inventory: [
+                    { item_id: 'ITEM-001', item_name: 'Widget A', location: 'A-01-01', quantity: 150, value: '$1,500' },
+                    { item_id: 'ITEM-002', item_name: 'Component B', location: 'B-02-03', quantity: 75, value: '$750' },
+                    { item_id: 'ITEM-003', item_name: 'Assembly C', location: 'C-01-02', quantity: 200, value: '$3,000' }
+                ],
+                orders: [
+                    { order_id: 'SO-001', customer: 'Acme Corp', order_date: '2025-01-15', total_amount: '$2,500', status: 'Shipped' },
+                    { order_id: 'SO-002', customer: 'Tech LLC', order_date: '2025-01-14', total_amount: '$1,800', status: 'Processing' }
+                ],
+                customers: [
+                    { customer_id: 'CUST-001', company_name: 'Acme Corp', total_orders: 15, total_spent: '$25,000' },
+                    { customer_id: 'CUST-002', company_name: 'Tech LLC', total_orders: 8, total_spent: '$12,000' }
+                ]
+            };
+            
+            return sampleData[source] || [];
+        }
+
+        function saveReport() {if (!currentReport) {
+                alert('Please generate a report first')
+                return}
+
+            alert(`Report "${currentReport.name}" saved successfully!\n\nYou can find it in the "Saved Reports" section below.`);
+        }
+
+        function scheduleReport() {if (!currentReport) {
+                alert('Please generate a report first')
+                return}
+
+            const schedule = prompt('Schedule report:\n\n1. Daily\n2. Weekly\n3. Monthly\n4. Custom\n\nEnter option number:');
+            
+            if (schedule) {
+                alert(`Report scheduled successfully!\n\nSchedule: ${getScheduleText(schedule)}\nNext run: Tomorrow at 6:00 AM`);
+            }
+        }
+
+        function getScheduleText(option) {
+            const schedules = {
+                '1': 'Daily',
+                '2': 'Weekly',
+                '3': 'Monthly',
+                '4': 'Custom'
+            };
+            return schedules[option] || 'Unknown';
+        }
+
+        function exportReport(format) {if (!currentReport) {
+                alert('Please generate a report first')
+                return}
+
+            alert(`Exporting report to ${format.toUpperCase()}...\n\n✅ Export completed\n📁 File saved to Downloads folder`);
+        }
+
+        function runReport(reportId) {
+            alert(`Running report: ${reportId}\n\n⏳ Generating report...\n✅ Report completed\n📊 Results displayed in new tab`);
+        }
+
+        function editReport(reportId) {
+            alert(`Opening report editor for: ${reportId}\n\n✏️ Load existing configuration\n🔧 Modify settings as needed`);
+        }
+
+        function duplicateReport(reportId) {
+            alert(`Duplicating report: ${reportId}\n\n📋 Copy created\n✏️ New report ready for editing`);
+        }
+
+        // Initialize with inventory fields by default
+        document.addEventListener('DOMContentLoaded', function() {updateFieldSelector('inventory')});
+    </script>
+</body>
+</html>

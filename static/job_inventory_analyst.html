@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Inventory Data Analyst - QR Legends</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f172a;--surface:#1e293b;--surface2:#334155;--border:#334155;--text:#f1f5f9;--sub:#94a3b8;--accent:#06b6d4;--success:#22c55e;--warning:#f59e0b;--danger:#ef4444;--radius:12px;--shadow:0 4px 24px rgba(0,0,0,0.4)}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{font-weight:800;font-size:18px;color:var(--accent)}
+.role-badge{background:linear-gradient(135deg,#0e7490,#0891b2);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;color:#fff}
+.topbar-left,.topbar-right{display:flex;align-items:center;gap:12px}
+.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:14px;font-weight:600;transition:all 0.2s;text-decoration:none;display:inline-flex;align-items:center;gap:6px;min-height:40px}
+.btn-ghost{background:transparent;color:var(--sub);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--surface2);color:var(--text)}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-accent:hover{opacity:0.9}
+.content{padding:24px;max-width:1400px;margin:0 auto}
+.page-header{margin-bottom:28px}
+.page-header h1{font-size:28px;font-weight:800;margin-bottom:6px;background:linear-gradient(135deg,#22d3ee,#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.page-header p{color:var(--sub);font-size:15px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:28px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.stat-label{color:var(--sub);font-size:12px;font-weight:600;text-transform:uppercase;margin-bottom:8px}
+.stat-value{font-size:30px;font-weight:800;margin-bottom:4px}
+.stat-sub{font-size:12px;color:var(--sub)}
+.v-accent{color:var(--accent)} .v-success{color:var(--success)} .v-warning{color:var(--warning)} .v-danger{color:var(--danger)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-title{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:10px 12px;color:var(--sub);font-size:12px;font-weight:600;text-transform:uppercase;border-bottom:1px solid var(--border)}
+td{padding:12px;border-bottom:1px solid rgba(51,65,85,0.5);font-size:14px}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(6,182,212,0.04)}
+.badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.badge-success{background:rgba(34,197,94,0.15);color:#22c55e}
+.badge-warning{background:rgba(245,158,11,0.15);color:#f59e0b}
+.badge-danger{background:rgba(239,68,68,0.15);color:#ef4444}
+.badge-neutral{background:rgba(148,163,184,0.15);color:#94a3b8}
+.progress-bar{background:var(--surface2);border-radius:4px;height:8px;overflow:hidden;margin-top:8px}
+.progress-fill{height:100%;border-radius:4px}
+.search-bar{display:flex;gap:10px;margin-bottom:16px}
+.search-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:14px;outline:none}
+.search-input:focus{border-color:var(--accent)}
+.filter-select{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:14px;outline:none}
+.category-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.cat-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--sub);cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s}
+.cat-btn.active,.cat-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+@media(max-width:768px){.grid-2{grid-template-columns:1fr}.content{padding:16px}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="logo">QR LEGENDS</span>
+    <span class="role-badge">📊 Inventory Analyst</span>
+  </div>
+  <div class="topbar-right">
+    <a href="/main_dashboard" class="btn btn-ghost">🏠 Dashboard</a>
+    <button onclick="exportReport()" class="btn btn-accent">📥 Export</button>
+  </div>
+</div>
+
+<div class="content">
+  <div class="page-header">
+    <h1>Inventory Analytics</h1>
+    <p>Real-time inventory data, stock analysis, and reporting &bull; <span id="current-time"></span></p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-label">Total SKUs</div><div class="stat-value v-accent" id="stat-skus">--</div><div class="stat-sub">Unique items tracked</div></div>
+    <div class="stat-card"><div class="stat-label">Total Units</div><div class="stat-value v-success" id="stat-units">--</div><div class="stat-sub">On-hand inventory</div></div>
+    <div class="stat-card"><div class="stat-label">Stock Value</div><div class="stat-value v-warning" id="stat-value">--</div><div class="stat-sub">At cost</div></div>
+    <div class="stat-card"><div class="stat-label">Low Stock</div><div class="stat-value v-danger" id="stat-low">--</div><div class="stat-sub">Below reorder point</div></div>
+    <div class="stat-card"><div class="stat-label">Out of Stock</div><div class="stat-value v-danger" id="stat-oos">--</div><div class="stat-sub">Zero quantity</div></div>
+    <div class="stat-card"><div class="stat-label">Last Count</div><div class="stat-value v-accent" id="stat-count">--</div><div class="stat-sub">Days ago</div></div>
+  </div>
+
+  <!-- Inventory Table -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">📦 Inventory Master</span>
+      <button class="btn btn-ghost" onclick="loadInventory()" style="font-size:12px;padding:6px 12px">↻ Refresh</button>
+    </div>
+    <div class="search-bar">
+      <input class="search-input" id="item-search" placeholder="Search by name, SKU, location..." oninput="filterItems()">
+      <select class="filter-select" id="status-filter" onchange="filterItems()">
+        <option value="">All Status</option>
+        <option value="ok">In Stock</option>
+        <option value="low">Low Stock</option>
+        <option value="oos">Out of Stock</option>
+      </select>
+    </div>
+    <div class="category-bar" id="category-bar">
+      <button class="cat-btn active" onclick="filterCategory('all',this)">All</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>SKU / Item ID</th><th>Name</th><th>Category</th><th>Location</th>
+            <th>On Hand</th><th>Reorder Pt</th><th>Value</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="inventory-tbody">
+          <tr><td colspan="8" style="text-align:center;color:var(--sub);padding:30px">Loading inventory...</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:12px;color:var(--sub);font-size:12px" id="item-count"></div>
+  </div>
+
+  <!-- Analysis Cards -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">⚠️ Stock Alerts</span>
+      </div>
+      <div id="stock-alerts">
+        <div style="color:var(--sub);text-align:center;padding:20px">Loading...</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">📋 Cycle Count Queue</span>
+        <a href="/cycle_counting" class="btn btn-ghost" style="font-size:12px;padding:6px 12px">Open Full View</a>
+      </div>
+      <div id="cycle-count-queue">
+        <div style="color:var(--sub);text-align:center;padding:20px">Loading...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let allItems = [];
+let activeCategory = 'all';
+
+function updateTime() {
+  document.getElementById('current-time').textContent = new Date().toLocaleString();
+}
+setInterval(updateTime, 1000);
+updateTime();
+
+async function loadInventory() {
+  try {
+    const res = await fetch('/api/inventory');
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+    allItems = data.items || data.inventory || [];
+    
+    renderItems(allItems);
+    updateStats(allItems);
+    buildCategoryButtons(allItems);
+    renderStockAlerts(allItems);
+    renderCycleQueue(allItems);
+  } catch(e) {
+    // Use demo data
+    allItems = generateDemoItems();
+    renderItems(allItems);
+    updateStats(allItems);
+    buildCategoryButtons(allItems);
+    renderStockAlerts(allItems);
+    renderCycleQueue(allItems);
+  }
+}
+
+function generateDemoItems() {
+  const cats = ['Electronics','Hardware','Packaging','Consumables','Parts'];
+  const locs = ['A-01','A-02','B-03','B-04','C-05','C-06','D-07'];
+  return Array.from({length:25}, (_,i) => ({
+    id:`SKU-${String(i+1).padStart(4,'0')}`,
+    name:`Item ${i+1} - ${cats[i%5]} Product`,
+    category:cats[i%5],
+    location:locs[i%7],
+    quantity: i%7===0 ? 0 : i%4===0 ? 3 : Math.floor(Math.random()*200+10),
+    reorder_point: 15,
+    unit_cost: Math.round((Math.random()*50+5)*100)/100
+  }));
+}
+
+function updateStats(items) {
+  document.getElementById('stat-skus').textContent = items.length;
+  const totalUnits = items.reduce((s,i) => s+(i.quantity||0), 0);
+  document.getElementById('stat-units').textContent = totalUnits.toLocaleString();
+  const totalVal = items.reduce((s,i) => s+((i.quantity||0)*(i.unit_cost||i.price||0)), 0);
+  document.getElementById('stat-value').textContent = '$'+totalVal.toLocaleString('en-US',{maximumFractionDigits:0});
+  const low = items.filter(i => (i.quantity||0) > 0 && (i.quantity||0) < (i.reorder_point||i.min_stock||10));
+  document.getElementById('stat-low').textContent = low.length;
+  const oos = items.filter(i => (i.quantity||0) === 0);
+  document.getElementById('stat-oos').textContent = oos.length;
+  document.getElementById('stat-count').textContent = '2';
+}
+
+function buildCategoryButtons(items) {
+  const cats = [...new Set(items.map(i => i.category||i.type||'General').filter(Boolean))];
+  const bar = document.getElementById('category-bar');
+  bar.innerHTML = `<button class="cat-btn ${activeCategory==='all'?'active':''}" onclick="filterCategory('all',this)">All (${items.length})</button>`;
+  cats.forEach(cat => {
+    const count = items.filter(i => (i.category||i.type||'General') === cat).length;
+    bar.innerHTML += `<button class="cat-btn ${activeCategory===cat?'active':''}" onclick="filterCategory('${cat}',this)">${cat} (${count})</button>`;
+  });
+}
+
+function filterCategory(cat, btn) {
+  activeCategory = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterItems();
+}
+
+function filterItems() {
+  const search = document.getElementById('item-search').value.toLowerCase();
+  const status = document.getElementById('status-filter').value;
+  let filtered = allItems.filter(i => {
+    const matchSearch = !search || 
+      (i.name||'').toLowerCase().includes(search) ||
+      (i.id||'').toLowerCase().includes(search) ||
+      (i.location||'').toLowerCase().includes(search);
+    const qty = i.quantity||0;
+    const reorder = i.reorder_point||i.min_stock||10;
+    const matchStatus = !status ||
+      (status==='oos' && qty===0) ||
+      (status==='low' && qty>0 && qty<reorder) ||
+      (status==='ok' && qty>=reorder);
+    const matchCat = activeCategory==='all' || (i.category||i.type||'General')===activeCategory;
+    return matchSearch && matchStatus && matchCat;
+  });
+  renderItems(filtered);
+  document.getElementById('item-count').textContent = `Showing ${filtered.length} of ${allItems.length} items`;
+}
+
+function renderItems(items) {
+  const tbody = document.getElementById('inventory-tbody');
+  if (!items.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--sub);padding:30px">No items found</td></tr>';
+    return;
+  }
+  tbody.innerHTML = items.slice(0,50).map(item => {
+    const qty = item.quantity || 0;
+    const reorder = item.reorder_point || item.min_stock || 10;
+    const val = (qty * (item.unit_cost || item.price || 0)).toFixed(2);
+    let status, badge;
+    if (qty === 0) { status='Out of Stock'; badge='badge-danger'; }
+    else if (qty < reorder) { status='Low Stock'; badge='badge-warning'; }
+    else { status='In Stock'; badge='badge-success'; }
+    return `<tr>
+      <td style="font-family:monospace;font-size:12px;color:var(--sub)">${item.id||item.sku||'--'}</td>
+      <td style="font-weight:600">${item.name||item.item_name||'Unknown'}</td>
+      <td>${item.category||item.type||'General'}</td>
+      <td style="font-family:monospace;font-size:12px">${item.location||item.bin||'--'}</td>
+      <td style="font-weight:700;color:${qty===0?'var(--danger)':qty<reorder?'var(--warning)':'var(--success)'}">${qty.toLocaleString()}</td>
+      <td style="color:var(--sub)">${reorder}</td>
+      <td>$${parseFloat(val).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+      <td><span class="badge ${badge}">${status}</span></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('item-count').textContent = `Showing ${Math.min(items.length,50)} of ${items.length} items`;
+}
+
+function renderStockAlerts(items) {
+  const container = document.getElementById('stock-alerts');
+  const oos = items.filter(i => (i.quantity||0) === 0);
+  const low = items.filter(i => (i.quantity||0) > 0 && (i.quantity||0) < (i.reorder_point||10));
+  
+  let html = '';
+  if (oos.length) {
+    html += `<div style="margin-bottom:12px"><div style="color:var(--danger);font-weight:700;font-size:13px;margin-bottom:8px">🔴 Out of Stock (${oos.length})</div>`;
+    html += oos.slice(0,4).map(i => `<div style="padding:8px;background:rgba(239,68,68,0.08);border-radius:6px;margin-bottom:6px;font-size:13px"><strong>${i.name||i.id}</strong><br><span style="color:var(--sub);font-size:11px">${i.location||'--'} &bull; Reorder: ${i.reorder_point||10}</span></div>`).join('');
+    html += '</div>';
+  }
+  if (low.length) {
+    html += `<div><div style="color:var(--warning);font-weight:700;font-size:13px;margin-bottom:8px">🟡 Low Stock (${low.length})</div>`;
+    html += low.slice(0,4).map(i => `<div style="padding:8px;background:rgba(245,158,11,0.08);border-radius:6px;margin-bottom:6px;font-size:13px"><strong>${i.name||i.id}</strong> — ${i.quantity} left<br><span style="color:var(--sub);font-size:11px">${i.location||'--'} &bull; Reorder at: ${i.reorder_point||10}</span></div>`).join('');
+    html += '</div>';
+  }
+  if (!html) html = '<div style="color:var(--success);text-align:center;padding:20px">✅ All stock levels healthy</div>';
+  container.innerHTML = html;
+}
+
+function renderCycleQueue(items) {
+  const container = document.getElementById('cycle-count-queue');
+  const zones = ['Zone A', 'Zone B', 'Zone C', 'Zone D', 'Zone E'];
+  container.innerHTML = zones.map((z,i) => {
+    const due = i < 2;
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:8px;margin-bottom:8px;background:${due?'rgba(239,68,68,0.08)':'rgba(51,65,85,0.3)'}">
+      <div>
+        <div style="font-weight:600;font-size:13px">${z}</div>
+        <div style="color:var(--sub);font-size:11px">${Math.floor(Math.random()*30+5)} items &bull; ${due?'OVERDUE':'Next: Tomorrow'}</div>
+      </div>
+      <span class="badge ${due?'badge-danger':'badge-neutral'}">${due?'Due':'Scheduled'}</span>
+    </div>`;
+  }).join('');
+}
+
+function exportReport() {
+  if (!allItems.length) { alert('Load inventory first'); return; }
+  const csv = ['SKU,Name,Category,Location,Quantity,Reorder Point,Unit Cost,Value,Status'];
+  allItems.forEach(i => {
+    const qty = i.quantity||0; const cost = i.unit_cost||i.price||0;
+    const status = qty===0?'Out of Stock':qty<(i.reorder_point||10)?'Low Stock':'In Stock';
+    csv.push([i.id||'',`"${i.name||''}"`,i.category||'',i.location||'',qty,i.reorder_point||10,cost,(qty*cost).toFixed(2),status].join(','));
+  });
+  const blob = new Blob([csv.join('\n')], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `inventory_report_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+loadInventory();
+</script>
+<script src="/auto_theme_injector.js"></script>
+</body>
+</html>

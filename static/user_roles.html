@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Roles - QR Legends</title>
+    <script src="/static/copyright_notice.js"></script>
+    <style>
+        body {font-family: Arial, sans-serif margin: 0 padding: 20px background-color: #f5f5f5}
+        .container {max-width: 1200px margin: 0 auto}
+        .page-header {background: linear-gradient(135deg, #6f42c1, #5a35a3) color: white padding: 20px border-radius: 10px; text-align: center; margin-bottom: 30px}
+        .card {background: white padding: 20px margin: 15px 0 border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+        .btn {padding: 10px 20px margin: 5px border: none border-radius: 5px; cursor: pointer; font-weight: bold}
+        .btn-primary {background: #007bff color: white}
+        .btn-success {background: #28a745 color: white}
+        .btn-danger {background: #dc3545 color: white}
+        .form-group {margin: 15px 0}
+        .form-group label {display: block margin-bottom: 5px font-weight: bold}
+        .form-group input, .form-group select {width: 100% padding: 10px border: 1px solid #ddd border-radius: 4px; box-sizing: border-box}
+        .roles-grid {display: grid grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) gap: 20px}
+        .role-card {border: 2px solid #dee2e6 border-radius: 8px padding: 15px background: #f8f9fa}
+        .permissions-list {margin: 10px 0}
+        .permission-item {margin: 5px 0 padding: 5px background: white border-radius: 4px}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>👤 User Roles & Permissions</h1>
+            <p>Manage user roles and access permissions for warehouse operations</p>
+        </div>
+
+        <div class="card">
+            <h3>Create New Role</h3>
+            <div class="form-group">
+                <label>Role Name</label>
+                <input type="text" id="roleName" placeholder="Enter role name">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <input type="text" id="roleDescription" placeholder="Role description">
+            </div>
+            <div class="form-group">
+                <label>Department</label>
+                <select id="roleDepartment">
+                    <option value="receiving">Receiving</option>
+                    <option value="shipping">Shipping</option>
+                    <option value="inventory">Inventory</option>
+                    <option value="quality">Quality Control</option>
+                    <option value="admin">Administration</option>
+                </select>
+            </div>
+            <button class="btn btn-success" onclick="createRole()">Create Role</button>
+        </div>
+
+        <div class="card">
+            <h3>Existing Roles</h3>
+            <div class="roles-grid" id="rolesGrid">
+                <div class="role-card">
+                    <h4>Warehouse Manager</h4>
+                    <p>Full access to all warehouse operations</p>
+                    <div class="permissions-list">
+                        <div class="permission-item">✅ Inventory Management</div>
+                        <div class="permission-item">✅ User Management</div>
+                        <div class="permission-item">✅ Reports & Analytics</div>
+                        <div class="permission-item">✅ System Configuration</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="editRole('manager')">Edit</button>
+                </div>
+                
+                <div class="role-card">
+                    <h4>Receiving Clerk</h4>
+                    <p>Access to receiving and putaway operations</p>
+                    <div class="permissions-list">
+                        <div class="permission-item">✅ Receiving Operations</div>
+                        <div class="permission-item">✅ QR Code Scanning</div>
+                        <div class="permission-item">✅ Damage Reports</div>
+                        <div class="permission-item">❌ User Management</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="editRole('receiving')">Edit</button>
+                </div>
+                
+                <div class="role-card">
+                    <h4>Shipping Clerk</h4>
+                    <p>Access to shipping and order fulfillment</p>
+                    <div class="permissions-list">
+                        <div class="permission-item">✅ Shipping Operations</div>
+                        <div class="permission-item">✅ Order Picking</div>
+                        <div class="permission-item">✅ Load Planning</div>
+                        <div class="permission-item">❌ Inventory Adjustments</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="editRole('shipping')">Edit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function createRole() {const name = document.getElementById('roleName').value
+            const description = document.getElementById('roleDescription').value
+            const department = document.getElementById('roleDepartment').value
+            
+            if (!name || !description) {
+                alert('Please enter role name and description');
+                return;}
+            
+            alert(`Role "${name}" created successfully for ${department} department`);
+            
+            // Clear form
+            document.getElementById('roleName').value = '';
+            document.getElementById('roleDescription').value = '';
+        }
+        
+        function editRole(roleId) {
+            alert(`Opening role editor for: ${roleId}`);
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Roles - QR Legends</title>
+    <style>
+        body {font-family: Arial, sans-serif margin: 20px background-color: #f5f5f5}
+        .container {max-width: 1200px margin: 0 auto background: white padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+        .header {text-align: center margin-bottom: 30px padding: 20px background: linear-gradient(135deg, #2c3e50, #3498db); color: white; border-radius: 10px}
+        .back-btn {display: inline-block padding: 10px 20px background: #6c757d color: white; text-decoration: none; border-radius: 5px; margin-bottom: 20px}
+        .roles-grid {display: grid grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) gap: 20px}
+        .role-card {padding: 20px border: 2px solid #ddd border-radius: 10px background: #f8f9fa}
+        .role-admin {border-color: #dc3545}
+        .role-manager {border-color: #ffc107}
+        .role-employee {border-color: #28a745}
+        .permissions {margin: 10px 0}
+        .permission {display: inline-block background: #007bff color: white padding: 3px 8px; margin: 2px; border-radius: 3px; font-size: 12px}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/admin_hub" class="back-btn">← Back to Admin Hub</a>
+        
+        <div class="header">
+            <h1>👥 User Roles Management</h1>
+            <p>Configure user permissions and access levels</p>
+        </div>
+
+        <div class="roles-grid">
+            <div class="role-card role-admin">
+                <h3>🔴 Administrator</h3>
+                <p>Full system access and management capabilities</p>
+                <div class="permissions">
+                    <span class="permission">All Modules</span>
+                    <span class="permission">User Management</span>
+                    <span class="permission">System Config</span>
+                    <span class="permission">Reports</span>
+                    <span class="permission">Billing</span>
+                </div>
+                <button class="btn">Edit Role</button>
+            </div>
+            
+            <div class="role-card role-manager">
+                <h3>🟡 Manager</h3>
+                <p>Departmental oversight and operational management</p>
+                <div class="permissions">
+                    <span class="permission">Inventory</span>
+                    <span class="permission">Reports</span>
+                    <span class="permission">Team Management</span>
+                    <span class="permission">Analytics</span>
+                </div>
+                <button class="btn">Edit Role</button>
+            </div>
+            
+            <div class="role-card role-employee">
+                <h3>🟢 Employee</h3>
+                <p>Standard warehouse operations and scanning</p>
+                <div class="permissions">
+                    <span class="permission">Scanning</span>
+                    <span class="permission">Receiving</span>
+                    <span class="permission">Putaway</span>
+                    <span class="permission">Picking</span>
+                </div>
+                <button class="btn">Edit Role</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

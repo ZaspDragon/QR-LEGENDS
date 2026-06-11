@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Denied - QR LEGENDS</title>
+    <style>
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            margin: 0
+            padding: 0
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center}
+        .container {background: white
+            border-radius: 15px
+            padding: 40px
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3)
+            text-align: center;
+            max-width: 500px;
+            margin: 20px}
+        .error-icon {font-size: 4rem
+            color: #dc3545
+            margin-bottom: 20px}
+        h1 {color: #333
+            margin-bottom: 20px}
+        .message {color: #666
+            font-size: 1.1rem
+            line-height: 1.6
+            margin-bottom: 30px}
+        .btn {background: #667eea
+            color: white
+            padding: 12px 30px
+            border: none
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+            transition: background 0.3s}
+        .btn:hover {background: #5a6fd8}
+        .btn-secondary {background: #6c757d}
+        .btn-secondary:hover {background: #545b62}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-icon">🚫</div>
+        <h1>Access Denied</h1>
+        <div class="message">
+            <p>You don't have permission to access this department page.</p>
+            <p>Your account has been restricted to specific department access only.</p>
+            <p>If you believe this is an error, please contact your administrator.</p>
+        </div>
+        <div>
+            <a href="javascript:history.back()" class="btn btn-secondary">← Go Back</a>
+            <a href="/api/auth/logout" class="btn">Logout</a>
+        </div>
+    </div>
+</body>
+</html>

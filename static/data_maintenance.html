@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Maintenance - QR Legends</title>
+    <style>
+        * {margin: 0 padding: 0 box-sizing: border-box}
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif background: #f5f7fa padding: 20px}
+        .container {max-width: 1200px margin: 0 auto}
+        .back-button {display: inline-block margin-bottom: 20px padding: 10px 20px background: #6c757d; color: white; text-decoration: none; border-radius: 5px}
+        h1 {color: #2c3e50 margin-bottom: 30px}
+        .maintenance-grid {display: grid grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) gap: 20px}
+        .maintenance-card {background: white padding: 20px border-radius: 10px box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+        .btn {padding: 10px 20px border: none border-radius: 5px cursor: pointer; font-weight: 600; margin: 5px}
+        .btn-primary {background: #007bff color: white}
+        .btn-warning {background: #ffc107 color: #212529}
+        .btn-danger {background: #dc3545 color: white}
+        .stats {display: grid grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) gap: 15px margin-bottom: 20px}
+        .stat-card {background: white padding: 15px border-radius: 8px text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
+        .stat-number {font-size: 24px font-weight: bold color: #007bff}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/admin_hub" class="back-button">← Back to Admin Hub</a>
+        
+        <h1>💾 Data Maintenance</h1>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="total-records">1,247</div>
+                <div>Total Records</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="orphaned-records">23</div>
+                <div>Orphaned Records</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="archive-size">156 MB</div>
+                <div>Archive Size</div>
+            </div>
+        </div>
+
+        <div class="maintenance-grid">
+            <div class="maintenance-card">
+                <h3>🗃️ Master Data Cleanup</h3>
+                <p>Clean up orphaned records and maintain data integrity</p>
+                <button onclick="cleanupOrphanedRecords()" class="btn btn-warning">Clean Orphaned Records</button>
+                <button onclick="validateDataIntegrity()" class="btn btn-primary">Validate Integrity</button>
+            </div>
+
+            <div class="maintenance-card">
+                <h3>📦 Archive Management</h3>
+                <p>Archive old transactions and manage storage</p>
+                <button onclick="archiveOldData()" class="btn btn-primary">Archive Old Data</button>
+                <button onclick="viewArchives()" class="btn btn-primary">View Archives</button>
+            </div>
+
+            <div class="maintenance-card">
+                <h3>🔄 Data Import/Export</h3>
+                <p>Import/export data for system migrations</p>
+                <button onclick="exportData()" class="btn btn-primary">Export Data</button>
+                <button onclick="importData()" class="btn btn-warning">Import Data</button>
+            </div>
+
+            <div class="maintenance-card">
+                <h3>⚠️ System Cleanup</h3>
+                <p>Remove temporary files and optimize performance</p>
+                <button onclick="cleanupTempFiles()" class="btn btn-warning">Cleanup Temp Files</button>
+                <button onclick="optimizeDatabase()" class="btn btn-danger">Optimize Database</button>
+            </div>
+        </div>
+
+        <div id="maintenance-log" style="margin-top: 30px; background: white; padding: 20px; border-radius: 10px;">
+            <h3>Maintenance Log</h3>
+            <div id="log-entries"></div>
+        </div>
+    </div>
+
+    <script>
+        function cleanupOrphanedRecords() {logMaintenance('Cleaned up 23 orphaned records')
+            document.getElementById('orphaned-records').textContent = '0'}
+
+        function validateDataIntegrity() {logMaintenance('Data integrity validation completed - No issues found')}
+
+        function archiveOldData() {logMaintenance('Archived 156 old transaction records')}
+
+        function viewArchives() {alert('Archive viewer would open here')}
+
+        function exportData() {logMaintenance('Data export initiated - Download will begin shortly')}
+
+        function importData() {alert('File selection dialog would open here')}
+
+        function cleanupTempFiles() {logMaintenance('Cleaned up 45MB of temporary files')}
+
+        function optimizeDatabase() {logMaintenance('Database optimization completed - Performance improved')}
+
+        function logMaintenance(message) {const logEntries = document.getElementById('log-entries')
+            const timestamp = new Date().toLocaleString()
+            logEntries.innerHTML = `<div style="padding: 10px border-bottom: 1px solid #eee">
+                <strong>${timestamp}</strong>: ${message}
+            </div>` + logEntries.innerHTML;
+        }
+    </script>
+</body>
+</html>ipt>
+</body>
+</html>

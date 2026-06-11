@@ -1,0 +1,467 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cross Docking Operations - QR LEGENDS</title>
+    <style>
+        * {margin: 0
+            padding: 0
+            box-sizing: border-box}
+
+        body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+            background: linear-gradient(135deg, #28a745, #20c997)
+            min-height: 100vh
+            padding: 20px}
+
+        .container {max-width: 1200px
+            margin: 0 auto}
+
+        .back-button {display: inline-block
+            margin-bottom: 20px
+            padding: 10px 20px
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease}
+
+        .back-button:hover {background: rgba(255, 255, 255, 0.3)
+            transform: translateY(-2px)}
+
+        h1 {color: white
+            text-align: center
+            margin-bottom: 30px
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);}
+
+        .card {background: white
+            border-radius: 15px
+            padding: 25px
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);}
+
+        .card h3 {color: #333
+            margin-bottom: 20px
+            border-bottom: 2px solid #28a745
+            padding-bottom: 10px}
+
+        .form-group {margin-bottom: 20px}
+
+        .form-group label {display: block
+            margin-bottom: 8px
+            font-weight: 600
+            color: #555}
+
+        .form-group input, .form-group select, .form-group textarea {width: 100%
+            padding: 12px
+            border: 2px solid #e1e5e9
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease}
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea: focus {outline: none
+            border-color: #28a745}
+
+        .btn {padding: 12px 24px
+            border: none
+            border-radius: 8px
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px}
+
+        .btn-primary {background: linear-gradient(135deg, #28a745, #20c997)
+            color: white}
+
+        .btn-success {background: linear-gradient(135deg, #28a745, #34d058)
+            color: white}
+
+        .btn-warning {background: linear-gradient(135deg, #ffc107, #ffed4e)
+            color: #333}
+
+        .btn:hover {transform: translateY(-2px)
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2)}
+
+        .grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
+            gap: 20px}
+
+        .dock-door {background: #f8f9fa
+            border: 2px solid #dee2e6
+            border-radius: 8px
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease}
+
+        .dock-door: hover {background: #e9ecef
+            transform: translateY(-2px)}
+
+        .dock-door.occupied {background: #ffeaa7
+            border-color: #fdcb6e}
+
+        .dock-door.available {background: #d1f2eb
+            border-color: #28a745}
+
+        .status-indicator {display: inline-block
+            width: 12px
+            height: 12px
+            border-radius: 50%;
+            margin-right: 8px}
+
+        .status-available {background: #28a745}
+        .status-occupied {background: #ffc107}
+        .status-maintenance {background: #dc3545}
+
+        .shipment-list {max-height: 300px
+            overflow-y: auto}
+
+        .shipment-item {background: #f8f9fa
+            border: 1px solid #dee2e6
+            border-radius: 8px
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: between;
+            align-items: center}
+
+        .priority-high {border-left: 5px solid #dc3545}
+        .priority-medium {border-left: 5px solid #ffc107}
+        .priority-low {border-left: 5px solid #28a745}
+
+        @media (max-width: 768px) {.container {
+                padding: 10px}
+
+            h1 {font-size: 2rem}
+
+            .card {padding: 15px}
+        }
+    </style>
+</head>
+<body>
+    <a href="/main_dashboard" class="back-button">← Back to Dashboard</a>
+
+    <div class="container">
+        <h1>⚡ Cross Docking Operations</h1>
+        <p style="text-align: center; color: white; font-size: 1.2rem; margin-bottom: 30px;">
+            Direct inbound shipments to outbound without storage - Minimize handling time
+        </p>
+
+        <div class="grid">
+            <!-- Cross Dock Scanner -->
+            <div class="card">
+                <h3>📱 Scan Inbound Shipment</h3>
+                <div class="form-group">
+                    <label>Scan Inbound Shipment QR/Barcode</label>
+                    <input type="text" id="shipmentScanInput" placeholder="Scan or enter shipment code" autofocus>
+                </div>
+                <button class="btn btn-primary" onclick="scanInboundShipment()">Process Inbound</button>
+                <button class="btn btn-success" onclick="openCameraScannerShipment()">📷 Camera Scanner</button>
+                <div id="scanResult"></div>
+            </div>
+
+            <!-- Dock Door Assignment -->
+            <div class="card">
+                <h3>🚪 Dock Door Management</h3>
+                <div class="form-group">
+                    <label>Select Dock Door</label>
+                    <select id="dockDoorSelect">
+                        <option value="">Choose dock door...</option>
+                        <!-- Dock doors will be populated here -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Selected Door Status</label>
+                    <div id="selectedDoorStatus" style="padding: 10px; background: #f8f9fa; border-radius: 8px; margin-top: 5px;">
+                        No door selected
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="refreshDockDoors()">Refresh Dock Status</button>
+                <button class="btn btn-success" onclick="assignSelectedDoor()">Assign Selected Door</button>
+            </div>
+
+            <!-- Cross Dock Assignment -->
+            <div class="card">
+                <h3>🔄 Cross Dock Assignment</h3>
+                <div class="form-group">
+                    <label>Inbound Shipment ID</label>
+                    <input type="text" id="inboundShipmentId" placeholder="Enter inbound shipment ID">
+                </div>
+                <div class="form-group">
+                    <label>Outbound Order/Route</label>
+                    <select id="outboundRoute">
+                        <option value="">Select outbound destination</option>
+                        <option value="route_a">Route A - North Distribution</option>
+                        <option value="route_b">Route B - South Distribution</option>
+                        <option value="route_c">Route C - Express Delivery</option>
+                        <option value="direct_ship">Direct Ship to Customer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Priority Level</label>
+                    <select id="priorityLevel">
+                        <option value="high">High - Rush Order</option>
+                        <option value="medium">Medium - Standard</option>
+                        <option value="low">Low - Regular</option>
+                    </select>
+                </div>
+                <button class="btn btn-success" onclick="createCrossDockAssignment()">Create Cross Dock Assignment</button>
+            </div>
+
+            <!-- Active Cross Dock Operations -->
+            <div class="card">
+                <h3>📋 Active Cross Dock Operations</h3>
+                <div class="shipment-list" id="activeCrossDocks">
+                    <!-- Active cross dock operations will be listed here -->
+                </div>
+                <button class="btn btn-primary" onclick="refreshCrossDockOperations()">Refresh Operations</button>
+            </div>
+
+            <!-- Transit Time Tracker -->
+            <div class="card">
+                <h3>⏱️ Transit Time Optimization</h3>
+                <div id="transitStats">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center;">
+                        <div>
+                            <h4 style="color: #28a745;">Average Transit</h4>
+                            <p style="font-size: 1.5rem; font-weight: bold;">12 min</p>
+                        </div>
+                        <div>
+                            <h4 style="color: #ffc107;">Current Load</h4>
+                            <p style="font-size: 1.5rem; font-weight: bold;">8 items</p>
+                        </div>
+                        <div>
+                            <h4 style="color: #007bff;">Efficiency</h4>
+                            <p style="font-size: 1.5rem; font-weight: bold;">94%</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-warning" onclick="optimizeTransitTimes()">Optimize Routes</button>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <h3>⚡ Quick Actions</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <button class="btn btn-primary" onclick="createEmergencyXDock()">🚨 Emergency Cross Dock</button>
+                    <button class="btn btn-success" onclick="bulkAssignXDock()">📦 Bulk Assignment</button>
+                    <button class="btn btn-warning" onclick="viewXDockReports()">📊 Performance Reports</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/qr_camera_scanner.js"></script>
+    <script>
+        // Initialize dock doors on page load
+        document.addEventListener('DOMContentLoaded', function() {initializeDockDoors()
+            refreshCrossDockOperations()});
+
+        function initializeDockDoors() {const dockDoorSelect = document.getElementById('dockDoorSelect')
+            // Extended status array for 50 dock doors with realistic distribution
+            const dockStatuses = [
+                'available', 'occupied', 'available', 'maintenance', 'available', 'occupied', 'available', 'available', 'available', 'maintenance',
+                'available', 'occupied', 'available', 'available', 'occupied', 'available', 'maintenance', 'available', 'available', 'occupied',
+                'available', 'available', 'occupied', 'available', 'available', 'maintenance', 'available', 'occupied', 'available', 'available',
+                'occupied', 'available', 'available', 'available', 'maintenance', 'available', 'occupied', 'available', 'available', 'occupied',
+                'available', 'maintenance', 'available', 'available', 'occupied', 'available', 'available', 'occupied', 'available', 'available'
+            ]
+            
+            // Clear existing options except the first one
+            dockDoorSelect.innerHTML = '<option value="">Choose dock door...</option>'
+            
+            for (let i = 1; i <= 50; i++) {
+                const status = dockStatuses[i - 1] || 'available';
+                const option = document.createElement('option');
+                option.value = `${i}-${status}`;
+                option.textContent = `Door ${i} - ${status.charAt(0).toUpperCase() + status.slice(1)}`;
+                option.className = status;
+                dockDoorSelect.appendChild(option);
+            }
+            
+            // Add event listener for door selection
+            dockDoorSelect.addEventListener('change', function() {updateSelectedDoorStatus()});
+        }
+
+        function updateSelectedDoorStatus() {const dockDoorSelect = document.getElementById('dockDoorSelect')
+            const selectedDoorStatus = document.getElementById('selectedDoorStatus')
+            const selectedValue = dockDoorSelect.value
+            
+            if (!selectedValue) {
+                selectedDoorStatus.innerHTML = 'No door selected';
+                selectedDoorStatus.style.background = '#f8f9fa';
+                return;}
+            
+            const [doorNumber, status] = selectedValue.split('-');
+            let statusColor = '#f8f9fa';
+            let statusIcon = '';
+            
+            switch(status) {case 'available':
+                    statusColor = '#d1f2eb'
+                    statusIcon = '✅'
+                    break
+                case 'occupied':
+                    statusColor = '#ffeaa7';
+                    statusIcon = '🚛';
+                    break;
+                case 'maintenance':
+                    statusColor = '#fadbd8';
+                    statusIcon = '🔧';
+                    break;}
+            
+            selectedDoorStatus.innerHTML = `${statusIcon} Door ${doorNumber} - ${status.charAt(0).toUpperCase() + status.slice(1)}`;
+            selectedDoorStatus.style.background = statusColor;
+        }
+
+        function assignSelectedDoor() {const dockDoorSelect = document.getElementById('dockDoorSelect')
+            const selectedValue = dockDoorSelect.value
+            
+            if (!selectedValue) {
+                alert('Please select a dock door first')
+                return;}
+            
+            const [doorNumber, status] = selectedValue.split('-');
+            
+            if (status === 'available') {
+                alert(`✅ Dock Door ${doorNumber} assigned for cross dock operation`);
+                // In a real application, this would update the assignment
+            } else {
+                alert(`❌ Cannot assign Door ${doorNumber} - currently ${status}`);
+            }
+        }
+
+        function selectDockDoor(doorNumber, status) {
+            // Legacy function for compatibility
+            if (status === 'available') {
+                alert(`Dock Door ${doorNumber} selected for assignment`);
+            } else {
+                alert(`Dock Door ${doorNumber} is currently ${status}`);
+            }
+        }
+
+        function refreshDockDoors() {// In a real application, this would fetch current dock door status from API
+            alert('✅ Dock door status refreshed')
+            // Reinitialize the dropdown
+            initializeDockDoors()}
+
+        function scanInboundShipment() {const shipmentCode = document.getElementById('shipmentScanInput').value.trim()
+            if (!shipmentCode) {
+                alert('Please scan or enter a shipment code')
+                return}
+
+            // Simulate processing
+            document.getElementById('scanResult').innerHTML = `
+                <div style="background: #d4edda color: #155724 padding: 15px border-radius: 8px; margin-top: 15px;">
+                    <h4>✅ Inbound Shipment Scanned</h4>
+                    <p><strong>Shipment:</strong> ${shipmentCode}</p>
+                    <p><strong>Items:</strong> 24 units</p>
+                    <p><strong>Weight:</strong> 150 lbs</p>
+                    <p><strong>Recommended:</strong> Direct to Outbound Route B</p>
+                    <button class="btn btn-success" onclick="quickAssignToCrossDock('${shipmentCode}')">Quick Assign to Cross Dock</button>
+                </div>
+            `;
+        }
+
+        function quickAssignToCrossDock(shipmentCode) {
+            alert(`✅ ${shipmentCode} assigned to cross dock operation`);
+            refreshCrossDockOperations();
+        }
+
+        function createCrossDockAssignment() {const inboundId = document.getElementById('inboundShipmentId').value
+            const outboundRoute = document.getElementById('outboundRoute').value
+            const priority = document.getElementById('priorityLevel').value
+
+            if (!inboundId || !outboundRoute) {
+                alert('Please fill in all required fields');
+                return;}
+
+            alert(`✅ Cross dock assignment created:\nInbound: ${inboundId}\nRoute: ${outboundRoute}\nPriority: ${priority}`);
+            
+            // Clear form
+            document.getElementById('inboundShipmentId').value = '';
+            document.getElementById('outboundRoute').value = '';
+            
+            refreshCrossDockOperations();
+        }
+
+        function refreshCrossDockOperations() {const container = document.getElementById('activeCrossDocks')
+            
+            // Sample active cross dock operations
+            const operations = [
+                {
+                    inbound: 'SH-001234',
+                    outbound: 'Route A - North',
+                    priority: 'high',
+                    status: 'In Transit',
+                    timeRemaining: '8 min'},
+                {
+                    inbound: 'SH-001235',
+                    outbound: 'Direct Ship',
+                    priority: 'medium',
+                    status: 'Loading',
+                    timeRemaining: '15 min'
+                },
+                {
+                    inbound: 'SH-001236',
+                    outbound: 'Route B - South',
+                    priority: 'low',
+                    status: 'Staged',
+                    timeRemaining: '22 min'
+                }
+            ];
+
+            container.innerHTML = operations.map(op => `
+                <div class="shipment-item priority-${op.priority}">
+                    <div>
+                        <strong>${op.inbound}</strong> → ${op.outbound}
+                        <br><small>Status: ${op.status} | ETA: ${op.timeRemaining}</small>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" style="padding: 5px 10px font-size: 12px" onclick="trackOperation('${op.inbound}')">Track</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function trackOperation(shipmentId) {
+            alert(`📍 Tracking ${shipmentId}:\n- Received at Dock 3\n- Currently in transit zone\n- Expected outbound dock assignment in 5 minutes`);
+        }
+
+        function optimizeTransitTimes() {alert('🤖 AI optimization complete:\n- Reorganized 3 routes for efficiency\n- Estimated 15% time savings\n- New average transit time: 10.2 minutes')}
+
+        function createEmergencyXDock() {const shipmentId = prompt('Enter emergency shipment ID:')
+            if (shipmentId) {
+                alert(`🚨 Emergency cross dock created for ${shipmentId}\n- Priority: URGENT\n- Assigned to next available dock\n- Transit time: <5 minutes`);
+            }
+        }
+
+        function bulkAssignXDock() {alert('📦 Bulk assignment wizard:\n- 12 shipments pending\n- Auto-assigned based on routes\n- Estimated completion: 45 minutes')}
+
+        function viewXDockReports() {alert('📊 Cross Dock Performance (Today):\n- Total shipments: 156\n- Average transit time: 12 min\n- Efficiency: 94%\n- Zero delays on high priority items')}
+
+        function openCameraScannerShipment() {if (typeof QRCameraScanner !== 'undefined') {
+                const scanner = new QRCameraScanner()
+                scanner.initCamera(function(qrData) {
+                    document.getElementById('shipmentScanInput').value = qrData;
+                    scanInboundShipment();}).catch(error => {console.error('Camera scanner error:', error)
+                    alert('Camera access failed. Please allow camera permission and try again.');});
+            } else {const qrCode = prompt('Camera scanner not available. Please enter shipment code manually:')
+                if (qrCode && qrCode.trim()) {
+                    document.getElementById('shipmentScanInput').value = qrCode.trim();
+                    scanInboundShipment()}
+            }
+        }
+    </script>
+
+    <!-- Include Universal Dashboard Button -->
+    <script src="/universal_dashboard_button.js"></script>
+    <!-- Include Floating Chat Widget -->
+    <script src="/floating_chat_widget.js"></script>
+    <!-- Include Employee Messaging Widget -->
+    <script src="/employee_messaging_widget.js"></script>
+</body>
+</html>

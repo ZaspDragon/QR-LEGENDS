@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Configuration - QR LEGENDS</title>
+    <style>
+        * {margin: 0
+            padding: 0
+            box-sizing: border-box}
+
+        body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+            background: linear-gradient(135deg, #6610f2, #495057)
+            min-height: 100vh
+            padding: 20px}
+
+        .container {max-width: 1200px
+            margin: 0 auto}
+
+        .back-button {display: inline-block
+            margin-bottom: 20px
+            padding: 10px 20px
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease}
+
+        .back-button:hover {background: rgba(255, 255, 255, 0.3)
+            transform: translateY(-2px)}
+
+        h1 {color: white
+            text-align: center
+            margin-bottom: 30px
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);}
+
+        .card {background: white
+            border-radius: 15px
+            padding: 25px
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);}
+
+        .card h3 {color: #333
+            margin-bottom: 20px
+            border-bottom: 2px solid #6610f2
+            padding-bottom: 10px}
+
+        .form-group {margin-bottom: 20px}
+
+        .form-group label {display: block
+            margin-bottom: 8px
+            font-weight: 600
+            color: #555}
+
+        .form-group input, .form-group select, .form-group textarea {width: 100%
+            padding: 12px
+            border: 2px solid #e1e5e9
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease}
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea: focus {outline: none
+            border-color: #6610f2}
+
+        .checkbox-group {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
+            gap: 10px
+            margin-top: 10px}
+
+        .checkbox-item {display: flex
+            align-items: center
+            padding: 8px
+            background: #f8f9fa;
+            border-radius: 5px}
+
+        .checkbox-item input[type="checkbox"] {width: auto
+            margin-right: 8px}
+
+        .btn {padding: 12px 24px
+            border: none
+            border-radius: 8px
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px}
+
+        .btn-primary {background: linear-gradient(135deg, #6610f2, #495057)
+            color: white}
+
+        .btn-success {background: linear-gradient(135deg, #28a745, #34d058)
+            color: white}
+
+        .btn-warning {background: linear-gradient(135deg, #ffc107, #ffed4e)
+            color: #333}
+
+        .btn-danger {background: linear-gradient(135deg, #dc3545, #c82333)
+            color: white}
+
+        .btn:hover {transform: translateY(-2px)
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2)}
+
+        .grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr))
+            gap: 20px}
+
+        .config-section {background: #f8f9fa
+            padding: 20px
+            border-radius: 10px
+            border-left: 5px solid #6610f2}
+
+        .status-indicator {display: inline-block
+            width: 12px
+            height: 12px
+            border-radius: 50%;
+            margin-right: 8px}
+
+        .status-active {background: #28a745}
+        .status-inactive {background: #dc3545}
+        .status-warning {background: #ffc107}
+
+        .alert {padding: 15px
+            border-radius: 8px
+            margin: 15px 0}
+
+        .alert-success {background: #d4edda
+            color: #155724
+            border: 1px solid #c3e6cb}
+
+        .alert-warning {background: #fff3cd
+            color: #856404
+            border: 1px solid #ffeaa7}
+
+        .alert-danger {background: #f8d7da
+            color: #721c24
+            border: 1px solid #f5c6cb}
+
+        @media (max-width: 768px) {.container {
+                padding: 10px}
+
+            h1 {font-size: 2rem}
+
+            .card {padding: 15px}
+
+            .grid {grid-template-columns: 1fr}
+        }
+    </style>
+</head>
+<body>
+    <a href="/main_dashboard" class="back-button">← Back to Dashboard</a>
+
+    <div class="container">
+        <h1>⚙️ System Configuration</h1>
+        <p style="text-align: center; color: white; font-size: 1.2rem; margin-bottom: 30px;">
+            Configure WMS parameters, system settings, and operational rules
+        </p>
+
+        <div class="grid">
+            <!-- Warehouse Configuration -->
+            <div class="card">
+                <h3>🏢 Warehouse Settings</h3>
+                <div class="form-group">
+                    <label>Warehouse Name</label>
+                    <input type="text" id="warehouseName" value="Main Distribution Center" placeholder="Enter warehouse name">
+                </div>
+                <div class="form-group">
+                    <label>Default Time Zone</label>
+                    <select id="timeZone">
+                        <option value="EST">Eastern Time (EST)</option>
+                        <option value="CST">Central Time (CST)</option>
+                        <option value="MST">Mountain Time (MST)</option>
+                        <option value="PST">Pacific Time (PST)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Operating Hours</label>
+                    <input type="text" id="operatingHours" value="06:00 - 22:00" placeholder="HH:MM - HH:MM">
+                </div>
+                <div class="form-group">
+                    <label>Maximum Capacity (Items)</label>
+                    <input type="number" id="maxCapacity" value="50000" placeholder="Enter max capacity">
+                </div>
+                <button class="btn btn-success" onclick="saveWarehouseSettings()">Save Warehouse Settings</button>
+            </div>
+
+            <!-- Scanning & QR Configuration -->
+            <div class="card">
+                <h3>📱 Scanning Configuration</h3>
+                <div class="form-group">
+                    <label>QR Code Format</label>
+                    <select id="qrFormat">
+                        <option value="standard">Standard QR Code</option>
+                        <option value="high_density">High Density</option>
+                        <option value="micro">Micro QR Code</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Scan Timeout (seconds)</label>
+                    <input type="number" id="scanTimeout" value="30" min="5" max="120">
+                </div>
+                <div class="form-group">
+                    <label>Auto-Scan Features</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="autoFocus" checked>
+                            <label for="autoFocus">Auto Focus Camera</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="autoCapture" checked>
+                            <label for="autoCapture">Auto Capture on Detection</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="beepOnScan" checked>
+                            <label for="beepOnScan">Beep on Successful Scan</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="vibrateOnScan">
+                            <label for="vibrateOnScan">Vibrate on Scan (Mobile)</label>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="saveScanningSettings()">Save Scanning Settings</button>
+            </div>
+
+            <!-- Workflow Configuration -->
+            <div class="card">
+                <h3>🔄 Workflow Rules</h3>
+                <div class="form-group">
+                    <label>Auto-Putaway Rules</label>
+                    <select id="putawayRules">
+                        <option value="fifo">First In, First Out (FIFO)</option>
+                        <option value="lifo">Last In, First Out (LIFO)</option>
+                        <option value="optimal">Optimal Location Assignment</option>
+                        <option value="manual">Manual Assignment Only</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Pick Path Optimization</label>
+                    <select id="pickPath">
+                        <option value="zone">Zone-Based Picking</option>
+                        <option value="batch">Batch Picking</option>
+                        <option value="wave">Wave Picking</option>
+                        <option value="discrete">Discrete Order Picking</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quality Check Requirements</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="qcReceiving" checked>
+                            <label for="qcReceiving">QC on Receiving</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="qcPicking">
+                            <label for="qcPicking">QC on Picking</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="qcPacking" checked>
+                            <label for="qcPacking">QC on Packing</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="qcShipping" checked>
+                            <label for="qcShipping">QC on Shipping</label>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="saveWorkflowSettings()">Save Workflow Rules</button>
+            </div>
+
+            <!-- Notification Configuration -->
+            <div class="card">
+                <h3>🔔 Notification Settings</h3>
+                <div class="form-group">
+                    <label>Low Stock Alert Threshold (%)</label>
+                    <input type="number" id="lowStockThreshold" value="20" min="1" max="100">
+                </div>
+                <div class="form-group">
+                    <label>Email Notifications</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="emailLowStock" checked>
+                            <label for="emailLowStock">Low Stock Alerts</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="emailErrors" checked>
+                            <label for="emailErrors">System Errors</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="emailReports">
+                            <label for="emailReports">Daily Reports</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="emailMaintenance" checked>
+                            <label for="emailMaintenance">Maintenance Alerts</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Notification Recipients</label>
+                    <textarea id="notificationEmails" rows="3" placeholder="Enter email addresses, one per line">admin@company.com
+manager@company.com</textarea>
+                </div>
+                <button class="btn btn-success" onclick="saveNotificationSettings()">Save Notification Settings</button>
+            </div>
+
+            <!-- System Status -->
+            <div class="card">
+                <h3>🖥️ System Status</h3>
+                <div class="config-section">
+                    <h4>Service Status</h4>
+                    <div style="margin: 15px 0;">
+                        <p><span class="status-indicator status-active"></span>QR Scanner Service: Active</p>
+                        <p><span class="status-indicator status-active"></span>Database Connection: Active</p>
+                        <p><span class="status-indicator status-warning"></span>Email Service: Limited</p>
+                        <p><span class="status-indicator status-active"></span>Backup Service: Active</p>
+                    </div>
+                </div>
+                <div class="config-section" style="margin-top: 20px;">
+                    <h4>Performance Metrics</h4>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px;">
+                        <div style="text-align: center;">
+                            <strong>CPU Usage</strong>
+                            <p style="font-size: 1.5rem; color: #28a745;">23%</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <strong>Memory Usage</strong>
+                            <p style="font-size: 1.5rem; color: #ffc107;">67%</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <strong>Disk Space</strong>
+                            <p style="font-size: 1.5rem; color: #28a745;">45%</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <strong>Active Users</strong>
+                            <p style="font-size: 1.5rem; color: #007bff;">12</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="refreshSystemStatus()">Refresh Status</button>
+            </div>
+
+            <!-- Security Configuration -->
+            <div class="card">
+                <h3>🔐 Security Settings</h3>
+                <div class="form-group">
+                    <label>Session Timeout (minutes)</label>
+                    <input type="number" id="sessionTimeout" value="60" min="5" max="480">
+                </div>
+                <div class="form-group">
+                    <label>Password Requirements</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="requireUppercase" checked>
+                            <label for="requireUppercase">Require Uppercase</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="requireNumbers" checked>
+                            <label for="requireNumbers">Require Numbers</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="requireSymbols">
+                            <label for="requireSymbols">Require Symbols</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="requireLength" checked>
+                            <label for="requireLength">Minimum 8 Characters</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Failed Login Attempts Before Lockout</label>
+                    <input type="number" id="loginAttempts" value="3" min="1" max="10">
+                </div>
+                <button class="btn btn-success" onclick="saveSecuritySettings()">Save Security Settings</button>
+            </div>
+
+            <!-- Data Management -->
+            <div class="card">
+                <h3>💾 Data Management</h3>
+                <div class="form-group">
+                    <label>Auto-Backup Frequency</label>
+                    <select id="backupFrequency">
+                        <option value="hourly">Every Hour</option>
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="manual">Manual Only</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Data Retention Period (days)</label>
+                    <input type="number" id="retentionPeriod" value="365" min="30" max="2555">
+                </div>
+                <div class="form-group">
+                    <label>Log Level</label>
+                    <select id="logLevel">
+                        <option value="error">Error Only</option>
+                        <option value="warning">Warning & Above</option>
+                        <option value="info" selected>Info & Above</option>
+                        <option value="debug">Debug (All)</option>
+                    </select>
+                </div>
+                <button class="btn btn-success" onclick="saveDataSettings()">Save Data Settings</button>
+                <button class="btn btn-warning" onclick="performBackup()">Manual Backup Now</button>
+                <button class="btn btn-danger" onclick="clearLogs()">Clear System Logs</button>
+            </div>
+        </div>
+
+        <!-- System Actions -->
+        <div class="card">
+            <h3>⚡ System Actions</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
+                <button class="btn btn-primary" onclick="testSystemIntegration()">🔧 Test System Integration</button>
+                <button class="btn btn-success" onclick="exportConfiguration()">📤 Export Configuration</button>
+                <button class="btn btn-warning" onclick="importConfiguration()">📥 Import Configuration</button>
+                <button class="btn btn-danger" onclick="resetToDefaults()">🔄 Reset to Defaults</button>
+            </div>
+            <div id="systemActionResult"></div>
+        </div>
+    </div>
+
+    <script>
+        function saveWarehouseSettings() {showAlert('success', 'Warehouse settings saved successfully')}
+
+        function saveScanningSettings() {showAlert('success', 'Scanning configuration updated')}
+
+        function saveWorkflowSettings() {showAlert('success', 'Workflow rules configured')}
+
+        function saveNotificationSettings() {showAlert('success', 'Notification settings saved')}
+
+        function saveSecuritySettings() {showAlert('success', 'Security settings updated')}
+
+        function saveDataSettings() {showAlert('success', 'Data management settings saved')}
+
+        function refreshSystemStatus() {showAlert('success', 'System status refreshed')}
+
+        function testSystemIntegration() {showAlert('success', 'System integration test completed successfully')}
+
+        function performBackup() {showAlert('success', 'Manual backup initiated - will complete in background')}
+
+        function clearLogs() {if (confirm('Are you sure you want to clear all system logs? This action cannot be undone.')) {
+                showAlert('warning', 'System logs cleared')}
+        }
+
+        function exportConfiguration() {showAlert('success', 'Configuration exported to config_backup.json')}
+
+        function importConfiguration() {const input = document.createElement('input')
+            input.type = 'file'
+            input.accept = '.json'
+            input.onchange = function(e) {
+                if (e.target.files[0]) {
+                    showAlert('success', 'Configuration imported successfully');}
+            };
+            input.click();
+        }
+
+        function resetToDefaults() {if (confirm('Are you sure you want to reset all settings to defaults? This will overwrite current configuration.')) {
+                showAlert('warning', 'All settings reset to factory defaults')}
+        }
+
+        function showAlert(type, message) {const resultDiv = document.getElementById('systemActionResult')
+            resultDiv.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => {resultDiv.innerHTML = ''}, 5000);
+        }
+    </script>
+
+    <!-- Include Universal Dashboard Button -->
+    <script src="/universal_dashboard_button.js"></script>
+    <!-- Include Floating Chat Widget -->
+    <script src="/floating_chat_widget.js"></script>
+    <!-- Include Employee Messaging Widget -->
+    <script src="/employee_messaging_widget.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Configuration - QR Legends</title>
+    <script src="/static/copyright_notice.js"></script>
+    <style>
+        body {font-family: Arial, sans-serif margin: 0 padding: 20px background-color: #f5f5f5}
+        .container {max-width: 1200px margin: 0 auto}
+        .page-header {background: linear-gradient(135deg, #6c757d, #495057) color: white padding: 20px border-radius: 10px; text-align: center; margin-bottom: 30px}
+        .card {background: white padding: 20px margin: 15px 0 border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+        .btn {padding: 10px 20px margin: 5px border: none border-radius: 5px; cursor: pointer; font-weight: bold}
+        .btn-primary {background: #007bff color: white}
+        .btn-success {background: #28a745 color: white}
+        .btn-warning {background: #ffc107 color: #212529}
+        .form-group {margin: 15px 0}
+        .form-group label {display: block margin-bottom: 5px font-weight: bold}
+        .form-group input, .form-group select, .form-group textarea {width: 100% padding: 10px border: 1px solid #ddd border-radius: 4px; box-sizing: border-box}
+        .config-grid {display: grid grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)) gap: 20px}
+        .toggle-switch {position: relative display: inline-block width: 60px height: 34px}
+        .toggle-switch input {opacity: 0 width: 0 height: 0}
+        .slider {position: absolute cursor: pointer top: 0 left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px}
+        .slider: before {position: absolute content: "" height: 26px width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%}
+        input:checked + .slider {background-color: #2196F3}
+        input:checked + .slider:before {transform: translateX(26px)}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>⚙️ System Configuration</h1>
+            <p>Configure WMS parameters and system settings</p>
+        </div>
+
+        <div class="config-grid">
+            <div class="card">
+                <h3>🖨️ Printer Settings</h3>
+                <div class="form-group">
+                    <label>Default Label Printer</label>
+                    <select id="defaultPrinter">
+                        <option value="zebra_01">Zebra ZT610 - Dock 1</option>
+                        <option value="zebra_02">Zebra ZT410 - Dock 2</option>
+                        <option value="dymo_01">DYMO LabelWriter</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Label Size</label>
+                    <select id="labelSize">
+                        <option value="4x6">4" x 6" (Standard)</option>
+                        <option value="3x5">3" x 5" (Small)</option>
+                        <option value="2x1">2" x 1" (Mini)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Print Quality</label>
+                    <select id="printQuality">
+                        <option value="standard">Standard (203 DPI)</option>
+                        <option value="high">High (300 DPI)</option>
+                        <option value="premium">Premium (600 DPI)</option>
+                    </select>
+                </div>
+                <button class="btn btn-success" onclick="savePrinterSettings()">Save Printer Settings</button>
+            </div>
+
+            <div class="card">
+                <h3>📱 QR Code Settings</h3>
+                <div class="form-group">
+                    <label>QR Code Format</label>
+                    <select id="qrFormat">
+                        <option value="qr">QR Code (Recommended)</option>
+                        <option value="datamatrix">Data Matrix</option>
+                        <option value="code128">Code 128</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Error Correction Level</label>
+                    <select id="errorCorrection">
+                        <option value="low">Low (7%)</option>
+                        <option value="medium" selected>Medium (15%)</option>
+                        <option value="high">High (25%)</option>
+                        <option value="ultra">Ultra (30%)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Auto-scan Timeout (seconds)</label>
+                    <input type="number" id="scanTimeout" value="30" min="10" max="300">
+                </div>
+                <button class="btn btn-success" onclick="saveQRSettings()">Save QR Settings</button>
+            </div>
+
+            <div class="card">
+                <h3>🏭 Warehouse Zones</h3>
+                <div class="form-group">
+                    <label>Zone Configuration</label>
+                    <textarea id="zoneConfig" rows="6" placeholder="A1-A10: Receiving&#10;B1-B20: Storage&#10;C1-C5: Shipping&#10;D1-D15: Returns"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Default Zone for New Items</label>
+                    <select id="defaultZone">
+                        <option value="A">Zone A - Receiving</option>
+                        <option value="B">Zone B - Storage</option>
+                        <option value="C">Zone C - Shipping</option>
+                        <option value="D">Zone D - Returns</option>
+                    </select>
+                </div>
+                <button class="btn btn-success" onclick="saveZoneSettings()">Save Zone Settings</button>
+            </div>
+
+            <div class="card">
+                <h3>📊 Inventory Thresholds</h3>
+                <div class="form-group">
+                    <label>Low Stock Alert (%)</label>
+                    <input type="number" id="lowStockThreshold" value="20" min="1" max="50">
+                </div>
+                <div class="form-group">
+                    <label>Critical Stock Alert (%)</label>
+                    <input type="number" id="criticalStockThreshold" value="5" min="1" max="20">
+                </div>
+                <div class="form-group">
+                    <label>Overstock Alert (%)</label>
+                    <input type="number" id="overstockThreshold" value="150" min="100" max="300">
+                </div>
+                <button class="btn btn-success" onclick="saveInventoryThresholds()">Save Thresholds</button>
+            </div>
+
+            <div class="card">
+                <h3>🔔 Notification Settings</h3>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px;">
+                        Email Notifications
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="emailNotifications" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px;">
+                        SMS Alerts
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="smsAlerts">
+                            <span class="slider"></span>
+                        </label>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px;">
+                        Push Notifications
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="pushNotifications" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </label>
+                </div>
+                <button class="btn btn-success" onclick="saveNotificationSettings()">Save Notifications</button>
+            </div>
+
+            <div class="card">
+                <h3>🔧 Advanced Settings</h3>
+                <div class="form-group">
+                    <label>Session Timeout (minutes)</label>
+                    <input type="number" id="sessionTimeout" value="60" min="15" max="480">
+                </div>
+                <div class="form-group">
+                    <label>Backup Frequency</label>
+                    <select id="backupFrequency">
+                        <option value="hourly">Every Hour</option>
+                        <option value="daily" selected>Daily</option>
+                        <option value="weekly">Weekly</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Log Retention (days)</label>
+                    <input type="number" id="logRetention" value="90" min="30" max="365">
+                </div>
+                <button class="btn btn-warning" onclick="saveAdvancedSettings()">Save Advanced Settings</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>🔄 System Status</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div style="text-align: center; padding: 15px; background: #d4edda; border-radius: 8px;">
+                    <h4>Database</h4>
+                    <span style="color: #28a745; font-size: 1.5rem;">✅ Online</span>
+                </div>
+                <div style="text-align: center; padding: 15px; background: #d4edda; border-radius: 8px;">
+                    <h4>Printers</h4>
+                    <span style="color: #28a745; font-size: 1.5rem;">✅ Connected</span>
+                </div>
+                <div style="text-align: center; padding: 15px; background: #fff3cd; border-radius: 8px;">
+                    <h4>Scanner</h4>
+                    <span style="color: #856404; font-size: 1.5rem;">⚠️ Warning</span>
+                </div>
+                <div style="text-align: center; padding: 15px; background: #d4edda; border-radius: 8px;">
+                    <h4>Network</h4>
+                    <span style="color: #28a745; font-size: 1.5rem;">✅ Stable</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function savePrinterSettings() {const printer = document.getElementById('defaultPrinter').value
+            const size = document.getElementById('labelSize').value
+            const quality = document.getElementById('printQuality').value
+
+            alert(`Printer settings saved:\nPrinter: ${printer}\nSize: ${size}\nQuality: ${quality}`);
+        }
+
+        function saveQRSettings() {const format = document.getElementById('qrFormat').value
+            const errorCorrection = document.getElementById('errorCorrection').value
+            const timeout = document.getElementById('scanTimeout').value
+
+            alert(`QR settings saved:\nFormat: ${format}\nError Correction: ${errorCorrection}\nTimeout: ${timeout}s`);
+        }
+
+        function saveZoneSettings() {const zones = document.getElementById('zoneConfig').value
+            const defaultZone = document.getElementById('defaultZone').value
+
+            alert(`Zone settings saved:\nDefault Zone: ${defaultZone}\nConfiguration updated`);
+        }
+
+        function saveInventoryThresholds() {const low = document.getElementById('lowStockThreshold').value
+            const critical = document.getElementById('criticalStockThreshold').value
+            const overstock = document.getElementById('overstockThreshold').value
+
+            alert(`Inventory thresholds saved:\nLow: ${low}%\nCritical: ${critical}%\nOverstock: ${overstock}%`);
+        }
+
+        function saveNotificationSettings() {const email = document.getElementById('emailNotifications').checked
+            const sms = document.getElementById('smsAlerts').checked
+            const push = document.getElementById('pushNotifications').checked
+
+            alert(`Notification settings saved:\nEmail: ${email}\nSMS: ${sms}\nPush: ${push}`);
+        }
+
+        function saveAdvancedSettings() {const timeout = document.getElementById('sessionTimeout').value
+            const backup = document.getElementById('backupFrequency').value
+            const retention = document.getElementById('logRetention').value
+
+            alert(`Advanced settings saved:\nSession: ${timeout}min\nBackup: ${backup}\nLogs: ${retention} days`);
+        }
+    </script>
+</body>
+</html>

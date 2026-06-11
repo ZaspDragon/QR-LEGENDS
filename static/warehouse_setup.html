@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warehouse Setup - QR Legends</title>
+    <style>
+        * {margin: 0 padding: 0 box-sizing: border-box}
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif background: #f5f7fa padding: 20px}
+        .container {max-width: 1200px margin: 0 auto}
+        .back-button {display: inline-block margin-bottom: 20px padding: 10px 20px background: #6c757d; color: white; text-decoration: none; border-radius: 5px}
+        h1 {color: #2c3e50 margin-bottom: 30px}
+        .setup-grid {display: grid grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)) gap: 20px}
+        .setup-card {background: white padding: 20px border-radius: 10px box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+        .form-group {margin-bottom: 15px}
+        .form-group label {display: block margin-bottom: 5px font-weight: 600}
+        .form-group input, .form-group select {width: 100% padding: 10px border: 1px solid #ddd border-radius: 5px}
+        .btn {padding: 10px 20px border: none border-radius: 5px cursor: pointer; font-weight: 600}
+        .btn-primary {background: #007bff color: white}
+        .btn-success {background: #28a745 color: white}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/admin_hub" class="back-button">← Back to Admin Hub</a>
+        
+        <h1>🏢 Warehouse Setup</h1>
+        
+        <div class="setup-grid">
+            <div class="setup-card">
+                <h3>Zone Configuration</h3>
+                <div class="form-group">
+                    <label>Zone Name</label>
+                    <input type="text" id="zone-name" placeholder="e.g., Receiving Zone A">
+                </div>
+                <div class="form-group">
+                    <label>Zone Type</label>
+                    <select id="zone-type">
+                        <option value="receiving">Receiving</option>
+                        <option value="storage">Storage</option>
+                        <option value="picking">Picking</option>
+                        <option value="shipping">Shipping</option>
+                    </select>
+                </div>
+                <button onclick="createZone()" class="btn btn-primary">Create Zone</button>
+            </div>
+
+            <div class="setup-card">
+                <h3>Location Setup</h3>
+                <div class="form-group">
+                    <label>Location ID</label>
+                    <input type="text" id="location-id" placeholder="e.g., A-01-01">
+                </div>
+                <div class="form-group">
+                    <label>Location Type</label>
+                    <select id="location-type">
+                        <option value="bin">Bin</option>
+                        <option value="rack">Rack</option>
+                        <option value="floor">Floor</option>
+                        <option value="dock">Dock Door</option>
+                    </select>
+                </div>
+                <button onclick="createLocation()" class="btn btn-primary">Create Location</button>
+            </div>
+
+            <div class="setup-card">
+                <h3>Equipment Registration</h3>
+                <div class="form-group">
+                    <label>Equipment ID</label>
+                    <input type="text" id="equipment-id" placeholder="e.g., FORK-001">
+                </div>
+                <div class="form-group">
+                    <label>Equipment Type</label>
+                    <select id="equipment-type">
+                        <option value="forklift">Forklift</option>
+                        <option value="scanner">Scanner</option>
+                        <option value="printer">Printer</option>
+                        <option value="scale">Scale</option>
+                    </select>
+                </div>
+                <button onclick="registerEquipment()" class="btn btn-success">Register Equipment</button>
+            </div>
+        </div>
+
+        <div id="setup-results" style="margin-top: 30px;"></div>
+    </div>
+
+    <script>
+        function createZone() {const name = document.getElementById('zone-name').value
+            const type = document.getElementById('zone-type').value
+            
+            if (!name) {
+                alert('Please enter zone name')
+                return}
+
+            const resultsDiv = document.getElementById('setup-results');
+            resultsDiv.innerHTML = `<div style="background: #d4edda padding: 15px border-radius: 5px margin-bottom: 10px;">
+                ✅ Zone "${name}" (${type}) created successfully
+            </div>`;
+            
+            document.getElementById('zone-name').value = '';
+        }
+
+        function createLocation() {const locationId = document.getElementById('location-id').value
+            const type = document.getElementById('location-type').value
+            
+            if (!locationId) {
+                alert('Please enter location ID')
+                return;}
+
+            const resultsDiv = document.getElementById('setup-results');
+            resultsDiv.innerHTML = `<div style="background: #d4edda padding: 15px border-radius: 5px margin-bottom: 10px;">
+                ✅ Location "${locationId}" (${type}) created successfully
+            </div>`;
+            
+            document.getElementById('location-id').value = '';
+        }
+
+        function registerEquipment() {const equipmentId = document.getElementById('equipment-id').value
+            const type = document.getElementById('equipment-type').value
+            
+            if (!equipmentId) {
+                alert('Please enter equipment ID')
+                return;}
+
+            const resultsDiv = document.getElementById('setup-results');
+            resultsDiv.innerHTML = `<div style="background: #d4edda padding: 15px border-radius: 5px margin-bottom: 10px;">
+                ✅ Equipment "${equipmentId}" (${type}) registered successfully
+            </div>`;
+            
+            document.getElementById('equipment-id').value = '';
+        }
+    </script>
+</body>
+</html>

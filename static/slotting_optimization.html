@@ -1,0 +1,393 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slotting Optimization - QR Legends</title>
+    <link rel="icon" type="image/png" href="/static/qr_legends_logo.png">
+    <script src="https: //cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {margin: 0
+            padding: 0
+            box-sizing: border-box}
+
+        body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            min-height: 100vh
+            color: #1a1a1a}
+
+        .header {background: rgba(255, 255, 255, 0.95)
+            backdrop-filter: blur(10px)
+            padding: 16px 24px
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);}
+
+        .logo {display: flex
+            align-items: center
+            gap: 12px
+            font-size: 20px;
+            font-weight: 700;
+            color: #2563eb;
+            text-decoration: none}
+
+        .header-actions {display: flex
+            gap: 8px}
+
+        .header-btn {padding: 8px 16px
+            border: none
+            border-radius: 8px
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s ease}
+
+        .header-btn.primary {background: #2563eb
+            color: white}
+
+        .header-btn.secondary {background: rgba(0, 0, 0, 0.1)
+            color: #4b5563}
+
+        .main-content {padding: 32px 24px
+            max-width: 1400px
+            margin: 0 auto}
+
+        .page-header {text-align: center
+            margin-bottom: 40px}
+
+        .page-title {font-size: 36px
+            font-weight: 800
+            color: white
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);}
+
+        .page-subtitle {font-size: 16px
+            color: rgba(255, 255, 255, 0.8)}
+
+        .optimization-grid {display: grid
+            grid-template-columns: 1fr 1fr
+            gap: 24px
+            margin-bottom: 32px}
+
+        .optimization-card {background: rgba(255, 255, 255, 0.95)
+            border-radius: 16px
+            padding: 24px
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);}
+
+        .card-title {font-size: 20px
+            font-weight: 600
+            color: #1f2937
+            margin-bottom: 16px}
+
+        .chart-container {height: 300px
+            margin-bottom: 16px}
+
+        .recommendations {background: rgba(255, 255, 255, 0.95)
+            border-radius: 16px
+            padding: 24px
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 32px}
+
+        .recommendation-item {display: flex
+            align-items: center
+            gap: 16px
+            padding: 16px;
+            margin-bottom: 12px;
+            background: #f9fafb;
+            border-radius: 12px;
+            border-left: 4px solid #2563eb}
+
+        .recommendation-priority {padding: 4px 8px
+            border-radius: 12px
+            font-size: 12px
+            font-weight: 600}
+
+        .priority-high {background: #fef2f2
+            color: #dc2626}
+
+        .priority-medium {background: #fffbeb
+            color: #d97706}
+
+        .priority-low {background: #f0fdf4
+            color: #16a34a}
+
+        .recommendation-content {flex: 1}
+
+        .recommendation-title {font-weight: 600
+            color: #1f2937
+            margin-bottom: 4px}
+
+        .recommendation-desc {font-size: 14px
+            color: #6b7280}
+
+        .apply-btn {padding: 8px 16px
+            border: none
+            border-radius: 8px
+            background: #2563eb;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease}
+
+        .apply-btn:hover {background: #1d4ed8}
+
+        .velocity-analysis {background: rgba(255, 255, 255, 0.95)
+            border-radius: 16px
+            padding: 24px
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);}
+
+        .velocity-table {width: 100%
+            border-collapse: collapse
+            margin-top: 16px}
+
+        .velocity-table th,
+        .velocity-table td {padding: 12px
+            text-align: left
+            border-bottom: 1px solid #e5e7eb}
+
+        .velocity-table th {background: #f9fafb
+            font-weight: 600
+            color: #374151}
+
+        .velocity-category {padding: 4px 8px
+            border-radius: 12px
+            font-size: 12px
+            font-weight: 600}
+
+        .category-a {background: #dcfce7
+            color: #166534}
+
+        .category-b {background: #fef3c7
+            color: #92400e}
+
+        .category-c {background: #fee2e2
+            color: #991b1b}
+
+        @media (max-width: 968px) {.optimization-grid {
+                grid-template-columns: 1fr}
+        }
+
+        @media (max-width: 768px) {.main-content {
+                padding: 24px 16px}
+
+            .recommendation-item {flex-direction: column
+                align-items: flex-start}
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/" class="logo">
+            📐 Slotting Optimization
+        </a>
+        <div class="header-actions">
+            <a href="/main_dashboard" class="header-btn secondary">🏠 Dashboard</a>
+            <a href="/inventory_hub" class="header-btn secondary">📊 Inventory</a>
+            <a href="/warehouse_visualization" class="header-btn primary">🏭 3D View</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Slotting Optimization</h1>
+            <p class="page-subtitle">AI-powered product placement optimization based on velocity and affinity</p>
+        </div>
+
+        <div class="optimization-grid">
+            <div class="optimization-card">
+                <div class="card-title">📊 Pick Velocity Analysis</div>
+                <div class="chart-container">
+                    <canvas id="velocityChart"></canvas>
+                </div>
+            </div>
+
+            <div class="optimization-card">
+                <div class="card-title">🎯 Zone Efficiency</div>
+                <div class="chart-container">
+                    <canvas id="efficiencyChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="recommendations">
+            <div class="card-title">🚀 Optimization Recommendations</div>
+            
+            <div class="recommendation-item">
+                <div class="recommendation-priority priority-high">High</div>
+                <div class="recommendation-content">
+                    <div class="recommendation-title">Move HVX-100 to Golden Zone</div>
+                    <div class="recommendation-desc">High-velocity item currently in C-zone. Moving to A-01 would reduce pick time by 42%</div>
+                </div>
+                <button class="apply-btn">Apply</button>
+            </div>
+
+            <div class="recommendation-item">
+                <div class="recommendation-priority priority-high">High</div>
+                <div class="recommendation-content">
+                    <div class="recommendation-title">Consolidate FRM Series in B-Zone</div>
+                    <div class="recommendation-desc">FRM-220, FRM-315, FRM-442 often picked together. Co-locate for batch efficiency</div>
+                </div>
+                <button class="apply-btn">Apply</button>
+            </div>
+
+            <div class="recommendation-item">
+                <div class="recommendation-priority priority-medium">Medium</div>
+                <div class="recommendation-content">
+                    <div class="recommendation-title">Relocate Seasonal Items</div>
+                    <div class="recommendation-desc">Winter items showing low velocity. Move to overflow zone to free prime locations</div>
+                </div>
+                <button class="apply-btn">Apply</button>
+            </div>
+
+            <div class="recommendation-item">
+                <div class="recommendation-priority priority-low">Low</div>
+                <div class="recommendation-content">
+                    <div class="recommendation-title">Optimize Pick Path for Zone D</div>
+                    <div class="recommendation-desc">Rearrange Zone D layout to reduce travel time by 15%</div>
+                </div>
+                <button class="apply-btn">Apply</button>
+            </div>
+        </div>
+
+        <div class="velocity-analysis">
+            <div class="card-title">📈 Item Velocity Classification</div>
+            <table class="velocity-table">
+                <thead>
+                    <tr>
+                        <th>SKU</th>
+                        <th>Description</th>
+                        <th>Current Location</th>
+                        <th>Picks/Day</th>
+                        <th>Category</th>
+                        <th>Recommended Zone</th>
+                        <th>Potential Savings</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>HVX-100</td>
+                        <td>Air Filter 10x20</td>
+                        <td>C-02-15</td>
+                        <td>47</td>
+                        <td><span class="velocity-category category-a">A</span></td>
+                        <td>A-01-01</td>
+                        <td>42% faster</td>
+                    </tr>
+                    <tr>
+                        <td>FRM-220</td>
+                        <td>Fastener M8 x 20</td>
+                        <td>B-12-07</td>
+                        <td>31</td>
+                        <td><span class="velocity-category category-a">A</span></td>
+                        <td>A-02-03</td>
+                        <td>28% faster</td>
+                    </tr>
+                    <tr>
+                        <td>CLN-500</td>
+                        <td>Glass Cleaner 32oz</td>
+                        <td>D-04-03</td>
+                        <td>12</td>
+                        <td><span class="velocity-category category-b">B</span></td>
+                        <td>B-05-12</td>
+                        <td>15% faster</td>
+                    </tr>
+                    <tr>
+                        <td>CBL-650</td>
+                        <td>CAT6 Cable 50ft</td>
+                        <td>C-02-09</td>
+                        <td>8</td>
+                        <td><span class="velocity-category category-b">B</span></td>
+                        <td>B-08-15</td>
+                        <td>12% faster</td>
+                    </tr>
+                    <tr>
+                        <td>WTR-300</td>
+                        <td>Winter Coat Large</td>
+                        <td>A-05-08</td>
+                        <td>2</td>
+                        <td><span class="velocity-category category-c">C</span></td>
+                        <td>D-12-20</td>
+                        <td>Free prime space</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Initialize charts
+        document.addEventListener('DOMContentLoaded', function() {// Velocity Chart
+            const velocityCtx = document.getElementById('velocityChart').getContext('2d')
+            new Chart(velocityCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Zone A', 'Zone B', 'Zone C', 'Zone D'],
+                    datasets: [{
+                        label: 'Picks per Hour',
+                        data: [142, 98, 67, 43],
+                        backgroundColor: [
+                            '#10b981',
+                            '#f59e0b', 
+                            '#ef4444',
+                            '#6b7280'
+                        ],
+                        borderRadius: 8}]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Efficiency Chart
+            const efficiencyCtx = document.getElementById('efficiencyChart').getContext('2d');
+            new Chart(efficiencyCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Optimal', 'Good', 'Needs Improvement'],
+                    datasets: [{
+                        data: [67, 25, 8],
+                        backgroundColor: [
+                            '#10b981',
+                            '#f59e0b',
+                            '#ef4444'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            console.log('Slotting Optimization system loaded');
+        });
+
+        // Apply recommendation
+        document.querySelectorAll('.apply-btn').forEach(btn => {btn.addEventListener('click', function() {
+                this.textContent = 'Applied ✓'
+                this.style.background = '#10b981'
+                this.disabled = true});
+        });
+    </script>
+</body>
+</html>

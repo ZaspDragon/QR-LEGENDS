@@ -1,0 +1,390 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supplier Performance - QR LEGENDS</title>
+    <style>
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            margin: 0
+            padding: 20px
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh}
+        .container {max-width: 1200px
+            margin: 0 auto
+            background: white
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);}
+        .header {text-align: center
+            margin-bottom: 30px}
+        .back-btn {position: absolute
+            top: 20px
+            left: 20px
+            background: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-weight: 600}
+        .metrics-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr))
+            gap: 20px
+            margin-bottom: 30px}
+        .metric-card {background: #f8f9fa
+            border-radius: 10px
+            padding: 20px
+            text-align: center;
+            border: 1px solid #e0e0e0}
+        .metric-value {font-size: 2rem
+            font-weight: bold
+            margin-bottom: 10px}
+        .metric-label {color: #666
+            font-size: 0.9rem}
+        .supplier-grid {display: grid
+            gap: 20px}
+        .supplier-card {border: 1px solid #e0e0e0
+            border-radius: 10px
+            padding: 20px
+            background: #f8f9fa}
+        .supplier-header {display: flex
+            justify-content: space-between
+            align-items: center
+            margin-bottom: 15px}
+        .supplier-name {font-size: 1.2rem
+            font-weight: bold
+            color: #333}
+        .performance-score {padding: 5px 15px
+            border-radius: 15px
+            font-weight: bold
+            font-size: 0.9rem}
+        .score-excellent {background: #d4edda color: #155724}
+        .score-good {background: #d1ecf1 color: #0c5460}
+        .score-average {background: #fff3cd color: #856404}
+        .score-poor {background: #f8d7da color: #721c24}
+        .performance-details {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr))
+            gap: 15px
+            margin-bottom: 15px}
+        .detail-item {text-align: center
+            padding: 10px
+            background: white
+            border-radius: 5px}
+        .detail-value {font-size: 1.1rem
+            font-weight: bold
+            margin-bottom: 5px}
+        .detail-label {font-size: 0.8rem
+            color: #666}
+        .btn {padding: 8px 16px
+            border: none
+            border-radius: 5px
+            cursor: pointer;
+            font-weight: 600;
+            margin: 5px;
+            font-size: 0.9rem}
+        .btn-primary {background: #667eea color: white}
+        .btn-success {background: #28a745 color: white}
+        .btn-warning {background: #ffc107 color: #333}
+        .chart-container {background: #f8f9fa
+            border-radius: 10px
+            padding: 20px
+            margin: 20px 0;
+            border: 1px solid #e0e0e0}
+        .chart-bar {display: flex
+            align-items: center
+            margin: 10px 0}
+        .chart-label {width: 120px
+            font-size: 0.9rem
+            font-weight: 600}
+        .chart-progress {flex: 1
+            height: 20px
+            background: #e9ecef
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 0 10px}
+        .chart-fill {height: 100%
+            border-radius: 10px
+            transition: width 0.3s ease}
+        .chart-value {width: 60px
+            text-align: right
+            font-size: 0.9rem
+            font-weight: 600}
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='/erp_hub'">← Back to ERP Hub</button>
+
+    <div class="container">
+        <div class="header">
+            <h1>📊 Supplier Performance</h1>
+            <p>Track and analyze supplier performance metrics</p>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value" style="color: #28a745;">95.2%</div>
+                <div class="metric-label">Average On-Time Delivery</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" style="color: #667eea;">98.1%</div>
+                <div class="metric-label">Quality Score</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" style="color: #ffc107;">$2.1M</div>
+                <div class="metric-label">Total Spend (YTD)</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" style="color: #17a2b8;">24</div>
+                <div class="metric-label">Active Suppliers</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h3>Top Performance Metrics</h3>
+            <div class="chart-bar">
+                <div class="chart-label">On-Time Delivery</div>
+                <div class="chart-progress">
+                    <div class="chart-fill" style="width: 95%; background: #28a745;"></div>
+                </div>
+                <div class="chart-value">95.2%</div>
+            </div>
+            <div class="chart-bar">
+                <div class="chart-label">Quality Score</div>
+                <div class="chart-progress">
+                    <div class="chart-fill" style="width: 98%; background: #667eea;"></div>
+                </div>
+                <div class="chart-value">98.1%</div>
+            </div>
+            <div class="chart-bar">
+                <div class="chart-label">Cost Efficiency</div>
+                <div class="chart-progress">
+                    <div class="chart-fill" style="width: 87%; background: #ffc107;"></div>
+                </div>
+                <div class="chart-value">87.3%</div>
+            </div>
+            <div class="chart-bar">
+                <div class="chart-label">Communication</div>
+                <div class="chart-progress">
+                    <div class="chart-fill" style="width: 92%; background: #17a2b8;"></div>
+                </div>
+                <div class="chart-value">92.5%</div>
+            </div>
+        </div>
+
+        <div id="supplier-list" class="supplier-grid">
+            <!-- Suppliers will be loaded here -->
+        </div>
+    </div>
+
+    <script>
+        let suppliers = [];
+
+        // Load suppliers when page loads
+        window.addEventListener('load', function() {loadSuppliers()});
+
+        async function loadSuppliers() {try {
+                const response = await fetch('/api/erp/supplier-performance')
+                if (response.ok) {
+                    suppliers = await response.json()
+                    displaySuppliers()} else {
+                    // Create sample data if none exists
+                    suppliers = [
+                        {
+                            id: 'SUP-001',
+                            name: 'ABC Manufacturing Co',
+                            contactEmail: 'orders@abcmfg.com',
+                            onTimeDelivery: 98.5,
+                            qualityScore: 97.2,
+                            costEfficiency: 89.1,
+                            communication: 95.0,
+                            totalOrders: 145,
+                            totalSpend: 485000,
+                            avgLeadTime: 7,
+                            defectRate: 0.8,
+                            overallScore: 94.7
+                        },
+                        {
+                            id: 'SUP-002',
+                            name: 'Tech Components Ltd',
+                            contactEmail: 'supply@techcomp.com',
+                            onTimeDelivery: 92.3,
+                            qualityScore: 99.1,
+                            costEfficiency: 85.4,
+                            communication: 90.2,
+                            totalOrders: 89,
+                            totalSpend: 325000,
+                            avgLeadTime: 10,
+                            defectRate: 0.3,
+                            overallScore: 91.8
+                        },
+                        {
+                            id: 'SUP-003',
+                            name: 'Industrial Parts Inc',
+                            contactEmail: 'sales@indparts.net',
+                            onTimeDelivery: 89.7,
+                            qualityScore: 96.8,
+                            costEfficiency: 92.3,
+                            communication: 88.5,
+                            totalOrders: 67,
+                            totalSpend: 198000,
+                            avgLeadTime: 12,
+                            defectRate: 1.2,
+                            overallScore: 89.3
+                        },
+                        {
+                            id: 'SUP-004',
+                            name: 'Global Supplies Corp',
+                            contactEmail: 'orders@globalsupplies.com',
+                            onTimeDelivery: 94.8,
+                            qualityScore: 98.5,
+                            costEfficiency: 87.9,
+                            communication: 93.2,
+                            totalOrders: 112,
+                            totalSpend: 412000,
+                            avgLeadTime: 8,
+                            defectRate: 0.6,
+                            overallScore: 93.6
+                        },
+                        {
+                            id: 'SUP-005',
+                            name: 'Quick Parts Solutions',
+                            contactEmail: 'info@quickparts.biz',
+                            onTimeDelivery: 96.2,
+                            qualityScore: 95.4,
+                            costEfficiency: 83.7,
+                            communication: 89.8,
+                            totalOrders: 203,
+                            totalSpend: 567000,
+                            avgLeadTime: 5,
+                            defectRate: 1.8,
+                            overallScore: 91.3
+                        }
+                    ];
+                    displaySuppliers();
+                }
+            } catch (error) {console.error('Error loading suppliers:', error)
+                displaySuppliers() // Show sample data}
+        }
+
+        function displaySuppliers() {const supplierList = document.getElementById('supplier-list')
+            
+            // Sort suppliers by overall score
+            const sortedSuppliers = suppliers.sort((a, b) => b.overallScore - a.overallScore)
+
+            supplierList.innerHTML = sortedSuppliers.map(supplier => {
+                const scoreClass = getScoreClass(supplier.overallScore)
+                const scoreLabel = getScoreLabel(supplier.overallScore);
+
+                return `
+                    <div class="supplier-card">
+                        <div class="supplier-header">
+                            <div>
+                                <div class="supplier-name">${supplier.name}</div>
+                                <div style="font-size: 0.9rem; color: #666; margin-top: 5px;">
+                                    📧 ${supplier.contactEmail}
+                                </div>
+                            </div>
+                            <div class="performance-score ${scoreClass}">
+                                ${supplier.overallScore.toFixed(1)}% ${scoreLabel}
+                            </div>
+                        </div>
+
+                        <div class="performance-details">
+                            <div class="detail-item">
+                                <div class="detail-value" style="color: #28a745;">${supplier.onTimeDelivery.toFixed(1)}%</div>
+                                <div class="detail-label">On-Time Delivery</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value" style="color: #667eea;">${supplier.qualityScore.toFixed(1)}%</div>
+                                <div class="detail-label">Quality Score</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value" style="color: #ffc107;">${supplier.costEfficiency.toFixed(1)}%</div>
+                                <div class="detail-label">Cost Efficiency</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value" style="color: #17a2b8;">${supplier.communication.toFixed(1)}%</div>
+                                <div class="detail-label">Communication</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">${supplier.totalOrders}</div>
+                                <div class="detail-label">Total Orders</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">$${(supplier.totalSpend / 1000).toFixed(0)}K</div>
+                                <div class="detail-label">Total Spend</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">${supplier.avgLeadTime} days</div>
+                                <div class="detail-label">Avg Lead Time</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">${supplier.defectRate.toFixed(1)}%</div>
+                                <div class="detail-label">Defect Rate</div>
+                            </div>
+                        </div>
+
+                        <div style="text-align: center; margin-top: 15px;">
+                            <button class="btn btn-primary" onclick="viewSupplierDetails('${supplier.id}')">
+                                📊 View Details
+                            </button>
+                            <button class="btn btn-success" onclick="contactSupplier('${supplier.id}')">
+                                📧 Contact
+                            </button>
+                            <button class="btn btn-warning" onclick="createPurchaseOrder('${supplier.id}')">
+                                📋 Create PO
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getScoreClass(score) {if (score >= 95) return 'score-excellent'
+            if (score >= 90) return 'score-good'
+            if (score >= 80) return 'score-average'
+            return 'score-poor';}
+
+        function getScoreLabel(score) {if (score >= 95) return 'Excellent'
+            if (score >= 90) return 'Good'
+            if (score >= 80) return 'Average'
+            return 'Poor';}
+
+        function viewSupplierDetails(supplierId) {const supplier = suppliers.find(s => s.id === supplierId)
+            if (supplier) {
+                alert(`Detailed Performance Report for ${supplier.name}\n\n` +
+                      `Overall Score: ${supplier.overallScore.toFixed(1)}%\n` +
+                      `On-Time Delivery: ${supplier.onTimeDelivery.toFixed(1)}%\n` +
+                      `Quality Score: ${supplier.qualityScore.toFixed(1)}%\n` +
+                      `Cost Efficiency: ${supplier.costEfficiency.toFixed(1)}%\n` +
+                      `Communication: ${supplier.communication.toFixed(1)}%\n\n` +
+                      `Total Orders: ${supplier.totalOrders}\n` +
+                      `Total Spend: $${supplier.totalSpend.toLocaleString()}\n` +
+                      `Average Lead Time: ${supplier.avgLeadTime} days\n` +
+                      `Defect Rate: ${supplier.defectRate.toFixed(1)}%`);
+            }
+        }
+
+        function contactSupplier(supplierId) {const supplier = suppliers.find(s => s.id === supplierId)
+            if (supplier) {
+                const subject = encodeURIComponent(`Business Inquiry - ${supplier.name}`);
+                const body = encodeURIComponent(`Dear ${supplier.name} Team,\n\nI hope this message finds you well. I am reaching out regarding our ongoing business relationship and would like to discuss...\n\nBest regards,\nQR Legends Team`);
+                window.open(`mailto:${supplier.contactEmail}?subject=${subject}&body=${body}`);
+            }
+        }
+
+        function createPurchaseOrder(supplierId) {const supplier = suppliers.find(s => s.id === supplierId)
+            if (supplier) {
+                if (confirm(`Create a new purchase order for ${supplier.name}?`)) {
+                    window.location.href = `/purchase_orders?supplier=${encodeURIComponent(supplier.name)}`;
+                }
+            }
+        }
+
+        // Auto-refresh data every 5 minutes
+        setInterval(loadSuppliers, 300000);
+    </script>
+</body>
+</html>

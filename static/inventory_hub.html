@@ -1,0 +1,473 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Hub - QR Legends</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            padding-top: 80px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .module-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .module-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .module-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .module-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .module-features {
+            list-style: none;
+            margin-bottom: 15px;
+        }
+
+        .module-features li {
+            color: #555;
+            margin: 5px 0;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .module-features li::before {
+            content: '✓';
+            color: #28a745;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .stats-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .module-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+<style>
+/* === QRLegends Unified Theme (Dark/Light) === */
+:root{
+  --ql-bg: #0b1724;
+  --ql-panel: #0f2340;
+  --ql-card: #102846;
+  --ql-text: #dbe8ff;
+  --ql-sub: #97a6c1;
+  --ql-primary: #3b82f6;
+  --ql-success: #22c55e;
+  --ql-warning: #f59e0b;
+  --ql-danger: #ef4444;
+  --ql-accent: #6366f1;
+  --ql-border: rgba(255,255,255,.12);
+  --ql-surface: rgba(255,255,255,.06);
+}
+/* Light mode overrides */
+body.light{
+  --ql-bg: #f2f6fb;
+  --ql-panel: #ffffff;
+  --ql-card: #ffffff;
+  --ql-text: #1d2840;
+  --ql-sub: #51607c;
+  --ql-primary: #2563eb;
+  --ql-success: #16a34a;
+  --ql-warning: #d97706;
+  --ql-danger: #dc2626;
+  --ql-accent: #4f46e5;
+  --ql-border: rgba(0,0,0,.12);
+  --ql-surface: rgba(15,23,42,.04);
+}
+
+html,body{height:100%;}
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed;
+  color: var(--ql-text);
+  font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+  line-height: 1.45;
+}
+body.light{
+  background: linear-gradient(180deg,#f7faff,#eef3fb);
+}
+
+.ql-header{
+  position: sticky; top:0; z-index:1000;
+  background: rgba(8,27,46,.7);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--ql-border);
+}
+body.light .ql-header{
+  background: rgba(255,255,255,.75);
+}
+.ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
+.ql-title{display:flex; align-items:center; gap:10px;}
+.ql-h1{font-size:1.25rem; margin:0; letter-spacing:.2px;}
+.ql-nav{display:flex; gap:8px; flex-wrap:wrap;}
+.ql-btn{
+  display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
+  background: var(--ql-surface); border: 1px solid var(--ql-border);
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+  transition: transform .08s ease, background .2s ease, border-color .2s ease;
+}
+.ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+body.light .ql-btn:hover{ background: rgba(15,23,42,.08); }
+.ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
+
+.ql-theme-toggle{
+  margin-left:12px; cursor:pointer; border:1px solid var(--ql-border);
+  background: var(--ql-surface); color: var(--ql-text);
+  border-radius:10px; padding:8px 10px; font-size:16px;
+}
+
+.ql-container{ max-width:1200px; margin:22px auto; padding:0 20px; }
+.ql-grid{ display:grid; gap:16px; grid-template-columns: repeat(12, 1fr);}
+.ql-card{
+  grid-column: span 12;
+  background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+  border: 1px solid var(--ql-border);
+  box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+  border-radius:16px; padding:16px 16px;
+}
+body.light .ql-card{
+  background: var(--ql-card);
+  box-shadow: 0 10px 30px rgba(2,8,23,.08);
+}
+
+@media(min-width:900px){
+  .ql-card.half{ grid-column: span 6; }
+  .ql-card.third{ grid-column: span 4; }
+}
+
+.ql-card h2{ font-size:1.05rem; margin:0 0 10px 0; color: #bcd5ff; letter-spacing:.2px; }
+body.light .ql-card h2{ color:#234073; }
+
+.ql-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+.ql-input, .ql-select, input[type="text"], input[type="date"], textarea, select {
+  width:100%; background: var(--ql-surface); color: var(--ql-text); border: 1px solid var(--ql-border);
+  padding:10px 12px; border-radius:10px; outline:none;
+}
+.ql-input::placeholder{ color: #9fb0cc; }
+body.light .ql-input::placeholder{ color: #6b7b92; }
+
+/* dashboard bubble */
+.ql-fab{ position: fixed; right: 18px; bottom: 18px; background: var(--ql-accent); color:white; border:none;
+  border-radius:999px; padding:10px 14px; font-weight:600; box-shadow: 0 14px 30px rgba(0,0,0,.35);}
+</style>
+<script>
+(function(){
+  try {
+    const saved = localStorage.getItem('ql-theme');
+    if(saved === 'light'){ document.addEventListener('DOMContentLoaded', ()=> document.body.classList.add('light')); }
+  } catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const btn = document.getElementById('ql-theme-toggle');
+    if(btn){
+      btn.addEventListener('click', function(){
+        document.body.classList.toggle('light');
+        const isLight = document.body.classList.contains('light');
+        btn.textContent = isLight ? '☀️' : '🌙';
+        try { localStorage.setItem('ql-theme', isLight ? 'light' : 'dark'); } catch(e){}
+      });
+      if(document.body.classList.contains('light')) btn.textContent = '☀️';
+    }
+    document.querySelectorAll('button:not([type])').forEach(b=> b.setAttribute('type','button'));
+  });
+})();
+</script>
+</head>
+<body>
+<!-- Unified QR Legends Header -->
+<header class="ql-header">
+  <div class="ql-header-inner">
+    <div class="ql-title">
+      <span class="ql-logo">🟦</span>
+      <h1 class="ql-h1">Inventory Hub - QR Legends</h1>
+    </div>
+    <nav class="ql-nav">
+      <a class="ql-btn ql-secondary" href="main_dashboard.html">🏠 Dashboard</a>
+      <a class="ql-btn ql-tertiary" href="order_picking.html">📦 Order Picking</a>
+      <a class="ql-btn ql-tertiary" href="inbound_hub.html">⬅️ Inbound</a>
+      <a class="ql-btn ql-tertiary" href="outbound_hub.html">➡️ Outbound</a>
+      <a class="ql-btn ql-tertiary" href="putaway.html">🧱 Putaway</a>
+      <a class="ql-btn ql-tertiary" href="inventory_management.html">📊 Inventory</a>
+    </nav>
+    <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<div class='ql-container'>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Inventory Management Hub</h1>
+            <p>Comprehensive inventory control and optimization</p>
+        </div>
+
+        <div class="content">
+            <!-- Statistics Overview -->
+            <div class="stats-section">
+                <h2 style="margin-bottom: 20px; color: #333;">📈 Inventory Overview</h2>
+                <div class="stats-grid" id="inventoryStats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalItems">0</div>
+                        <div class="stat-label">Total Items</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="lowStock">0</div>
+                        <div class="stat-label">Low Stock Alerts</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalValue">$0</div>
+                        <div class="stat-label">Total Value</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="locations">0</div>
+                        <div class="stat-label">Storage Locations</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Modules -->
+            <div class="module-grid">
+                <div class="module-card" onclick="location.href='inventory.html'">
+                    <span class="module-icon">📦</span>
+                    <h3>Inventory Management</h3>
+                    <p>Complete inventory tracking and control system</p>
+                    <ul class="module-features">
+                        <li>Real-time stock levels</li>
+                        <li>Item location tracking</li>
+                        <li>Barcode/QR scanning</li>
+                        <li>Stock adjustments</li>
+                    </ul>
+                    <a href="inventory.html" class="btn btn-primary">Open Inventory</a>
+                </div>
+
+                <div class="module-card" onclick="location.href='cycle_counting.html'">
+                    <span class="module-icon">🔍</span>
+                    <h3>Cycle Counting</h3>
+                    <p>Automated inventory counting and verification</p>
+                    <ul class="module-features">
+                        <li>Scheduled count cycles</li>
+                        <li>Variance reporting</li>
+                        <li>Count accuracy tracking</li>
+                        <li>Exception handling</li>
+                    </ul>
+                    <a href="cycle_counting.html" class="btn btn-primary">Start Counting</a>
+                </div>
+
+                <div class="module-card" onclick="location.href='replenishment.html'">
+                    <span class="module-icon">🔄</span>
+                    <h3>Replenishment</h3>
+                    <p>Automated stock replenishment and reordering</p>
+                    <ul class="module-features">
+                        <li>Min/Max level management</li>
+                        <li>Automatic reorder points</li>
+                        <li>Vendor management</li>
+                        <li>Purchase order generation</li>
+                    </ul>
+                    <a href="replenishment.html" class="btn btn-primary">Manage Replenishment</a>
+                </div>
+
+                <div class="module-card" onclick="location.href='transfers.html'">
+                    <span class="module-icon">↔️</span>
+                    <h3>Inventory Transfers</h3>
+                    <p>Move inventory between locations efficiently</p>
+                    <ul class="module-features">
+                        <li>Location-to-location transfers</li>
+                        <li>Transfer tracking</li>
+                        <li>Batch transfers</li>
+                        <li>Transfer history</li>
+                    </ul>
+                    <a href="transfers.html" class="btn btn-primary">Manage Transfers</a>
+                </div>
+
+                <div class="module-card" onclick="location.href='returns.html'">
+                    <span class="module-icon">↩️</span>
+                    <h3>Returns Processing</h3>
+                    <p>Handle customer returns and restocking</p>
+                    <ul class="module-features">
+                        <li>Return authorization</li>
+                        <li>Quality inspection</li>
+                        <li>Restocking decisions</li>
+                        <li>Return analytics</li>
+                    </ul>
+                    <a href="returns.html" class="btn btn-primary">Process Returns</a>
+                </div>
+
+                <div class="module-card" onclick="location.href='inventory_analysis.html'">
+                    <span class="module-icon">📊</span>
+                    <h3>Inventory Analytics</h3>
+                    <p>Advanced analytics and reporting</p>
+                    <ul class="module-features">
+                        <li>ABC analysis</li>
+                        <li>Turnover rates</li>
+                        <li>Aging reports</li>
+                        <li>Performance metrics</li>
+                    </ul>
+                    <a href="inventory_analysis.html" class="btn btn-primary">View Analytics</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load inventory statistics
+        async function loadInventoryStats() {
+            try {
+                const response = await fetch('/api/inventory/stats');
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('totalItems').textContent = data.total_items || 0;
+                    document.getElementById('lowStock').textContent = data.low_stock_alerts || 0;
+                    document.getElementById('totalValue').textContent = '$' + (data.total_value || 0).toLocaleString();
+                    document.getElementById('locations').textContent = data.storage_locations || 0;
+                }
+            } catch (error) {
+                console.error('Error loading inventory stats:', error);
+            }
+        }
+
+        // Load stats when page loads
+        document.addEventListener('DOMContentLoaded', loadInventoryStats);
+    </script>
+</div>
+<button class='ql-fab' onclick="location.href='main_dashboard.html'">🏠 Dashboard</button>
+</body>
+</html>

@@ -1,0 +1,392 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Directory - HR Portal</title>
+    <link rel="stylesheet" href="qr_legends_dark_theme.css">
+    <style>
+        .search-filters {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            padding: 12px 16px;
+            border: 1px solid var(--ql-border);
+            border-radius: 10px;
+            background: var(--ql-surface);
+            color: var(--ql-text);
+            font-size: 16px;
+        }
+        
+        .filter-select {
+            padding: 12px 16px;
+            border: 1px solid var(--ql-border);
+            border-radius: 10px;
+            background: var(--ql-surface);
+            color: var(--ql-text);
+            min-width: 150px;
+        }
+        
+        .employee-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .employee-card {
+            background: var(--ql-card);
+            border: 1px solid var(--ql-border);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .employee-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(2,8,23,.4);
+        }
+        
+        .employee-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .employee-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--ql-primary), var(--ql-accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .employee-info {
+            flex: 1;
+        }
+        
+        .employee-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--ql-text);
+            margin-bottom: 4px;
+        }
+        
+        .employee-title {
+            color: var(--ql-sub);
+            font-size: 0.9rem;
+        }
+        
+        .employee-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .detail-item {
+            font-size: 0.85rem;
+        }
+        
+        .detail-label {
+            color: var(--ql-sub);
+            margin-bottom: 2px;
+        }
+        
+        .detail-value {
+            color: var(--ql-text);
+            font-weight: 500;
+        }
+        
+        .employee-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            border-radius: 6px;
+            border: 1px solid var(--ql-border);
+            background: var(--ql-surface);
+            color: var(--ql-text);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-sm:hover {
+            background: var(--ql-primary);
+            color: white;
+        }
+        
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--ql-success);
+        }
+        
+        .status-inactive {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--ql-danger);
+        }
+        
+        .status-leave {
+            background: rgba(249, 115, 22, 0.2);
+            color: var(--ql-warning);
+        }
+    </style>
+</head>
+<body>
+    <header class="ql-header">
+        <div class="ql-header-inner">
+            <div class="ql-title">
+                <span class="ql-logo">📋</span>
+                <h1 class="ql-h1">Employee Directory</h1>
+            </div>
+            <nav class="ql-nav">
+                <a class="ql-btn" href="/erp_hr">👥 HR Portal</a>
+                <a class="ql-btn ql-secondary" href="/hr_employee_onboarding">+ Add Employee</a>
+            </nav>
+            <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+        </div>
+    </header>
+
+    <div class="ql-container">
+        <!-- Search and Filters -->
+        <div class="search-filters">
+            <input type="text" class="search-box" placeholder="Search employees by name, email, or ID..." id="employeeSearch">
+            <select class="filter-select" id="departmentFilter">
+                <option value="">All Departments</option>
+                <option value="warehouse">Warehouse</option>
+                <option value="administration">Administration</option>
+                <option value="hr">Human Resources</option>
+                <option value="it">Information Technology</option>
+                <option value="finance">Finance</option>
+                <option value="sales">Sales</option>
+            </select>
+            <select class="filter-select" id="statusFilter">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="leave">On Leave</option>
+            </select>
+        </div>
+
+        <!-- Employee Cards -->
+        <div class="employee-grid" id="employeeGrid">
+            <!-- Employee 1 -->
+            <div class="employee-card">
+                <div class="employee-header">
+                    <div class="employee-avatar">JD</div>
+                    <div class="employee-info">
+                        <div class="employee-name">John Doe</div>
+                        <div class="employee-title">Warehouse Supervisor</div>
+                    </div>
+                    <span class="status-badge status-active">Active</span>
+                </div>
+                <div class="employee-details">
+                    <div class="detail-item">
+                        <div class="detail-label">Employee ID</div>
+                        <div class="detail-value">EMP001</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Department</div>
+                        <div class="detail-value">Warehouse</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Hire Date</div>
+                        <div class="detail-value">Jan 15, 2022</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Phone</div>
+                        <div class="detail-value">(555) 123-4567</div>
+                    </div>
+                </div>
+                <div class="employee-actions">
+                    <a href="/hr_employee_profile?id=EMP001" class="btn-sm">View Profile</a>
+                    <a href="/hr_performance_review?id=EMP001" class="btn-sm">Performance</a>
+                    <a href="mailto:john.doe@qrlegends.com" class="btn-sm">Email</a>
+                </div>
+            </div>
+
+            <!-- Employee 2 -->
+            <div class="employee-card">
+                <div class="employee-header">
+                    <div class="employee-avatar">SM</div>
+                    <div class="employee-info">
+                        <div class="employee-name">Sarah Miller</div>
+                        <div class="employee-title">HR Manager</div>
+                    </div>
+                    <span class="status-badge status-active">Active</span>
+                </div>
+                <div class="employee-details">
+                    <div class="detail-item">
+                        <div class="detail-label">Employee ID</div>
+                        <div class="detail-value">EMP002</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Department</div>
+                        <div class="detail-value">Human Resources</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Hire Date</div>
+                        <div class="detail-value">Mar 10, 2021</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Phone</div>
+                        <div class="detail-value">(555) 234-5678</div>
+                    </div>
+                </div>
+                <div class="employee-actions">
+                    <a href="/hr_employee_profile?id=EMP002" class="btn-sm">View Profile</a>
+                    <a href="/hr_performance_review?id=EMP002" class="btn-sm">Performance</a>
+                    <a href="mailto:sarah.miller@qrlegends.com" class="btn-sm">Email</a>
+                </div>
+            </div>
+
+            <!-- Employee 3 -->
+            <div class="employee-card">
+                <div class="employee-header">
+                    <div class="employee-avatar">MJ</div>
+                    <div class="employee-info">
+                        <div class="employee-name">Mike Johnson</div>
+                        <div class="employee-title">Inventory Specialist</div>
+                    </div>
+                    <span class="status-badge status-leave">On Leave</span>
+                </div>
+                <div class="employee-details">
+                    <div class="detail-item">
+                        <div class="detail-label">Employee ID</div>
+                        <div class="detail-value">EMP003</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Department</div>
+                        <div class="detail-value">Warehouse</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Hire Date</div>
+                        <div class="detail-value">Jun 5, 2023</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Phone</div>
+                        <div class="detail-value">(555) 345-6789</div>
+                    </div>
+                </div>
+                <div class="employee-actions">
+                    <a href="/hr_employee_profile?id=EMP003" class="btn-sm">View Profile</a>
+                    <a href="/hr_performance_review?id=EMP003" class="btn-sm">Performance</a>
+                    <a href="mailto:mike.johnson@qrlegends.com" class="btn-sm">Email</a>
+                </div>
+            </div>
+
+            <!-- Employee 4 -->
+            <div class="employee-card">
+                <div class="employee-header">
+                    <div class="employee-avatar">EB</div>
+                    <div class="employee-info">
+                        <div class="employee-name">Emily Brown</div>
+                        <div class="employee-title">IT Support Specialist</div>
+                    </div>
+                    <span class="status-badge status-active">Active</span>
+                </div>
+                <div class="employee-details">
+                    <div class="detail-item">
+                        <div class="detail-label">Employee ID</div>
+                        <div class="detail-value">EMP004</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Department</div>
+                        <div class="detail-value">Information Technology</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Hire Date</div>
+                        <div class="detail-value">Sep 12, 2022</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Phone</div>
+                        <div class="detail-value">(555) 456-7890</div>
+                    </div>
+                </div>
+                <div class="employee-actions">
+                    <a href="/hr_employee_profile?id=EMP004" class="btn-sm">View Profile</a>
+                    <a href="/hr_performance_review?id=EMP004" class="btn-sm">Performance</a>
+                    <a href="mailto:emily.brown@qrlegends.com" class="btn-sm">Email</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('ql-theme-toggle');
+            const savedTheme = localStorage.getItem('ql-theme');
+            
+            if (savedTheme === 'light') {
+                document.body.classList.add('light');
+                themeToggle.textContent = '☀️';
+            }
+            
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('light');
+                const isLight = document.body.classList.contains('light');
+                themeToggle.textContent = isLight ? '☀️' : '🌙';
+                localStorage.setItem('ql-theme', isLight ? 'light' : 'dark');
+            });
+
+            // Search and filter functionality
+            const searchBox = document.getElementById('employeeSearch');
+            const departmentFilter = document.getElementById('departmentFilter');
+            const statusFilter = document.getElementById('statusFilter');
+            
+            function filterEmployees() {
+                const searchTerm = searchBox.value.toLowerCase();
+                const selectedDept = departmentFilter.value.toLowerCase();
+                const selectedStatus = statusFilter.value.toLowerCase();
+                
+                const cards = document.querySelectorAll('.employee-card');
+                
+                cards.forEach(card => {
+                    const name = card.querySelector('.employee-name').textContent.toLowerCase();
+                    const title = card.querySelector('.employee-title').textContent.toLowerCase();
+                    const dept = card.querySelector('.detail-value').textContent.toLowerCase();
+                    const status = card.querySelector('.status-badge').classList.contains('status-active') ? 'active' :
+                                  card.querySelector('.status-badge').classList.contains('status-leave') ? 'leave' : 'inactive';
+                    
+                    const matchesSearch = name.includes(searchTerm) || title.includes(searchTerm);
+                    const matchesDept = !selectedDept || dept.includes(selectedDept);
+                    const matchesStatus = !selectedStatus || status === selectedStatus;
+                    
+                    if (matchesSearch && matchesDept && matchesStatus) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+            
+            searchBox.addEventListener('input', filterEmployees);
+            departmentFilter.addEventListener('change', filterEmployees);
+            statusFilter.addEventListener('change', filterEmployees);
+        });
+    </script>
+</body>
+</html>

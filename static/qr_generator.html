@@ -1,0 +1,398 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator - Static UIDs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .qr-display {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .qr-display img {
+            max-width: 300px;
+            margin: 20px 0;
+        }
+        .uid-display {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 18px;
+            text-align: center;
+        }
+        .info-box {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .error-message {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏷️ QR Code Generator - Static UIDs</h1>
+
+        <a href="/main_dashboard" class="back-btn">← Back to Dashboard</a>
+
+        <div class="info-box">
+            <h3>🔒 Patent-Safe Design</h3>
+            <p><strong>Static QR Codes:</strong> Each QR code contains only a permanent UID that never changes.</p>
+            <p><strong>Server-Side Data:</strong> All item information (name, quantity, location) is stored on the server and linked to the UID.</p>
+            <p><strong>No Dynamic Generation:</strong> QR codes are generated once and remain static - only the database data changes.</p>
+        </div>
+
+        <div class="card">
+            <h3>Generate New Static QR Code</h3>
+            <div class="form-group">
+                <label>Item Name</label>
+                <input type="text" id="itemName" placeholder="Enter item name (e.g., Red Widget, Blue Box, etc.)">
+            </div>
+            <button class="btn btn-primary" onclick="generateStaticQR()">🔗 Generate Static UID & QR Code</button>
+
+            <div id="generationResult"></div>
+        </div>
+
+        <div class="card">
+            <h3>📋 Generated QR Codes</h3>
+            <p>Below are the static QR codes you've generated. Each contains only a permanent UID.</p>
+            <div id="qrList">
+                <p style="color: #666; text-align: center;">No QR codes generated yet</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>🔍 Test QR Code Scanner</h3>
+            <p>Scan any generated QR code to see how the system fetches data using the static UID:</p>
+            <button class="btn btn-primary" onclick="testQRCameraScanner()">🟠 Test QR Scanner</button>
+            <div id="scanResult"></div>
+        </div>
+
+        <div class="card">
+            <h3>💡 How It Works</h3>
+            <ol>
+                <li><strong>Generate:</strong> Create a static QR code containing only a permanent UID</li>
+                <li><strong>Store:</strong> Item details are stored server-side linked to the UID</li>
+                <li><strong>Scan:</strong> When scanned, the UID fetches current data from the database</li>
+                <li><strong>Update:</strong> Change item details in the system without touching the QR code</li>
+                <li><strong>Track:</strong> All movements and changes are logged server-side using the UID</li>
+            </ol>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script>
+        let generatedQRs = [];
+
+        function showMessage(message, isError = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = isError ? 'error-message' : 'success-message';
+            messageDiv.innerHTML = message;
+            
+            const container = document.getElementById('generationResult');
+            container.innerHTML = '';
+            container.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                if (messageDiv.parentElement) {
+                    messageDiv.remove();
+                }
+            }, 5000);
+        }
+
+        async function generateStaticQR() {
+            const itemName = document.getElementById('itemName').value.trim();
+
+            if (!itemName) {
+                showMessage('Please enter an item name', true);
+                return;
+            }
+
+            try {
+                // Generate a simple static UID
+                const timestamp = Date.now();
+                const randomNum = Math.floor(Math.random() * 10000);
+                const staticUID = `QRL-${timestamp}-${randomNum}`;
+                
+                // Generate QR code using QRCode library
+                const canvas = document.createElement('canvas');
+                await QRCode.toCanvas(canvas, staticUID, {
+                    width: 300,
+                    margin: 2,
+                    color: {
+                        dark: '#000000',
+                        light: '#FFFFFF'
+                    }
+                });
+                
+                const qrImageData = canvas.toDataURL();
+                
+                const result = {
+                    static_uid: staticUID,
+                    item_name: itemName,
+                    qr_image: qrImageData,
+                    created_at: new Date().toISOString()
+                };
+
+                // Display the generated QR code
+                const resultDiv = document.getElementById('generationResult');
+                resultDiv.innerHTML = `
+                    <div class="qr-display">
+                        <h4>✅ Static QR Code Generated</h4>
+                        <div class="uid-display">
+                            Static UID: ${result.static_uid}
+                        </div>
+                        <img src="${result.qr_image}" alt="Static QR Code">
+                        <p><strong>Item:</strong> ${result.item_name}</p>
+                        <p><strong>Generated:</strong> ${new Date(result.created_at).toLocaleString()}</p>
+                        <div style="margin-top: 15px">
+                            <button class="btn btn-success" onclick="printQR('${result.static_uid}', '${result.qr_image}')">🖨️ Print Label</button>
+                            <button class="btn btn-primary" onclick="viewItem('${result.static_uid}')">👁️ View Item Data</button>
+                        </div>
+                    </div>
+                `;
+
+                // Add to generated list
+                generatedQRs.push(result);
+                updateQRList();
+
+                // Clear form
+                document.getElementById('itemName').value = '';
+
+                // Try to save to server (optional)
+                try {
+                    await fetch('/api/qr/save', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(result)
+                    });
+                } catch (saveError) {
+                    console.log('Server save failed, but QR generated locally:', saveError);
+                }
+
+            } catch (error) {
+                console.error('QR Generation Error:', error);
+                showMessage('Error generating QR code: ' + error.message, true);
+            }
+        }
+
+        function updateQRList() {
+            const listDiv = document.getElementById('qrList');
+
+            if (generatedQRs.length === 0) {
+                listDiv.innerHTML = '<p style="color: #666; text-align: center;">No QR codes generated yet</p>';
+                return;
+            }
+
+            listDiv.innerHTML = generatedQRs.map(qr => `
+                <div style="border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 8px; background: #fafafa;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${qr.item_name}</strong><br>
+                            <code style="background: #e3f2fd; padding: 2px 6px; border-radius: 3px;">${qr.static_uid}</code><br>
+                            <small style="color: #666;">Generated: ${new Date(qr.created_at).toLocaleString()}</small>
+                        </div>
+                        <div>
+                            <button class="btn" style="background: #17a2b8; color: white;" onclick="viewItem('${qr.static_uid}')">View Data</button>
+                            <button class="btn" style="background: #6c757d; color: white;" onclick="printQR('${qr.static_uid}', '${qr.qr_image}')">Print</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function viewItem(uid) {
+            try {
+                const response = await fetch(`/api/items/${uid}`);
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    const item = result.item_data;
+                    alert(`Item Data for UID: ${uid}\n\nName: ${item.item_name}\nQuantity: ${item.quantity}\nLocation: ${item.location || 'Not set'}\nStatus: ${item.status}\nLast Updated: ${new Date(item.last_updated).toLocaleString()}`);
+                } else {
+                    // Show basic info if server call fails
+                    const qr = generatedQRs.find(q => q.static_uid === uid);
+                    if (qr) {
+                        alert(`Item Data for UID: ${uid}\n\nName: ${qr.item_name}\nGenerated: ${new Date(qr.created_at).toLocaleString()}\n\nNote: Server data not available`);
+                    } else {
+                        alert('Item not found');
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching item data:', error);
+                const qr = generatedQRs.find(q => q.static_uid === uid);
+                if (qr) {
+                    alert(`Item Data for UID: ${uid}\n\nName: ${qr.item_name}\nGenerated: ${new Date(qr.created_at).toLocaleString()}\n\nNote: Server connection failed`);
+                } else {
+                    alert('Error fetching item data: ' + error.message);
+                }
+            }
+        }
+
+        function printQR(uid, qrImage) {
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Print QR Label - ${uid}</title>
+                    <style>
+                        body { text-align: center; font-family: Arial, sans-serif; }
+                        .label { border: 2px solid #000; padding: 20px; margin: 20px; display: inline-block; }
+                        .uid { font-family: monospace; font-size: 14px; margin: 10px 0; }
+                    </style>
+                </head>
+                <body>
+                    <div class="label">
+                        <h3>QR LEGENDS</h3>
+                        <img src="${qrImage}" style="max-width: 200px;">
+                        <div class="uid">UID: ${uid}</div>
+                        <p style="font-size: 12px;">Scan for current item data</p>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function testQRCameraScanner() {
+            try {
+                // Try to load the QR scanner
+                if (typeof QRCameraScanner !== 'undefined') {
+                    const scanner = new QRCameraScanner();
+                    scanner.start().then(() => {
+                        console.log('QR Scanner started successfully');
+                    }).catch(error => {
+                        showQRScannerError(error);
+                    });
+                } else {
+                    // Fallback: show manual entry option
+                    showManualQREntry();
+                }
+            } catch (error) {
+                console.error('QR Scanner error:', error);
+                showQRScannerError(error);
+            }
+        }
+
+        function showQRScannerError(error) {
+            document.getElementById('scanResult').innerHTML = `
+                <div class="error-message">
+                    ❌ <strong>Camera Scanner Error:</strong><br>
+                    ${error.message}<br>
+                    <em>Please allow camera permission and try again, or use manual entry below</em>
+                </div>
+                <button class="btn btn-primary" onclick="showManualQREntry()">📝 Manual QR Entry</button>
+            `;
+        }
+
+        function showManualQREntry() {
+            document.getElementById('scanResult').innerHTML = `
+                <div style="background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                    <h4>📝 Manual QR Code Entry</h4>
+                    <input type="text" id="manualQRInput" placeholder="Enter QR code data manually" style="width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px;">
+                    <button class="btn btn-primary" onclick="processManualQR()">Process QR Code</button>
+                </div>
+            `;
+        }
+
+        function processManualQR() {
+            const qrData = document.getElementById('manualQRInput').value.trim();
+            if (qrData) {
+                // Check if it's one of our generated QRs
+                const matchingQR = generatedQRs.find(qr => qr.static_uid === qrData);
+                if (matchingQR) {
+                    alert(`QR Code Found!\n\nUID: ${matchingQR.static_uid}\nItem: ${matchingQR.item_name}\nGenerated: ${new Date(matchingQR.created_at).toLocaleString()}`);
+                } else {
+                    alert(`QR Code Data: ${qrData}\n\nThis appears to be a valid QR code, but not from our generated list.`);
+                }
+                document.getElementById('manualQRInput').value = '';
+            } else {
+                alert('Please enter QR code data');
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('QR Generator loaded successfully');
+        });
+    </script>
+</body>
+</html>
