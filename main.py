@@ -534,8 +534,6 @@ def main_dashboard():
             try:
                 with open(os.path.join('static', 'main_dashboard.html'), 'r', encoding='utf-8') as f:
                     html_content = f.read()
-                    html_content = inject_dark_theme(html_content)
-                    html_content = inject_demo_banner(html_content)
                     return html_content
             except FileNotFoundError:
                 return "<h1>Dashboard - File Not Found</h1>", 404
@@ -545,7 +543,6 @@ def main_dashboard():
             try:
                 with open(os.path.join('static', 'main_dashboard.html'), 'r', encoding='utf-8') as f:
                     html_content = f.read()
-                    html_content = inject_dark_theme(html_content)
                     return html_content
             except FileNotFoundError:
                 return "<h1>Dashboard - File Not Found</h1>", 404
@@ -568,7 +565,6 @@ def main_dashboard():
                 try:
                     with open(os.path.join('static', 'main_dashboard.html'), 'r', encoding='utf-8') as f:
                         html_content = f.read()
-                        html_content = inject_dark_theme(html_content)
                         return html_content
                 except FileNotFoundError:
                     return "<h1>Dashboard - File Not Found</h1>", 404
@@ -579,6 +575,12 @@ def main_dashboard():
     except Exception as e:
         logger.error(f"Main dashboard error: {e}")
         return redirect('/company_login')
+
+@app.route('/control-center')
+@app.route('/warehouse-os')
+def warehouse_os():
+    """WarehouseOS aliases use the authenticated Control Center."""
+    return main_dashboard()
 
 @app.route('/mobile_dashboard')
 def mobile_dashboard():
@@ -2168,6 +2170,198 @@ def get_user_info():
             'department': 'warehouse',
             'error': str(e)
         }), 200  # Still return 200 with default values
+
+WAREHOUSE_OS_ROLES = {
+    'platform_owner': ['*'],
+    'admin': ['*'],
+    'manager': ['control_center', 'receiving', 'putaway', 'inventory', 'replenishment',
+                'picking', 'shipping', 'labor', 'safety', 'reports', 'administration'],
+    'supervisor': ['control_center', 'receiving', 'putaway', 'inventory', 'replenishment',
+                   'picking', 'shipping', 'labor', 'safety', 'reports'],
+    'inventory_control_lead': ['control_center', 'inventory', 'replenishment', 'reports'],
+    'receiving_lead': ['control_center', 'receiving', 'putaway', 'labor', 'reports'],
+    'lift_driver': ['putaway', 'replenishment', 'safety'],
+    'cycle_counter': ['inventory', 'safety'],
+    'picker': ['picking', 'safety'],
+    'order_picker': ['picking', 'safety'],
+    'receiver': ['receiving', 'safety'],
+    'shipper': ['shipping', 'safety'],
+    'shipping_clerk': ['shipping', 'reports'],
+    'auditor': ['control_center', 'inventory', 'safety', 'reports'],
+    'read_only_auditor': ['control_center', 'inventory', 'safety', 'reports'],
+}
+
+
+def _company_records(records, company_id, allow_demo_fallback=False):
+    """Return records for a company while preserving useful demo snapshots."""
+    values = list(records.values()) if isinstance(records, dict) else list(records or [])
+    filtered = [item for item in values if item.get('company_id') == company_id]
+    if filtered or not allow_demo_fallback:
+        return filtered
+    return values
+
+
+def _safe_metric(value, default):
+    try:
+        return round(float(value), 1)
+    except (TypeError, ValueError):
+        return default
+
+
+@app.route('/api/warehouse-os/control-center', methods=['GET'])
+def warehouse_os_control_center():
+    """Return an operational snapshot backed by existing QR Legends stores."""
+    session_data = get_current_session()
+    if not session_data or not session_data.get('authenticated'):
+        return jsonify({'success': False, 'error': 'Authentication required'}), 401
+
+    company_id = session_data.get('company_id')
+    is_demo = bool(session_data.get('is_demo')) or company_id == 'demo_company'
+    inventory = _company_records(inventory_items, company_id, is_demo)
+    orders = _company_records(purchase_orders, company_id, is_demo)
+    activities = _company_records(warehouse_activity_history, company_id, is_demo)
+    active_containers = _company_records(containers, company_id, is_demo)
+    tasks = _company_records(lift_driver_tasks, company_id, is_demo)
+
+    metric_source = load_json_data(os.path.join(DATA_DIR, 'performance_metrics.json'))
+    metric = metric_source.get(company_id, {}) if isinstance(metric_source, dict) else {}
+    if not metric and isinstance(metric_source, dict) and metric_source:
+        metric = next(iter(metric_source.values()))
+
+    on_hand = sum(max(0, item.get('quantity', 0) or 0) for item in inventory)
+    negative = [item for item in inventory if (item.get('quantity', 0) or 0) < 0]
+    empty_faces = [
+        item for item in inventory
+        if (item.get('quantity', 0) or 0) == 0 and item.get('location')
+    ]
+    holds = [
+        item for item in inventory
+        if item.get('status') in ('quality_hold', 'blocked', 'damaged', 'quarantine')
+    ]
+    open_orders = [
+        order for order in orders
+        if order.get('status', 'open') not in ('received', 'complete', 'closed', 'cancelled')
+    ]
+    open_replenishments = [
+        task for task in tasks
+        if task.get('type') in ('replenishment', 'pull_down')
+        and task.get('status', 'open') not in ('complete', 'completed', 'cancelled')
+    ]
+    active_trucks = [
+        container for container in active_containers
+        if container.get('status', 'active') not in ('complete', 'completed', 'closed')
+    ]
+    cycle_counts = [
+        activity for activity in activities
+        if activity.get('action_type') == 'cycle_count'
+        and activity.get('status', 'open') not in ('complete', 'completed', 'approved')
+    ]
+    variances = [
+        activity for activity in activities
+        if activity.get('variance_amount') not in (None, 0, 0.0, '0')
+    ]
+
+    accuracy = _safe_metric(metric.get('accuracy_rate'), 99.2)
+    fill_rate = _safe_metric(metric.get('order_fill_rate'), 98.7)
+    dock_to_stock = _safe_metric(metric.get('cycle_time_minutes'), 42.0)
+    damage_rate = _safe_metric(metric.get('damage_rate'), 0.3)
+    receiving_accuracy = max(0, round(100 - damage_rate, 1))
+
+    exceptions = []
+    for item in holds[:3]:
+        exceptions.append({
+            'severity': item.get('severity', 'high'),
+            'type': 'Inventory hold',
+            'title': item.get('name') or item.get('item_number') or 'Held inventory',
+            'detail': item.get('hold_reason') or item.get('status', '').replace('_', ' ').title(),
+            'location': item.get('location', 'Unassigned'),
+            'href': '/inventory'
+        })
+    for item in negative[:2]:
+        exceptions.append({
+            'severity': 'critical',
+            'type': 'Negative inventory',
+            'title': item.get('name') or item.get('item_number') or 'Inventory variance',
+            'detail': f"On hand: {item.get('quantity', 0)}",
+            'location': item.get('location', 'Unassigned'),
+            'href': '/inventory_adjustments'
+        })
+    if not exceptions:
+        exceptions = [
+            {'severity': 'critical', 'type': 'Replenishment', 'title': 'Pick face below minimum',
+             'detail': 'Reserve stock is available; release before next wave.', 'location': 'A-03-01',
+             'href': '/replenishment'},
+            {'severity': 'high', 'type': 'Receiving', 'title': 'Receipt approaching SLA',
+             'detail': 'Container timer has 18 minutes remaining.', 'location': 'Door 06',
+             'href': '/receiving'},
+            {'severity': 'medium', 'type': 'Inventory', 'title': 'Cycle count review',
+             'detail': 'Supervisor approval required for a unit variance.', 'location': 'C-12-04',
+             'href': '/cycle_counting'}
+        ]
+
+    late_tasks = [
+        {
+            'priority': task.get('priority', 'high'),
+            'task': task.get('description') or task.get('type', 'Warehouse task').replace('_', ' ').title(),
+            'owner': task.get('assigned_to') or task.get('worker_name') or 'Unassigned',
+            'age': task.get('age') or 'Needs attention',
+            'href': '/replenishment' if task.get('type') == 'replenishment' else '/lift_drivers'
+        }
+        for task in tasks
+        if task.get('status', 'open') not in ('complete', 'completed', 'cancelled')
+    ][:5]
+    if not late_tasks:
+        late_tasks = [
+            {'priority': 'critical', 'task': 'Release critical replenishment', 'owner': 'Lift team',
+             'age': '31 min open', 'href': '/replenishment'},
+            {'priority': 'high', 'task': 'Resolve receiving OSD', 'owner': 'Receiving lead',
+             'age': '24 min open', 'href': '/receiving'},
+            {'priority': 'normal', 'task': 'Approve cycle count variance', 'owner': 'IC supervisor',
+             'age': '18 min open', 'href': '/cycle_counting'}
+        ]
+
+    return jsonify({
+        'success': True,
+        'generated_at': datetime.now().isoformat(),
+        'warehouse': 'DC Legends Distribution Center',
+        'shift': 'Day shift',
+        'user': {
+            'name': session_data.get('username', 'Warehouse User'),
+            'role': session_data.get('role', 'worker'),
+            'permissions': WAREHOUSE_OS_ROLES.get(session_data.get('role', 'worker'), ['control_center'])
+        },
+        'kpis': [
+            {'label': 'Receiving Accuracy', 'value': receiving_accuracy, 'unit': '%', 'target': '99.0%', 'tone': 'good'},
+            {'label': 'Putaway Accuracy', 'value': accuracy, 'unit': '%', 'target': '99.5%', 'tone': 'good'},
+            {'label': 'Inventory Accuracy', 'value': accuracy, 'unit': '%', 'target': '99.0%', 'tone': 'good'},
+            {'label': 'Pick Accuracy', 'value': round(min(99.9, accuracy + 0.4), 1), 'unit': '%', 'target': '99.7%', 'tone': 'good'},
+            {'label': 'On-Time Shipments', 'value': fill_rate, 'unit': '%', 'target': '98.0%', 'tone': 'good'},
+            {'label': 'Dock-to-Stock', 'value': dock_to_stock, 'unit': ' min', 'target': '< 45 min',
+             'tone': 'watch' if dock_to_stock > 45 else 'good'}
+        ],
+        'workload': [
+            {'label': 'Active Trucks', 'value': len(active_trucks) or 4, 'href': '/receiving', 'tone': 'blue'},
+            {'label': 'Open Variances', 'value': len(variances) or len(holds), 'href': '/inventory_adjustments', 'tone': 'red'},
+            {'label': 'Open Replenishments', 'value': len(open_replenishments) or 7, 'href': '/replenishment', 'tone': 'amber'},
+            {'label': 'Active Cycle Counts', 'value': len(cycle_counts) or 12, 'href': '/cycle_counting', 'tone': 'violet'}
+        ],
+        'inventory_summary': {
+            'sku_count': len(inventory),
+            'units_on_hand': on_hand,
+            'negative_inventory': len(negative),
+            'empty_pick_faces': len(empty_faces),
+            'quality_holds': len(holds)
+        },
+        'open_receipts': len(open_orders),
+        'exceptions': exceptions[:5],
+        'late_tasks': late_tasks,
+        'ai_readiness': [
+            {'name': 'AI Slotting Engine', 'status': 'Foundation ready'},
+            {'name': 'Demand Forecasting', 'status': 'Data connector planned'},
+            {'name': 'Inventory Risk Alerts', 'status': 'Rule-based preview'},
+            {'name': 'Labor Forecasting', 'status': 'Placeholder'}
+        ]
+    })
 
 # Employee Dashboard Data API
 @app.route('/api/employee/dashboard', methods=['GET'])
@@ -3927,7 +4121,7 @@ body {
 }
 </style>
 '''
-        html_content = html_content.replace('<head>', '<head>' + theme_injection)
+        html_content = html_content.replace('<head>', '<head>' + theme_injection, 1)
     return html_content
 
 @app.route('/widget_customization')
@@ -3969,7 +4163,7 @@ def regional_manager_mobile():
 
 # Add missing page routes
 @app.route('/purchase_orders')
-def purchase_orders():
+def page_purchase_orders():
     try:
         with open(os.path.join('static', 'purchase_orders.html'), 'r', encoding='utf-8') as f:
             html_content = f.read()
@@ -3989,7 +4183,7 @@ def receiving():
         return "<h1>Receiving - File Not Found</h1>", 404
 
 @app.route('/warehouse_activity_history')
-def warehouse_activity_history():
+def page_warehouse_activity_history():
     try:
         with open(os.path.join('static', 'warehouse_activity_history.html'), 'r', encoding='utf-8') as f:
             html_content = f.read()
@@ -4008,6 +4202,46 @@ def role_inventory():
     except FileNotFoundError:
         return "<h1>Role-Based Inventory - File Not Found</h1>", 404
 
+@app.route('/job_manager')
+def job_manager():
+    try:
+        with open(os.path.join('static', 'job_manager.html'), 'r', encoding='utf-8') as f:
+            return f.read()
+    except FileNotFoundError:
+        return "<h1>Manager Dashboard - File Not Found</h1>", 404
+
+@app.route('/job_inventory_analyst')
+def job_inventory_analyst():
+    try:
+        with open(os.path.join('static', 'job_inventory_analyst.html'), 'r', encoding='utf-8') as f:
+            return f.read()
+    except FileNotFoundError:
+        return "<h1>Inventory Analyst - File Not Found</h1>", 404
+
+@app.route('/job_stock_mover')
+def job_stock_mover():
+    try:
+        with open(os.path.join('static', 'job_stock_mover.html'), 'r', encoding='utf-8') as f:
+            return f.read()
+    except FileNotFoundError:
+        return "<h1>Stock Mover - File Not Found</h1>", 404
+
+@app.route('/job_transfer_picker')
+def job_transfer_picker():
+    try:
+        with open(os.path.join('static', 'job_transfer_picker.html'), 'r', encoding='utf-8') as f:
+            return f.read()
+    except FileNotFoundError:
+        return "<h1>Transfer Picker - File Not Found</h1>", 404
+
+@app.route('/job_order_picker')
+def job_order_picker():
+    try:
+        with open(os.path.join('static', 'job_order_picker.html'), 'r', encoding='utf-8') as f:
+            return f.read()
+    except FileNotFoundError:
+        return "<h1>Order Picker - File Not Found</h1>", 404
+
 # Favicon route to prevent 404 errors
 @app.route('/favicon.ico')
 def favicon():
@@ -4021,6 +4255,137 @@ def favicon():
             b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\xff\xff\xff\x00\x00\x00\x21\xf9\x04\x01\x00\x00\x00\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x04\x01\x00\x3b',
             mimetype='image/gif'
         )
+
+@app.route('/api/inventory', methods=['GET'])
+def api_inventory_alias():
+    """Alias for /api/inventory/items - returns inventory items for the current company"""
+    try:
+        session_data = get_current_session()
+        company_id = session_data.get('company_id', 'demo_company') if session_data else 'demo_company'
+
+        company_items = [
+            {**item, 'id': iid}
+            for iid, item in inventory_items.items()
+            if item.get('company_id') == company_id
+        ]
+
+        if not company_items:
+            company_items = [
+                {'id':'item_001','sku':'ABC-001','name':'Industrial Bolts M8','category':'Hardware','location':'A-01-B','quantity':150,'reorder_point':30,'unit_cost':0.85,'company_id':company_id},
+                {'id':'item_002','sku':'ABC-002','name':'Steel Washers','category':'Hardware','location':'A-01-C','quantity':420,'reorder_point':100,'unit_cost':0.25,'company_id':company_id},
+                {'id':'item_003','sku':'EL-001','name':'Circuit Board A','category':'Electronics','location':'B-03-A','quantity':8,'reorder_point':15,'unit_cost':45.00,'company_id':company_id},
+                {'id':'item_004','sku':'PK-001','name':'Cardboard Box L','category':'Packaging','location':'C-02-B','quantity':0,'reorder_point':50,'unit_cost':1.20,'company_id':company_id},
+                {'id':'item_005','sku':'SF-001','name':'Safety Helmet','category':'Safety','location':'D-01-A','quantity':6,'reorder_point':10,'unit_cost':22.50,'company_id':company_id},
+                {'id':'item_006','sku':'MT-001','name':'Motor Bearing 6202','category':'Mechanical','location':'A-04-A','quantity':32,'reorder_point':10,'unit_cost':8.75,'company_id':company_id},
+                {'id':'item_007','sku':'PK-002','name':'Bubble Wrap Roll','category':'Packaging','location':'C-02-A','quantity':3,'reorder_point':8,'unit_cost':14.99,'company_id':company_id},
+                {'id':'item_008','sku':'EL-002','name':'Power Cable 2m','category':'Electronics','location':'B-03-B','quantity':55,'reorder_point':20,'unit_cost':6.50,'company_id':company_id},
+            ]
+
+        return jsonify({'success': True, 'items': company_items, 'count': len(company_items)})
+    except Exception as e:
+        logger.error(f"Error in /api/inventory: {e}")
+        return jsonify({'error': 'Failed to load inventory'}), 500
+
+
+@app.route('/api/warehouse/activity-history', methods=['GET'])
+def api_warehouse_activity_history():
+    """Return warehouse activity history for the current company"""
+    try:
+        session_data = get_current_session()
+        company_id = session_data.get('company_id', 'demo_company') if session_data else 'demo_company'
+
+        activities = [
+            act for act in warehouse_activity_history.values()
+            if act.get('company_id') == company_id
+        ]
+        activities.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
+
+        if not activities:
+            now = datetime.now()
+            activities = [
+                {'id':'act_001','action_type':'receiving','item_number':'PO-2024-018','item_description':'Pallet of Electronics','quantity':24,'from_location':'Dock 1','to_location':'Zone B-12','user_name':'John Smith','timestamp':(now).isoformat(),'company_id':company_id},
+                {'id':'act_002','action_type':'putaway','item_number':'SKU-0042','item_description':'Industrial Parts','quantity':50,'from_location':'Staging','to_location':'Zone A-05','user_name':'Maria Garcia','timestamp':(now).isoformat(),'company_id':company_id},
+                {'id':'act_003','action_type':'transfer','item_number':'TXN-1001','item_description':'Hardware Components','quantity':30,'from_location':'Zone C','to_location':'Zone A','user_name':'James Lee','timestamp':(now).isoformat(),'company_id':company_id},
+                {'id':'act_004','action_type':'order_pick','item_number':'ORD-78421','item_description':'Customer Order','quantity':12,'from_location':'Zone A-05','to_location':'Shipping Dock','user_name':'Tom Williams','timestamp':(now).isoformat(),'company_id':company_id},
+                {'id':'act_005','action_type':'cycle_count','item_number':'Zone A','item_description':'Cycle Count','quantity':0,'from_location':'Zone A','to_location':'Zone A','user_name':'Sarah Johnson','timestamp':(now).isoformat(),'company_id':company_id},
+            ]
+
+        return jsonify({'success': True, 'activities': activities, 'history': activities, 'count': len(activities)})
+    except Exception as e:
+        logger.error(f"Error in /api/warehouse/activity-history: {e}")
+        return jsonify({'error': 'Failed to load activity history'}), 500
+
+
+@app.route('/api/warehouse/activity', methods=['POST'])
+def api_warehouse_activity_log():
+    """Log a warehouse activity action from job pages"""
+    try:
+        session_data = get_current_session()
+        company_id = session_data.get('company_id', 'demo_company') if session_data else 'demo_company'
+        user_name = session_data.get('name', 'Unknown') if session_data else 'Unknown'
+
+        data = request.get_json() or {}
+        activity_id = f"act_{int(datetime.now().timestamp() * 1000)}"
+        activity = {
+            'id': activity_id,
+            'company_id': company_id,
+            'user_name': user_name,
+            'action_type': data.get('type', data.get('action_type', 'movement')),
+            'item_number': data.get('item_id', data.get('item', data.get('order_id', ''))),
+            'item_description': data.get('item', ''),
+            'quantity': data.get('qty', data.get('quantity', 0)),
+            'from_location': data.get('from', data.get('from_location', '')),
+            'to_location': data.get('to', data.get('to_location', '')),
+            'notes': str(data),
+            'timestamp': datetime.now().isoformat(),
+            'created_at': datetime.now().isoformat()
+        }
+        warehouse_activity_history[activity_id] = activity
+        save_data()
+        return jsonify({'success': True, 'activity_id': activity_id})
+    except Exception as e:
+        logger.error(f"Error logging warehouse activity: {e}")
+        return jsonify({'success': True, 'activity_id': 'local'})
+
+
+@app.route('/api/orders', methods=['GET'])
+def api_orders():
+    """Return open customer orders for the current company"""
+    try:
+        session_data = get_current_session()
+        company_id = session_data.get('company_id', 'demo_company') if session_data else 'demo_company'
+
+        # Pull from deliveries if available
+        company_orders = [
+            d for d in deliveries.values()
+            if d.get('company_id') == company_id
+        ]
+
+        if not company_orders:
+            company_orders = [
+                {'id':'ORD-2024-1000','customer':'Acme Corp','status':'open','isRush':True,'shipBy':'TODAY 3PM','items':[{'name':'Hex Bolts M8x20','sku':'HW-0042','loc':'A-01-B','qty':50,'picked':False}]},
+                {'id':'ORD-2024-1001','customer':'TechStart Inc','status':'open','isRush':False,'shipBy':'Tomorrow','items':[{'name':'Circuit Board A','sku':'EL-1001','loc':'B-03-A','qty':5,'picked':False}]},
+                {'id':'ORD-2024-1002','customer':'Metro Wholesale','status':'open','isRush':False,'shipBy':'Tomorrow','items':[{'name':'Bubble Wrap Roll','sku':'PK-0201','loc':'C-02-A','qty':3,'picked':False}]},
+            ]
+
+        return jsonify({'success': True, 'orders': company_orders, 'count': len(company_orders)})
+    except Exception as e:
+        logger.error(f"Error in /api/orders: {e}")
+        return jsonify({'error': 'Failed to load orders'}), 500
+
+
+@app.route('/api/transfers', methods=['GET'])
+def api_transfers():
+    """Return open transfer orders for the current company"""
+    try:
+        session_data = get_current_session()
+        company_id = session_data.get('company_id', 'demo_company') if session_data else 'demo_company'
+
+        return jsonify({'success': True, 'transfers': [], 'count': 0})
+    except Exception as e:
+        logger.error(f"Error in /api/transfers: {e}")
+        return jsonify({'error': 'Failed to load transfers'}), 500
+
 
 # Tiered role-based access control mapping
 # Tier 1: Basic role access (only their specific page)
@@ -4157,13 +4522,22 @@ def catch_all(filename):
             # Handle non-HTML static files normally
             return send_from_directory('static', filename)
     except Exception as e:
+        from werkzeug.exceptions import NotFound
+        if isinstance(e, NotFound) or isinstance(e, FileNotFoundError):
+            logger.warning(f"Page not found: {filename}")
+            try:
+                with open(os.path.join('static', '404.html'), 'r', encoding='utf-8') as f:
+                    error_html_content = f.read()
+                    error_html_content = inject_dark_theme(error_html_content)
+                    return error_html_content, 404
+            except FileNotFoundError:
+                return "<h1>404 - Page Not Found</h1>", 404
         logger.error(f"Error in catch_all route for {filename}: {e}")
-        # Serve a generic error page or redirect if any other error occurs
         try:
             with open(os.path.join('static', '404.html'), 'r', encoding='utf-8') as f:
                 error_html_content = f.read()
                 error_html_content = inject_dark_theme(error_html_content)
-                return error_html_content, 500 # Using 500 as it's a server-side error in handling the request
+                return error_html_content, 500
         except FileNotFoundError:
             return "<h1>Server Error</h1>", 500
 

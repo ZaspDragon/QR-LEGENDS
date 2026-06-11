@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07111f">
+  <title>Control Center | DC Legends WarehouseOS</title>
+  <link rel="stylesheet" href="/warehouse_os.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="/main_dashboard">
+        <span class="brand-mark">DC</span>
+        <span><strong>DC Legends</strong><span>WarehouseOS</span></span>
+      </a>
+      <div class="nav-label">Operations</div>
+      <nav class="nav" id="primary-nav"></nav>
+      <div class="sidebar-foot">
+        <div class="facility"><strong id="warehouse-name">Distribution Center</strong>Built by Warehouse People</div>
+      </div>
+    </aside>
+
+    <main class="page">
+      <header class="topbar">
+        <div class="site-status">
+          <button class="icon-btn menu-btn" id="menu-button" aria-label="Open navigation">☰</button>
+          <i class="status-dot"></i>
+          <div><strong>Operations online</strong><span id="shift-name">Loading shift</span></div>
+        </div>
+        <div class="top-actions">
+          <input class="search" id="command-search" aria-label="Search modules" placeholder="Go to a module...">
+          <a class="icon-btn" href="/notification_center" aria-label="Notifications">!</a>
+          <a class="primary-btn" href="/qr_scanner">Scan QR</a>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="page-heading">
+          <div>
+            <div class="eyebrow">Live warehouse command</div>
+            <h1>Control Center</h1>
+            <p>What is late, what is blocked, and what should happen next.</p>
+          </div>
+          <div class="updated"><span id="user-role">warehouse user</span> · <span id="updated">Connecting...</span></div>
+        </section>
+
+        <section class="kpi-grid loading" id="kpis">
+          <article class="card kpi"><div class="kpi-label">Loading operational KPIs</div></article>
+        </section>
+        <section class="workload-grid loading" id="workload"></section>
+
+        <section class="dashboard-grid">
+          <article class="card panel">
+            <header class="panel-head"><h2>Exceptions Requiring Action</h2><a href="/exceptions_hub">View all</a></header>
+            <div class="loading" id="exceptions"><div class="empty">Loading exceptions...</div></div>
+          </article>
+          <article class="card panel">
+            <header class="panel-head"><h2>Late and Aging Tasks</h2><a href="/operational_kpis">Escalation view</a></header>
+            <div class="loading" id="late-tasks"><div class="empty">Loading task queue...</div></div>
+          </article>
+        </section>
+
+        <section class="lower-grid">
+          <article class="card panel">
+            <header class="panel-head"><h2>Inventory Health</h2><a href="/inventory_hub">Open inventory</a></header>
+            <div class="summary-body loading" id="inventory-summary"></div>
+          </article>
+          <article class="card panel">
+            <header class="panel-head"><h2>Next Best Actions</h2><a href="/mobile_scanner">Associate mode</a></header>
+            <div class="module-actions">
+              <a href="/receiving">Receive inbound load</a>
+              <a href="/putaway">Start directed putaway</a>
+              <a href="/replenishment">Release replenishment</a>
+              <a href="/cycle_counting">Perform cycle count</a>
+              <a href="/order_picking">Start zone picking</a>
+              <a href="/shipping">Verify outbound load</a>
+            </div>
+          </article>
+          <article class="card panel">
+            <header class="panel-head"><h2>Intelligence Roadmap</h2><a href="/ai_settings">AI settings</a></header>
+            <div class="summary-body loading" id="ai-readiness"></div>
+          </article>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <nav class="mobile-bar" aria-label="Mobile workflow navigation">
+    <a href="/main_dashboard"><b>⌂</b>Center</a>
+    <a href="/receiving"><b>↓</b>Receive</a>
+    <a href="/qr_scanner"><b>□</b>Scan</a>
+    <a href="/order_picking"><b>✓</b>Pick</a>
+    <a href="/shipping"><b>→</b>Ship</a>
+  </nav>
+  <script src="/warehouse_os.js" defer></script>
+</body>
+</html>

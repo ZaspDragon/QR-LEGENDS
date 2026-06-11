@@ -1,0 +1,548 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slotting - QR Legends</title>
+    <style>
+        * {box-sizing: border-box}
+
+        body {font-family: Arial, sans-serif
+            margin: 0
+            padding: 10px
+            background-color: #f5f5f5;
+            padding-top: 70px;
+            padding-bottom: 120px}
+
+        .container {max-width: 1200px
+            margin: 0 auto
+            width: 100%}
+
+        .page-header {background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%)
+            color: white
+            padding: 20px
+            margin: -10px -10px 20px -10px;
+            border-radius: 10px 10px 0 0;
+            text-align: center}
+
+        .page-header h1 {margin: 0
+            font-size: 1.8rem
+            font-weight: 600}
+
+        .card {background: white
+            padding: 20px
+            margin: 15px 0
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+
+        .btn {padding: 12px 20px
+            margin: 5px
+            border: none
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500}
+
+        .btn-primary {background: #007bff color: white}
+        .btn-success {background: #28a745 color: white}
+        .btn-warning {background: #ffc107 color: black}
+        .btn-info {background: #17a2b8 color: white}
+
+        .form-group {margin: 15px 0}
+
+        .form-group label {display: block
+            margin-bottom: 5px
+            font-weight: bold}
+
+        .form-group input, .form-group select {width: 100%
+            padding: 10px
+            border: 1px solid #ddd
+            border-radius: 4px;
+            font-size: 14px}
+
+        .grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
+            gap: 20px}
+
+        .velocity-chart {background: #f8f9fa
+            padding: 15px
+            border-radius: 8px
+            margin: 15px 0}
+
+        .item-card {border: 1px solid #ddd
+            padding: 15px
+            border-radius: 8px
+            margin: 10px 0;
+            background: white}
+
+        .velocity-high {border-left: 4px solid #28a745}
+        .velocity-medium {border-left: 4px solid #ffc107}
+        .velocity-low {border-left: 4px solid #dc3545}
+
+        .stats-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
+            gap: 15px
+            margin-bottom: 20px}
+
+        .stat-card {background: white
+            padding: 20px
+            border-radius: 8px
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+
+        .stat-value {font-size: 2rem
+            font-weight: bold
+            color: #007bff}
+
+        .optimization-section {background: #e8f5e8
+            border-left: 4px solid #28a745}
+
+        .analysis-section {background: #fff3cd
+            border-left: 4px solid #ffc107}
+
+        @media (max-width: 768px) {.grid {
+                grid-template-columns: 1fr}
+            
+            .stats-grid {grid-template-columns: repeat(2, 1fr)}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>📐 Slotting Optimization</h1>
+        </div>
+
+        <!-- Statistics Dashboard -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalItems">0</div>
+                <div>Total Items</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="highVelocityItems">0</div>
+                <div>High Velocity</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="mediumVelocityItems">0</div>
+                <div>Medium Velocity</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="lowVelocityItems">0</div>
+                <div>Low Velocity</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="optimizationScore">85%</div>
+                <div>Optimization Score</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="travelDistance">1.2mi</div>
+                <div>Avg Travel Distance</div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- Velocity Analysis -->
+            <div class="card analysis-section">
+                <h3>📊 Velocity Analysis</h3>
+                <p>Analyze item movement frequency to optimize slot placement</p>
+
+                <div class="form-group">
+                    <label>Analysis Period</label>
+                    <select id="analysisPeriod" onchange="loadVelocityAnalysis()">
+                        <option value="7">Last 7 Days</option>
+                        <option value="30" selected>Last 30 Days</option>
+                        <option value="90">Last 90 Days</option>
+                        <option value="365">Last Year</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-primary" onclick="runVelocityAnalysis()">
+                    📈 Run Velocity Analysis
+                </button>
+
+                <div id="velocityResults" style="margin-top: 15px;">
+                    <!-- Velocity results will be displayed here -->
+                </div>
+            </div>
+
+            <!-- Slotting Recommendations -->
+            <div class="card optimization-section">
+                <h3>🎯 Slotting Recommendations</h3>
+                <p>AI-powered recommendations to optimize item placement</p>
+
+                <div class="form-group">
+                    <label>Optimization Strategy</label>
+                    <select id="optimizationStrategy">
+                        <option value="velocity">Velocity-Based</option>
+                        <option value="abc">ABC Analysis</option>
+                        <option value="seasonal">Seasonal Patterns</option>
+                        <option value="size">Size Optimization</option>
+                        <option value="combined">Combined Strategy</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Zone Priority</label>
+                    <select id="zonePriority">
+                        <option value="pick_face">Pick Face Priority</option>
+                        <option value="travel_time">Minimize Travel Time</option>
+                        <option value="ergonomic">Ergonomic Optimization</option>
+                        <option value="storage_efficiency">Storage Efficiency</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-success" onclick="generateRecommendations()">
+                    🤖 Generate Recommendations
+                </button>
+
+                <div id="recommendationResults" style="margin-top: 15px;">
+                    <!-- Recommendations will be displayed here -->
+                </div>
+            </div>
+
+            <!-- Current Slotting Status -->
+            <div class="card">
+                <h3>📍 Current Slotting Status</h3>
+
+                <div class="form-group">
+                    <label>Filter by Section</label>
+                    <select id="sectionFilter" onchange="filterSlottingData()">
+                        <option value="all">All Sections</option>
+                        <option value="A">Section A</option>
+                        <option value="B">Section B</option>
+                        <option value="C">Section C</option>
+                        <option value="D">Section D</option>
+                        <option value="E">Section E</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Filter by Velocity</label>
+                    <select id="velocityFilter" onchange="filterSlottingData()">
+                        <option value="all">All Velocities</option>
+                        <option value="high">High Velocity</option>
+                        <option value="medium">Medium Velocity</option>
+                        <option value="low">Low Velocity</option>
+                    </select>
+                </div>
+
+                <div id="currentSlotting">
+                    <!-- Current slotting data will be displayed here -->
+                </div>
+            </div>
+
+            <!-- Slot Assignment -->
+            <div class="card">
+                <h3>🔄 Manual Slot Assignment</h3>
+
+                <div class="form-group">
+                    <label>Item Number</label>
+                    <input type="text" id="itemNumber" placeholder="Enter or scan item number">
+                </div>
+
+                <div class="form-group">
+                    <label>Current Location</label>
+                    <input type="text" id="currentLocation" placeholder="Current slot location" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>New Location</label>
+                    <input type="text" id="newLocation" placeholder="Scan new slot location">
+                </div>
+
+                <div class="form-group">
+                    <label>Assignment Reason</label>
+                    <select id="assignmentReason">
+                        <option value="velocity_optimization">Velocity Optimization</option>
+                        <option value="size_optimization">Size Optimization</option>
+                        <option value="seasonal_adjustment">Seasonal Adjustment</option>
+                        <option value="damage_prevention">Damage Prevention</option>
+                        <option value="manual_override">Manual Override</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-primary" onclick="assignSlot()">
+                    📝 Assign Slot
+                </button>
+
+                <div id="assignmentResult" style="margin-top: 15px;">
+                    <!-- Assignment results will be displayed here -->
+                </div>
+            </div>
+
+            <!-- Performance Metrics -->
+            <div class="card">
+                <h3>📈 Slotting Performance</h3>
+
+                <div class="velocity-chart">
+                    <h4>Pick Path Efficiency</h4>
+                    <div style="background: #28a745; height: 20px; width: 78%; border-radius: 10px; margin: 10px 0;"></div>
+                    <p>78% - Good efficiency, room for improvement</p>
+                </div>
+
+                <div class="velocity-chart">
+                    <h4>Storage Density</h4>
+                    <div style="background: #17a2b8; height: 20px; width: 92%; border-radius: 10px; margin: 10px 0;"></div>
+                    <p>92% - Excellent space utilization</p>
+                </div>
+
+                <div class="velocity-chart">
+                    <h4>Velocity Alignment</h4>
+                    <div style="background: #ffc107; height: 20px; width: 65%; border-radius: 10px; margin: 10px 0;"></div>
+                    <p>65% - Needs optimization</p>
+                </div>
+
+                <button class="btn btn-info" onclick="generatePerformanceReport()">
+                    📊 Generate Detailed Report
+                </button>
+            </div>
+
+            <!-- Bulk Slotting Operations -->
+            <div class="card">
+                <h3>🔄 Bulk Slotting Operations</h3>
+
+                <div class="form-group">
+                    <label>Operation Type</label>
+                    <select id="bulkOperationType">
+                        <option value="rebalance">Rebalance All Items</option>
+                        <option value="seasonal_adjust">Seasonal Adjustment</option>
+                        <option value="new_layout">Apply New Layout</option>
+                        <option value="abc_realign">ABC Realignment</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Target Sections</label>
+                    <select id="targetSections" multiple>
+                        <option value="A">Section A</option>
+                        <option value="B">Section B</option>
+                        <option value="C">Section C</option>
+                        <option value="D">Section D</option>
+                        <option value="E">Section E</option>
+                    </select>
+                </div>
+
+                <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                    <h5>⚠️ Warning</h5>
+                    <p>Bulk operations will generate move tasks and may disrupt current operations. Schedule during low-activity periods.</p>
+                </div>
+
+                <button class="btn btn-warning" onclick="previewBulkOperation()">
+                    👁️ Preview Changes
+                </button>
+                <button class="btn btn-success" onclick="executeBulkOperation()" style="margin-left: 10px;">
+                    🚀 Execute Bulk Operation
+                </button>
+
+                <div id="bulkOperationResult" style="margin-top: 15px;">
+                    <!-- Bulk operation results will be displayed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data for demonstration
+        let slottingData = [
+            { item: 'ITEM-001', location: 'A01-01-01', velocity: 'high', picks_per_day: 25, size: 'small' },
+            { item: 'ITEM-002', location: 'B03-05-02', velocity: 'medium', picks_per_day: 8, size: 'medium' },
+            { item: 'ITEM-003', location: 'C12-08-01', velocity: 'low', picks_per_day: 2, size: 'large' },
+            { item: 'ITEM-004', location: 'A02-02-01', velocity: 'high', picks_per_day: 32, size: 'small' },
+            { item: 'ITEM-005', location: 'D05-03-03', velocity: 'medium', picks_per_day: 12, size: 'medium' }
+        ];
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {updateStatistics()
+            loadCurrentSlotting()});
+
+        function updateStatistics() {const totalItems = slottingData.length
+            const highVelocity = slottingData.filter(item => item.velocity === 'high').length
+            const mediumVelocity = slottingData.filter(item => item.velocity === 'medium').length
+            const lowVelocity = slottingData.filter(item => item.velocity === 'low').length;
+
+            document.getElementById('totalItems').textContent = totalItems;
+            document.getElementById('highVelocityItems').textContent = highVelocity;
+            document.getElementById('mediumVelocityItems').textContent = mediumVelocity;
+            document.getElementById('lowVelocityItems').textContent = lowVelocity;}
+
+        function loadCurrentSlotting() {const currentSlottingDiv = document.getElementById('currentSlotting')
+            let html = ''
+
+            slottingData.forEach(item => {
+                const velocityClass = `velocity-${item.velocity}`
+                html += `
+                    <div class="item-card ${velocityClass}">
+                        <strong>${item.item}</strong>
+                        <div>Location: ${item.location}</div>
+                        <div>Velocity: ${item.velocity.toUpperCase()} (${item.picks_per_day} picks/day)</div>
+                        <div>Size: ${item.size}</div>
+                        <button class="btn btn-primary" onclick="optimizeItem('${item.item}')" style="margin-top: 10px;">Optimize</button>
+                    </div>
+                `;
+            });
+
+            currentSlottingDiv.innerHTML = html;
+        }
+
+        function runVelocityAnalysis() {const period = document.getElementById('analysisPeriod').value
+            const resultsDiv = document.getElementById('velocityResults')
+
+            resultsDiv.innerHTML = `
+                <div style="background: #d1ecf1 padding: 15px border-radius: 8px margin-top: 15px">
+                    <h4>📊 Velocity Analysis Results (${period} days)</h4>
+                    <div class="velocity-chart">
+                        <strong>High Velocity Items (20+ picks/day):</strong>
+                        <div style="background: #28a745; height: 15px; width: 40%; border-radius: 5px; margin: 5px 0;"></div>
+                        <span>40% of items</span>
+                    </div>
+                    <div class="velocity-chart">
+                        <strong>Medium Velocity Items (5-19 picks/day):</strong>
+                        <div style="background: #ffc107; height: 15px; width: 35%; border-radius: 5px; margin: 5px 0;"></div>
+                        <span>35% of items</span>
+                    </div>
+                    <div class="velocity-chart">
+                        <strong>Low Velocity Items (<5 picks/day):</strong>
+                        <div style="background: #dc3545; height: 15px; width: 25%; border-radius: 5px; margin: 5px 0;"></div>
+                        <span>25% of items</span>
+                    </div>
+                    <p><strong>Recommendation:</strong> Move high-velocity items closer to shipping dock.</p>
+                </div>
+            `;
+        }
+
+        function generateRecommendations() {const strategy = document.getElementById('optimizationStrategy').value
+            const priority = document.getElementById('zonePriority').value
+            const resultsDiv = document.getElementById('recommendationResults')
+
+            resultsDiv.innerHTML = `
+                <div style="background: #d4edda padding: 15px border-radius: 8px margin-top: 15px;">
+                    <h4>🎯 Slotting Recommendations</h4>
+                    <div class="item-card velocity-high">
+                        <strong>ITEM-003</strong> → Move from C12-08-01 to A01-03-01
+                        <div>Reason: High velocity item in remote location</div>
+                        <div>Expected Improvement: 35% reduction in pick time</div>
+                    </div>
+                    <div class="item-card velocity-medium">
+                        <strong>ITEM-005</strong> → Move from D05-03-03 to B02-02-02
+                        <div>Reason: Medium velocity optimization</div>
+                        <div>Expected Improvement: 20% reduction in travel distance</div>
+                    </div>
+                    <div class="item-card velocity-low">
+                        <strong>ITEM-001</strong> → Move from A01-01-01 to E08-05-01
+                        <div>Reason: Low velocity item in prime location</div>
+                        <div>Expected Improvement: Free up premium slot</div>
+                    </div>
+                    <p><strong>Overall Impact:</strong> 25% improvement in pick efficiency</p>
+                </div>
+            `}
+
+        function assignSlot() {const itemNumber = document.getElementById('itemNumber').value
+            const newLocation = document.getElementById('newLocation').value
+            const reason = document.getElementById('assignmentReason').value
+            const resultDiv = document.getElementById('assignmentResult');
+
+            if (!itemNumber || !newLocation) {
+                resultDiv.innerHTML = `
+                    <div style="background: #fff3cd padding: 10px border-radius: 5px color: #856404;">
+                        ⚠️ Please enter both item number and new location
+                    </div>
+                `;
+                return}
+
+            resultDiv.innerHTML = `
+                <div style="background: #d4edda padding: 10px border-radius: 5px color: #155724;">
+                    ✅ Slot assignment completed!<br>
+                    Item: ${itemNumber}<br>
+                    New Location: ${newLocation}<br>
+                    Reason: ${reason}<br>
+                    Move task created for warehouse staff
+                </div>
+            `;
+
+            // Clear form
+            document.getElementById('itemNumber').value = '';
+            document.getElementById('newLocation').value = '';
+        }
+
+        function filterSlottingData() {const sectionFilter = document.getElementById('sectionFilter').value
+            const velocityFilter = document.getElementById('velocityFilter').value
+
+            let filteredData = slottingData
+
+            if (sectionFilter !== 'all') {
+                filteredData = filteredData.filter(item => item.location.startsWith(sectionFilter));}
+
+            if (velocityFilter !== 'all') {filteredData = filteredData.filter(item => item.velocity === velocityFilter)}
+
+            // Update display with filtered data
+            const currentSlottingDiv = document.getElementById('currentSlotting');
+            let html = '';
+
+            filteredData.forEach(item => {
+                const velocityClass = `velocity-${item.velocity}`
+                html += `
+                    <div class="item-card ${velocityClass}">
+                        <strong>${item.item}</strong>
+                        <div>Location: ${item.location}</div>
+                        <div>Velocity: ${item.velocity.toUpperCase()} (${item.picks_per_day} picks/day)</div>
+                        <div>Size: ${item.size}</div>
+                        <button class="btn btn-primary" onclick="optimizeItem('${item.item}')" style="margin-top: 10px;">Optimize</button>
+                    </div>
+                `;
+            });
+
+            currentSlottingDiv.innerHTML = html || '<p>No items match the selected filters</p>';
+        }
+
+        function optimizeItem(itemId) {
+            alert(`Generating optimization recommendations for ${itemId}...`);
+        }
+
+        function generatePerformanceReport() {alert('Generating detailed slotting performance report...')}
+
+        function previewBulkOperation() {const operationType = document.getElementById('bulkOperationType').value
+            const resultDiv = document.getElementById('bulkOperationResult')
+
+            resultDiv.innerHTML = `
+                <div style="background: #d1ecf1 padding: 15px border-radius: 8px margin-top: 15px">
+                    <h4>👁️ Bulk Operation Preview: ${operationType}</h4>
+                    <p><strong>Items to Move:</strong> 23</p>
+                    <p><strong>Estimated Time:</strong> 2.5 hours</p>
+                    <p><strong>Staff Required:</strong> 3 warehouse workers</p>
+                    <p><strong>Expected Improvement:</strong> 18% pick efficiency gain</p>
+                    <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                        <strong>Move Tasks Preview:</strong><br>
+                        • ITEM-001: A01-01-01 → E08-05-01<br>
+                        • ITEM-003: C12-08-01 → A01-03-01<br>
+                        • ITEM-005: D05-03-03 → B02-02-02<br>
+                        ... and 20 more items
+                    </div>
+                </div>
+            `;
+        }
+
+        function executeBulkOperation() {if (!confirm('This will create move tasks for all recommended changes. Continue?')) {
+                return}
+
+            const resultDiv = document.getElementById('bulkOperationResult');
+            resultDiv.innerHTML = `
+                <div style="background: #d4edda padding: 15px border-radius: 8px margin-top: 15px;">
+                    <h4>✅ Bulk Operation Executed Successfully!</h4>
+                    <p>23 move tasks have been created and assigned to warehouse staff.</p>
+                    <p>Expected completion time: 2.5 hours</p>
+                    <p>Progress can be monitored in the Move Tasks dashboard.</p>
+                </div>
+            `;
+        }
+    </script>
+
+    <!-- Include Universal Dashboard Button -->
+    <script src="/universal_dashboard_button.js"></script>
+    <!-- Include Floating Chat Widget -->
+    <script src="/floating_chat_widget.js"></script>
+    <!-- Include Employee Messaging Widget -->
+    <script src="/employee_messaging_widget.js"></script>
+</body>
+</html>

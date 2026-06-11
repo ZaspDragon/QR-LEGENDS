@@ -1,0 +1,341 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Legends - Page Navigator</title>
+<style>
+/* === QRLegends Unified Theme (Dark/Light) === */
+:root{
+  --ql-bg: #0b1724;
+  --ql-panel: #0f2340;
+  --ql-card: #102846;
+  --ql-text: #dbe8ff;
+  --ql-sub: #97a6c1;
+  --ql-primary: #3b82f6;
+  --ql-success: #22c55e;
+  --ql-warning: #f59e0b;
+  --ql-danger: #ef4444;
+  --ql-accent: #6366f1;
+  --ql-border: rgba(255,255,255,.12);
+  --ql-surface: rgba(255,255,255,.06);
+}
+/* Light mode overrides */
+body.light{
+  --ql-bg: #f2f6fb;
+  --ql-panel: #ffffff;
+  --ql-card: #ffffff;
+  --ql-text: #1d2840;
+  --ql-sub: #51607c;
+  --ql-primary: #2563eb;
+  --ql-success: #16a34a;
+  --ql-warning: #d97706;
+  --ql-danger: #dc2626;
+  --ql-accent: #4f46e5;
+  --ql-border: rgba(0,0,0,.12);
+  --ql-surface: rgba(15,23,42,.04);
+}
+
+html,body{height:100%;}
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed;
+  color: var(--ql-text);
+  font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+  line-height: 1.45;
+}
+body.light{
+  background: linear-gradient(180deg,#f7faff,#eef3fb);
+}
+
+.ql-header{
+  position: sticky; top:0; z-index:1000;
+  background: rgba(8,27,46,.7);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--ql-border);
+}
+body.light .ql-header{
+  background: rgba(255,255,255,.75);
+}
+.ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
+.ql-title{display:flex; align-items:center; gap:10px;}
+.ql-h1{font-size:1.25rem; margin:0; letter-spacing:.2px;}
+.ql-nav{display:flex; gap:8px; flex-wrap:wrap;}
+.ql-btn{
+  display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
+  background: var(--ql-surface); border: 1px solid var(--ql-border);
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+  transition: transform .08s ease, background .2s ease, border-color .2s ease;
+}
+.ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+body.light .ql-btn:hover{ background: rgba(15,23,42,.08); }
+.ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
+
+.ql-theme-toggle{
+  margin-left:12px; cursor:pointer; border:1px solid var(--ql-border);
+  background: var(--ql-surface); color: var(--ql-text);
+  border-radius:10px; padding:8px 10px; font-size:16px;
+}
+
+.ql-container{ max-width:1200px; margin:22px auto; padding:0 20px; }
+.ql-grid{ display:grid; gap:16px; grid-template-columns: repeat(12, 1fr);}
+.ql-card{
+  grid-column: span 12;
+  background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+  border: 1px solid var(--ql-border);
+  box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+  border-radius:16px; padding:20px;
+}
+body.light .ql-card{
+  background: var(--ql-card);
+  box-shadow: 0 10px 30px rgba(2,8,23,.08);
+}
+
+@media(min-width:900px){
+  .ql-card.half{ grid-column: span 6; }
+  .ql-card.third{ grid-column: span 4; }
+}
+
+.ql-card h2{ font-size:1.05rem; margin:0 0 10px 0; color: #bcd5ff; letter-spacing:.2px; }
+body.light .ql-card h2{ color:#234073; }
+
+.search-box {
+    margin: 20px 0;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--ql-surface);
+    color: var(--ql-text);
+    border: 1px solid var(--ql-border);
+    border-radius: 10px;
+    font-size: 16px;
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: var(--ql-accent);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.page-list {
+    list-style: none;
+    padding: 0;
+}
+
+.page-item {
+    margin-bottom: 8px;
+}
+
+.page-link {
+    display: block;
+    padding: 10px 14px;
+    color: var(--ql-text);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    background: var(--ql-surface);
+}
+
+.page-link:hover {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: var(--ql-accent);
+    transform: translateX(5px);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.header-content {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header-content h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: var(--ql-accent);
+}
+
+.header-content p {
+    color: var(--ql-sub);
+    margin-bottom: 0;
+}
+</style>
+<script>
+(function(){
+  try {
+    const saved = localStorage.getItem('ql-theme');
+    if(saved === 'light'){ document.addEventListener('DOMContentLoaded', ()=> document.body.classList.add('light')); }
+  } catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const btn = document.getElementById('ql-theme-toggle');
+    if(btn){
+      btn.addEventListener('click', function(){
+        document.body.classList.toggle('light');
+        const isLight = document.body.classList.contains('light');
+        btn.textContent = isLight ? '☀️' : '🌙';
+        try { localStorage.setItem('ql-theme', isLight ? 'light' : 'dark'); } catch(e){}
+      });
+      if(document.body.classList.contains('light')) btn.textContent = '☀️';
+    }
+    document.querySelectorAll('button:not([type])').forEach(b=> b.setAttribute('type','button'));
+  });
+})();
+</script>
+</head>
+<body>
+<!-- Unified QR Legends Header -->
+<header class="ql-header">
+  <div class="ql-header-inner">
+    <div class="ql-title">
+      <span class="ql-logo">🟦</span>
+      <h1 class="ql-h1">Page Navigator - QR LEGENDS</h1>
+    </div>
+    <nav class="ql-nav">
+      <a class="ql-btn ql-secondary" href="/main_dashboard">🏠 Dashboard</a>
+      <a class="ql-btn" href="/erp_dashboard">🏢 ERP</a>
+      <a class="ql-btn" href="/receiving">📦 Receiving</a>
+      <a class="ql-btn" href="/inventory">📊 Inventory</a>
+    </nav>
+    <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<div class="ql-container">
+    <div class="header-content">
+        <h1>🔷 QR Legends Page Navigator</h1>
+        <p>Find and access all available pages in the system</p>
+        
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="Search pages..." id="searchInput">
+        </div>
+    </div>
+
+    <div class="ql-grid categories">
+        <div class="ql-card">
+            <h2>📊 Core Operations</h2>
+            <ul class="page-list">
+                <li class="page-item"><a href="/receiving" class="page-link">📥 Receiving</a></li>
+                <li class="page-item"><a href="/putaway" class="page-link">🧱 Putaway</a></li>
+                <li class="page-item"><a href="/order_picking" class="page-link">📋 Order Picking</a></li>
+                <li class="page-item"><a href="/packing" class="page-link">📦 Packing</a></li>
+                <li class="page-item"><a href="/shipping" class="page-link">📤 Shipping</a></li>
+                <li class="page-item"><a href="/quality_check" class="page-link">✅ Quality Check</a></li>
+                <li class="page-item"><a href="/returns" class="page-link">↩️ Returns</a></li>
+                <li class="page-item"><a href="/transfers" class="page-link">🔄 Transfers</a></li>
+                <li class="page-item"><a href="/cross_docking" class="page-link">🚛 Cross Docking</a></li>
+            </ul>
+        </div>
+
+        <div class="ql-card">
+            <h2>🎯 Management Hubs</h2>
+            <ul class="page-list">
+                <li class="page-item"><a href="/inventory_hub" class="page-link">📊 Inventory Hub</a></li>
+                <li class="page-item"><a href="/admin_hub" class="page-link">⚙️ Admin Hub</a></li>
+                <li class="page-item"><a href="/reports_hub" class="page-link">📈 Reports Hub</a></li>
+                <li class="page-item"><a href="/tools_hub" class="page-link">🔧 Tools Hub</a></li>
+                <li class="page-item"><a href="/exceptions_hub" class="page-link">⚠️ Exceptions Hub</a></li>
+                <li class="page-item"><a href="/help_hub" class="page-link">❓ Help Hub</a></li>
+                <li class="page-item"><a href="/inbound_hub" class="page-link">⬅️ Inbound Hub</a></li>
+                <li class="page-item"><a href="/outbound_hub" class="page-link">➡️ Outbound Hub</a></li>
+            </ul>
+        </div>
+
+        <div class="ql-card">
+            <h2>🏢 ERP & Sales</h2>
+            <ul class="page-list">
+                <li class="page-item"><a href="/erp_hub" class="page-link">🏢 ERP Hub</a></li>
+                <li class="page-item"><a href="/erp_dashboard" class="page-link">📊 ERP Dashboard</a></li>
+                <li class="page-item"><a href="/salespad_dashboard" class="page-link">🛒 SalesPad Dashboard</a></li>
+                <li class="page-item"><a href="/erp_customers" class="page-link">👥 ERP Customers</a></li>
+                <li class="page-item"><a href="/erp_suppliers" class="page-link">🏭 ERP Suppliers</a></li>
+                <li class="page-item"><a href="/purchase_orders" class="page-link">📋 Purchase Orders</a></li>
+                <li class="page-item"><a href="/order_management" class="page-link">📦 Order Management</a></li>
+            </ul>
+        </div>
+
+        <div class="ql-card">
+            <h2>🔧 Tools & Utilities</h2>
+            <ul class="page-list">
+                <li class="page-item"><a href="/qr_generator" class="page-link">📱 QR Generator</a></li>
+                <li class="page-item"><a href="/slot_qr_generator" class="page-link">🏷️ Slot QR Generator</a></li>
+                <li class="page-item"><a href="/warehouse_video_scanner" class="page-link">📹 Video Scanner</a></li>
+                <li class="page-item"><a href="/ai_item_finder" class="page-link">🤖 AI Item Finder</a></li>
+                <li class="page-item"><a href="/voice_picking" class="page-link">🎤 Voice Picking</a></li>
+                <li class="page-item"><a href="/label_printing" class="page-link">🖨️ Label Printing</a></li>
+                <li class="page-item"><a href="/rf_handheld" class="page-link">📡 RF Handheld</a></li>
+            </ul>
+        </div>
+
+        <div class="ql-card">
+            <h2>👥 Administration</h2>
+            <ul class="page-list">
+                <li class="page-item"><a href="/user_management" class="page-link">👤 User Management</a></li>
+                <li class="page-item"><a href="/company_employee_management" class="page-link">👥 Employee Management</a></li>
+                <li class="page-item"><a href="/system_config" class="page-link">⚙️ System Config</a></li>
+                <li class="page-item"><a href="/backup_management" class="page-link">💾 Backup Management</a></li>
+                <li class="page-item"><a href="/super_admin" class="page-link">🔐 Super Admin</a></li>
+                <li class="page-item"><a href="/license_management" class="page-link">📜 License Management</a></li>
+            </ul>
+        </div>
+
+        <div class="ql-card">
+            <h2>💬 Communication</h2>
+            <ul class="page-list">
+                <li class="page-item"><a href="/warehouse_chat" class="page-link">💬 Warehouse Chat</a></li>
+                <li class="page-item"><a href="/employee_messaging" class="page-link">📱 Employee Messaging</a></li>
+                <li class="page-item"><a href="/messaging_system" class="page-link">📨 Messaging System</a></li>
+                <li class="page-item"><a href="/notification_center" class="page-link">🔔 Notification Center</a></li>
+                <li class="page-item"><a href="/department_group_chat" class="page-link">👥 Department Chat</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+// Search functionality
+const searchInput = document.getElementById('searchInput');
+const pageItems = document.querySelectorAll('.page-item');
+const categories = document.querySelectorAll('.ql-card');
+
+searchInput.addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    
+    pageItems.forEach(item => {
+        const link = item.querySelector('.page-link');
+        const text = link.textContent.toLowerCase();
+        
+        if (text.includes(searchTerm)) {
+            item.classList.remove('hidden');
+        } else {
+            item.classList.add('hidden');
+        }
+    });
+
+    // Hide empty categories
+    categories.forEach(category => {
+        const visibleItems = category.querySelectorAll('.page-item:not(.hidden)');
+        if (visibleItems.length === 0 && searchTerm !== '') {
+            category.style.display = 'none';
+        } else {
+            category.style.display = 'block';
+        }
+    });
+});
+
+console.log('QR Legends Page Navigator loaded');
+</script>
+</body>
+</html>

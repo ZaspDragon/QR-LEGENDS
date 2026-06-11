@@ -1,0 +1,410 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management - QR LEGENDS</title>
+    <style>
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            margin: 0
+            padding: 20px
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            min-height: 100vh}
+        .container {max-width: 1200px
+            margin: 0 auto
+            background: white
+            border-radius: 15px
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);}
+        .header {text-align: center
+            margin-bottom: 30px}
+        .company-info {background: #f8f9fa
+            border-radius: 10px
+            padding: 20px
+            margin-bottom: 30px
+            text-align: center}
+        .role-info {background: #e3f2fd
+            border-radius: 10px
+            padding: 20px
+            margin-bottom: 30px}
+        .role-card {display: inline-block
+            margin: 10px
+            padding: 15px 25px
+            border-radius: 10px
+            color: white;
+            font-weight: bold;
+            text-align: center}
+        .role-admin {background: #dc3545}
+        .role-manager {background: #fd7e14}
+        .role-worker {background: #28a745}
+        .role-client {background: #6f42c1}
+        .employees-table {width: 100%
+            border-collapse: collapse
+            margin-top: 20px}
+        .employees-table th,
+        .employees-table td {padding: 12px
+            text-align: left
+            border-bottom: 1px solid #ddd}
+        .employees-table th {background-color: #f8f9fa
+            font-weight: 600}
+        .role-badge {padding: 4px 12px
+            border-radius: 20px
+            color: white
+            font-size: 0.8rem
+            font-weight: bold}
+        .btn {padding: 8px 16px
+            border: none
+            border-radius: 5px
+            cursor: pointer
+            font-size: 0.9rem;
+            margin: 0 2px}
+        .btn-primary {background: #007bff color: white}
+        .btn-success {background: #28a745 color: white}
+        .btn-warning {background: #ffc107 color: black}
+        .btn-danger {background: #dc3545 color: white}
+        .loading {text-align: center
+            color: #666
+            font-style: italic
+            padding: 50px}
+        .back-btn {position: absolute
+            top: 20px
+            left: 20px
+            background: white
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-weight: 600}
+        .role-select {padding: 5px 10px
+            border: 1px solid #ddd
+            border-radius: 5px
+            background: white}
+        .permissions-list {font-size: 0.8rem
+            color: #666
+            margin-top: 5px}
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='/main_dashboard'">← Back to Dashboard</button>
+    
+    <div class="container">
+        <div class="header">
+            <h1>👥 Employee Management</h1>
+            <p>Manage your employees and assign roles</p>
+        </div>
+
+        <div id="company-info" class="company-info">
+            <h3 id="company-name">Loading...</h3>
+            <p id="company-details">Company information</p>
+        </div>
+
+        <div class="role-info">
+            <h3>Available Roles & Permissions</h3>
+            <div class="role-card role-admin">ADMIN</div>
+            <div class="role-card role-manager">MANAGER</div>
+            <div class="role-card role-worker">WORKER</div>
+            <div class="role-card role-client">CLIENT</div>
+            
+            <div style="margin-top: 15px; font-size: 0.9rem;">
+                <strong>Admin:</strong> Full system access, manage users, inventory, analytics<br>
+                <strong>Manager:</strong> Approve transfers, view analytics, export reports<br>
+                <strong>Worker:</strong> Scan items, create transfers, update inventory<br>
+                <strong>Client:</strong> View analytics, inventory, create requests
+            </div>
+        </div>
+
+        <div id="loading" class="loading">Loading employees...</div>
+        
+        <div id="employees-content" style="display: none;">
+            <h3>Your Employees</h3>
+            <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <span id="employee-count">0 employees</span>
+                <button id="add-employee-btn" class="btn btn-success" onclick="showAddEmployeeModal()">
+                    + Add Employee
+                </button>
+            </div>
+            
+            <table class="employees-table">
+                <thead>
+                    <tr>
+                        <th>Employee ID</th>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Current Role</th>
+                        <th>Permissions</th>
+                        <th>Joined Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="employees-list">
+                    <!-- Employee rows will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add Employee Modal -->
+    <div id="add-employee-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: 15px; padding: 30px; width: 90%; max-width: 500px;">
+            <h3>Add New Employee</h3>
+            <form id="add-employee-form" onsubmit="addEmployee(event)">
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">First Name</label>
+                    <input type="text" id="first-name" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Last Name</label>
+                    <input type="text" id="last-name" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Department</label>
+                    <select id="department" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                        <option value="">Select Department</option>
+                        <option value="receiving">Receiving</option>
+                        <option value="transfers">Transfers</option>
+                        <option value="inventory">Inventory</option>
+                        <option value="order_picking">Order Picking</option>
+                        <option value="problem_solving">Problem Solving</option>
+                        <option value="management">Management</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Role</label>
+                    <select id="role" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                        <option value="worker">Worker</option>
+                        <option value="client">Client</option>
+                        <option value="manager">Manager</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Password</label>
+                    <input type="password" id="password" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    <small style="color: #666;">Employee will use this password to log in</small>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-success" style="flex: 1;">Add Employee</button>
+                    <button type="button" class="btn btn-danger" onclick="hideAddEmployeeModal()" style="flex: 1;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let companyData = {};
+        let employees = [];
+        
+        const ROLE_PERMISSIONS = {
+            'admin': ['manage_users', 'manage_inventory', 'approve_transfers', 'view_analytics', 'manage_billing', 'export_reports'],
+            'manager': ['approve_transfers', 'view_analytics', 'export_reports', 'view_logs', 'manage_inventory'],
+            'worker': ['scan_items', 'create_transfers', 'update_inventory', 'view_tasks'],
+            'client': ['view_analytics', 'view_inventory', 'create_requests', 'view_reports']
+        };
+
+        async function loadCompanyInfo() {try {
+                const response = await fetch('/api/auth/profile')
+                if (response.ok) {
+                    const profile = await response.json()
+                    companyData = profile
+                    document.getElementById('company-name').textContent = profile.company.name
+                    document.getElementById('company-details').innerHTML = `
+                        <strong>Employer Code:</strong> ${profile.company.employer_code}<br>
+                        <strong>Email:</strong> ${profile.user.email}
+                    `;
+                }
+            } catch (error) {console.error('Error loading company info:', error)}
+        }
+
+        async function loadEmployees() {try {
+                const response = await fetch('/api/employees')
+                if (!response.ok) {
+                    throw new Error('Failed to load employees')}
+
+                const data = await response.json();
+                employees = data.employees || [];
+                const trialInfo = data.trial_info || {};
+                
+                // Update employee count display
+                let countText = `${employees.length} employee${employees.length !== 1 ? 's' : ''}`;
+                if (trialInfo.is_trial) {
+                    countText += ` (Trial: ${employees.length}/${trialInfo.employee_limit} allowed)`;
+                }
+                document.getElementById('employee-count').textContent = countText;
+                
+                // Show trial info if applicable
+                if (trialInfo.is_trial) {const trialWarning = document.createElement('div')
+                    trialWarning.style.cssText = 'background: #fff3cd border: 1px solid #ffeaa7 border-radius: 8px padding: 15px; margin: 20px 0; color: #856404;';
+                    trialWarning.innerHTML = `
+                        <h4 style="margin: 0 0 10px 0">🚀 Free Trial - Employee Limit</h4>
+                        <p style="margin: 0">You can add up to <strong>2 employees</strong> during your 7-day free trial. 
+                        ${trialInfo.can_add_more ? `You can add ${trialInfo.employee_limit - trialInfo.current_count} more employee(s).` : 'You have reached the trial limit. Upgrade to add more employees.'}</p>
+                    `;
+                    document.getElementById('employees-content').insertBefore(trialWarning, document.querySelector('.employees-table'));
+                }
+                
+                displayEmployees();
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('employees-content').style.display = 'block';
+            } catch (error) {console.error('Error loading employees:', error)
+                document.getElementById('loading').innerHTML = 
+                    '<p style="color: #dc3545">⚠️ Error loading employees. Please refresh the page.</p>'}
+        }
+
+        function displayEmployees() {const tbody = document.getElementById('employees-list')
+            tbody.innerHTML = ''
+
+            employees.forEach(employee => {
+                const row = document.createElement('tr')
+                
+                const roleClass = `role-${employee.role}`;
+                const permissions = ROLE_PERMISSIONS[employee.role] || [];
+                const permissionsList = permissions.slice(0, 3).join(', ') + (permissions.length > 3 ? '...' : '');
+                
+                const restrictionStatus = employee.department_restricted ? 
+                    `<br><small style="color: #dc3545;">🔒 Restricted to ${employee.allowed_department}</small>` : '';
+                    
+                row.innerHTML = `
+                    <td>${employee.employee_id}</td>
+                    <td>${employee.name}${restrictionStatus}</td>
+                    <td>${employee.department}</td>
+                    <td><span class="role-badge ${roleClass}">${employee.role.toUpperCase()}</span></td>
+                    <td class="permissions-list">${permissionsList}</td>
+                    <td>${new Date(employee.created_at).toLocaleDateString()}</td>
+                    <td>
+                        <select class="role-select" onchange="updateEmployeeRole('${employee.id}', this.value)">
+                            <option value="">Change Role</option>
+                            <option value="worker" ${employee.role === 'worker' ? 'selected' : ''}>Worker</option>
+                            <option value="client" ${employee.role === 'client' ? 'selected' : ''}>Client</option>
+                            <option value="manager" ${employee.role === 'manager' ? 'selected' : ''}>Manager</option>
+                            <option value="admin" ${employee.role === 'admin' ? 'selected' : ''}>Admin</option>
+                        </select>
+                        <br><br>
+                        <button class="btn btn-warning" onclick="toggleDepartmentRestriction('${employee.id}', '${employee.department}')">
+                            ${employee.department_restricted ? 'Remove' : 'Add'} Dept. Restriction
+                        </button>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        async function updateEmployeeRole(employeeId, newRole) {if (!newRole) return
+            
+            const employee = employees.find(emp => emp.id === employeeId)
+            if (!employee) return
+            
+            if (!confirm(`Are you sure you want to change ${employee.name}'s role to ${newRole}?`)) {loadEmployees() // Reset the dropdown
+                return}
+
+            try {
+                const response = await fetch(`/api/company/employees/role`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        employee_id: employeeId,
+                        role: newRole 
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(`✅ ${result.employee_name}'s role updated successfully!\nOld role: ${result.old_role}\nNew role: ${result.new_role}`);
+                    loadEmployees(); // Reload the list
+                } else {
+                    alert(`❌ Error: ${result.error}`);
+                    loadEmployees(); // Reset the dropdown
+                }
+            } catch (error) {console.error('Error updating role:', error)
+                alert('❌ Network error occurred')
+                loadEmployees() // Reset the dropdown}
+        }
+
+        async function toggleDepartmentRestriction(employeeId, currentDepartment) {const employee = employees.find(emp => emp.id === employeeId)
+            if (!employee) return
+            
+            const isCurrentlyRestricted = employee.department_restricted || false
+            const action = isCurrentlyRestricted ? 'remove' : 'add'
+            
+            if (!confirm(`Are you sure you want to ${action} department restrictions for ${employee.name}?\n\n${isCurrentlyRestricted ? 'This will give them full access to all departments.' : 'This will restrict them to only their department page with limited permissions.'}`)) {return}
+
+            try {
+                const response = await fetch(`/api/employees/${employeeId}/restrict-department`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        restrict_to_department: !isCurrentlyRestricted,
+                        allowed_department: currentDepartment
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(`✅ ${result.employee_name}'s department restrictions updated successfully!\n\nRestricted: ${result.restricted ? 'Yes' : 'No'}\nAllowed Department: ${result.allowed_department || 'All'}\nPermissions: ${result.restricted_permissions.join(', ') || 'Full role permissions'}`);
+                    loadEmployees(); // Reload the list
+                } else {
+                    alert(`❌ Error: ${result.error}`);
+                }
+            } catch (error) {console.error('Error updating restrictions:', error)
+                alert('❌ Network error occurred')}
+        }
+
+        function showAddEmployeeModal() {document.getElementById('add-employee-modal').style.display = 'block'}
+
+        function hideAddEmployeeModal() {document.getElementById('add-employee-modal').style.display = 'none'
+            document.getElementById('add-employee-form').reset()}
+
+        async function addEmployee(event) {event.preventDefault()
+            
+            const firstName = document.getElementById('first-name').value
+            const lastName = document.getElementById('last-name').value
+            const department = document.getElementById('department').value
+            const role = document.getElementById('role').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/api/company/employees/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',},
+                    body: JSON.stringify({
+                        first_name: firstName,
+                        last_name: lastName,
+                        department: department,
+                        role: role,
+                        password: password
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(`✅ Employee ${firstName} ${lastName} added successfully!\nEmployee ID: ${result.employee_id}`);
+                    hideAddEmployeeModal();
+                    loadEmployees(); // Reload the list
+                } else {
+                    if (result.error.includes('trial limit')) {
+                        alert(`❌ Trial Limit Reached\n\n${result.error}\n\nUpgrade your plan to add more employees.`);
+                    } else {
+                        alert(`❌ Error: ${result.error}`);
+                    }
+                }
+            } catch (error) {console.error('Error adding employee:', error)
+                alert('❌ Network error occurred')}
+        }
+
+        // Load data when page loads
+        window.addEventListener('load', async () => {await loadCompanyInfo()
+            await loadEmployees()});
+    </script>
+</body>
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regional Manager Mobile - QR Legends</title>
+    <style>
+/* === QRLegends Unified Theme (Dark/Light) === */
+:root{
+  --ql-bg: #0b1724;
+  --ql-panel: #0f2340;
+  --ql-card: #102846;
+  --ql-text: #dbe8ff;
+  --ql-sub: #97a6c1;
+  --ql-primary: #3b82f6;
+  --ql-success: #22c55e;
+  --ql-warning: #f59e0b;
+  --ql-danger: #ef4444;
+  --ql-accent: #6366f1;
+  --ql-border: rgba(255,255,255,.12);
+  --ql-surface: rgba(255,255,255,.06);
+}
+
+html,body{height:100%;}
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed;
+  color: var(--ql-text);
+  font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+  line-height: 1.45;
+}
+
+.ql-header{
+  position: sticky; top:0; z-index:1000;
+  background: rgba(8,27,46,.7);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--ql-border);
+}
+.ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
+.ql-title{display:flex; align-items:center; gap:10px;}
+.ql-h1{font-size:1.25rem; margin:0; letter-spacing:.2px;}
+.ql-nav{display:flex; gap:8px; flex-wrap:wrap;}
+.ql-btn{
+  display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
+  background: var(--ql-surface); border: 1px solid var(--ql-border);
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+  transition: transform .08s ease, background .2s ease, border-color .2s ease;
+}
+.ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+.ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
+
+.ql-container{ max-width:1400px; margin:22px auto; padding:0 20px; }
+.ql-card{
+  background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+  border: 1px solid var(--ql-border);
+  box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+  border-radius:16px; padding:20px;
+  margin-bottom: 20px;
+}
+
+/* Mobile-first responsive design */
+.mobile-dashboard {
+    padding: 10px;
+    max-width: 100%;
+}
+
+.mobile-header {
+    text-align: center;
+    margin-bottom: 25px;
+    padding: 25px 15px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(59, 130, 246, 0.05));
+    border-radius: 16px;
+    border: 1px solid var(--ql-border);
+}
+
+.quick-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.stat-card {
+    background: var(--ql-card);
+    border: 1px solid var(--ql-border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--ql-primary);
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    color: var(--ql-sub);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.mobile-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.action-btn {
+    background: linear-gradient(135deg, var(--ql-primary), var(--ql-accent));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+
+.action-btn.success {
+    background: linear-gradient(135deg, var(--ql-success), rgba(34,197,94,.8));
+}
+
+.action-btn.warning {
+    background: linear-gradient(135deg, var(--ql-warning), rgba(245,158,11,.8));
+}
+
+.region-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 25px;
+}
+
+.region-card {
+    background: var(--ql-card);
+    border: 1px solid var(--ql-border);
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.region-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--ql-text);
+    margin-bottom: 8px;
+}
+
+.region-status {
+    padding: 4px 8px;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 12px;
+}
+
+.status-excellent { background: rgba(34, 197, 94, 0.2); color: var(--ql-success); }
+.status-good { background: rgba(59, 130, 246, 0.2); color: var(--ql-primary); }
+.status-warning { background: rgba(249, 115, 22, 0.2); color: var(--ql-warning); }
+
+.region-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.metric {
+    text-align: center;
+    padding: 8px;
+    background: var(--ql-surface);
+    border-radius: 6px;
+}
+
+.metric-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ql-primary);
+}
+
+.metric-label {
+    font-size: 0.7rem;
+    color: var(--ql-sub);
+}
+
+/* Responsive improvements */
+@media (min-width: 480px) {
+    .quick-stats {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .mobile-actions {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 768px) {
+    .region-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+    </style>
+</head>
+<body>
+<header class="ql-header">
+  <div class="ql-header-inner">
+    <div class="ql-title">
+      <span class="ql-logo">📱</span>
+      <h1 class="ql-h1">Regional Manager Mobile - QR LEGENDS</h1>
+    </div>
+    <nav class="ql-nav">
+      <a class="ql-btn ql-secondary" href="/main_dashboard">🏠 Dashboard</a>
+      <a class="ql-btn" href="/regional_performance">🌎 Regional</a>
+      <a class="ql-btn" href="/ceo_dashboard">👔 CEO</a>
+      <a class="ql-btn" href="/professional_dashboard">📊 Professional</a>
+    </nav>
+  </div>
+</header>
+
+<div class='ql-container'>
+    <div class="mobile-dashboard">
+        <div class="mobile-header">
+            <h1 style="font-size: 1.8rem; margin: 0 0 8px 0; color: var(--ql-text);">📱 Regional Manager Mobile</h1>
+            <p style="color: var(--ql-sub); margin: 0; font-size: 1rem;">On-the-go regional oversight and management</p>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+            <div class="stat-card">
+                <div class="stat-value">12</div>
+                <div class="stat-label">Facilities</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">96.3%</div>
+                <div class="stat-label">Performance</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">2,847</div>
+                <div class="stat-label">Employees</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">$24.7M</div>
+                <div class="stat-label">Revenue</div>
+            </div>
+        </div>
+
+        <!-- Mobile Actions -->
+        <div class="mobile-actions">
+            <a href="/regional_performance" class="action-btn">
+                🌎 Regional Performance
+            </a>
+            <a href="/ceo_dashboard" class="action-btn success">
+                👔 CEO Dashboard
+            </a>
+            <a href="/analytics_dashboard" class="action-btn warning">
+                📈 Analytics
+            </a>
+            <a href="/professional_dashboard" class="action-btn">
+                📊 Professional View
+            </a>
+        </div>
+
+        <!-- Region Cards -->
+        <div class="region-cards">
+            <div class="region-card">
+                <div class="region-title">🏔️ North Region</div>
+                <div class="region-status status-excellent">Excellent</div>
+                <div class="region-metrics">
+                    <div class="metric">
+                        <div class="metric-value">98.7%</div>
+                        <div class="metric-label">Performance</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">$8.2M</div>
+                        <div class="metric-label">Revenue</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">847</div>
+                        <div class="metric-label">Staff</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="region-card">
+                <div class="region-title">🌴 South Region</div>
+                <div class="region-status status-good">Good</div>
+                <div class="region-metrics">
+                    <div class="metric">
+                        <div class="metric-value">95.4%</div>
+                        <div class="metric-label">Performance</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">$6.8M</div>
+                        <div class="metric-label">Revenue</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">623</div>
+                        <div class="metric-label">Staff</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="region-card">
+                <div class="region-title">🏙️ East Region</div>
+                <div class="region-status status-excellent">Excellent</div>
+                <div class="region-metrics">
+                    <div class="metric">
+                        <div class="metric-value">97.9%</div>
+                        <div class="metric-label">Performance</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">$9.7M</div>
+                        <div class="metric-label">Revenue</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">1,247</div>
+                        <div class="metric-label">Staff</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="region-card">
+                <div class="region-title">🏜️ West Region</div>
+                <div class="region-status status-warning">Needs Attention</div>
+                <div class="region-metrics">
+                    <div class="metric">
+                        <div class="metric-value">92.1%</div>
+                        <div class="metric-label">Performance</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">$5.2M</div>
+                        <div class="metric-label">Revenue</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">456</div>
+                        <div class="metric-label">Staff</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Footer -->
+        <div style="text-align: center; margin-top: 30px; padding-bottom: 20px;">
+            <a href="/main_dashboard" class="action-btn">
+                🏠 Back to Main Dashboard
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Regional Manager Mobile dashboard loaded');
+
+            // Add touch feedback for mobile
+            document.querySelectorAll('.action-btn, .region-card').forEach(element => {
+                element.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+
+                element.addEventListener('touchend', function() {
+                    this.style.transform = '';
+                });
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

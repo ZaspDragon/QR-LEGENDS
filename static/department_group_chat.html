@@ -1,0 +1,271 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Department Group Chat - QR Legends</title>
+    <style>
+        body {font-family: Arial, sans-serif 
+            margin: 0 
+            padding: 20px 
+            background-color: #f5f5f5}
+        .container {max-width: 1200px 
+            margin: 0 auto}
+        .header {background: linear-gradient(135deg, #007bff 0%, #0056b3 100%)
+            color: white
+            padding: 20px
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center}
+        .chat-container {background: white
+            border-radius: 15px
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1)
+            height: 600px;
+            display: flex;
+            flex-direction: column}
+        .messages-area {flex: 1
+            overflow-y: auto
+            padding: 20px
+            display: flex;
+            flex-direction: column;
+            gap: 15px}
+        .message {background: #f8f9fa
+            border-radius: 10px
+            padding: 15px
+            border-left: 4px solid #007bff}
+        .message.damage-report {border-left-color: #dc3545
+            background: #fff5f5}
+        .message.variance-report {border-left-color: #ffc107
+            background: #fffbf0}
+        .message-header {display: flex
+            justify-content: space-between
+            align-items: center
+            margin-bottom: 10px;
+            font-weight: 600}
+        .message-priority {padding: 2px 8px
+            border-radius: 12px
+            font-size: 12px
+            color: white}
+        .priority-high {background: #dc3545}
+        .priority-normal {background: #28a745}
+        .message-photo {max-width: 300px
+            border-radius: 8px
+            margin: 10px 0
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);}
+        .message-actions {margin-top: 10px
+            display: flex
+            gap: 8px}
+        .btn {padding: 6px 12px
+            border: none
+            border-radius: 5px
+            cursor: pointer;
+            font-size: 12px}
+        .btn-primary {background: #007bff color: white}
+        .btn-success {background: #28a745 color: white}
+        .btn-warning {background: #ffc107 color: #333}
+        .message-input-area {padding: 20px
+            border-top: 1px solid #eee
+            background: #f8f9fa}
+        .input-group {display: flex
+            gap: 10px}
+        .message-input {flex: 1
+            padding: 12px
+            border: 1px solid #ddd
+            border-radius: 8px;
+            outline: none}
+        .send-btn {padding: 12px 20px
+            background: #007bff
+            color: white
+            border: none;
+            border-radius: 8px;
+            cursor: pointer}
+        .department-selector {margin-bottom: 20px
+            padding: 15px
+            background: white
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+        .photo-modal {display: none
+            position: fixed
+            z-index: 1000
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center}
+        .photo-modal img {max-width: 90%
+            max-height: 90%
+            border-radius: 8px}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>💬 Department Group Chat</h1>
+                <p>Real-time communication for damage reports, variances, and department updates</p>
+            </div>
+            <div>
+                <button onclick="window.location.href='/main_dashboard'" class="btn btn-primary">← Back to Dashboard</button>
+            </div>
+        </div>
+
+        <div class="department-selector">
+            <label for="departmentSelect" style="font-weight: 600; margin-right: 10px;">Select Department:</label>
+            <select id="departmentSelect" onchange="loadDepartmentMessages()" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
+                <option value="receiving">📦 Receiving</option>
+                <option value="inventory">📊 Inventory</option>
+                <option value="transfers">🚚 Transfers</option>
+                <option value="order_picking">📋 Order Picking</option>
+                <option value="returns">↩️ Returns</option>
+                <option value="problem_solving">🔧 Problem Solving</option>
+                <option value="general">💬 General</option>
+            </select>
+            <button onclick="loadDepartmentMessages()" class="btn btn-primary" style="margin-left: 10px;">🔄 Refresh</button>
+        </div>
+
+        <div class="chat-container">
+            <div class="messages-area" id="messagesArea">
+                <!-- Messages will be loaded here -->
+            </div>
+            
+            <div class="message-input-area">
+                <div class="input-group">
+                    <input type="text" id="messageInput" class="message-input" placeholder="Type your message..." onkeypress="handleEnterKey(event)">
+                    <button onclick="sendMessage()" class="send-btn">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Photo Modal -->
+    <div id="photoModal" class="photo-modal" onclick="closePhotoModal()">
+        <img id="modalPhoto" src="" alt="Enlarged photo">
+    </div>
+
+    <script>
+        let currentDepartment = 'receiving';
+        let messages = [];
+
+        async function loadDepartmentMessages() {const department = document.getElementById('departmentSelect').value
+            currentDepartment = department
+
+            try {
+                const response = await fetch(`/api/departments/chat/${department}`);
+                if (response.ok) {const data = await response.json()
+                    messages = data.messages || []
+                    displayMessages()} else {console.error('Failed to load messages')
+                    messages = []
+                    displayMessages()}
+            } catch (error) {console.error('Error loading messages:', error)
+                messages = []
+                displayMessages()}
+        }
+
+        function displayMessages() {const messagesArea = document.getElementById('messagesArea')
+            
+            if (messages.length === 0) {
+                messagesArea.innerHTML = `
+                    <div style="text-align: center color: #666 padding: 40px">
+                        <h3>No messages yet</h3>
+                        <p>Damage reports and variances will appear here automatically</p>
+                    </div>
+                `
+                return}
+
+            messagesArea.innerHTML = messages.map(message => {const messageTime = new Date(message.timestamp).toLocaleString()
+                const priorityClass = message.priority === 'high' ? 'priority-high' : 'priority-normal'
+                
+                return `
+                    <div class="message ${message.type}">
+                        <div class="message-header">
+                            <div>
+                                <strong>${message.sender_name}</strong>
+                                <span class="message-priority ${priorityClass}">${message.priority.toUpperCase()}</span>
+                            </div>
+                            <span style="font-size: 12px; color: #666;">${messageTime}</span>
+                        </div>
+                        <div style="white-space: pre-line; line-height: 1.5;">${message.message}</div>
+                        ${message.photo_url ? `}
+                            <img src="${message.photo_url}" 
+                                 alt="Attached photo" 
+                                 class="message-photo" 
+                                 onclick="openPhotoModal('${message.photo_url}')">
+                        ` : ''}
+                        ${message.type === 'damage_report' || message.type === 'variance_report' ? `}
+                            <div class="message-actions">
+                                <button class="btn btn-success" onclick="acknowledgeReport('${message.id}')">✅ Acknowledged</button>
+                                <button class="btn btn-warning" onclick="requestMoreInfo('${message.id}')">❓ Need More Info</button>
+                                <button class="btn btn-primary" onclick="assignToSomeone('${message.id}')">👤 Assign</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            // Scroll to bottom
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+
+        async function sendMessage() {const messageInput = document.getElementById('messageInput')
+            const message = messageInput.value.trim()
+            
+            if (!message) return
+
+            try {
+                const formData = new FormData();
+                formData.append('department', currentDepartment);
+                formData.append('message', message);
+                formData.append('type', 'general');
+
+                const response = await fetch('/api/departments/chat/send', {
+                    method: 'POST',
+                    body: formData});
+
+                if (response.ok) {messageInput.value = ''
+                    loadDepartmentMessages() // Refresh messages} else {alert('Failed to send message')}
+            } catch (error) {console.error('Error sending message:', error)
+                alert('Network error. Please try again.')}
+        }
+
+        function handleEnterKey(event) {if (event.key === 'Enter') {
+                sendMessage()}
+        }
+
+        function openPhotoModal(photoUrl) {const modal = document.getElementById('photoModal')
+            const modalPhoto = document.getElementById('modalPhoto')
+            modalPhoto.src = photoUrl
+            modal.style.display = 'flex';}
+
+        function closePhotoModal() {const modal = document.getElementById('photoModal')
+            modal.style.display = 'none'}
+
+        function acknowledgeReport(messageId) {
+            sendMessage(`✅ Report acknowledged - ${messageId.substring(0, 8)}`);
+        }
+
+        function requestMoreInfo(messageId) {const info = prompt('What additional information do you need?')
+            if (info) {
+                sendMessage(`❓ Need more info for report ${messageId.substring(0, 8)}: ${info}`);
+            }
+        }
+
+        function assignToSomeone(messageId) {const assignee = prompt('Assign this report to whom?')
+            if (assignee) {
+                sendMessage(`👤 Report ${messageId.substring(0, 8)} assigned to: ${assignee}`);
+            }
+        }
+
+        // Auto-refresh messages every 30 seconds
+        setInterval(loadDepartmentMessages, 30000);
+
+        // Load messages on page load
+        document.addEventListener('DOMContentLoaded', function() {loadDepartmentMessages()});
+    </script>
+</body>
+</html>

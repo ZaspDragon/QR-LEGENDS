@@ -1,0 +1,1172 @@
+{
+  "timestamp": "2025-08-23 18:20:11",
+  "base_url": "http://localhost:5000",
+  "html_routes": [
+    {
+      "route": "/",
+      "status_code": 200,
+      "success": true,
+      "content_length": 57115,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/index",
+      "status_code": 200,
+      "success": true,
+      "content_length": 25058,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/main_dashboard",
+      "status_code": 200,
+      "success": true,
+      "content_length": 72180,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/company_login",
+      "status_code": 200,
+      "success": true,
+      "content_length": 57115,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/employee_login",
+      "status_code": 200,
+      "success": true,
+      "content_length": 31855,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/demo",
+      "status_code": 200,
+      "success": true,
+      "content_length": 21774,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/demo_access",
+      "status_code": 200,
+      "success": true,
+      "content_length": 15818,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/inbound_hub",
+      "status_code": 200,
+      "success": true,
+      "content_length": 6100,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/outbound_hub",
+      "status_code": 200,
+      "success": true,
+      "content_length": 8187,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/inventory_hub",
+      "status_code": 200,
+      "success": true,
+      "content_length": 17360,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/exceptions_hub",
+      "status_code": 200,
+      "success": true,
+      "content_length": 4072,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/tools_hub",
+      "status_code": 200,
+      "success": true,
+      "content_length": 5412,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/admin_hub",
+      "status_code": 200,
+      "success": true,
+      "content_length": 5145,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/reports_hub",
+      "status_code": 200,
+      "success": true,
+      "content_length": 4154,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/help_hub",
+      "status_code": 200,
+      "success": true,
+      "content_length": 4052,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/erp_hub",
+      "status_code": 200,
+      "success": true,
+      "content_length": 29167,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/receiving",
+      "status_code": 200,
+      "success": true,
+      "content_length": 107382,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/putaway",
+      "status_code": 200,
+      "success": true,
+      "content_length": 80025,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/quality_check",
+      "status_code": 200,
+      "success": true,
+      "content_length": 28807,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/order_picking",
+      "status_code": 200,
+      "success": true,
+      "content_length": 113054,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/packing",
+      "status_code": 200,
+      "success": true,
+      "content_length": 67329,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/shipping",
+      "status_code": 200,
+      "success": true,
+      "content_length": 25832,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/returns",
+      "status_code": 200,
+      "success": true,
+      "content_length": 38536,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/transfers",
+      "status_code": 200,
+      "success": true,
+      "content_length": 83389,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/cross_docking",
+      "status_code": 200,
+      "success": true,
+      "content_length": 21578,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/container_management",
+      "status_code": 200,
+      "success": true,
+      "content_length": 22276,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/delivery_management",
+      "status_code": 200,
+      "success": true,
+      "content_length": 16385,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/yard_management",
+      "status_code": 200,
+      "success": true,
+      "content_length": 34708,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/company_inventory",
+      "status_code": 200,
+      "success": true,
+      "content_length": 89788,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/inventory",
+      "status_code": 200,
+      "success": true,
+      "content_length": 188694,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/inventory_analysis",
+      "status_code": 200,
+      "success": true,
+      "content_length": 13469,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/inventory_valuation",
+      "status_code": 200,
+      "success": true,
+      "content_length": 27105,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/qr_generator",
+      "status_code": 200,
+      "success": true,
+      "content_length": 13592,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/slot_qr_generator",
+      "status_code": 200,
+      "success": true,
+      "content_length": 24027,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/warehouse_video_scanner",
+      "status_code": 200,
+      "success": true,
+      "content_length": 37464,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/ai_item_finder",
+      "status_code": 200,
+      "success": true,
+      "content_length": 20392,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/phone_measurement",
+      "status_code": 200,
+      "success": true,
+      "content_length": 24815,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/printer_wms_setup",
+      "status_code": 200,
+      "success": true,
+      "content_length": 89706,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/voice_picking",
+      "status_code": 200,
+      "success": true,
+      "content_length": 29601,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/mobile_scanner",
+      "status_code": 200,
+      "success": true,
+      "content_length": 6632,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/label_printing",
+      "status_code": 200,
+      "success": true,
+      "content_length": 23201,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/rf_handheld",
+      "status_code": 200,
+      "success": true,
+      "content_length": 32741,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/camera_test",
+      "status_code": 200,
+      "success": true,
+      "content_length": 14737,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/admin_dashboard",
+      "status_code": 200,
+      "success": true,
+      "content_length": 122317,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/user_management",
+      "status_code": 200,
+      "success": true,
+      "content_length": 16049,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/company_employee_management",
+      "status_code": 200,
+      "success": true,
+      "content_length": 21040,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/backup_management",
+      "status_code": 200,
+      "success": true,
+      "content_length": 21576,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/super_admin",
+      "status_code": 200,
+      "success": true,
+      "content_length": 39908,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/system_config",
+      "status_code": 200,
+      "success": true,
+      "content_length": 35598,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/user_roles",
+      "status_code": 200,
+      "success": true,
+      "content_length": 9409,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/data_maintenance",
+      "status_code": 200,
+      "success": true,
+      "content_length": 5562,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/license_management",
+      "status_code": 200,
+      "success": true,
+      "content_length": 5390,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/erp_dashboard",
+      "status_code": 200,
+      "success": true,
+      "content_length": 38491,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/erp_configuration",
+      "status_code": 200,
+      "success": true,
+      "content_length": 30334,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/erp_customers",
+      "status_code": 200,
+      "success": true,
+      "content_length": 35939,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/erp_suppliers",
+      "status_code": 200,
+      "success": true,
+      "content_length": 34746,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/erp_items",
+      "status_code": 200,
+      "success": true,
+      "content_length": 41560,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/erp_supplier_performance",
+      "status_code": 200,
+      "success": true,
+      "content_length": 7851,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/erp_wms_sync",
+      "status_code": 200,
+      "success": true,
+      "content_length": 14961,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/purchase_orders",
+      "status_code": 200,
+      "success": true,
+      "content_length": 32914,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/purchase_analytics",
+      "status_code": 200,
+      "success": true,
+      "content_length": 22008,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/salespad_dashboard",
+      "status_code": 200,
+      "success": true,
+      "content_length": 34944,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/salespad_configuration",
+      "status_code": 200,
+      "success": true,
+      "content_length": 36894,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/quotes_pricing",
+      "status_code": 200,
+      "success": true,
+      "content_length": 26610,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/order_management",
+      "status_code": 200,
+      "success": true,
+      "content_length": 17906,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/customer_portal",
+      "status_code": 200,
+      "success": true,
+      "content_length": 22010,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/payment_processing",
+      "status_code": 200,
+      "success": true,
+      "content_length": 29361,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/analytics_dashboard",
+      "status_code": 200,
+      "success": true,
+      "content_length": 22921,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/financial_reports",
+      "status_code": 200,
+      "success": true,
+      "content_length": 15891,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/operational_kpis",
+      "status_code": 200,
+      "success": true,
+      "content_length": 7356,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/exception_reports",
+      "status_code": 200,
+      "success": true,
+      "content_length": 18679,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/labor_management",
+      "status_code": 200,
+      "success": true,
+      "content_length": 19476,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/cost_tracking",
+      "status_code": 200,
+      "success": true,
+      "content_length": 20650,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/integration_management",
+      "status_code": 200,
+      "success": true,
+      "content_length": 33284,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/company_integrations",
+      "status_code": 200,
+      "success": true,
+      "content_length": 41939,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/website_integration_setup",
+      "status_code": 200,
+      "success": true,
+      "content_length": 42309,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/customer_support",
+      "status_code": 200,
+      "success": true,
+      "content_length": 35839,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/it_support_request",
+      "status_code": 200,
+      "success": true,
+      "content_length": 24260,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/problem_solving",
+      "status_code": 200,
+      "success": true,
+      "content_length": 74802,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/company_training",
+      "status_code": 200,
+      "success": true,
+      "content_length": 46659,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/onboarding",
+      "status_code": 200,
+      "success": true,
+      "content_length": 30728,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/billing_dashboard",
+      "status_code": 200,
+      "success": true,
+      "content_length": 92508,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/billing_notification_panel",
+      "status_code": 200,
+      "success": true,
+      "content_length": 6930,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/subscription_suspended",
+      "status_code": 200,
+      "success": true,
+      "content_length": 5432,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/contact",
+      "status_code": 200,
+      "success": true,
+      "content_length": 23860,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/profile_page",
+      "status_code": 200,
+      "success": true,
+      "content_length": 25814,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/notification_center",
+      "status_code": 200,
+      "success": true,
+      "content_length": 10847,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/messaging_system",
+      "status_code": 200,
+      "success": true,
+      "content_length": 29360,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/department_group_chat",
+      "status_code": 200,
+      "success": true,
+      "content_length": 12209,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/employee_messaging",
+      "status_code": 200,
+      "success": true,
+      "content_length": 30150,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/delivery_qr_generator",
+      "status_code": 200,
+      "success": true,
+      "content_length": 17671,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/dropoff_location_generator",
+      "status_code": 200,
+      "success": true,
+      "content_length": 13159,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/driver_dropoff",
+      "status_code": 200,
+      "success": true,
+      "content_length": 44337,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/admin_freight",
+      "status_code": 200,
+      "success": true,
+      "content_length": 62159,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/admin_tracking",
+      "status_code": 200,
+      "success": true,
+      "content_length": 18010,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/two_factor_setup",
+      "status_code": 200,
+      "success": true,
+      "content_length": 7592,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/reset_password",
+      "status_code": 200,
+      "success": true,
+      "content_length": 7163,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/access_denied",
+      "status_code": 200,
+      "success": true,
+      "content_length": 2375,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/app_installer",
+      "status_code": 200,
+      "success": true,
+      "content_length": 17354,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    },
+    {
+      "route": "/code_download",
+      "status_code": 200,
+      "success": true,
+      "content_length": 9231,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/email_test",
+      "status_code": 200,
+      "success": true,
+      "content_length": 5348,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/stripe_test",
+      "status_code": 200,
+      "success": true,
+      "content_length": 23396,
+      "content_type": "text/html; charset=utf-8",
+      "error": null,
+      "warning": "Page contains error text"
+    },
+    {
+      "route": "/task_interleaving",
+      "status_code": 200,
+      "success": true,
+      "content_length": 3911,
+      "content_type": "text/html; charset=utf-8",
+      "error": null
+    }
+  ],
+  "api_routes": [
+    {
+      "route": "/api/analytics",
+      "status_code": 401,
+      "success": false,
+      "content_type": "application/json",
+      "error": null
+    },
+    {
+      "route": "/api/scan-logs",
+      "status_code": 401,
+      "success": false,
+      "content_type": "application/json",
+      "error": null
+    },
+    {
+      "route": "/api/inventory/items",
+      "status_code": 401,
+      "success": false,
+      "content_type": "application/json",
+      "error": null
+    },
+    {
+      "route": "/api/labels",
+      "status_code": 401,
+      "success": false,
+      "content_type": "application/json",
+      "error": null
+    },
+    {
+      "route": "/api/auth/profile",
+      "status_code": 401,
+      "success": false,
+      "content_type": "application/json",
+      "error": null
+    },
+    {
+      "route": "/api/system-health",
+      "status_code": 200,
+      "success": true,
+      "content_type": "application/json",
+      "error": null,
+      "json_valid": true,
+      "data_keys": [
+        "cpu_usage",
+        "memory_usage",
+        "status",
+        "success",
+        "uptime"
+      ]
+    },
+    {
+      "route": "/api/route-status",
+      "status_code": 200,
+      "success": true,
+      "content_type": "application/json",
+      "error": null,
+      "json_valid": true,
+      "data_keys": [
+        "active_routes",
+        "failed_routes",
+        "success",
+        "total_routes"
+      ]
+    }
+  ],
+  "static_files": [
+    "subscription_suspended.html",
+    "admin_tracking.html",
+    "notification_center.html",
+    "reset_password.html",
+    "billing_notification_panel.html",
+    "super_admin.html",
+    "two_factor_setup.html",
+    "analytics_dashboard.html",
+    "access_denied.html",
+    "contact.html",
+    "company_employee_management.html",
+    "app_installer.html",
+    "code_download.html",
+    "company_inventory.html",
+    "printer_wms_setup.html",
+    "backup_management.html",
+    "it_support_request.html",
+    "stripe_test.html",
+    "phone_measurement.html",
+    "delivery_management.html",
+    "packing.html",
+    "dropoff_location_generator.html",
+    "exceptions_hub.html",
+    "help_hub.html",
+    "website_integration_setup.html",
+    "ai_item_finder.html",
+    "voice_picking.html",
+    "rf_handheld.html",
+    "operational_kpis.html",
+    "inventory_analysis.html",
+    "reports_hub.html",
+    "slotting.html",
+    "settings_management.html",
+    "supplier_performance.html",
+    "cost_tracking.html",
+    "accounts_receivable.html",
+    "accounts_payable.html",
+    "erp_configuration.html",
+    "salespad_configuration.html",
+    "purchase_analytics.html",
+    "inventory_valuation.html",
+    "wms_sync.html",
+    "erp_supplier_performance.html",
+    "financial_reports.html",
+    "system_config.html",
+    "mobile_scanner.html",
+    "safety_protocols.html",
+    "wms_training.html",
+    "order_management.html",
+    "quotes_pricing.html",
+    "customer_portal.html",
+    "payment_processing.html",
+    "label_printing.html",
+    "warehouse_setup.html",
+    "license_management.html",
+    "erp_hub.html",
+    "erp_integration.html",
+    "erp_ultra_dashboard.html",
+    "salespad_new_quote.html",
+    "salespad_new_order.html",
+    "salespad_invoice_generator.html",
+    "billing_dashboard.html",
+    "technical_support.html",
+    "exception_reporting.html",
+    "task_interleaving.html",
+    "salespad_backorders.html",
+    "stock_alerts.html",
+    "custom_reports.html",
+    "performance_targets.html",
+    "issue_analyzer.html",
+    "loading.html",
+    "driver_checkin.html",
+    "ai_settings.html",
+    "integration_management.html",
+    "company_integrations.html",
+    "labor_management.html",
+    "purchase_orders.html",
+    "driver_dropoff.html",
+    "putaway.html",
+    "profile_page.html",
+    "cross_docking.html",
+    "shipping.html",
+    "tools_hub.html",
+    "admin_freight.html",
+    "equipment_safety.html",
+    "company_training.html",
+    "sop_001.html",
+    "sop_002.html",
+    "sop_003.html",
+    "sop_101.html",
+    "sop_102.html",
+    "sop_103.html",
+    "sop_201.html",
+    "sop_202.html",
+    "sop_203.html",
+    "sop_301.html",
+    "sop_302.html",
+    "sop_303.html",
+    "sop_library.html",
+    "cycle_counting.html",
+    "replenishment.html",
+    "admin_hub.html",
+    "onboarding.html",
+    "container_management.html",
+    "user_management.html",
+    "problem_solving.html",
+    "returns.html",
+    "transfers.html",
+    "warehouse_video_scanner.html",
+    "receiving_tracking.html",
+    "yard_management.html",
+    "user_roles.html",
+    "ai_warehouse_assistant.html",
+    "smart_dock_scheduling.html",
+    "inbound_hub.html",
+    "company_chat.html",
+    "private_messaging.html",
+    "erp_inventory_wms.html",
+    "erp_analytics.html",
+    "erp_settings.html",
+    "ai_route_optimization.html",
+    "erp_dashboard.html",
+    "intro_tour.html",
+    "quality_check.html",
+    "inventory.html",
+    "outbound_hub.html",
+    "customer_support.html",
+    "ops_console.html",
+    "department_group_chat.html",
+    "messaging_system.html",
+    "employee_messaging.html",
+    "erp_sales.html",
+    "erp_purchasing.html",
+    "erp_production.html",
+    "erp_finance.html",
+    "erp_crm.html",
+    "erp_hr.html",
+    "react_widget_dashboard.html",
+    "company_login.html",
+    "employee_dashboard.html",
+    "competitive_advantages.html",
+    "widget_customization.html",
+    "widgets_catalog.html",
+    "competitive_advantage_dashboard.html",
+    "sla_timers.html",
+    "regional_manager_mobile.html",
+    "company_dashboard.html",
+    "erp_customers.html",
+    "erp_suppliers.html",
+    "erp_items.html",
+    "dock_management.html",
+    "slotting_optimization.html",
+    "workflow_automation.html",
+    "board_reporting.html",
+    "ceo_dashboard.html",
+    "warehouse_visualization.html",
+    "warehouse_chat.html",
+    "contract_management.html",
+    "iot_dashboard.html",
+    "sustainability_dashboard.html",
+    "500.html",
+    "404.html",
+    "admin_dashboard.html",
+    "index.html",
+    "employee_login.html",
+    "order_picking.html",
+    "data_maintenance.html",
+    "camera_test.html",
+    "inventory_hub.html",
+    "driver_management_hub.html",
+    "home.html",
+    "email_test.html",
+    "erp_receiving_transactions.html",
+    "warehouse_3d_view.html",
+    "warehouse_3d_mapping.html",
+    "demand_data_sources.html",
+    "ai_demand_prediction.html",
+    "smart_dock_assignment.html",
+    "branch_security_cameras.html",
+    "branch_manager_widget.html",
+    "exception_reports.html",
+    "erp_finance_hub.html",
+    "slot_qr_generator.html",
+    "salespad_dashboard.html",
+    "qr_generator.html",
+    "delivery_qr_generator.html",
+    "receiving.html",
+    "demo.html",
+    "demo_access.html",
+    "erp_wms_sync.html",
+    "professional_dashboard.html",
+    "main_dashboard.html"
+  ],
+  "summary": {
+    "total_routes": 110,
+    "successful_routes": 105,
+    "success_rate": 95.45454545454545,
+    "html_success": 103,
+    "api_success": 2
+  }
+}

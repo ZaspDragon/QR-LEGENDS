@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - QR Legends</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0b1220 0%, #1e293b 100%);
+            min-height: 100vh;
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 48px;
+            margin: 0 auto;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.5);
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #2563eb, #3b82f6);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .label {
+            color: #94a3b8;
+            font-weight: 600;
+        }
+        .value {
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold mb-2">👤 User Profile</h1>
+            <p class="text-gray-400">View and manage your account information</p>
+        </div>
+
+        <!-- Profile Avatar -->
+        <div class="card text-center">
+            <div class="profile-avatar" id="profileAvatar">U</div>
+            <h2 class="text-3xl font-bold mt-6 mb-2" id="userName">Loading...</h2>
+            <p class="text-gray-400 text-lg" id="userRole">Role</p>
+        </div>
+
+        <!-- Account Information -->
+        <div class="card">
+            <h3 class="text-2xl font-bold mb-4">📋 Account Information</h3>
+            <div>
+                <div class="info-row">
+                    <span class="label">Employee ID</span>
+                    <span class="value" id="employeeId">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Email</span>
+                    <span class="value" id="userEmail">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Username</span>
+                    <span class="value" id="userUsername">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Role</span>
+                    <span class="value" id="roleDisplay">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Department</span>
+                    <span class="value" id="userDepartment">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Access Tier</span>
+                    <span class="value" id="userTier">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-4">
+            <button onclick="location.href='/main_dashboard'" class="btn-primary flex-1">
+                ← Back to Dashboard
+            </button>
+            <button onclick="changePassword()" class="btn-primary flex-1" style="background: linear-gradient(45deg, #64748b, #475569);">
+                🔒 Change Password
+            </button>
+        </div>
+    </div>
+
+    <script>
+        async function loadUserProfile() {
+            try {
+                const response = await fetch('/api/user/info');
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Update avatar
+                    const avatar = document.getElementById('profileAvatar');
+                    if (avatar && data.first_name) {
+                        avatar.textContent = data.first_name.charAt(0).toUpperCase();
+                    }
+                    
+                    // Update name and role
+                    const fullName = `${data.first_name || ''} ${data.last_name || ''}`.trim();
+                    document.getElementById('userName').textContent = fullName || data.username || 'User';
+                    document.getElementById('userRole').textContent = (data.role || 'User').toUpperCase();
+                    
+                    // Update information fields
+                    document.getElementById('employeeId').textContent = data.employee_id || '-';
+                    document.getElementById('userEmail').textContent = data.email || '-';
+                    document.getElementById('userUsername').textContent = data.username || '-';
+                    document.getElementById('roleDisplay').textContent = data.role || '-';
+                    document.getElementById('userDepartment').textContent = data.department || '-';
+                    document.getElementById('userTier').textContent = data.tier ? `Tier ${data.tier}` : '-';
+                } else {
+                    console.error('Failed to load user profile');
+                    alert('Failed to load profile information');
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                alert('Error loading profile');
+            }
+        }
+
+        function changePassword() {
+            alert('Password change functionality coming soon!');
+        }
+
+        // Load profile on page load
+        document.addEventListener('DOMContentLoaded', loadUserProfile);
+    </script>
+</body>
+</html>

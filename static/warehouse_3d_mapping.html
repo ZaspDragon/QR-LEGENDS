@@ -1,0 +1,686 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Warehouse Mapping - QR LEGENDS</title>
+    <style>
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            margin: 0
+            padding: 20px
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh}
+        
+        .container {max-width: 1400px
+            margin: 0 auto
+            background: white
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);}
+        
+        .header {text-align: center
+            margin-bottom: 30px
+            color: #333}
+        
+        .controls-panel {background: #f8f9fa
+            border-radius: 10px
+            padding: 20px
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px}
+        
+        .control-section {background: white
+            padding: 15px
+            border-radius: 8px
+            border: 1px solid #ddd}
+        
+        .control-section h3 {margin: 0 0 15px 0
+            color: #333
+            font-size: 16px}
+        
+        .form-group {margin-bottom: 15px}
+        
+        .form-group label {display: block
+            margin-bottom: 5px
+            font-weight: bold
+            color: #555}
+        
+        .form-group input, .form-group select {width: 100%
+            padding: 8px
+            border: 1px solid #ddd
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box}
+        
+        .btn {padding: 10px 15px
+            border: none
+            border-radius: 5px
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            margin: 5px;
+            transition: all 0.3s}
+        
+        .btn-primary {background: #007bff color: white}
+        .btn-success {background: #28a745 color: white}
+        .btn-warning {background: #ffc107 color: black}
+        .btn-danger {background: #dc3545 color: white}
+        .btn-info {background: #17a2b8 color: white}
+        .btn:hover {transform: translateY(-2px) box-shadow: 0 5px 15px rgba(0,0,0,0.2)}
+        
+        .warehouse-canvas {border: 2px solid #333
+            background: #f9f9f9
+            border-radius: 8px
+            position: relative;
+            width: 100%;
+            height: 600px;
+            overflow: hidden;
+            margin: 20px 0}
+        
+        .rack-block {position: absolute
+            border: 2px solid #333
+            background: rgba(108, 117, 125, 0.3)
+            border-radius: 4px;
+            cursor: move;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px;
+            box-sizing: border-box;
+            user-select: none}
+        
+        .rack-block:hover {border-color: #007bff
+            background: rgba(0, 123, 255, 0.2)}
+        
+        .rack-block.selected {border-color: #dc3545
+            background: rgba(220, 53, 69, 0.2)}
+        
+        .rack-info {font-size: 10px
+            font-weight: bold
+            text-align: center
+            color: #333}
+        
+        .rack-positions {font-size: 8px
+            color: #666}
+        
+        .legend {display: flex
+            flex-wrap: wrap
+            gap: 15px
+            margin: 20px 0;
+            justify-content: center}
+        
+        .legend-item {display: flex
+            align-items: center
+            gap: 8px}
+        
+        .legend-color {width: 20px
+            height: 20px
+            border-radius: 4px
+            border: 1px solid #333}
+        
+        .rack-details {background: #e9ecef
+            border-radius: 8px
+            padding: 15px
+            margin: 20px 0;
+            display: none}
+        
+        .rack-details.active {display: block}
+        
+        .position-grid {display: grid
+            gap: 2px
+            margin: 10px 0}
+        
+        .position-cell {width: 20px
+            height: 15px
+            border: 1px solid #333
+            background: #fff;
+            font-size: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer}
+        
+        .position-cell: hover {background: #007bff
+            color: white}
+        
+        .toolbar {background: #343a40
+            color: white
+            padding: 15px
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap}
+        
+        .toolbar .btn {margin: 2px}
+        
+        .info-panel {background: #d1ecf1
+            border: 1px solid #bee5eb
+            border-radius: 8px
+            padding: 15px;
+            margin: 20px 0}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏗️ 3D Warehouse Rack Designer</h1>
+            <p>Design and configure warehouse rack layouts with precise positioning</p>
+        </div>
+
+        <div class="toolbar">
+            <div>
+                <button class="btn btn-success" onclick="addRackBlock()">➕ Add Rack Block</button>
+                <button class="btn btn-danger" onclick="deleteSelected()">🗑️ Delete Selected</button>
+                <button class="btn btn-info" onclick="clearWarehouse()">🧹 Clear All</button>
+            </div>
+            <div>
+                <button class="btn btn-primary" onclick="saveLayout()">💾 Save Layout</button>
+                <button class="btn btn-warning" onclick="loadLayout()">📁 Load Layout</button>
+                <button class="btn btn-info" onclick="exportLayout()">📄 Export</button>
+            </div>
+        </div>
+
+        <div class="controls-panel">
+            <div class="control-section">
+                <h3>🏗️ Rack Configuration</h3>
+                <div class="form-group">
+                    <label>Rack Name/ID</label>
+                    <input type="text" id="rackName" placeholder="e.g., RACK-A01" value="">
+                </div>
+                <div class="form-group">
+                    <label>Start Position #</label>
+                    <input type="number" id="startPosition" min="1" max="99" value="1">
+                </div>
+                <div class="form-group">
+                    <label>End Position #</label>
+                    <input type="number" id="endPosition" min="1" max="99" value="10">
+                </div>
+                <div class="form-group">
+                    <label>Rack Height (Levels)</label>
+                    <input type="number" id="rackHeight" min="1" max="15" value="4">
+                </div>
+                <div class="form-group">
+                    <label>Rack Width (pixels)</label>
+                    <input type="number" id="rackWidth" min="50" max="500" value="200">
+                </div>
+                <div class="form-group">
+                    <label>Rack Depth (pixels)</label>
+                    <input type="number" id="rackDepth" min="30" max="200" value="80">
+                </div>
+            </div>
+
+            <div class="control-section">
+                <h3>📍 Positioning</h3>
+                <div class="form-group">
+                    <label>X Position</label>
+                    <input type="number" id="xPosition" min="0" max="1200" value="50">
+                </div>
+                <div class="form-group">
+                    <label>Y Position</label>
+                    <input type="number" id="yPosition" min="0" max="600" value="50">
+                </div>
+                <div class="form-group">
+                    <label>Rack Type</label>
+                    <select id="rackType">
+                        <option value="standard">Standard Rack</option>
+                        <option value="drive-in">Drive-In Rack</option>
+                        <option value="cantilever">Cantilever Rack</option>
+                        <option value="pushback">Push-Back Rack</option>
+                        <option value="flow">Flow Rack</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Load Capacity (lbs per level)</label>
+                    <input type="number" id="loadCapacity" min="100" max="5000" value="2000">
+                </div>
+            </div>
+
+            <div class="control-section">
+                <h3>🎨 Visual Settings</h3>
+                <div class="form-group">
+                    <label>Rack Color</label>
+                    <select id="rackColor">
+                        <option value="rgba(108, 117, 125, 0.3)">Gray (Standard)</option>
+                        <option value="rgba(40, 167, 69, 0.3)">Green (Available)</option>
+                        <option value="rgba(255, 193, 7, 0.3)">Yellow (Partial)</option>
+                        <option value="rgba(220, 53, 69, 0.3)">Red (Full)</option>
+                        <option value="rgba(23, 162, 184, 0.3)">Blue (Reserved)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Show Position Numbers</label>
+                    <select id="showPositions">
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Show Height Levels</label>
+                    <select id="showLevels">
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: rgba(108, 117, 125, 0.3);"></div>
+                <span>Standard Rack</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: rgba(40, 167, 69, 0.3);"></div>
+                <span>Available</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: rgba(255, 193, 7, 0.3);"></div>
+                <span>Partially Full</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: rgba(220, 53, 69, 0.3);"></div>
+                <span>Full</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: rgba(23, 162, 184, 0.3);"></div>
+                <span>Reserved</span>
+            </div>
+        </div>
+
+        <div class="warehouse-canvas" id="warehouseCanvas">
+            <div style="position: absolute; top: 10px; left: 20px; font-weight: bold; color: #666;">
+                Warehouse Floor Plan - Click and drag to position racks
+            </div>
+        </div>
+
+        <div class="rack-details" id="rackDetails">
+            <h3>📦 Selected Rack Details</h3>
+            <div id="rackDetailsContent"></div>
+        </div>
+
+        <div class="info-panel">
+            <h4>📋 Instructions:</h4>
+            <ul>
+                <li><strong>Add Rack:</strong> Configure settings above and click "Add Rack Block"</li>
+                <li><strong>Move Rack:</strong> Click and drag any rack to reposition</li>
+                <li><strong>Select Rack:</strong> Click a rack to view/edit details</li>
+                <li><strong>Delete Rack:</strong> Select a rack and click "Delete Selected"</li>
+                <li><strong>Position Range:</strong> Start/End positions define storage slots (e.g., 1-10 = 10 storage positions)</li>
+                <li><strong>Height Levels:</strong> Number of vertical storage levels in the rack</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let rackBlocks = [];
+        let selectedRack = null;
+        let dragData = null;
+        let rackCounter = 1;
+
+        // Initialize canvas event listeners
+        const canvas = document.getElementById('warehouseCanvas');
+
+        canvas.addEventListener('mousedown', handleMouseDown);
+        canvas.addEventListener('mousemove', handleMouseMove);
+        canvas.addEventListener('mouseup', handleMouseUp);
+
+        function addRackBlock() {
+            const rackName = document.getElementById('rackName').value || `RACK-${String(rackCounter).padStart(3, '0')}`;
+            const startPos = parseInt(document.getElementById('startPosition').value);
+            const endPos = parseInt(document.getElementById('endPosition').value);
+            const height = parseInt(document.getElementById('rackHeight').value);
+            const width = parseInt(document.getElementById('rackWidth').value);
+            const depth = parseInt(document.getElementById('rackDepth').value);
+            const xPos = parseInt(document.getElementById('xPosition').value);
+            const yPos = parseInt(document.getElementById('yPosition').value);
+            const rackType = document.getElementById('rackType').value;
+            const loadCapacity = parseInt(document.getElementById('loadCapacity').value);
+            const rackColor = document.getElementById('rackColor').value;
+            const showPositions = document.getElementById('showPositions').value === 'true';
+            const showLevels = document.getElementById('showLevels').value === 'true';
+
+            if (startPos > endPos) {alert('Start position must be less than or equal to end position')
+                return}
+
+            const rack = {
+                id: `rack_${Date.now()}_${rackCounter}`,
+                name: rackName,
+                startPosition: startPos,
+                endPosition: endPos,
+                height: height,
+                width: width,
+                depth: depth,
+                x: xPos,
+                y: yPos,
+                type: rackType,
+                loadCapacity: loadCapacity,
+                color: rackColor,
+                showPositions: showPositions,
+                showLevels: showLevels,
+                positions: generatePositions(startPos, endPos, height)
+            };
+
+            rackBlocks.push(rack);
+            renderRack(rack);
+            rackCounter++;
+
+            // Clear form
+            document.getElementById('rackName').value = '';
+            console.log(`Added rack: ${rack.name} with ${endPos - startPos + 1} positions and ${height} levels`);
+        }
+
+        function generatePositions(start, end, levels) {const positions = []
+            for (let pos = start pos <= end pos++) {
+                for (let level = 1; level <= levels; level++) {
+                    positions.push({
+                        position: pos,
+                        level: level,
+                        occupied: false,
+                        item: null,
+                        qrCode: `${pos.toString().padStart(2, '0')}-${level.toString().padStart(2, '0')}`
+                    });
+                }
+            }
+            return positions;
+        }
+
+        function renderRack(rack) {const rackElement = document.createElement('div')
+            rackElement.className = 'rack-block'
+            rackElement.id = rack.id
+            rackElement.style.left = rack.x + 'px';
+            rackElement.style.top = rack.y + 'px';
+            rackElement.style.width = rack.width + 'px';
+            rackElement.style.height = rack.depth + 'px';
+            rackElement.style.background = rack.color;
+
+            let content = `<div class="rack-info">${rack.name}</div>`;
+            
+            if (rack.showPositions) {
+                content += `<div class="rack-positions">Pos: ${rack.startPosition}-${rack.endPosition}</div>`;
+            }
+            
+            if (rack.showLevels) {
+                content += `<div class="rack-positions">Levels: ${rack.height}</div>`;
+            }
+
+            content += `<div class="rack-positions">${rack.type}</div>`;
+
+            rackElement.innerHTML = content;
+
+            rackElement.addEventListener('click', (e) => {e.stopPropagation()
+                selectRack(rack)});
+
+            canvas.appendChild(rackElement);
+        }
+
+        function selectRack(rack) {// Remove previous selection
+            document.querySelectorAll('.rack-block').forEach(el => {
+                el.classList.remove('selected')});
+
+            // Select new rack
+            const rackElement = document.getElementById(rack.id);
+            rackElement.classList.add('selected');
+            selectedRack = rack;
+
+            showRackDetails(rack);
+        }
+
+        function showRackDetails(rack) {const detailsPanel = document.getElementById('rackDetails')
+            const contentDiv = document.getElementById('rackDetailsContent')
+
+            const positionCount = rack.endPosition - rack.startPosition + 1
+            const totalSlots = positionCount * rack.height;
+
+            let content = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div>
+                        <strong>Rack Name:</strong> ${rack.name}<br>
+                        <strong>Type:</strong> ${rack.type}<br>
+                        <strong>Positions:</strong> ${rack.startPosition} to ${rack.endPosition} (${positionCount} positions)<br>
+                        <strong>Height:</strong> ${rack.height} levels<br>
+                        <strong>Total Slots:</strong> ${totalSlots}<br>
+                        <strong>Load Capacity:</strong> ${rack.loadCapacity} lbs/level
+                    </div>
+                    <div>
+                        <strong>Dimensions:</strong> ${rack.width}px × ${rack.depth}px<br>
+                        <strong>Position:</strong> X: ${rack.x}, Y: ${rack.y}<br>
+                        <strong>Status:</strong> Available<br>
+                        <button class="btn btn-warning" onclick="editRack('${rack.id}')">✏️ Edit Rack</button>
+                        <button class="btn btn-primary" onclick="generateRackQRs('${rack.id}')">📱 Generate QR Codes</button>
+                    </div>
+                </div>
+            `;
+
+            // Add position grid
+            content += `<h4>Position Layout:</h4>`;
+            content += `<div class="position-grid" style="grid-template-columns: repeat(${positionCount}, 1fr);">`;
+
+            for (let level = rack.height; level >= 1; level--) {for (let pos = rack.startPosition pos <= rack.endPosition pos++) {
+                    const positionData = rack.positions.find(p => p.position === pos && p.level === level)
+                    const occupied = positionData && positionData.occupied;
+                    content += `
+                        <div class="position-cell" 
+                             style="background: ${occupied ? '#dc3545' : '#28a745'}" 
+                             title="Position ${pos}, Level ${level}${occupied ? ' - Occupied' : ' - Available'}"
+                             onclick="togglePosition('${rack.id}', ${pos}, ${level})">
+                            ${pos}-${level}
+                        </div>
+                    `;
+                }
+            }
+            content += '</div>';
+
+            contentDiv.innerHTML = content;
+            detailsPanel.classList.add('active');
+        }
+
+        function editRack(rackId) {const rack = rackBlocks.find(r => r.id === rackId)
+            if (!rack) return
+
+            // Populate form with current values
+            document.getElementById('rackName').value = rack.name
+            document.getElementById('startPosition').value = rack.startPosition;
+            document.getElementById('endPosition').value = rack.endPosition;
+            document.getElementById('rackHeight').value = rack.height;
+            document.getElementById('rackWidth').value = rack.width;
+            document.getElementById('rackDepth').value = rack.depth;
+            document.getElementById('xPosition').value = rack.x;
+            document.getElementById('yPosition').value = rack.y;
+            document.getElementById('rackType').value = rack.type;
+            document.getElementById('loadCapacity').value = rack.loadCapacity;
+            document.getElementById('rackColor').value = rack.color;
+            document.getElementById('showPositions').value = rack.showPositions.toString();
+            document.getElementById('showLevels').value = rack.showLevels.toString();
+
+            // Remove the rack so it can be re-added with new settings
+            deleteRack(rackId);}
+
+        function togglePosition(rackId, position, level) {const rack = rackBlocks.find(r => r.id === rackId)
+            if (!rack) return
+
+            const positionData = rack.positions.find(p => p.position === position && p.level === level)
+            if (positionData) {
+                positionData.occupied = !positionData.occupied;
+                showRackDetails(rack);}
+        }
+
+        function generateRackQRs(rackId) {const rack = rackBlocks.find(r => r.id === rackId)
+            if (!rack) return
+
+            const positionCount = rack.endPosition - rack.startPosition + 1
+            const totalQRs = positionCount * rack.height;
+
+            if (confirm(`Generate ${totalQRs} QR codes for rack ${rack.name}?\n\nThis will create QR codes for positions ${rack.startPosition}-${rack.endPosition} across ${rack.height} levels.`)) {
+                alert(`🔗 Generated ${totalQRs} QR codes for ${rack.name}!\n\nQR codes would be available for download with format:\n${rack.name}-{position}-{level}`);
+                console.log(`Generated QR codes for rack ${rack.name}:`, rack.positions.map(p => `${rack.name}-${p.qrCode}`));
+            }
+        }
+
+        function deleteSelected() {
+            if (selectedRack) {
+                if (confirm(`Delete rack ${selectedRack.name}?`)) {deleteRack(selectedRack.id)}
+            } else {alert('Please select a rack first')}
+        }
+
+        function deleteRack(rackId) {const element = document.getElementById(rackId)
+            if (element) {
+                element.remove()}
+            
+            rackBlocks = rackBlocks.filter(r => r.id !== rackId);
+            
+            if (selectedRack && selectedRack.id === rackId) {selectedRack = null
+                document.getElementById('rackDetails').classList.remove('active')}
+        }
+
+        function clearWarehouse() {if (confirm('Clear all racks from the warehouse?')) {
+                canvas.innerHTML = '<div style="position: absolute top: 10px left: 20px font-weight: bold; color: #666;">Warehouse Floor Plan - Click and drag to position racks</div>';
+                rackBlocks = [];
+                selectedRack = null;
+                document.getElementById('rackDetails').classList.remove('active')}
+        }
+
+        function saveLayout() {
+            const layout = {
+                name: prompt('Enter layout name:') || 'Warehouse Layout',
+                created: new Date().toISOString(),
+                racks: rackBlocks
+            };
+
+            const dataStr = JSON.stringify(layout, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${layout.name.replace(/[^a-z0-9]/gi, '_')}_layout.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            
+            alert('Layout saved successfully!');
+        }
+
+        function loadLayout() {const input = document.createElement('input')
+            input.type = 'file'
+            input.accept = '.json'
+            
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const layout = JSON.parse(e.target.result);
+                        
+                        clearWarehouse();
+                        
+                        layout.racks.forEach(rack => {
+                            rackBlocks.push(rack);
+                            renderRack(rack);});
+                        
+                        alert(`Loaded layout: ${layout.name}\nRacks loaded: ${layout.racks.length}`);
+                    } catch (error) {alert('Error loading layout file: ' + error.message)}
+                };
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        function exportLayout() {if (rackBlocks.length === 0) {
+                alert('No racks to export')
+                return}
+
+            const summary = {
+                totalRacks: rackBlocks.length,
+                totalPositions: rackBlocks.reduce((sum, rack) => sum + (rack.endPosition - rack.startPosition + 1), 0),
+                totalSlots: rackBlocks.reduce((sum, rack) => sum + (rack.endPosition - rack.startPosition + 1) * rack.height, 0),
+                rackTypes: [...new Set(rackBlocks.map(r => r.type))],
+                racks: rackBlocks.map(rack => ({
+                    name: rack.name,
+                    type: rack.type,
+                    positions: `${rack.startPosition}-${rack.endPosition}`,
+                    levels: rack.height,
+                    totalSlots: (rack.endPosition - rack.startPosition + 1) * rack.height,
+                    loadCapacity: rack.loadCapacity,
+                    dimensions: `${rack.width}x${rack.depth}px`,
+                    position: `(${rack.x}, ${rack.y})`
+                }))
+            };
+
+            const reportStr = JSON.stringify(summary, null, 2);
+            const reportBlob = new Blob([reportStr], {type: 'application/json'});
+            const url = URL.createObjectURL(reportBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `warehouse_layout_report_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            
+            alert(`Exported layout report!\n\nTotal Racks: ${summary.totalRacks}\nTotal Positions: ${summary.totalPositions}\nTotal Storage Slots: ${summary.totalSlots}`);
+        }
+
+        // Mouse event handlers for drag and drop
+        function handleMouseDown(e) {const target = e.target.closest('.rack-block')
+            if (target) {
+                const rect = target.getBoundingClientRect()
+                const canvasRect = canvas.getBoundingClientRect()
+                
+                dragData = {
+                    element: target,
+                    rackId: target.id,
+                    offsetX: e.clientX - rect.left,
+                    offsetY: e.clientY - rect.top,
+                    canvasRect: canvasRect};
+                
+                target.style.zIndex = '1000';
+                e.preventDefault();
+            }
+        }
+
+        function handleMouseMove(e) {if (dragData) {
+                const newX = e.clientX - dragData.canvasRect.left - dragData.offsetX
+                const newY = e.clientY - dragData.canvasRect.top - dragData.offsetY
+                
+                // Constrain to canvas bounds
+                const maxX = canvas.clientWidth - dragData.element.clientWidth
+                const maxY = canvas.clientHeight - dragData.element.clientHeight;
+                
+                const constrainedX = Math.max(0, Math.min(maxX, newX));
+                const constrainedY = Math.max(0, Math.min(maxY, newY));
+                
+                dragData.element.style.left = constrainedX + 'px';
+                dragData.element.style.top = constrainedY + 'px';
+                
+                // Update rack data
+                const rack = rackBlocks.find(r => r.id === dragData.rackId);
+                if (rack) {
+                    rack.x = constrainedX;
+                    rack.y = constrainedY;}
+            }
+        }
+
+        function handleMouseUp(e) {if (dragData) {
+                dragData.element.style.zIndex = ''
+                dragData = null}
+        }
+
+        // Click outside to deselect
+        canvas.addEventListener('click', (e) => {if (e.target === canvas) {
+                selectedRack = null
+                document.querySelectorAll('.rack-block').forEach(el => {
+                    el.classList.remove('selected')});
+                document.getElementById('rackDetails').classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

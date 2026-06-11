@@ -1,0 +1,568 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Management Hub - QR Legends</title>
+    <style>
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif 
+            margin: 0 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 
+            min-height: 100vh}
+        .container {max-width: 1400px margin: 0 auto padding: 20px}
+        .header {background: rgba(255,255,255,0.1) 
+            backdrop-filter: blur(10px)
+            color: white 
+            padding: 30px; 
+            border-radius: 15px; 
+            margin-bottom: 30px; 
+            text-align: center; 
+            border: 1px solid rgba(255,255,255,0.2);}
+        .grid {display: grid grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)) gap: 25px}
+        .card {background: rgba(255,255,255,0.95) 
+            padding: 25px 
+            border-radius: 15px 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1); 
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;}
+        .card:hover {transform: translateY(-5px) 
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15)}
+        .btn {padding: 12px 24px 
+            margin: 8px 
+            border: none 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block}
+        .btn-primary {background: linear-gradient(135deg, #667eea, #764ba2) color: white}
+        .btn-success {background: linear-gradient(135deg, #4facfe, #00f2fe) color: white}
+        .btn-warning {background: linear-gradient(135deg, #ffecd2, #fcb69f) color: #8b4513}
+        .btn-danger {background: linear-gradient(135deg, #ff9a9e, #fecfef) color: #dc3545}
+        .btn:hover {transform: translateY(-2px) box-shadow: 0 4px 12px rgba(0,0,0,0.2)}
+        .status-active {color: #28a745 font-weight: bold}
+        .status-waiting {color: #ffc107 font-weight: bold}
+        .status-delayed {color: #dc3545 font-weight: bold}
+        .stats-grid {display: grid grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) gap: 15px margin-bottom: 20px}
+        .stat-card {background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.2)) 
+            padding: 20px 
+            border-radius: 12px 
+            text-align: center; 
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);}
+        .stat-number {font-size: 2.5em font-weight: bold margin-bottom: 5px}
+        .form-group {margin: 15px 0}
+        .form-group label {display: block margin-bottom: 8px font-weight: 600 color: #333}
+        .form-group input, .form-group select, .form-group textarea {width: 100% 
+            padding: 12px 
+            border: 2px solid #e1e5e9 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 14px;
+            transition: border-color 0.3s ease}
+        .form-group input:focus, .form-group select:focus, .form-group textarea: focus {border-color: #667eea
+            outline: none}
+        .driver-card {background: #f8f9fa 
+            border: 1px solid #dee2e6 
+            border-radius: 10px 
+            padding: 15px; 
+            margin: 10px 0}
+        .dock-status {display: inline-block 
+            padding: 6px 12px 
+            border-radius: 20px 
+            font-size: 12px; 
+            font-weight: bold; 
+            color: white}
+        .dock-available {background: #28a745}
+        .dock-occupied {background: #dc3545}
+        .dock-maintenance {background: #6c757d}
+        .route-optimization {background: linear-gradient(135deg, #ff9a9e, #fecfef) padding: 20px border-radius: 10px margin: 20px 0}
+        .notification {padding: 15px 
+            margin: 10px 0 
+            border-radius: 8px 
+            border-left: 4px solid}
+        .notification-success {background: #d4edda border-color: #28a745 color: #155724}
+        .notification-warning {background: #fff3cd border-color: #ffc107 color: #856404}
+        .notification-danger {background: #f8d7da border-color: #dc3545 color: #721c24}
+        .back-button {position: fixed 
+            top: 20px 
+            left: 20px 
+            background: rgba(255,255,255,0.9); 
+            color: #333; 
+            padding: 10px 20px; 
+            border-radius: 25px; 
+            text-decoration: none; 
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease}
+        .back-button: hover {background: white transform: translateY(-2px)}
+        .live-tracking {background: linear-gradient(135deg, #667eea, #764ba2) 
+            color: white 
+            padding: 20px 
+            border-radius: 10px; 
+            margin: 20px 0}
+        .eta-display {font-size: 1.5em font-weight: bold color: #4facfe}
+        @media (max-width: 768px) {.grid { grid-template-columns: 1fr}
+            .stats-grid {grid-template-columns: repeat(2, 1fr)}
+            .container {padding: 10px}
+        }
+    </style>
+</head>
+<body>
+    <a href="/main_dashboard" class="back-button">← Back to Dashboard</a>
+
+    <div class="container">
+        <div class="header">
+            <h1>🚛 Driver Management Hub</h1>
+            <p>Comprehensive driver portal with automated check-in/out, dock management, and real-time tracking</p>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="activeDrivers">12</div>
+                    <div>Active Drivers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="pendingPickups">8</div>
+                    <div>Pending Pickups</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="inTransit">15</div>
+                    <div>In Transit</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="completedToday">23</div>
+                    <div>Completed Today</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- Driver Mobile Portal -->
+            <div class="card">
+                <h3>📱 Driver Mobile Portal</h3>
+                <p>QR/Barcode scanning for pickup and drop-off confirmation with digital proof of delivery</p>
+                
+                <div class="form-group">
+                    <label>Driver Login/Check-in</label>
+                    <input type="text" id="driverCode" placeholder="Scan driver QR code or enter driver ID">
+                </div>
+                
+                <button class="btn btn-primary" onclick="driverCheckIn()">📱 Driver Check-In</button>
+                <button class="btn btn-success" onclick="openDriverPortal()">🚚 Open Driver Portal</button>
+                <button class="btn btn-warning" onclick="generateDriverQR()">🔗 Generate Driver QR</button>
+                
+                <div id="driverStatus" style="margin-top: 15px;"></div>
+            </div>
+
+            <!-- Automated Gate Management -->
+            <div class="card">
+                <h3>🚪 Automated Gate Management</h3>
+                <p>QR code, RFID, or license plate scanning for automated check-in/out</p>
+                
+                <div class="form-group">
+                    <label>Vehicle Check-In Method</label>
+                    <select id="checkInMethod">
+                        <option value="qr">QR Code Scan</option>
+                        <option value="rfid">RFID Tag</option>
+                        <option value="license">License Plate</option>
+                        <option value="manual">Manual Entry</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Vehicle Identifier</label>
+                    <input type="text" id="vehicleId" placeholder="Scan or enter vehicle ID">
+                </div>
+                
+                <button class="btn btn-success" onclick="automatedCheckIn()">✅ Check-In Vehicle</button>
+                <button class="btn btn-warning" onclick="automatedCheckOut()">🚪 Check-Out Vehicle</button>
+                
+                <div class="notification notification-success" style="display: none;" id="gateNotification">
+                    Vehicle successfully processed through gate
+                </div>
+            </div>
+
+            <!-- Dock & Yard Management -->
+            <div class="card">
+                <h3>🏭 Dock & Yard Management</h3>
+                <p>Appointment scheduling, dock assignment, and real-time yard inventory</p>
+                
+                <div class="form-group">
+                    <label>Available Dock Doors</label>
+                    <div id="dockStatus">
+                        <span class="dock-status dock-available">Dock 1: Available</span>
+                        <span class="dock-status dock-occupied">Dock 2: Occupied</span>
+                        <span class="dock-status dock-available">Dock 3: Available</span>
+                        <span class="dock-status dock-maintenance">Dock 4: Maintenance</span>
+                        <span class="dock-status dock-occupied">Dock 5: Occupied</span>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" onclick="scheduleDockAppointment()">📅 Schedule Appointment</button>
+                <button class="btn btn-success" onclick="assignDock()">🎯 Auto-Assign Dock</button>
+                <button class="btn btn-warning" onclick="viewYardInventory()">📦 View Yard Inventory</button>
+            </div>
+
+            <!-- Route Optimization & Navigation -->
+            <div class="card">
+                <h3>🗺️ AI Route Optimization</h3>
+                <p>Turn-by-turn navigation with cost optimization and real-time traffic updates</p>
+                
+                <div class="route-optimization">
+                    <h4>🎯 Smart Route Planning</h4>
+                    <p><strong>Next Stop:</strong> <span id="nextStop">ABC Distribution Center</span></p>
+                    <p><strong>Optimized Route:</strong> <span id="routeInfo">3 stops, 47 miles, $23.50 total cost</span></p>
+                    <p><strong>ETA:</strong> <span class="eta-display" id="routeETA">2:45 PM</span></p>
+                </div>
+                
+                <button class="btn btn-primary" onclick="optimizeRoute()">🚀 Optimize Route</button>
+                <button class="btn btn-success" onclick="startNavigation()">🧭 Start Navigation</button>
+                <button class="btn btn-warning" onclick="reportTrafficIssue()">⚠️ Report Issue</button>
+            </div>
+
+            <!-- Real-Time Tracking & Alerts -->
+            <div class="card">
+                <h3>📍 Real-Time Tracking</h3>
+                <p>GPS tracking, telematics integration, and automated customer notifications</p>
+                
+                <div class="live-tracking">
+                    <h4>📡 Live Driver Tracking</h4>
+                    <div id="activeDriversList">
+                        <div class="driver-card">
+                            <strong>Driver: Mike Johnson</strong> - Truck #TRK-001<br>
+                            <span class="status-active">● Active</span> | ETA: 1:30 PM | 2.3 miles away
+                        </div>
+                        <div class="driver-card">
+                            <strong>Driver: Sarah Chen</strong> - Truck #TRK-002<br>
+                            <span class="status-waiting">● Waiting</span> | At Dock 2 | Loading in progress
+                        </div>
+                        <div class="driver-card">
+                            <strong>Driver: Carlos Rodriguez</strong> - Truck #TRK-003<br>
+                            <span class="status-delayed">● Delayed</span> | Traffic incident | ETA: 3:15 PM
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" onclick="refreshTracking()">🔄 Refresh Tracking</button>
+                <button class="btn btn-success" onclick="sendCustomerUpdates()">📧 Send Customer Updates</button>
+            </div>
+
+            <!-- Exception Handling -->
+            <div class="card">
+                <h3>⚠️ Exception Management</h3>
+                <p>Instant logging for damaged freight, partial deliveries, and returns</p>
+                
+                <div class="form-group">
+                    <label>Exception Type</label>
+                    <select id="exceptionType">
+                        <option value="damage">Damaged Freight</option>
+                        <option value="partial">Partial Delivery</option>
+                        <option value="return">Customer Return</option>
+                        <option value="delay">Delivery Delay</option>
+                        <option value="refused">Delivery Refused</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Exception Details</label>
+                    <textarea id="exceptionDetails" rows="3" placeholder="Describe the exception..."></textarea>
+                </div>
+                
+                <button class="btn btn-warning" onclick="logException()">📝 Log Exception</button>
+                <button class="btn btn-danger" onclick="escalateException()">🚨 Escalate to Manager</button>
+                <button class="btn btn-success" onclick="resolveException()">✅ Mark Resolved</button>
+            </div>
+
+            <!-- Digital Proof of Delivery -->
+            <div class="card">
+                <h3>📋 Digital Proof of Delivery</h3>
+                <p>Signature capture, photo evidence, and GPS timestamping</p>
+                
+                <div class="form-group">
+                    <label>Delivery Confirmation Method</label>
+                    <select id="confirmationMethod">
+                        <option value="signature">Digital Signature</option>
+                        <option value="photo">Photo Evidence</option>
+                        <option value="qr">Customer QR Scan</option>
+                        <option value="pin">PIN Verification</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-success" onclick="captureSignature()">✍️ Capture Signature</button>
+                <button class="btn btn-primary" onclick="takeDeliveryPhoto()">📸 Take Photo</button>
+                <button class="btn btn-warning" onclick="getGPSLocation()">📍 GPS Timestamp</button>
+                
+                <div id="proofOfDelivery" style="margin-top: 15px;"></div>
+            </div>
+
+            <!-- Integration Dashboard -->
+            <div class="card">
+                <h3>🔗 ERP/WMS Integration</h3>
+                <p>Seamless integration with order management and accounting systems</p>
+                
+                <div class="notification notification-success">
+                    <strong>Integration Status:</strong> All systems connected
+                </div>
+                
+                <div style="margin: 15px 0;">
+                    <p><strong>Orders in Queue:</strong> <span id="ordersQueue">15</span></p>
+                    <p><strong>Ready for Invoicing:</strong> <span id="readyInvoicing">8</span></p>
+                    <p><strong>AR Updates:</strong> <span id="arUpdates">12</span></p>
+                </div>
+                
+                <button class="btn btn-primary" onclick="syncOrders()">🔄 Sync Orders</button>
+                <button class="btn btn-success" onclick="processInvoicing()">💰 Process Invoicing</button>
+                <button class="btn btn-warning" onclick="updateAR()">📊 Update A/R</button>
+            </div>
+
+            <!-- Customer Communication -->
+            <div class="card">
+                <h3>📞 Customer Communication</h3>
+                <p>Automated notifications and real-time delivery updates</p>
+                
+                <div class="form-group">
+                    <label>Notification Type</label>
+                    <select id="notificationType">
+                        <option value="dispatch">Order Dispatched</option>
+                        <option value="enroute">Driver En Route</option>
+                        <option value="arrived">Driver Arrived</option>
+                        <option value="completed">Delivery Completed</option>
+                        <option value="exception">Delivery Exception</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Customer Contact</label>
+                    <input type="text" id="customerContact" placeholder="Phone or email">
+                </div>
+                
+                <button class="btn btn-success" onclick="sendSMSUpdate()">💬 Send SMS</button>
+                <button class="btn btn-primary" onclick="sendEmailUpdate()">📧 Send Email</button>
+                <button class="btn btn-warning" onclick="callCustomer()">📞 Call Customer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize driver management system
+        document.addEventListener('DOMContentLoaded', function() {console.log('Driver Management Hub initialized')
+            updateStats()
+            refreshDockStatus()
+            initializeTracking();});
+
+        function updateStats() {// Simulate real-time stats updates
+            setInterval(() => {
+                document.getElementById('activeDrivers').textContent = Math.floor(Math.random() * 5) + 10
+                document.getElementById('pendingPickups').textContent = Math.floor(Math.random() * 5) + 6
+                document.getElementById('inTransit').textContent = Math.floor(Math.random() * 8) + 12
+                document.getElementById('completedToday').textContent = Math.floor(Math.random() * 10) + 20;}, 30000);
+        }
+
+        function driverCheckIn() {const driverCode = document.getElementById('driverCode').value
+            if (!driverCode) {
+                alert('Please enter or scan driver code')
+                return}
+
+            document.getElementById('driverStatus').innerHTML = `
+                <div class="notification notification-success">
+                    <strong>✅ Driver Check-In Successful</strong><br>
+                    Driver: ${driverCode}<br>
+                    Time: ${new Date().toLocaleTimeString()}<br>
+                    Status: Active and ready for assignments
+                </div>
+            `;
+
+            console.log(`Driver ${driverCode} checked in successfully`);
+        }
+
+        function openDriverPortal() {// In production, this would open the mobile-optimized driver app
+            window.open('/driver_dropoff', '_blank')}
+
+        function generateDriverQR() {
+            const driverQR = `DRV-${Date.now()}`;
+            alert(`Driver QR Code Generated: ${driverQR}\n\nThis QR can be scanned for instant check-in and load assignment.`);
+        }
+
+        function automatedCheckIn() {const method = document.getElementById('checkInMethod').value
+            const vehicleId = document.getElementById('vehicleId').value
+
+            if (!vehicleId) {
+                alert('Please enter vehicle identifier')
+                return;}
+
+            const gateNotification = document.getElementById('gateNotification');
+            gateNotification.innerHTML = `
+                <strong>✅ Vehicle Check-In Complete</strong><br>
+                Method: ${method.toUpperCase()}<br>
+                Vehicle: ${vehicleId}<br>
+                Gate: Main Entrance<br>
+                Time: ${new Date().toLocaleString()}
+            `;
+            gateNotification.style.display = 'block';
+
+            console.log(`Vehicle ${vehicleId} checked in via ${method}`);
+        }
+
+        function automatedCheckOut() {const vehicleId = document.getElementById('vehicleId').value
+            if (!vehicleId) {
+                alert('Please enter vehicle identifier')
+                return}
+
+            const gateNotification = document.getElementById('gateNotification');
+            gateNotification.innerHTML = `
+                <strong>🚪 Vehicle Check-Out Complete</strong><br>
+                Vehicle: ${vehicleId}<br>
+                Exit Gate: Main<br>
+                Duration: 2h 15m<br>
+                Time: ${new Date().toLocaleString()}
+            `;
+            gateNotification.style.display = 'block';
+        }
+
+        function scheduleDockAppointment() {const appointmentTime = prompt('Enter preferred appointment time:', new Date(Date.now() + 3600000).toISOString().slice(0, 16))
+            if (appointmentTime) {
+                alert(`Dock appointment scheduled for ${appointmentTime}\nDock 3 has been reserved\nConfirmation sent to driver`);
+            }
+        }
+
+        function assignDock() {const availableDocks = ['Dock 1', 'Dock 3']
+            const assignedDock = availableDocks[Math.floor(Math.random() * availableDocks.length)]
+            alert(`Auto-assigned: ${assignedDock}\nOptimal for current load type\nDriver notification sent`);
+        }
+
+        function viewYardInventory() {alert(`Yard Inventory Summary:
+• Trailers in yard: 12
+• Empty spots: 8
+• Maintenance bays: 2 occupied
+• Overflow area: 3 trailers
+• Next available: Spot Y-15`)}
+
+        function optimizeRoute() {document.getElementById('nextStop').textContent = 'XYZ Manufacturing'
+            document.getElementById('routeInfo').textContent = '4 stops, 52 miles, $26.75 total cost'
+            document.getElementById('routeETA').textContent = '3: 10 PM'
+            
+            alert('🚀 Route Optimized!\n• 15% cost reduction\n• 23 minutes saved\n• 3 traffic delays avoided\n• Customer notifications sent')}
+
+        function startNavigation() {alert('🧭 Navigation Started\n• Turn-by-turn directions active\n• Real-time traffic monitoring\n• Customer ETA updates enabled')}
+
+        function reportTrafficIssue() {const issue = prompt('Describe traffic issue:', 'Construction delay on Highway 101')
+            if (issue) {
+                alert(`Traffic issue reported: ${issue}\n• Alternative routes calculated\n• Affected deliveries notified\n• ETA updates sent to customers`);
+            }
+        }
+
+        function refreshTracking() {console.log('Refreshing real-time tracking data...')
+            // Simulate tracking update
+            setTimeout(() => {
+                alert('📍 Tracking Updated\n• All driver locations refreshed\n• ETAs recalculated\n• Customer notifications sent')}, 1000);
+        }
+
+        function sendCustomerUpdates() {alert('📧 Customer Updates Sent\n• 15 SMS notifications\n• 12 email updates\n• 3 automated calls scheduled\n• All ETAs current')}
+
+        function logException() {const type = document.getElementById('exceptionType').value
+            const details = document.getElementById('exceptionDetails').value
+
+            if (!details) {
+                alert('Please provide exception details')
+                return;}
+
+            alert(`Exception Logged Successfully:
+Type: ${type}
+Details: ${details}
+Reference: EXC-${Date.now()}
+• Warehouse notified
+• Manager alerted
+• Customer informed`);
+        }
+
+        function escalateException() {alert('🚨 Exception Escalated\n• Manager notification sent\n• Priority flag added\n• Customer service contacted\n• Resolution timeline: 2 hours')}
+
+        function resolveException() {alert('✅ Exception Resolved\n• Status updated in system\n• Customer notified\n• Delivery resumed\n• Case closed')}
+
+        function captureSignature() {alert('✍️ Digital Signature Captured\n• Customer signature recorded\n• GPS location tagged\n• Timestamp: ' + new Date().toLocaleString() + '\n• Proof of delivery complete')}
+
+        function takeDeliveryPhoto() {alert('📸 Delivery Photo Taken\n• High-resolution image captured\n• GPS coordinates embedded\n• Uploaded to cloud storage\n• Available in delivery record')}
+
+        function getGPSLocation() {if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const lat = position.coords.latitude.toFixed(6)
+                    const lon = position.coords.longitude.toFixed(6)
+                    alert(`📍 GPS Location Recorded\nLatitude: ${lat}\nLongitude: ${lon}\nAccuracy: ${position.coords.accuracy}m\nTimestamp: ${new Date().toLocaleString()}`);
+                });
+            } else {alert('📍 GPS Location Simulated\nLatitude: 39.7392\nLongitude: -104.9903\nTimestamp: ' + new Date().toLocaleString())}
+        }
+
+        function syncOrders() {console.log('Syncing with ERP/WMS systems...')
+            setTimeout(() => {
+                document.getElementById('ordersQueue').textContent = '18'
+                alert('🔄 Orders Synchronized\n• 3 new orders imported\n• 2 orders updated\n• All systems in sync')}, 1500);
+        }
+
+        function processInvoicing() {setTimeout(() => {
+                document.getElementById('readyInvoicing').textContent = '12'
+                alert('💰 Invoicing Processed\n• 8 invoices generated\n• Sent to A/R automatically\n• Customer billing updated')}, 1000);
+        }
+
+        function updateAR() {setTimeout(() => {
+                document.getElementById('arUpdates').textContent = '15'
+                alert('📊 A/R Updated\n• 12 delivery confirmations\n• Payment status synced\n• Customer accounts current')}, 800);
+        }
+
+        function sendSMSUpdate() {const contact = document.getElementById('customerContact').value
+            const type = document.getElementById('notificationType').value
+            
+            if (!contact) {
+                alert('Please enter customer contact')
+                return;}
+
+            alert(`💬 SMS Sent Successfully\nTo: ${contact}\nType: ${type}\nMessage: Your delivery is on the way!\nETA: 2:45 PM`);
+        }
+
+        function sendEmailUpdate() {const contact = document.getElementById('customerContact').value
+            if (!contact) {
+                alert('Please enter customer contact')
+                return}
+
+            alert(`📧 Email Sent Successfully\nTo: ${contact}\nSubject: Delivery Update\nTracking link included\nETA notifications enabled`);
+        }
+
+        function callCustomer() {const contact = document.getElementById('customerContact').value
+            if (!contact) {
+                alert('Please enter customer contact')
+                return}
+
+            alert(`📞 Initiating Call\nTo: ${contact}\nPurpose: Delivery coordination\nDriver will contact customer directly`);
+        }
+
+        function refreshDockStatus() {// Simulate dock status updates
+            setInterval(() => {
+                const dockStatuses = ['available', 'occupied', 'maintenance']
+                const dockElements = document.querySelectorAll('.dock-status')
+                
+                dockElements.forEach((element, index) => {
+                    if (Math.random() > 0.8) { // 20% chance of status change
+                        const newStatus = dockStatuses[Math.floor(Math.random() * dockStatuses.length)]
+                        element.className = `dock-status dock-${newStatus}`;
+                        element.textContent = `Dock ${index + 1}: ${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}`;
+            
+            // Update dock status in the interface
+            updateDockStatus(index, newStatus);
+        }
+
+        function updateDockStatus(dockIndex, status) {
+            console.log(`Dock ${dockIndex + 1} status updated to: ${status}`);
+        }
+                    }
+                });
+            }, 45000);
+        }
+
+        function initializeTracking() {console.log('Real-time tracking initialized')
+            // In production, this would connect to GPS tracking APIs}
+    </script>
+</body>
+</html>

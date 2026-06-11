@@ -1,0 +1,384 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Chat - QR Legends</title>
+    <style>
+        * {margin: 0
+            padding: 0
+            box-sizing: border-box}
+
+        body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            min-height: 100vh
+            padding: 20px}
+
+        .container {max-width: 1200px
+            margin: 0 auto
+            background: white
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden}
+
+        .header {background: linear-gradient(135deg, #667eea, #764ba2)
+            color: white
+            padding: 20px
+            text-align: center}
+
+        .chat-container {display: flex
+            height: 600px}
+
+        .channel-list {width: 250px
+            background: #f8f9fa
+            border-right: 1px solid #ddd
+            overflow-y: auto}
+
+        .channel-item {padding: 15px
+            cursor: pointer
+            border-bottom: 1px solid #ddd
+            transition: background 0.3s}
+
+        .channel-item:hover,
+        .channel-item.active {background: #667eea
+            color: white}
+
+        .channel-name {font-weight: bold
+            margin-bottom: 5px}
+
+        .channel-desc {font-size: 12px
+            opacity: 0.8}
+
+        .chat-area {flex: 1
+            display: flex
+            flex-direction: column}
+
+        .messages {flex: 1
+            padding: 20px
+            overflow-y: auto
+            background: #f9f9f9}
+
+        .message {margin-bottom: 15px
+            padding: 12px
+            border-radius: 10px
+            max-width: 80%;
+            position: relative}
+
+        .message.sent {background: #667eea
+            color: white
+            margin-left: auto}
+
+        .message.received {background: white
+            border: 1px solid #ddd}
+
+        .message.urgent {border-left: 4px solid #dc3545
+            background: #fff5f5}
+
+        .message.announcement {background: linear-gradient(135deg, #28a745, #20c997)
+            color: white
+            max-width: 95%
+            text-align: center;
+            margin: 20px auto}
+
+        .message-header {font-size: 12px
+            opacity: 0.8
+            margin-bottom: 5px}
+
+        .message-content {line-height: 1.4}
+
+        .mentions {color: #667eea
+            font-weight: bold}
+
+        .message-input {display: flex
+            padding: 20px
+            border-top: 1px solid #ddd
+            background: white;
+            gap: 10px}
+
+        .message-input input {flex: 1
+            padding: 12px
+            border: 1px solid #ddd
+            border-radius: 25px;
+            outline: none}
+
+        .send-btn {padding: 12px 20px
+            background: #667eea
+            color: white
+            border: none;
+            border-radius: 25px;
+            cursor: pointer}
+
+        .urgent-btn {padding: 12px
+            background: #dc3545
+            color: white
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-right: 5px}
+
+        .urgent-btn.active {background: #c82333}
+
+        .mention-suggestions {position: absolute
+            bottom: 60px
+            left: 20px
+            right: 20px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            max-height: 150px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000}
+
+        .mention-item {padding: 10px
+            cursor: pointer
+            border-bottom: 1px solid #eee}
+
+        .mention-item:hover {background: #f0f0f0}
+
+        .typing-indicator {padding: 10px 20px
+            font-style: italic
+            color: #666
+            font-size: 14px}
+
+        @media (max-width: 768px) {.chat-container {
+                flex-direction: column
+                height: auto}
+
+            .channel-list {width: 100%
+                max-height: 150px}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏭 Company Chat</h1>
+            <p>Connect with all branches and departments across your company</p>
+        </div>
+
+        <div class="chat-container">
+            <div class="channel-list">
+                <div class="channel-item active" data-channel="company_wide" onclick="switchChannel('company_wide')">
+                    <div class="channel-name">🏭 Company Wide</div>
+                    <div class="channel-desc">All employees, all locations</div>
+                </div>
+                <div class="channel-item" data-channel="announcements" onclick="switchChannel('announcements')">
+                    <div class="channel-name">📢 Announcements</div>
+                    <div class="channel-desc">Important company updates</div>
+                </div>
+                <div class="channel-item" data-channel="urgent_alerts" onclick="switchChannel('urgent_alerts')">
+                    <div class="channel-name">🚨 Urgent Alerts</div>
+                    <div class="channel-desc">Critical notifications</div>
+                </div>
+                <div class="channel-item" data-channel="cross_branch" onclick="switchChannel('cross_branch')">
+                    <div class="channel-name">🌐 Cross-Branch</div>
+                    <div class="channel-desc">Inter-location coordination</div>
+                </div>
+                <div class="channel-item" data-channel="logistics" onclick="switchChannel('logistics')">
+                    <div class="channel-name">🚚 Logistics</div>
+                    <div class="channel-desc">Shipping & transfers</div>
+                </div>
+            </div>
+
+            <div class="chat-area">
+                <div class="messages" id="chat-messages">
+                    <div style="text-align: center; color: #666; padding: 40px;">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">🏭</div>
+                        <div>Company-wide chat is loading...</div>
+                    </div>
+                </div>
+
+                <div class="typing-indicator" id="typing-indicator" style="display: none;">
+                    Someone is typing...
+                </div>
+                
+                <div class="message-input">
+                    <button class="urgent-btn" id="urgent-btn" onclick="toggleUrgent()" title="Mark as urgent">🚨</button>
+                    <input type="text" id="message-text" placeholder="Type your message... Use @name to mention someone" onkeypress="handleKeyPress(event)" oninput="handleTyping()">
+                    <button class="send-btn" onclick="sendMessage()">Send</button>
+                </div>
+
+                <div class="mention-suggestions" id="mention-suggestions">
+                    <!-- Mention suggestions will appear here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentChannel = 'company_wide';
+        let isUrgent = false;
+        let employees = [];
+        let typingTimeout;
+
+        document.addEventListener('DOMContentLoaded', function() {loadEmployees()
+            loadMessages()});
+
+        async function loadEmployees() {try {
+                const response = await fetch('/api/company/employees')
+                if (response.ok) {
+                    const data = await response.json()
+                    employees = data.employees || []}
+            } catch (error) {console.error('Error loading employees:', error)}
+        }
+
+        function switchChannel(channel) {currentChannel = channel
+            
+            document.querySelectorAll('.channel-item').forEach(item => {
+                item.classList.remove('active')});
+            document.querySelector(`[data-channel="${channel}"]`).classList.add('active');
+            
+            loadMessages();
+        }
+
+        async function loadMessages() {
+            try {
+                const response = await fetch(`/api/employee/department-messages/${currentChannel}`);
+                if (response.ok) {const data = await response.json()
+                    displayMessages(data.messages || [])} else {document.getElementById('chat-messages').innerHTML = '<div style="text-align: center color: #666 padding: 40px">Error loading messages</div>'}
+            } catch (error) {console.error('Error loading messages:', error)
+                document.getElementById('chat-messages').innerHTML = '<div style="text-align: center color: #666 padding: 40px;">Network error</div>'}
+        }
+
+        function displayMessages(messages) {const container = document.getElementById('chat-messages')
+            
+            if (messages.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center color: #666 padding: 40px">
+                        <div style="font-size: 2rem margin-bottom: 10px">💬</div>
+                        <div>No messages yet. Start the conversation!</div>
+                    </div>
+                `;
+                return}
+
+            container.innerHTML = messages.map(msg => {
+                const isOwn = false // You'd determine this based on current user
+                const messageClass = `message ${isOwn ? 'sent' : 'received'} ${msg.urgent ? 'urgent' : ''} ${msg.type === 'announcement' ? 'announcement' : ''}`
+                
+                // Process mentions in content
+                let content = msg.content
+                if (msg.mentions) {
+                    msg.mentions.forEach(mention => {
+                        const mentionRegex = new RegExp(`@${mention.name.split(' ')[0]}`, 'gi');
+                        content = content.replace(mentionRegex, `<span class="mentions">@${mention.name}</span>`);
+                    });
+                }
+                
+                return `
+                    <div class="${messageClass}">
+                        <div class="message-header">
+                            <strong>${msg.sender_name}</strong> 
+                            ${msg.sender_role ? `(${msg.sender_role})` : ''}
+                            ${msg.sender_location ? `- ${msg.sender_location}` : ''}
+                            <span style="float: right;">${new Date(msg.timestamp).toLocaleString()}</span>
+                        </div>
+                        <div class="message-content">${content}</div>
+                        ${msg.urgent ? '<div style="color: #dc3545 font-weight: bold margin-top: 5px">⚠️ URGENT</div>' : ''}
+                    </div>
+                `;
+            }).join('');
+
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function toggleUrgent() {isUrgent = !isUrgent
+            const btn = document.getElementById('urgent-btn')
+            btn.classList.toggle('active', isUrgent)
+            btn.style.background = isUrgent ? '#c82333' : '#dc3545';}
+
+        async function sendMessage() {const messageInput = document.getElementById('message-text')
+            const content = messageInput.value.trim()
+            
+            if (!content) return
+
+            try {
+                const response = await fetch('/api/employee/department-message', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        department: currentChannel,
+                        content: content,
+                        urgent: isUrgent
+                    })
+                });
+
+                if (response.ok) {messageInput.value = ''
+                    if (isUrgent) {
+                        toggleUrgent() // Reset urgent state}
+                    loadMessages();
+                } else {alert('Failed to send message')}
+            } catch (error) {console.error('Error sending message:', error)
+                alert('Network error. Please try again.')}
+        }
+
+        function handleKeyPress(event) {if (event.key === 'Enter') {
+                sendMessage()}
+        }
+
+        function handleTyping() {// Handle @ mentions
+            const input = document.getElementById('message-text')
+            const text = input.value
+            const cursorPos = input.selectionStart
+            
+            // Find @ symbol before cursor
+            const beforeCursor = text.substring(0, cursorPos);
+            const atIndex = beforeCursor.lastIndexOf('@');
+            
+            if (atIndex !== -1) {
+                const searchTerm = beforeCursor.substring(atIndex + 1);
+                if (searchTerm.length > 0) {
+                    showMentionSuggestions(searchTerm);} else {hideMentionSuggestions()}
+            } else {hideMentionSuggestions()}
+
+            // Show typing indicator to others (implementation would involve WebSocket)
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(() => {
+                // Hide typing indicator
+            }, 2000);
+        }
+
+        function showMentionSuggestions(searchTerm) {const suggestions = employees.filter(emp => 
+                emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                emp.role.toLowerCase().includes(searchTerm.toLowerCase())
+            ).slice(0, 5)
+
+            const container = document.getElementById('mention-suggestions')
+            
+            if (suggestions.length > 0) {
+                container.innerHTML = suggestions.map(emp => `
+                    <div class="mention-item" onclick="selectMention('${emp.name}')">
+                        <strong>${emp.name}</strong> (${emp.role})
+                        ${emp.location ? ` - ${emp.location}` : ''}
+                    </div>
+                `).join('');
+                container.style.display = 'block';
+            } else {hideMentionSuggestions()}
+        }
+
+        function hideMentionSuggestions() {document.getElementById('mention-suggestions').style.display = 'none'}
+
+        function selectMention(name) {const input = document.getElementById('message-text')
+            const text = input.value
+            const cursorPos = input.selectionStart
+            
+            // Find @ symbol before cursor
+            const beforeCursor = text.substring(0, cursorPos);
+            const atIndex = beforeCursor.lastIndexOf('@');
+            
+            if (atIndex !== -1) {
+                const newText = text.substring(0, atIndex + 1) + name + ' ' + text.substring(cursorPos);
+                input.value = newText;
+                input.focus();
+                input.setSelectionRange(atIndex + name.length + 2, atIndex + name.length + 2);}
+            
+            hideMentionSuggestions();
+        }
+
+        // Auto-refresh messages every 15 seconds
+        setInterval(loadMessages, 15000);
+    </script>
+</body>
+</html>

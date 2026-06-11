@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 - Internal Server Error | QR Legends</title>
+    <style>
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            margin: 0
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333}
+        
+        .error-container {background: white
+            border-radius: 15px
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1)
+            padding: 60px 40px;
+            text-align: center;
+            max-width: 600px;
+            margin: 20px}
+        
+        .error-code {font-size: 120px
+            font-weight: 900
+            color: #667eea
+            margin: 0;
+            line-height: 1}
+        
+        .error-message {font-size: 24px
+            color: #555
+            margin: 20px 0
+            font-weight: 600}
+        
+        .error-description {font-size: 16px
+            color: #777
+            margin-bottom: 40px
+            line-height: 1.6}
+        
+        .action-buttons {display: flex
+            gap: 20px
+            justify-content: center
+            flex-wrap: wrap}
+        
+        .btn {padding: 12px 30px
+            border-radius: 25px
+            text-decoration: none
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 16px}
+        
+        .btn-primary {background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            color: white}
+        
+        .btn-primary:hover {transform: translateY(-2px)
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3)}
+        
+        .btn-secondary {background: #f8f9fa
+            color: #667eea
+            border: 2px solid #667eea}
+        
+        .btn-secondary: hover {background: #667eea
+            color: white}
+        
+        @media (max-width: 768px) {.error-container {
+                padding: 40px 20px}
+            
+            .error-code {font-size: 80px}
+            
+            .error-message {font-size: 20px}
+            
+            .action-buttons {flex-direction: column
+                align-items: center}
+            
+            .btn {width: 200px}
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <h1 class="error-code">500</h1>
+        <h2 class="error-message">Internal Server Error</h2>
+        <p class="error-description">
+            Oops! Something went wrong on our end. Our team has been notified and is working to fix the issue.
+            Please try again in a few moments.
+        </p>
+
+        <div class="error-details" style="background: #f5f5f5; padding: 15px; margin: 20px 0; border-radius: 5px; font-family: monospace; font-size: 12px; color: #666;">
+            <p><strong>Timestamp:</strong> <span id="error-timestamp"></span></p>
+            <p><strong>Request ID:</strong> <span id="request-id">Check response headers</span></p>
+            <p><strong>What you can do:</strong></p>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li>Try refreshing the page</li>
+                <li>Go back to the previous page</li>
+                <li>Check if you have a stable internet connection</li>
+                <li>If the problem persists, contact support with the Request ID above</li>
+            </ul>
+        </div>
+
+        <div class="action-buttons">
+            <a href="/main_dashboard" class="btn btn-primary">Go to Dashboard</a>
+            <a href="javascript:history.back()" class="btn btn-secondary">Go Back</a>
+            <a href="javascript:location.reload()" class="btn btn-secondary">Try Again</a>
+        </div>
+    </div>
+
+    <script>
+        // Set current timestamp
+        document.getElementById('error-timestamp').textContent = new Date().toLocaleString();
+
+        // Try to get request ID from response headers (if available)
+        try {
+            const requestId = new URLSearchParams(window.location.search).get('request_id');
+            if (requestId) {
+                document.getElementById('request-id').textContent = requestId;
+            }
+        } catch (e) {
+            console.log('Could not get request ID from URL');
+        }
+
+        // Auto-refresh after 60 seconds (increased from 30)
+        let countdown = 60;
+        const refreshBtn = document.querySelector('.btn-secondary:last-child');
+        const originalText = refreshBtn.textContent;
+
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            refreshBtn.textContent = `Try Again (${countdown}s)`;
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                location.reload();
+            }
+        }, 1000);
+
+        // Cancel auto-refresh if user clicks any button
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                clearInterval(countdownInterval);
+                refreshBtn.textContent = originalText;
+            });
+        });
+    </script>
+</body>

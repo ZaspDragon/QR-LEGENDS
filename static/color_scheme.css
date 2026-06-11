@@ -1,0 +1,79 @@
+
+/*
+===========================================
+QR LEGENDS FUNCTIONAL COLOR SCHEME
+===========================================
+
+This file documents the functional color departmental palette.
+Each department gets a color that reflects its operational purpose.
+
+FUNCTIONAL COLOR CODES:
+--------------------------------------
+Color 1 - Inbound Operations: #28A745 (Green)
+  Usage: Positive action/arrival, receiving, putaway, quality checks
+  Hover: #218838
+
+Color 2 - Outbound Operations: #DC3545 (Red)
+  Usage: Departure/shipments, picking, packing, shipping
+  Hover: #c82333
+
+Color 3 - Inventory Operations: #007BFF (Blue)
+  Usage: Stability/data, cycle counts, adjustments, transfers
+  Hover: #0056b3
+
+Color 4 - Exceptions Management: #FFC107 (Amber)
+  Usage: Warning/attention, problem solving, discrepancies, alerts
+  Hover: #e0a800
+
+Color 5 - Tools & Scanners: #6C757D (Steel Gray)
+  Usage: Utility features, QR generators, scanners, utilities
+  Hover: #545b62
+
+Color 6 - Administration: #6610F2 (Indigo)
+  Usage: Authority/management, admin functions, settings
+  Hover: #520dc2
+
+Color 7 - Reports & Analytics: #FD7E14 (Orange)
+  Usage: Analytics/insight, KPIs, reports, data analysis
+  Hover: #e8650e
+
+Color 8 - Help & Support: #DC3545 (Red) or #28A745 (Green)
+  Usage: Context dependent - urgent SOS vs. guide/help center
+  Red Hover: #c82333
+  Green Hover: #218838
+
+SUPPORTING COLORS:
+------------------
+Background: #ffffff (Pure white)
+Secondary Background: #f8f9fa (Light neutral)
+Text Primary: #212529 (Dark)
+Text Secondary: #495057 (Dark blue-gray)
+Border: #dee2e6 (Light border)
+Success: #28a745 (Green)
+Danger: #dc3545 (Red)
+Warning: #ffc107 (Amber)
+Info: #007bff (Blue)
+
+USAGE PATTERNS:
+---------------
+- Inbound Operations: Green (#28A745) - Positive action/arrival
+- Outbound Operations: Red (#DC3545) - Departure/shipments
+- Inventory Operations: Blue (#007BFF) - Stability/data
+- Exceptions Management: Amber (#FFC107) - Warning/attention
+- Tools: Steel Gray (#6C757D) - Utility features
+- Administration: Indigo (#6610F2) - Authority/management
+- Reports: Orange (#FD7E14) - Analytics/insight
+- Help/Support: Red/Green context dependent
+
+BUTTON CLASSES:
+---------------
+.btn-primary: Blue (#007bff)
+.btn-success: Green (#28a745)
+.btn-danger: Red (#dc3545)
+.btn-warning: Amber (#ffc107)
+.btn-info: Blue (#007bff)
+.btn-secondary: Indigo (#6610f2)
+
+This creates a functional color system where each color represents 
+the operational purpose and context of different warehouse functions.
+*/

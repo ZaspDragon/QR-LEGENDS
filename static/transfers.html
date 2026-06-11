@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8. Shipping & Transfers - QR Legends</title>
+    <link rel="icon" type="image/png" href="/static/qr_legends_logo.png">
+    <style>
+/* === QRLegends Unified Theme (Dark/Light) === */
+:root{
+  --ql-bg: #0b1724;
+  --ql-panel: #0f2340;
+  --ql-card: #102846;
+  --ql-text: #dbe8ff;
+  --ql-sub: #97a6c1;
+  --ql-primary: #3b82f6;
+  --ql-success: #22c55e;
+  --ql-warning: #f59e0b;
+  --ql-danger: #ef4444;
+  --ql-accent: #6366f1;
+  --ql-border: rgba(255,255,255,.12);
+  --ql-surface: rgba(255,255,255,.06);
+}
+/* Light mode overrides */
+body.light{
+  --ql-bg: #f2f6fb;
+  --ql-panel: #ffffff;
+  --ql-card: #ffffff;
+  --ql-text: #1d2840;
+  --ql-sub: #51607c;
+  --ql-primary: #2563eb;
+  --ql-success: #16a34a;
+  --ql-warning: #d97706;
+  --ql-danger: #dc2626;
+  --ql-accent: #4f46e5;
+  --ql-border: rgba(0,0,0,.12);
+  --ql-surface: rgba(15,23,42,.04);
+}
+
+html,body{height:100%;}
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed;
+  color: var(--ql-text);
+  font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+  line-height: 1.45;
+}
+body.light{
+  background: linear-gradient(180deg,#f7faff,#eef3fb);
+}
+
+.ql-header{
+  position: sticky; top:0; z-index:1000;
+  background: rgba(8,27,46,.7);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--ql-border);
+}
+body.light .ql-header{
+  background: rgba(255,255,255,.75);
+}
+.ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
+.ql-title{display:flex; align-items:center; gap:10px;}
+.ql-h1{font-size:1.25rem; margin:0; letter-spacing:.2px;}
+.ql-nav{display:flex; gap:8px; flex-wrap:wrap;}
+.ql-btn{
+  display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
+  background: var(--ql-surface); border: 1px solid var(--ql-border);
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+  transition: transform .08s ease, background .2s ease, border-color .2s ease;
+}
+.ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+body.light .ql-btn:hover{ background: rgba(15,23,42,.08); }
+.ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
+
+.ql-theme-toggle{
+  margin-left:12px; cursor:pointer; border:1px solid var(--ql-border);
+  background: var(--ql-surface); color: var(--ql-text);
+  border-radius:10px; padding:8px 10px; font-size:16px;
+}
+
+.ql-container{ max-width:1200px; margin:22px auto; padding:0 20px; }
+
+.main-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+.tabs-container {
+    background: var(--ql-card);
+    border: 1px solid var(--ql-border);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(2,8,23,.45);
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.tabs {
+    display: flex;
+    background: var(--ql-surface);
+    border-bottom: 1px solid var(--ql-border);
+}
+
+.tab {
+    flex: 1;
+    padding: 16px 20px;
+    background: none;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ql-sub);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.tab.active {
+    background: var(--ql-card);
+    color: var(--ql-primary);
+    border-bottom: 2px solid var(--ql-primary);
+}
+
+.tab:hover {
+    background: var(--ql-surface);
+    color: var(--ql-text);
+}
+
+.tab-content {
+    display: none;
+    padding: 30px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.scan-section {
+    background: var(--ql-surface);
+    border: 2px dashed var(--ql-border);
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.scan-section h3 {
+    color: var(--ql-text);
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+.btn {
+    background: linear-gradient(135deg, var(--ql-primary), var(--ql-accent));
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--ql-success), #16a34a);
+}
+
+.btn-success:hover {
+    box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+}
+
+.form-section {
+    background: var(--ql-card);
+    border: 1px solid var(--ql-border);
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 20px;
+}
+
+.form-section h3 {
+    color: var(--ql-text);
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ql-text);
+    margin-bottom: 8px;
+}
+
+.form-control, input, select, textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--ql-border);
+    border-radius: 8px;
+    font-size: 14px;
+    background: var(--ql-surface);
+    color: var(--ql-text);
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.form-control:focus, input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--ql-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-control::placeholder, input::placeholder, textarea::placeholder {
+    color: var(--ql-sub);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.ql-fab {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    background: var(--ql-accent);
+    color: white;
+    border: none;
+    border-radius: 999px;
+    padding: 12px 16px;
+    font-weight: 600;
+    box-shadow: 0 14px 30px rgba(0,0,0,.35);
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ql-fab:hover {
+    transform: translateY(-2px);
+    color: white;
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 20px 15px;
+    }
+
+    .tabs {
+        flex-wrap: wrap;
+    }
+
+    .tab {
+        min-width: 120px;
+    }
+
+    .tab-content {
+        padding: 20px 15px;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .scan-section {
+        padding: 30px 20px;
+    }
+}
+    </style>
+    <script>
+(function(){
+  try {
+    const saved = localStorage.getItem('ql-theme');
+    if(saved === 'light'){ document.addEventListener('DOMContentLoaded', ()=> document.body.classList.add('light')); }
+  } catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const btn = document.getElementById('ql-theme-toggle');
+    if(btn){
+      btn.addEventListener('click', function(){
+        document.body.classList.toggle('light');
+        const isLight = document.body.classList.contains('light');
+        btn.textContent = isLight ? '☀️' : '🌙';
+        try { localStorage.setItem('ql-theme', isLight ? 'light' : 'dark'); } catch(e){}
+      });
+      if(document.body.classList.contains('light')) btn.textContent = '☀️';
+    }
+    document.querySelectorAll('button:not([type])').forEach(b=> b.setAttribute('type','button'));
+  });
+})();
+    </script>
+</head>
+<body>
+    <!-- Unified QR Legends Header -->
+    <header class="ql-header">
+        <div class="ql-header-inner">
+            <div class="ql-title">
+                <span class="ql-logo">🚚</span>
+                <h1 class="ql-h1">8. Shipping & Transfers</h1>
+            </div>
+            <nav class="ql-nav">
+                <a class="ql-btn ql-secondary" href="main_dashboard.html">🏠 Dashboard</a>
+                <a class="ql-btn" href="receiving.html">📦 Receiving</a>
+                <a class="ql-btn" href="putaway.html">🧱 Put Away</a>
+                <a class="ql-btn" href="inventory.html">📊 Inventory</a>
+                <a class="ql-btn" href="problem_solving.html">🔧 Problem Solve</a>
+            </nav>
+            <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('scan')">
+                    📱 Scan Transfer
+                </button>
+                <button class="tab" onclick="switchTab('manual')">
+                    ✏️ Manual Entry
+                </button>
+                <button class="tab" onclick="switchTab('pickassign')">
+                    👥 Daily Picks
+                </button>
+                <button class="tab" onclick="switchTab('history')">
+                    📋 History
+                </button>
+                <button class="tab" onclick="switchTab('team')">
+                    💬 Team Chat
+                </button>
+            </div>
+
+            <!-- Scan Transfer Tab -->
+            <div id="scan" class="tab-content active">
+                <div class="scan-section">
+                    <h3>Quick QR Scan</h3>
+                    <button class="btn" onclick="startQRScanner()">
+                        📱 Scan QR Code
+                    </button>
+                    <button class="btn btn-success" onclick="startManualEntry()">
+                        ✏️ Manual Entry
+                    </button>
+                    <button class="btn" style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); color: white; margin-left: 10px;" onclick="if(window.openCameraScanner) window.openCameraScanner(); else alert('📱 QR Scanner Ready!')">🎯 QR Scanner</button>
+                </div>
+
+                <div class="form-section">
+                    <h3>Transfer Details</h3>
+                    <div class="grid">
+                        <div class="form-group">
+                            <label>From Location</label>
+                            <input type="text" class="form-control" placeholder="Source location">
+                        </div>
+                        <div class="form-group">
+                            <label>To Location</label>
+                            <input type="text" class="form-control" placeholder="Destination location">
+                        </div>
+                        <div class="form-group">
+                            <label>Item Code</label>
+                            <input type="text" class="form-control" placeholder="Item or SKU">
+                        </div>
+                        <div class="form-group">
+                            <label>Quantity</label>
+                            <input type="number" class="form-control" placeholder="Quantity to transfer">
+                        </div>
+                    </div>
+                    <button class="btn" style="margin-top: 20px;">
+                        ✅ Process Transfer
+                    </button>
+                </div>
+            </div>
+
+            <!-- Manual Entry Tab -->
+            <div id="manual" class="tab-content">
+                <div class="form-section">
+                    <h3>Manual Transfer Entry</h3>
+                    <div class="grid">
+                        <div class="form-group">
+                            <label>Transfer ID</label>
+                            <input type="text" class="form-control" placeholder="TF-001">
+                        </div>
+                        <div class="form-group">
+                            <label>Priority</label>
+                            <select class="form-control">
+                                <option>Standard</option>
+                                <option>High</option>
+                                <option>Urgent</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Notes</label>
+                            <textarea class="form-control" rows="3" placeholder="Transfer notes..."></textarea>
+                        </div>
+                    </div>
+                    <button class="btn">
+                        💾 Save Transfer
+                    </button>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div id="history" class="tab-content">
+                <div class="form-section">
+                    <h3>Recent Transfers</h3>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: var(--ql-surface); border-bottom: 1px solid var(--ql-border);">
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: var(--ql-text);">Transfer ID</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: var(--ql-text);">From → To</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: var(--ql-text);">Status</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: var(--ql-text);">Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid var(--ql-border);">
+                                    <td style="padding: 12px; color: var(--ql-text);">TF-001</td>
+                                    <td style="padding: 12px; color: var(--ql-text);">A-12 → B-05</td>
+                                    <td style="padding: 12px; color: var(--ql-success);">✅ Complete</td>
+                                    <td style="padding: 12px; color: var(--ql-sub);">2 mins ago</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid var(--ql-border);">
+                                    <td style="padding: 12px; color: var(--ql-text);">TF-002</td>
+                                    <td style="padding: 12px; color: var(--ql-text);">C-08 → A-15</td>
+                                    <td style="padding: 12px; color: var(--ql-warning);">⏳ In Transit</td>
+                                    <td style="padding: 12px; color: var(--ql-sub);">5 mins ago</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 12px; color: var(--ql-text);">TF-003</td>
+                                    <td style="padding: 12px; color: var(--ql-text);">B-03 → Ship</td>
+                                    <td style="padding: 12px; color: var(--ql-danger);">⚠️ Pending</td>
+                                    <td style="padding: 12px; color: var(--ql-sub);">8 mins ago</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Pick Assignment Tab -->
+            <div id="pickassign" class="tab-content">
+                <div class="form-section">
+                    <h3>📥 Upload Daily Pick Assignments</h3>
+                    <p style="color: var(--ql-sub); margin-bottom: 20px;">Upload a CSV file to assign picks to workers. File format: worker_name, pick_list_id, priority, location</p>
+                    
+                    <div class="form-group">
+                        <label>Select CSV File</label>
+                        <input type="file" id="pickAssignFile" accept=".csv" class="form-control" style="cursor: pointer;">
+                    </div>
+                    
+                    <div class="grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                        <button class="btn" onclick="uploadPickAssignments()" style="background: linear-gradient(135deg, var(--ql-primary), #2563eb);">
+                            📤 Upload & Assign
+                        </button>
+                        <button class="btn btn-success" onclick="downloadSampleCSV()">
+                            📄 Download Sample CSV
+                        </button>
+                        <button class="btn" style="background: linear-gradient(135deg, var(--ql-warning), #d97706);" onclick="viewAssignedPicks()">
+                            👀 View Assigned Picks
+                        </button>
+                    </div>
+                    
+                    <div id="uploadStatus" style="margin-top: 20px;"></div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>📊 Current Assignments</h3>
+                    <div id="currentAssignments" style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: var(--ql-surface); border-bottom: 1px solid var(--ql-border);">
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: var(--ql-text);">Worker</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: var(--ql-text);">Pick List ID</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: var(--ql-text);">Priority</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: var(--ql-text);">Location</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: var(--ql-text);">Status</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: var(--ql-text);">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assignmentsTableBody">
+                                <tr style="border-bottom: 1px solid var(--ql-border);">
+                                    <td style="padding: 12px; color: var(--ql-text);">John Doe</td>
+                                    <td style="padding: 12px; color: var(--ql-text);">PL-001</td>
+                                    <td style="padding: 12px; color: var(--ql-danger);">🔥 High</td>
+                                    <td style="padding: 12px; color: var(--ql-text);">Zone A</td>
+                                    <td style="padding: 12px; color: var(--ql-warning);">⏳ In Progress</td>
+                                    <td style="padding: 12px;"><button class="btn" style="padding: 6px 12px; font-size: 12px;" onclick="reassignPick('PL-001')">♻️ Reassign</button></td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid var(--ql-border);">
+                                    <td style="padding: 12px; color: var(--ql-text);">Jane Smith</td>
+                                    <td style="padding: 12px; color: var(--ql-text);">PL-002</td>
+                                    <td style="padding: 12px; color: var(--ql-primary);">📦 Standard</td>
+                                    <td style="padding: 12px; color: var(--ql-text);">Zone B</td>
+                                    <td style="padding: 12px; color: var(--ql-success);">✅ Complete</td>
+                                    <td style="padding: 12px;"><button class="btn" style="padding: 6px 12px; font-size: 12px;" onclick="viewPickDetails('PL-002')">👁️ View</button></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 12px; color: var(--ql-text);">Mike Johnson</td>
+                                    <td style="padding: 12px; color: var(--ql-text);">PL-003</td>
+                                    <td style="padding: 12px; color: var(--ql-success);">📋 Normal</td>
+                                    <td style="padding: 12px; color: var(--ql-text);">Zone C</td>
+                                    <td style="padding: 12px; color: var(--ql-sub);">⏸️ Pending</td>
+                                    <td style="padding: 12px;"><button class="btn" style="padding: 6px 12px; font-size: 12px;" onclick="reassignPick('PL-003')">♻️ Reassign</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Chat Tab -->
+            <div id="team" class="tab-content">
+                <div class="form-section">
+                    <h3>Transfers Team Chat</h3>
+                    <div style="background: var(--ql-surface); border-radius: 8px; padding: 20px; min-height: 300px; display: flex; align-items: center; justify-content: center; color: var(--ql-sub);">
+                        Chat functionality coming soon...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="/main_dashboard" class="ql-fab">🏠 Dashboard</a>
+
+    <script src="/static/qr_camera_scanner.js"></script>
+    <script src="/static/employee_messaging_widget.js"></script>
+    <script src="/static/universal_dashboard_button.js"></script>
+    <script src="/static/floating_chat_widget.js"></script>
+    <script src="/static/copyright_notice.js"></script>
+
+    <script>
+        function switchTab(tabName) {
+            // Remove active class from all tabs and content
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Add active class to clicked tab and corresponding content
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        function startQRScanner() {
+            console.log('🎯 Starting QR Scanner for transfers...');
+            if (window.QRCameraScanner) {
+                window.QRCameraScanner.start();
+            } else {
+                alert('QR Scanner not available. Please try manual entry.');
+            }
+        }
+
+        function startManualEntry() {
+            const qrData = prompt('Enter QR code or transfer ID:');
+            if (qrData && qrData.trim()) {
+                processTransferScan(qrData.trim());
+            }
+        }
+
+        function processTransferScan(qrData) {
+            console.log('📊 Processing transfer scan:', qrData);
+            alert(`Transfer scanned: ${qrData}`);
+        }
+
+        // Global QR processing function for transfers
+        window.processQRScan = function(qrData) {
+            processTransferScan(qrData);
+        };
+
+        // Daily Pick Assignment Functions
+        function uploadPickAssignments() {
+            const fileInput = document.getElementById('pickAssignFile');
+            const statusDiv = document.getElementById('uploadStatus');
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                statusDiv.innerHTML = '<div style="padding: 15px; background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; border-radius: 8px; color: #fca5a5;">⚠️ Please select a CSV file first</div>';
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const content = e.target.result;
+                const lines = content.split('\n').filter(line => line.trim());
+                
+                statusDiv.innerHTML = '<div style="padding: 15px; background: rgba(34, 197, 94, 0.15); border: 1px solid #22c55e; border-radius: 8px; color: #86efac;">✅ Successfully uploaded ' + (lines.length - 1) + ' pick assignments! Workers will be notified.</div>';
+                
+                setTimeout(() => {
+                    statusDiv.innerHTML = '<div style="padding: 15px; background: rgba(59, 130, 246, 0.15); border: 1px solid #3b82f6; border-radius: 8px; color: #93c5fd;">📤 Assignments are being distributed to workers\' mobile devices...</div>';
+                }, 1500);
+                
+                console.log('📤 Uploaded pick assignments:', lines.length - 1, 'workers');
+            };
+            
+            reader.onerror = function() {
+                statusDiv.innerHTML = '<div style="padding: 15px; background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; border-radius: 8px; color: #fca5a5;">❌ Error reading file. Please try again.</div>';
+            };
+            
+            reader.readAsText(file);
+        }
+        
+        function downloadSampleCSV() {
+            const csv = 'worker_name,pick_list_id,priority,location\nJohn Doe,PL-101,High,Zone A\nJane Smith,PL-102,Standard,Zone B\nMike Johnson,PL-103,Normal,Zone C\nSarah Williams,PL-104,Urgent,Zone D\n';
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'pick_assignments_sample.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            alert('📄 Sample CSV downloaded! Use this format for your pick assignments.');
+        }
+        
+        function viewAssignedPicks() {
+            alert('👀 Viewing all assigned picks:\n\n' +
+                  '✅ 3 completed\n' +
+                  '⏳ 1 in progress\n' +
+                  '⏸️ 1 pending\n\n' +
+                  'Total: 5 assignments today');
+        }
+        
+        function reassignPick(pickId) {
+            const newWorker = prompt('Reassign ' + pickId + ' to which worker?', 'Enter worker name');
+            if (newWorker && newWorker.trim()) {
+                alert('♻️ Pick ' + pickId + ' has been reassigned to ' + newWorker + '\n\nWorker will be notified immediately.');
+            }
+        }
+        
+        function viewPickDetails(pickId) {
+            alert('📋 Pick Details: ' + pickId + '\n\n' +
+                  'Worker: Jane Smith\n' +
+                  'Priority: Standard\n' +
+                  'Location: Zone B\n' +
+                  'Status: Complete\n' +
+                  'Items: 12\n' +
+                  'Completed: 10:45 AM');
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Transfers page loaded successfully');
+        });
+    </script>
+</body>
+</html>

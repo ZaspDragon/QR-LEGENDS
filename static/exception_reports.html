@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exception Reports - QR Legends</title>
+    <script src="/static/qr_camera_scanner.js"></script>
+    <script src="/static/copyright_notice.js"></script>
+    <script src="/static/floating_chat_widget.js"></script>
+    <script src="/static/employee_messaging_widget.js"></script>
+    <style>
+        * {margin: 0 padding: 0 box-sizing: border-box}
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif 
+            background: #f5f7fa 
+            padding: 20px}
+        .container {max-width: 1400px 
+            margin: 0 auto 
+            background: white
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden}
+        .back-button {display: inline-block 
+            margin: 20px 
+            padding: 10px 20px 
+            background: #6c757d; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 5px; 
+            transition: background 0.3s}
+        .back-button:hover {background: #5a6268}
+
+        .header {background: linear-gradient(135deg, #dc3545 0%, #c82333 100%)
+            color: white
+            padding: 30px
+            text-align: center}
+        .header h1 {color: white 
+            margin: 0 0 10px 0 
+            display: flex 
+            align-items: center; 
+            justify-content: center;
+            gap: 15px; 
+            font-size: 2.5rem}
+        .header p {margin: 0 opacity: 0.9 font-size: 1.1rem}
+
+        .alert-grid {display: grid 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) 
+            gap: 20px 
+            padding: 30px}
+        .alert-card {background: white 
+            padding: 25px 
+            border-radius: 12px 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;}
+        .alert-card:hover {transform: translateY(-2px)
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15)}
+
+        .critical-alert {border-left: 6px solid #e74c3c background: linear-gradient(135deg, #fdf2f2, #fff)}
+        .warning-alert {border-left: 6px solid #f39c12 background: linear-gradient(135deg, #fef9e7, #fff)}
+        .info-alert {border-left: 6px solid #3498db background: linear-gradient(135deg, #ebf3ff, #fff)}
+        .success-alert {border-left: 6px solid #27ae60 background: linear-gradient(135deg, #d5f4e6, #fff)}
+
+        .alert-card h3 {margin-bottom: 15px font-size: 1.3rem}
+        .alert-number {font-size: 3rem 
+            font-weight: bold 
+            margin-bottom: 15px
+            text-align: center}
+        .critical-alert .alert-number {color: #e74c3c}
+        .warning-alert .alert-number {color: #f39c12}
+        .info-alert .alert-number {color: #3498db}
+        .success-alert .alert-number {color: #27ae60}
+
+        .alert-list {margin-bottom: 20px}
+        .alert-list div {padding: 8px 0 
+            border-bottom: 1px solid rgba(0,0,0,0.1)
+            font-size: 0.95rem}
+        .alert-list div:last-child {border-bottom: none}
+
+        .alert-button {width: 100%
+            padding: 12px
+            border: none
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95rem}
+        .critical-alert .alert-button {background: #e74c3c 
+            color: white}
+        .critical-alert .alert-button: hover {background: #c0392b 
+            transform: translateY(-1px)}
+        .warning-alert .alert-button {background: #f39c12 
+            color: white}
+        .warning-alert .alert-button: hover {background: #d68910 
+            transform: translateY(-1px)}
+        .info-alert .alert-button {background: #3498db 
+            color: white}
+        .info-alert .alert-button: hover {background: #2980b9 
+            transform: translateY(-1px)}
+
+        .exception-table-section {padding: 30px
+            background: #f8f9fa}
+        .exception-table {width: 100% 
+            border-collapse: collapse
+            background: white
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);}
+        .exception-table th,
+        .exception-table td {padding: 15px 
+            text-align: left 
+            border-bottom: 1px solid #eee}
+        .exception-table th {background: linear-gradient(135deg, #667eea, #764ba2) 
+            color: white
+            font-weight: 600 
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px}
+        .exception-table tbody tr:hover {background: #f8f9fa}
+
+        .severity-critical {color: #e74c3c font-weight: bold}
+        .severity-warning {color: #f39c12 font-weight: bold}
+        .severity-info {color: #3498db font-weight: bold}
+
+        .status-badge {padding: 6px 12px
+            border-radius: 20px
+            font-size: 0.8rem
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px}
+        .status-open {background: #fff3cd color: #856404}
+        .status-investigating {background: #d1ecf1 color: #0c5460}
+        .status-resolved {background: #d4edda color: #155724}
+
+        .action-button {padding: 8px 16px
+            border: none
+            border-radius: 6px
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 2px}
+        .btn-investigate {background: #007bff color: white}
+        .btn-investigate: hover {background: #0056b3 transform: translateY(-1px)}
+        .btn-view {background: #6c757d color: white}
+        .btn-view: hover {background: #545b62 transform: translateY(-1px)}
+        .btn-review {background: #28a745 color: white}
+        .btn-review: hover {background: #1e7e34 transform: translateY(-1px)}
+
+        .stats-section {padding: 30px
+            background: white}
+        .stats-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr))
+            gap: 20px}
+        .stat-card {background: linear-gradient(135deg, #f8f9fa, #e9ecef)
+            padding: 25px
+            border-radius: 12px
+            text-align: center;
+            border-left: 5px solid #dc3545;
+            transition: transform 0.3s}
+        .stat-card:hover {transform: translateY(-2px)}
+        .stat-number {font-size: 2.5rem
+            font-weight: bold
+            color: #dc3545
+            margin-bottom: 5px}
+        .stat-label {color: #666
+            font-size: 0.9rem
+            font-weight: 600}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/reports_hub" class="back-button">← Back to Reports Hub</a>
+
+        <div class="header">
+            <h1>⚠️ Exception Reports Dashboard</h1>
+            <p>Monitor errors, discrepancies, and alerts across warehouse operations</p>
+        </div>
+
+        <div class="alert-grid">
+            <div class="alert-card critical-alert">
+                <h3>🚨 Critical Exceptions</h3>
+                <div class="alert-number" id="criticalCount">7</div>
+                <div class="alert-list">
+                    <div>• 3 Inventory count discrepancies</div>
+                    <div>• 2 Shipping address errors</div>
+                    <div>• 2 System access failures</div>
+                </div>
+                <button class="alert-button" onclick="showExceptionDetail('critical')">View Details</button>
+            </div>
+
+            <div class="alert-card warning-alert">
+                <h3>⚠️ Warning Issues</h3>
+                <div class="alert-number" id="warningCount">23</div>
+                <div class="alert-list">
+                    <div>• 12 Late shipments</div>
+                    <div>• 6 Low stock alerts</div>
+                    <div>• 5 Pick location changes</div>
+                </div>
+                <button class="alert-button" onclick="showExceptionDetail('warning')">Review All</button>
+            </div>
+
+            <div class="alert-card info-alert">
+                <h3>ℹ️ Information Alerts</h3>
+                <div class="alert-number" id="infoCount">45</div>
+                <div class="alert-list">
+                    <div>• 18 Workflow notifications</div>
+                    <div>• 15 Schedule changes</div>
+                    <div>• 12 System updates</div>
+                </div>
+                <button class="alert-button" onclick="showExceptionDetail('info')">View Log</button>
+            </div>
+
+            <div class="alert-card success-alert">
+                <h3>📊 Exception Trends</h3>
+                <div style="text-align: left; margin-top: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>Today vs Yesterday:</span>
+                        <span style="color: #e74c3c; font-weight: bold;">+8 exceptions</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>This Week:</span>
+                        <span style="color: #f39c12; font-weight: bold;">247 total</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Resolution Rate:</span>
+                        <span style="color: #27ae60; font-weight: bold;">89.2%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="exception-table-section">
+            <h3 style="margin-bottom: 20px; color: #2c3e50; font-size: 1.5rem;">🔍 Recent Exceptions</h3>
+            <table class="exception-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Severity</th>
+                        <th>Department</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="exceptionsTableBody">
+                    <tr>
+                        <td>14:32</td>
+                        <td>Inventory</td>
+                        <td>Count mismatch: SKU-12847 (Expected: 150, Found: 142)</td>
+                        <td><span class="severity-critical">Critical</span></td>
+                        <td>Receiving</td>
+                        <td><span class="status-badge status-open">Open</span></td>
+                        <td>
+                            <button class="action-button btn-investigate" onclick="investigateException('INV-001')">Investigate</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>14:15</td>
+                        <td>Shipping</td>
+                        <td>Invalid address format for order #ORD-5529</td>
+                        <td><span class="severity-critical">Critical</span></td>
+                        <td>Shipping</td>
+                        <td><span class="status-badge status-investigating">Investigating</span></td>
+                        <td>
+                            <button class="action-button btn-view" onclick="viewException('SHP-001')">View</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>13:58</td>
+                        <td>Performance</td>
+                        <td>Pick rate below threshold: Employee #EMP-247</td>
+                        <td><span class="severity-warning">Warning</span></td>
+                        <td>Picking</td>
+                        <td><span class="status-badge status-investigating">Investigating</span></td>
+                        <td>
+                            <button class="action-button btn-review" onclick="reviewException('PER-001')">Review</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>13:42</td>
+                        <td>System</td>
+                        <td>QR scanner offline: Station WS-05</td>
+                        <td><span class="severity-warning">Warning</span></td>
+                        <td>IT</td>
+                        <td><span class="status-badge status-resolved">Resolved</span></td>
+                        <td>
+                            <button class="action-button btn-view" onclick="viewException('SYS-001')">Details</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>13:25</td>
+                        <td>Workflow</td>
+                        <td>Delayed putaway: 25 items pending location assignment</td>
+                        <td><span class="severity-info">Info</span></td>
+                        <td>Putaway</td>
+                        <td><span class="status-badge status-investigating">Investigating</span></td>
+                        <td>
+                            <button class="action-button btn-investigate" onclick="assignLocation('WFL-001')">Assign</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="stats-section">
+            <h3 style="margin-bottom: 20px; color: #2c3e50; font-size: 1.5rem;">📈 Exception Statistics</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalExceptions">75</div>
+                    <div class="stat-label">Total Open Exceptions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="avgResolutionTime">2.4</div>
+                    <div class="stat-label">Avg Resolution (hours)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="resolvedToday">18</div>
+                    <div class="stat-label">Resolved Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="resolutionRate">89</div>
+                    <div class="stat-label">Resolution Rate (%)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showExceptionDetail(type) {switch(type) {
+                case 'critical':
+                    alert('Displaying critical exceptions:\n\n• Inventory discrepancies require immediate attention\n• Shipping errors affecting customer orders\n• System access failures preventing operations')
+                    break
+                case 'warning':
+                    alert('Displaying warning issues:\n\n• Late shipments affecting delivery schedules\n• Low stock alerts requiring replenishment\n• Pick location changes requiring updates')
+                    break;
+                case 'info':
+                    alert('Displaying information alerts:\n\n• Workflow notifications for process updates\n• Schedule changes affecting operations\n• System updates and maintenance notices');
+                    break}
+        }
+
+        function investigateException(exceptionId) {
+            alert(`Investigation started for exception: ${exceptionId}\n\nThis will:\n• Assign to appropriate team member\n• Set priority level\n• Begin resolution workflow`);
+        }
+
+        function viewException(exceptionId) {
+            alert(`Viewing details for exception: ${exceptionId}\n\nShowing:\n• Full exception details\n• Timeline of events\n• Related documentation`);
+        }
+
+        function reviewException(exceptionId) {
+            alert(`Performance review initiated for exception: ${exceptionId}\n\nThis will:\n• Analyze performance metrics\n• Identify root causes\n• Recommend corrective actions`);
+        }
+
+        function assignLocation(exceptionId) {
+            alert(`Location assignment in progress for: ${exceptionId}\n\nThis will:\n• Check available locations\n• Assign optimal positions\n• Update inventory system`);
+        }
+
+        // Update statistics periodically
+        function updateStats() {
+            const stats = {
+                critical: Math.floor(Math.random() * 10) + 5,
+                warning: Math.floor(Math.random() * 20) + 15,
+                info: Math.floor(Math.random() * 30) + 30,
+                total: Math.floor(Math.random() * 50) + 50,
+                avgTime: (Math.random() * 3 + 1).toFixed(1),
+                resolved: Math.floor(Math.random() * 15) + 10,
+                rate: Math.floor(Math.random() * 15) + 85
+            };
+
+            document.getElementById('criticalCount').textContent = stats.critical;
+            document.getElementById('warningCount').textContent = stats.warning;
+            document.getElementById('infoCount').textContent = stats.info;
+            document.getElementById('totalExceptions').textContent = stats.total;
+            document.getElementById('avgResolutionTime').textContent = stats.avgTime;
+            document.getElementById('resolvedToday').textContent = stats.resolved;
+            document.getElementById('resolutionRate').textContent = stats.rate;
+        }
+
+        // Initialize and update stats every 30 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Exception Reports page loaded successfully');
+            updateStats();
+            setInterval(updateStats, 30000);
+        });
+    </script>
+</body>
+</html>

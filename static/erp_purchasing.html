@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchasing Management - QR Legends ERP</title>
+    <style>
+        * {box-sizing: border-box}
+        body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+            margin: 0
+            padding: 20px
+            background: #f4f4f5;
+            color: #18181b}
+        .container {max-width: 1400px
+            margin: 0 auto
+            background: white
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);}
+        .header {display: flex
+            justify-content: space-between
+            align-items: center
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e4e4e7}
+        h1 {margin: 0 color: #18181b}
+        .btn {padding: 10px 20px
+            border: 1px solid #e4e4e7
+            border-radius: 8px
+            background: #007BFF;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            margin-right: 10px}
+        .stats-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr))
+            gap: 20px
+            margin-bottom: 30px}
+        .stat-card {background: #f8f9fa
+            padding: 20px
+            border-radius: 12px
+            border: 1px solid #e4e4e7}
+        .stat-value {font-size: 2rem font-weight: bold color: #007BFF}
+        .stat-label {color: #6c757d margin-top: 8px}
+        .purchasing-table {width: 100%
+            border-collapse: collapse
+            margin-top: 20px}
+        .purchasing-table th, .purchasing-table td {padding: 12px
+            text-align: left
+            border-bottom: 1px solid #e4e4e7}
+        .purchasing-table th {background: #f4f4f5
+            font-weight: 600}
+        .purchasing-table tbody tr:hover {background: #f9f9f9}
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: white; /* Default background, can be overridden by theme variables if available */
+            margin: 5% auto;
+            padding: 30px;
+            border: 1px solid #e4e4e7; /* Default border, can be overridden */
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #6c757d; /* Default color, can be overridden */
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #18181b; /* Default color, can be overridden */
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #18181b; /* Default color, can be overridden */
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background: #f8f9fa; /* Default background, can be overridden */
+            border: 1px solid #e4e4e7; /* Default border, can be overridden */
+            border-radius: 8px;
+            color: #18181b; /* Default color, can be overridden */
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #007BFF; /* Default focus color, can be overridden */
+            outline: none;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa; /* Default background, can be overridden */
+            color: #18181b; /* Default color, can be overridden */
+            border: 1px solid #e4e4e7; /* Default border, can be overridden */
+        }
+
+        .btn-secondary:hover {
+            background: #e4e4e7; /* Default hover background, can be overridden */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛒 Purchasing Management</h1>
+            <div>
+                <a href="/erp_dashboard" class="btn" style="background: #6c757d;">← Back to ERP</a>
+                <button class="btn" onclick="createNewPO()">+ New Purchase Order</button>
+                <button class="btn" style="background: #28a745;" onclick="addSupplier()">Manage Suppliers</button>
+                <button class="btn" style="background: #10b981;" onclick="newReceipt()">+ New Receipt</button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">38</div>
+                <div class="stat-label">Open Purchase Orders</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">$125k</div>
+                <div class="stat-label">Monthly Spend</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">5</div>
+                <div class="stat-label">Past Due Orders</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">93%</div>
+                <div class="stat-label">Supplier OTIF</div>
+            </div>
+        </div>
+
+        <h3>Recent Purchase Orders</h3>
+        <table class="purchasing-table">
+            <thead>
+                <tr>
+                    <th>PO #</th>
+                    <th>Supplier</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Due Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>PO-001</td>
+                    <td>Industrial Supply Co</td>
+                    <td>2025-01-15</td>
+                    <td>$8,450</td>
+                    <td><span style="color: #28a745;">Received</span></td>
+                    <td>2025-01-22</td>
+                    <td>
+                        <button class="btn" style="background: #f59e0b; padding: 5px 10px;">Edit</button>
+                        <button class="btn" style="background: #dc2626; padding: 5px 10px;">View</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>PO-002</td>
+                    <td>Parts Express</td>
+                    <td>2025-01-16</td>
+                    <td>$5,920</td>
+                    <td><span style="color: #007BFF;">In Transit</span></td>
+                    <td>2025-01-20</td>
+                    <td>
+                        <button class="btn" style="background: #f59e0b; padding: 5px 10px;">Edit</button>
+                        <button class="btn" style="background: #dc2626; padding: 5px 10px;">View</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Create PO Modal -->
+    <div id="createPOModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('createPOModal')">&times;</span>
+            <h2>Create New Purchase Order</h2>
+            <form id="createPOForm">
+                <div class="form-group">
+                    <label for="supplier">Supplier:</label>
+                    <select id="supplier" name="supplier" required>
+                        <option value="">Select Supplier</option>
+                        <option value="Acme Corp">Acme Corp</option>
+                        <option value="Global Industries">Global Industries</option>
+                        <option value="Supply Co">Supply Co</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="priority">Priority:</label>
+                    <select id="priority" name="priority" required>
+                        <option value="Normal">Normal</option>
+                        <option value="High">High</option>
+                        <option value="Urgent">Urgent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="delivery_date">Delivery Date:</label>
+                    <input type="date" id="delivery_date" name="delivery_date" required>
+                </div>
+                <div class="form-group">
+                    <label for="items">Items:</label>
+                    <textarea id="items" name="items" rows="4" placeholder="Enter items and quantities..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="notes">Notes:</label>
+                    <textarea id="notes" name="notes" rows="3" placeholder="Additional notes..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="submitNewPO()" class="btn btn-primary">Create PO</button>
+                    <button type="button" onclick="closeModal('createPOModal')" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Supplier Modal -->
+    <div id="addSupplierModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addSupplierModal')">&times;</span>
+            <h2>Add New Supplier</h2>
+            <form id="addSupplierForm">
+                <div class="form-group">
+                    <label for="supplier_name">Supplier Name:</label>
+                    <input type="text" id="supplier_name" name="supplier_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="contact_person">Contact Person:</label>
+                    <input type="text" id="contact_person" name="contact_person" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone:</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Address:</label>
+                    <textarea id="address" name="address" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="payment_terms">Payment Terms:</label>
+                    <select id="payment_terms" name="payment_terms" required>
+                        <option value="Net 30">Net 30</option>
+                        <option value="Net 15">Net 15</option>
+                        <option value="Cash on Delivery">Cash on Delivery</option>
+                        <option value="Net 60">Net 60</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category:</label>
+                    <select id="category" name="category" required>
+                        <option value="Office Supplies">Office Supplies</option>
+                        <option value="Raw Materials">Raw Materials</option>
+                        <option value="Equipment">Equipment</option>
+                        <option value="Services">Services</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="submitSupplier()" class="btn btn-primary">Add Supplier</button>
+                    <button type="button" onclick="closeModal('addSupplierModal')" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- New Receipt Modal -->
+    <div id="newReceiptModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('newReceiptModal')">&times;</span>
+            <h2>Create New Receipt</h2>
+            <form id="newReceiptForm">
+                <div class="form-group">
+                    <label for="po_number">PO Number:</label>
+                    <input type="text" id="po_number" name="po_number" placeholder="Enter PO number" required>
+                </div>
+                <div class="form-group">
+                    <label for="received_date">Received Date:</label>
+                    <input type="date" id="received_date" name="received_date" required>
+                </div>
+                <div class="form-group">
+                    <label for="received_by">Received By:</label>
+                    <input type="text" id="received_by" name="received_by" required>
+                </div>
+                <div class="form-group">
+                    <label for="items_received">Items Received:</label>
+                    <textarea id="items_received" name="items_received" rows="4" placeholder="List items and quantities received..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="condition">Condition:</label>
+                    <select id="condition" name="condition" required>
+                        <option value="Good">Good</option>
+                        <option value="Damaged">Damaged</option>
+                        <option value="Partial">Partial Delivery</option>
+                        <option value="Complete">Complete</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="notes">Notes:</label>
+                    <textarea id="notes" name="notes" rows="3" placeholder="Additional notes..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="submitReceipt()" class="btn btn-primary">Create Receipt</button>
+                    <button type="button" onclick="closeModal('newReceiptModal')" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function createNewPO() {
+            showModal('createPOModal');
+        }
+
+        function addSupplier() {
+            showModal('addSupplierModal');
+        }
+
+        function newReceipt() {
+            showModal('newReceiptModal');
+        }
+
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        async function submitNewPO() {
+            const form = document.getElementById('createPOForm');
+            const formData = new FormData(form);
+
+            const poData = {
+                supplier: formData.get('supplier'),
+                priority: formData.get('priority'),
+                delivery_date: formData.get('delivery_date'),
+                items: formData.get('items'),
+                notes: formData.get('notes')
+            };
+
+            try {
+                const response = await fetch('/api/purchasing/purchase-orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(poData)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert('Purchase Order created successfully! PO #' + result.po_number);
+                    closeModal('createPOModal');
+                    form.reset();
+                    loadPurchaseOrders();
+                } else {
+                    alert('Error creating purchase order');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error creating purchase order');
+            }
+        }
+
+        async function submitSupplier() {
+            const form = document.getElementById('addSupplierForm');
+            const formData = new FormData(form);
+
+            const supplierData = {
+                name: formData.get('supplier_name'),
+                contact_person: formData.get('contact_person'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                address: formData.get('address'),
+                payment_terms: formData.get('payment_terms'),
+                category: formData.get('category')
+            };
+
+            try {
+                const response = await fetch('/api/purchasing/suppliers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(supplierData)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert('Supplier added successfully!');
+                    closeModal('addSupplierModal');
+                    form.reset();
+                    loadSuppliers();
+                } else {
+                    alert('Error adding supplier');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error adding supplier');
+            }
+        }
+
+        async function submitReceipt() {
+            const form = document.getElementById('newReceiptForm');
+            const formData = new FormData(form);
+
+            const receiptData = {
+                po_number: formData.get('po_number'),
+                received_date: formData.get('received_date'),
+                received_by: formData.get('received_by'),
+                items_received: formData.get('items_received'),
+                condition: formData.get('condition'),
+                notes: formData.get('notes')
+            };
+
+            try {
+                const response = await fetch('/api/purchasing/receipts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(receiptData)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert('Receipt created successfully!');
+                    closeModal('newReceiptModal');
+                    form.reset();
+                    loadReceipts();
+                } else {
+                    alert('Error creating receipt');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error creating receipt');
+            }
+        }
+
+        async function loadPurchaseOrders() {
+            // Refresh purchase orders list
+            console.log('Loading purchase orders...');
+        }
+
+        async function loadSuppliers() {
+            // Refresh suppliers list
+            console.log('Loading suppliers...');
+        }
+
+        async function loadReceipts() {
+            // Refresh receipts list
+            console.log('Loading receipts...');
+        }
+    </script>
+</body>
+</html>

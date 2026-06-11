@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruitment Portal - HR Management</title>
+    <link rel="stylesheet" href="qr_legends_dark_theme.css">
+    <style>
+        .recruitment-dashboard {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .sidebar {
+            background: var(--ql-card);
+            border: 1px solid var(--ql-border);
+            border-radius: 16px;
+            padding: 24px;
+            height: fit-content;
+        }
+
+        .job-posting-card {
+            background: var(--ql-card);
+            border: 1px solid var(--ql-border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .job-posting-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(2,8,23,.4);
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .job-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--ql-text);
+            margin-bottom: 4px;
+        }
+
+        .job-department {
+            color: var(--ql-sub);
+            font-size: 0.9rem;
+        }
+
+        .job-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--ql-success);
+        }
+
+        .status-paused {
+            background: rgba(249, 115, 22, 0.2);
+            color: var(--ql-warning);
+        }
+
+        .status-closed {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--ql-danger);
+        }
+
+        .job-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .metric {
+            text-align: center;
+            padding: 12px;
+            background: var(--ql-surface);
+            border-radius: 8px;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--ql-primary);
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--ql-sub);
+            margin-top: 4px;
+        }
+
+        .job-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .candidate-list {
+            background: var(--ql-card);
+            border: 1px solid var(--ql-border);
+            border-radius: 16px;
+        }
+
+        .candidate-item {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--ql-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .candidate-item:last-child {
+            border-bottom: none;
+        }
+
+        .candidate-info {
+            flex: 1;
+        }
+
+        .candidate-name {
+            font-weight: 600;
+            color: var(--ql-text);
+            margin-bottom: 4px;
+        }
+
+        .candidate-details {
+            color: var(--ql-sub);
+            font-size: 0.9rem;
+        }
+
+        .candidate-stage {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+
+        .stage-applied {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--ql-primary);
+        }
+
+        .stage-screening {
+            background: rgba(249, 115, 22, 0.2);
+            color: var(--ql-warning);
+        }
+
+        .stage-interview {
+            background: rgba(168, 85, 247, 0.2);
+            color: var(--ql-accent);
+        }
+
+        .stage-offer {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--ql-success);
+        }
+
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .quick-stat {
+            text-align: center;
+            padding: 16px;
+            background: var(--ql-surface);
+            border-radius: 12px;
+        }
+
+        .quick-stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--ql-primary);
+        }
+
+        .quick-stat-label {
+            font-size: 0.8rem;
+            color: var(--ql-sub);
+            margin-top: 4px;
+        }
+
+        .upcoming-interviews {
+            margin-top: 24px;
+        }
+
+        .interview-item {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--ql-border);
+        }
+
+        .interview-item:last-child {
+            border-bottom: none;
+        }
+
+        .interview-time {
+            font-size: 0.8rem;
+            color: var(--ql-sub);
+        }
+
+        .interview-candidate {
+            font-weight: 500;
+            color: var(--ql-text);
+        }
+
+        .interview-position {
+            font-size: 0.8rem;
+            color: var(--ql-sub);
+        }
+    </style>
+</head>
+<body>
+    <header class="ql-header">
+        <div class="ql-header-inner">
+            <div class="ql-title">
+                <span class="ql-logo">🎯</span>
+                <h1 class="ql-h1">Recruitment Portal</h1>
+            </div>
+            <nav class="ql-nav">
+                <a class="ql-btn" href="/erp_hr">👥 HR Portal</a>
+                <a class="ql-btn ql-secondary" onclick="createJobPosting()">+ New Job</a>
+            </nav>
+            <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+        </div>
+    </header>
+
+    <div class="ql-container">
+        <div class="recruitment-dashboard">
+            <div class="main-content">
+                <!-- Active Job Postings -->
+                <div class="job-posting-card">
+                    <div class="job-header">
+                        <div>
+                            <div class="job-title">Warehouse Supervisor</div>
+                            <div class="job-department">Warehouse Operations • Full-time</div>
+                        </div>
+                        <span class="job-status status-active">Active</span>
+                    </div>
+
+                    <div class="job-metrics">
+                        <div class="metric">
+                            <div class="metric-value">47</div>
+                            <div class="metric-label">Applications</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">12</div>
+                            <div class="metric-label">In Review</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">3</div>
+                            <div class="metric-label">Interviews</div>
+                        </div>
+                    </div>
+
+                    <div class="job-actions">
+                        <button class="ql-btn ql-secondary" onclick="viewCandidates('warehouse-supervisor')">👥 View Candidates</button>
+                        <button class="ql-btn" onclick="scheduleInterview('warehouse-supervisor')">📅 Schedule Interview</button>
+                        <button class="ql-btn" onclick="editJobPosting('warehouse-supervisor')">✏️ Edit</button>
+                    </div>
+                </div>
+
+                <div class="job-posting-card">
+                    <div class="job-header">
+                        <div>
+                            <div class="job-title">Inventory Specialist</div>
+                            <div class="job-department">Warehouse Operations • Full-time</div>
+                        </div>
+                        <span class="job-status status-active">Active</span>
+                    </div>
+
+                    <div class="job-metrics">
+                        <div class="metric">
+                            <div class="metric-value">23</div>
+                            <div class="metric-label">Applications</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">8</div>
+                            <div class="metric-label">In Review</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">2</div>
+                            <div class="metric-label">Interviews</div>
+                        </div>
+                    </div>
+
+                    <div class="job-actions">
+                        <button class="ql-btn ql-secondary" onclick="viewCandidates('inventory-specialist')">👥 View Candidates</button>
+                        <button class="ql-btn" onclick="scheduleInterview('inventory-specialist')">📅 Schedule Interview</button>
+                        <button class="ql-btn" onclick="editJobPosting('inventory-specialist')">✏️ Edit</button>
+                    </div>
+                </div>
+
+                <div class="job-posting-card">
+                    <div class="job-header">
+                        <div>
+                            <div class="job-title">IT Support Technician</div>
+                            <div class="job-department">Information Technology • Full-time</div>
+                        </div>
+                        <span class="job-status status-paused">On Hold</span>
+                    </div>
+
+                    <div class="job-metrics">
+                        <div class="metric">
+                            <div class="metric-value">31</div>
+                            <div class="metric-label">Applications</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">0</div>
+                            <div class="metric-label">In Review</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">0</div>
+                            <div class="metric-label">Interviews</div>
+                        </div>
+                    </div>
+
+                    <div class="job-actions">
+                        <button class="ql-btn ql-secondary" onclick="viewCandidates('IT001')">👥 View Candidates</button>
+                        <button class="ql-btn" onclick="resumeJobPosting('IT001')">▶️ Resume</button>
+                        <button class="ql-btn" onclick="editJobPosting('IT001')">✏️ Edit</button>
+                    </div>
+                </div>
+
+                <!-- Recent Candidates -->
+                <div class="candidate-list">
+                    <div class="section-header">
+                        <h3 class="section-title">🆕 Recent Candidates</h3>
+                    </div>
+
+                    <div class="candidate-item">
+                        <div class="candidate-info">
+                            <div class="candidate-name">Alex Rodriguez</div>
+                            <div class="candidate-details">Applied for Warehouse Supervisor • 2 hours ago</div>
+                        </div>
+                        <div>
+                            <span class="candidate-stage stage-applied">Applied</span>
+                            <button class="ql-btn" style="padding: 6px 12px; font-size: 0.8rem;" onclick="reviewCandidate('CAND001')">Review</button>
+                        </div>
+                    </div>
+
+                    <div class="candidate-item">
+                        <div class="candidate-info">
+                            <div class="candidate-name">Maria Garcia</div>
+                            <div class="candidate-details">Applied for Inventory Specialist • 5 hours ago</div>
+                        </div>
+                        <div>
+                            <span class="candidate-stage stage-screening">Screening</span>
+                            <button class="ql-btn" style="padding: 6px 12px; font-size: 0.8rem;" onclick="reviewCandidate('CAND002')">Review</button>
+                        </div>
+                    </div>
+
+                    <div class="candidate-item">
+                        <div class="candidate-info">
+                            <div class="candidate-name">David Kim</div>
+                            <div class="candidate-details">Applied for Warehouse Supervisor • 1 day ago</div>
+                        </div>
+                        <div>
+                            <span class="candidate-stage stage-interview">Interview</span>
+                            <button class="ql-btn" style="padding: 6px 12px; font-size: 0.8rem;" onclick="reviewCandidate('CAND003')">Review</button>
+                        </div>
+                    </div>
+
+                    <div class="candidate-item">
+                        <div class="candidate-info">
+                            <div class="candidate-name">Jennifer Lee</div>
+                            <div class="candidate-details">Applied for Inventory Specialist • 2 days ago</div>
+                        </div>
+                        <div>
+                            <span class="candidate-stage stage-offer">Offer Sent</span>
+                            <button class="ql-btn" style="padding: 6px 12px; font-size: 0.8rem;" onclick="reviewCandidate('CAND004')">Review</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <h3 style="color: var(--ql-text); margin-bottom: 20px;">📊 Quick Stats</h3>
+
+                <div class="quick-stats">
+                    <div class="quick-stat">
+                        <div class="quick-stat-value">5</div>
+                        <div class="quick-stat-label">Open Positions</div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="quick-stat-value">127</div>
+                        <div class="quick-stat-label">Total Candidates</div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="quick-stat-value">15</div>
+                        <div class="quick-stat-label">Interviews This Week</div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="quick-stat-value">3</div>
+                        <div class="quick-stat-label">Offers Extended</div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 24px;">
+                    <button class="ql-btn ql-secondary" style="width: 100%; margin-bottom: 12px;" onclick="createJobPosting()">+ Create Job Posting</button>
+                    <button class="ql-btn" style="width: 100%; margin-bottom: 12px;" onclick="viewAllCandidates()">👥 All Candidates</button>
+                    <button class="ql-btn" style="width: 100%;" onclick="generateRecruitmentReport()">📊 Generate Report</button>
+                </div>
+
+                <div class="upcoming-interviews">
+                    <h4 style="color: var(--ql-text); margin-bottom: 16px;">📅 Upcoming Interviews</h4>
+
+                    <div class="interview-item">
+                        <div class="interview-time">Today 2:00 PM</div>
+                        <div class="interview-candidate">David Kim</div>
+                        <div class="interview-position">Warehouse Supervisor</div>
+                    </div>
+
+                    <div class="interview-item">
+                        <div class="interview-time">Tomorrow 10:00 AM</div>
+                        <div class="interview-candidate">Sarah Wilson</div>
+                        <div class="interview-position">Inventory Specialist</div>
+                    </div>
+
+                    <div class="interview-item">
+                        <div class="interview-time">Tomorrow 3:30 PM</div>
+                        <div class="interview-candidate">Michael Brown</div>
+                        <div class="interview-position">Warehouse Supervisor</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('ql-theme-toggle');
+            const savedTheme = localStorage.getItem('ql-theme');
+
+            if (savedTheme === 'light') {
+                document.body.classList.add('light');
+                themeToggle.textContent = '☀️';
+            }
+
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('light');
+                const isLight = document.body.classList.contains('light');
+                themeToggle.textContent = isLight ? '☀️' : '🌙';
+                localStorage.setItem('ql-theme', isLight ? 'light' : 'dark');
+            });
+
+            // Initialize recruitment portal functionality
+            initRecruitmentPortal();
+        });
+
+        function initRecruitmentPortal() {
+            // Mock recruitment data
+            window.recruitmentData = {
+                'warehouse-supervisor': {
+                    position: 'Warehouse Supervisor',
+                    department: 'Warehouse Operations',
+                    type: 'Full-time',
+                    applications: 47,
+                    inReview: 12,
+                    interviews: 3,
+                    candidates: [
+                        {
+                            id: 1,
+                            name: 'John Smith',
+                            email: 'john.smith@email.com',
+                            phone: '(555) 123-4567',
+                            experience: '8 years warehouse management',
+                            status: 'Interview Scheduled',
+                            rating: 4.5,
+                            appliedDate: '2025-01-15'
+                        },
+                        {
+                            id: 2,
+                            name: 'Sarah Johnson',
+                            email: 'sarah.johnson@email.com',
+                            phone: '(555) 234-5678',
+                            experience: '5 years logistics supervision',
+                            status: 'Under Review',
+                            rating: 4.2,
+                            appliedDate: '2025-01-14'
+                        },
+                        {
+                            id: 3,
+                            name: 'Mike Davis',
+                            email: 'mike.davis@email.com',
+                            phone: '(555) 345-6789',
+                            experience: '10 years warehouse operations',
+                            status: 'Application Received',
+                            rating: 4.8,
+                            appliedDate: '2025-01-13'
+                        }
+                    ]
+                },
+                'inventory-specialist': {
+                    position: 'Inventory Specialist',
+                    department: 'Warehouse Operations',
+                    type: 'Full-time',
+                    applications: 23,
+                    inReview: 8,
+                    interviews: 2,
+                    candidates: [
+                        {
+                            id: 4,
+                            name: 'Lisa Chen',
+                            email: 'lisa.chen@email.com',
+                            phone: '(555) 456-7890',
+                            experience: '3 years inventory management',
+                            status: 'Interview Scheduled',
+                            rating: 4.0,
+                            appliedDate: '2025-01-12'
+                        },
+                        {
+                            id: 5,
+                            name: 'Robert Wilson',
+                            email: 'robert.wilson@email.com',
+                            phone: '(555) 567-8901',
+                            experience: '4 years data analysis',
+                            status: 'Under Review',
+                            rating: 3.8,
+                            appliedDate: '2025-01-11'
+                        }
+                    ]
+                }
+            };
+
+            // Add event listeners to all buttons
+            addButtonListeners();
+        }
+
+        function addButtonListeners() {
+            // View Candidates buttons
+            document.querySelectorAll('.job-actions button:nth-child(1)').forEach(btn => {
+                btn.onclick = function() {
+                    const positionKey = this.getAttribute('onclick').match(/viewCandidates\('([^']+)'\)/)[1];
+                    viewCandidates(positionKey);
+                };
+            });
+
+            // Schedule Interview buttons
+            document.querySelectorAll('.job-actions button:nth-child(2)').forEach(btn => {
+                btn.onclick = function() {
+                    const positionKey = this.getAttribute('onclick').match(/scheduleInterview\('([^']+)'\)/)[1];
+                    scheduleInterview(positionKey);
+                };
+            });
+
+            // Edit buttons
+            document.querySelectorAll('.job-actions button:nth-child(3)').forEach(btn => {
+                btn.onclick = function() {
+                    const positionKey = this.getAttribute('onclick').match(/editJobPosting\('([^']+)'\)/)[1];
+                    editJobPosting(positionKey);
+                };
+            });
+
+             // Resume button (for 'IT Support Technician' example)
+            const resumeBtn = document.querySelector('.job-actions button[onclick*="resumeJobPosting"]');
+            if (resumeBtn) {
+                resumeBtn.onclick = function() {
+                    const positionKey = this.getAttribute('onclick').match(/resumeJobPosting\('([^']+)'\)/)[1];
+                    resumeJobPosting(positionKey);
+                };
+            }
+
+            // Review Candidate buttons
+            document.querySelectorAll('.candidate-item button').forEach(btn => {
+                btn.onclick = function() {
+                    const candidateId = this.getAttribute('onclick').match(/reviewCandidate\('([^']+)'\)/)[1];
+                    reviewCandidate(candidateId);
+                };
+            });
+
+            // Sidebar buttons
+            document.querySelectorAll('.sidebar button[onclick*="createJobPosting"]').forEach(btn => {
+                btn.onclick = createJobPosting;
+            });
+            document.querySelectorAll('.sidebar button[onclick*="viewAllCandidates"]').forEach(btn => {
+                btn.onclick = viewAllCandidates;
+            });
+            document.querySelectorAll('.sidebar button[onclick*="generateRecruitmentReport"]').forEach(btn => {
+                btn.onclick = generateRecruitmentReport;
+            });
+        }
+
+        function viewCandidates(positionKey) {
+            const data = window.recruitmentData[positionKey];
+            if (!data) {
+                alert('No data found for this position');
+                return;
+            }
+
+            // Create candidate list modal
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.8); z-index: 1000;
+                display: flex; align-items: center; justify-content: center;
+                padding: 20px;
+            `;
+
+            const content = document.createElement('div');
+            content.style.cssText = `
+                background: var(--ql-card); border-radius: 16px; padding: 30px;
+                max-width: 800px; width: 100%; max-height: 80vh; overflow-y: auto;
+                border: 1px solid var(--ql-border);
+            `;
+
+            content.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: var(--ql-text); margin: 0;">Candidates for ${data.position}</h2>
+                    <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 24px; color: var(--ql-text); cursor: pointer;">×</button>
+                </div>
+                <div class="candidates-list">
+                    ${data.candidates.map(candidate => `
+                        <div style="background: var(--ql-surface); border: 1px solid var(--ql-border); border-radius: 8px; padding: 20px; margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                <div>
+                                    <h3 style="color: var(--ql-text); margin: 0 0 5px 0;">${candidate.name}</h3>
+                                    <p style="color: var(--ql-sub); margin: 0; font-size: 0.9rem;">${candidate.experience}</p>
+                                </div>
+                                <span style="background: ${getStatusColor(candidate.status)}; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; white-space: nowrap;">${candidate.status}</span>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                                <div>
+                                    <strong style="color: var(--ql-text);">Email:</strong><br>
+                                    <span style="color: var(--ql-sub);">${candidate.email}</span>
+                                </div>
+                                <div>
+                                    <strong style="color: var(--ql-text);">Phone:</strong><br>
+                                    <span style="color: var(--ql-sub);">${candidate.phone}</span>
+                                </div>
+                                <div>
+                                    <strong style="color: var(--ql-text);">Applied:</strong><br>
+                                    <span style="color: var(--ql-sub);">${candidate.appliedDate}</span>
+                                </div>
+                                <div>
+                                    <strong style="color: var(--ql-text);">Rating:</strong><br>
+                                    <span style="color: var(--ql-primary);">${'★'.repeat(Math.floor(candidate.rating))}${'☆'.repeat(5-Math.floor(candidate.rating))} ${candidate.rating}/5</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button onclick="scheduleInterviewForCandidate(${candidate.id})" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.9rem;">Schedule Interview</button>
+                                <button onclick="viewResume(${candidate.id})" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.9rem;">View Resume</button>
+                                <button onclick="contactCandidate(${candidate.id})" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.9rem;">Contact</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            modal.className = 'modal';
+            modal.appendChild(content);
+            document.body.appendChild(modal);
+        }
+
+        function scheduleInterview(positionKey) {
+            const data = window.recruitmentData[positionKey];
+            if (!data) {
+                alert('No data found for this position');
+                return;
+            }
+
+            // Create interview scheduling modal
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.8); z-index: 1000;
+                display: flex; align-items: center; justify-content: center;
+                padding: 20px;
+            `;
+
+            const content = document.createElement('div');
+            content.style.cssText = `
+                background: var(--ql-card); border-radius: 16px; padding: 30px;
+                max-width: 500px; width: 100%;
+                border: 1px solid var(--ql-border);
+            `;
+
+            content.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: var(--ql-text); margin: 0;">Schedule Interview</h2>
+                    <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 24px; color: var(--ql-text); cursor: pointer;">×</button>
+                </div>
+                <form onsubmit="submitInterview(event)" style="display: flex; flex-direction: column; gap: 15px;">
+                    <div>
+                        <label style="color: var(--ql-text); display: block; margin-bottom: 5px;">Position:</label>
+                        <input type="text" value="${data.position}" readonly style="width: 100%; padding: 10px; background: var(--ql-surface); border: 1px solid var(--ql-border); border-radius: 4px; color: var(--ql-text);">
+                    </div>
+                    <div>
+                        <label style="color: var(--ql-text); display: block; margin-bottom: 5px;">Candidate:</label>
+                        <select name="candidateId" required style="width: 100%; padding: 10px; background: var(--ql-surface); border: 1px solid var(--ql-border); border-radius: 4px; color: var(--ql-text);">
+                            <option value="">Select Candidate</option>
+                            ${data.candidates.map(candidate => `
+                                <option value="${candidate.id}">${candidate.name} - ${candidate.status}</option>
+                            `).join('')}
+                        </select>
+                    </div>
+                    <div>
+                        <label style="color: var(--ql-text); display: block; margin-bottom: 5px;">Interview Date:</label>
+                        <input type="date" name="interviewDate" required style="width: 100%; padding: 10px; background: var(--ql-surface); border: 1px solid var(--ql-border); border-radius: 4px; color: var(--ql-text);">
+                    </div>
+                    <div>
+                        <label style="color: var(--ql-text); display: block; margin-bottom: 5px;">Interview Time:</label>
+                        <input type="time" name="interviewTime" required style="width: 100%; padding: 10px; background: var(--ql-surface); border: 1px solid var(--ql-border); border-radius: 4px; color: var(--ql-text);">
+                    </div>
+                    <div>
+                        <label style="color: var(--ql-text); display: block; margin-bottom: 5px;">Interview Type:</label>
+                        <select name="interviewType" required style="width: 100%; padding: 10px; background: var(--ql-surface); border: 1px solid var(--ql-border); border-radius: 4px; color: var(--ql-text);">
+                            <option value="">Select Type</option>
+                            <option value="phone">Phone Interview</option>
+                            <option value="video">Video Interview</option>
+                            <option value="in-person">In-Person Interview</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="color: var(--ql-text); display: block; margin-bottom: 5px;">Interviewer:</label>
+                        <select name="interviewer" required style="width: 100%; padding: 10px; background: var(--ql-surface); border: 1px solid var(--ql-border); border-radius: 4px; color: var(--ql-text);">
+                            <option value="">Select Interviewer</option>
+                            <option value="hr_manager">HR Manager</option>
+                            <option value="department_head">Department Head</option>
+                            <option value="supervisor">Direct Supervisor</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                        <button type="button" onclick="this.closest('.modal').remove()" class="btn btn-secondary">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Schedule Interview</button>
+                    </div>
+                </form>
+            `;
+
+            modal.className = 'modal';
+            modal.appendChild(content);
+            document.body.appendChild(modal);
+        }
+
+        function editJobPosting(positionKey) {
+            const data = window.recruitmentData[positionKey];
+            if (!data) {
+                alert('No data found for this position');
+                return;
+            }
+
+            // Create edit position modal
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.8); z-index: 1000;
+                display: flex; align-items: center; justify-content: center;
+                padding: 20px;
+            `;
+
+            const content = document.createElement('div');
+            content.style.cssText = `
+                background: var(--ql-card); border-radius: 16px; padding: 30px;
+                max-width: 500px; width: 100%;
+                border: 1px solid var(--ql-border);
+            `;
+
+            content.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: var(--ql-text); margin: 0;">Edit Position</h2>
+                    <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 24px; color: var(--ql-text); cursor: pointer;">×</button>
+                </div>
+                <form onsubmit="submitPositionEdit(event)" style="display: flex; flex-direction: column; gap: 15px;">
+                    <div>
+                        <label style="color: var(--ql-text); display: block; margin-bottom: 5px;">Position Title:</label>
+                        <input type="text" name="position" value="${data.position}" required style="width: 100%; padding: 10px; background: var(--ql-surface); border: 1px solid var(--ql-border); border-radius: 4px; color: var(--ql-text);">
+                    </div>
+                    <div>
+                        <label style="color: var(--ql-text); display: block; margin-bottom: 5px;">Department:</label>
+                        <input type="text" name="department" value="${data.department}" required style="width: 100%; padding: 10px; background: var(--ql-surface); border: 1px solid var(--ql-border); border-radius: 4px; color: var(--ql-text);">
+                    </div>
+                    <div>
+                        <label style="color: var(--ql-text); display: block; margin-bottom: 5px;">Employment Type:</label>
+                        <select name="type" required style="width: 100%; padding: 10px; background: var(--ql-surface); border: 1px solid var(--ql-border); border-radius: 4px; color: var(--ql-text);">
+                            <option value="Full-time" ${data.type === 'Full-time' ? 'selected' : ''}>Full-time</option>
+                            <option value="Part-time" ${data.type === 'Part-time' ? 'selected' : ''}>Part-time</option>
+                            <option value="Contract" ${data.type === 'Contract' ? 'selected' : ''}>Contract</option>
+                            <option value="Temporary" ${data.type === 'Temporary' ? 'selected' : ''}>Temporary</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="color: var(--ql-text); display: block; margin-bottom: 5px;">Status:</label>
+                        <select name="status" required style="width: 100%; padding: 10px; background: var(--ql-surface); border: 1px solid var(--ql-border); border-radius: 4px; color: var(--ql-text);">
+                            <option value="Active">Active</option>
+                            <option value="Paused">Paused</option>
+                            <option value="Closed">Closed</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                        <button type="button" onclick="this.closest('.modal').remove()" class="btn btn-secondary">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            `;
+
+            modal.className = 'modal';
+            modal.appendChild(content);
+            document.body.appendChild(modal);
+        }
+
+        // Helper functions
+        function getStatusColor(status) {
+            switch (status) {
+                case 'Interview Scheduled': return '#22c55e'; // Green
+                case 'Under Review': return '#f59e0b'; // Amber
+                case 'Application Received': return '#3b82f6'; // Blue
+                default: return '#6b7280'; // Gray
+            }
+        }
+
+        function submitInterview(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const interviewData = Object.fromEntries(formData.entries());
+
+            // Simulate API call
+            console.log('Interview scheduled:', interviewData);
+            alert('Interview scheduled successfully!');
+            event.target.closest('.modal').remove();
+
+            // Refresh the page data (in real app, this would update from server)
+            location.reload();
+        }
+
+        function submitPositionEdit(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const positionData = Object.fromEntries(formData.entries());
+
+            // Simulate API call
+            console.log('Position updated:', positionData);
+            alert('Position updated successfully!');
+            event.target.closest('.modal').remove();
+
+            // Refresh the page data (in real app, this would update from server)
+            location.reload();
+        }
+
+        function scheduleInterviewForCandidate(candidateId) {
+            // This function would typically trigger the scheduleInterview modal with pre-filled candidate data
+            alert(`Opening interview scheduler for candidate ID: ${candidateId}`);
+            // For simplicity, we'll just alert. In a real app, you'd find the job this candidate belongs to and open the schedule modal.
+        }
+
+        function viewResume(candidateId) {
+            alert(`Opening resume for candidate ID: ${candidateId}\n\nIn a real application, this would open the candidate's resume document.`);
+        }
+
+        function contactCandidate(candidateId) {
+            alert(`Opening contact options for candidate ID: ${candidateId}\n\nThis would open email/phone options to contact the candidate.`);
+        }
+
+        // Placeholder functions for buttons that are not yet fully implemented or have generic alerts
+        function createJobPosting() {
+            alert('📝 Creating new job posting...\n\nForm will include:\n- Position details\n- Requirements\n- Salary range\n- Application deadline\n- Interview process');
+        }
+
+        function resumeJobPosting(jobId) {
+            alert(`▶️ Resuming job posting ${jobId}...\n\nThis will:\n- Reactivate the posting\n- Notify candidates\n- Resume application processing`);
+        }
+
+        function reviewCandidate(candidateId) {
+            alert(`📋 Reviewing candidate ${candidateId}...\n\nCandidate profile includes:\n- Resume/CV\n- Cover letter\n- Application responses\n- Assessment scores\n- Interview notes`);
+        }
+
+        function viewAllCandidates() {
+            alert('👥 Opening candidate database...\n\nSearch and filter by:\n- Position applied\n- Application stage\n- Skills and experience\n- Interview scores');
+        }
+
+        function generateRecruitmentReport() {
+            alert('📊 Generating recruitment analytics...\n\nReport includes:\n- Hiring metrics\n- Time to fill\n- Source effectiveness\n- Candidate funnel analysis');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,466 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Legends - Mobile Dashboard</title>
+    <style>
+/* === QRLegends Mobile Theme === */
+:root{
+  --ql-bg: #0b1724;
+  --ql-panel: #0f2340;
+  --ql-card: #102846;
+  --ql-text: #dbe8ff;
+  --ql-sub: #97a6c1;
+  --ql-primary: #3b82f6;
+  --ql-success: #22c55e;
+  --ql-warning: #f59e0b;
+  --ql-danger: #ef4444;
+  --ql-accent: #6366f1;
+  --ql-border: rgba(255,255,255,.12);
+  --ql-surface: rgba(255,255,255,.06);
+}
+
+body.light{
+  --ql-bg: #f2f6fb;
+  --ql-panel: #ffffff;
+  --ql-card: #ffffff;
+  --ql-text: #1d2840;
+  --ql-sub: #51607c;
+  --ql-primary: #2563eb;
+  --ql-success: #16a34a;
+  --ql-warning: #d97706;
+  --ql-danger: #dc2626;
+  --ql-accent: #4f46e5;
+  --ql-border: rgba(0,0,0,.12);
+  --ql-surface: rgba(15,23,42,.04);
+}
+
+html,body{height:100%; margin:0; padding:0;}
+body{
+  background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed;
+  color: var(--ql-text);
+  font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+  line-height: 1.4;
+  padding: 0 0 80px 0;
+}
+
+body.light{
+  background: linear-gradient(180deg,#f7faff,#eef3fb);
+}
+
+/* Mobile Header */
+.mobile-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(8,27,46,.9);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--ql-border);
+  padding: 12px 16px;
+}
+
+body.light .mobile-header {
+  background: rgba(255,255,255,.9);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.app-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ql-text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.theme-btn, .profile-btn {
+  background: var(--ql-surface);
+  border: 1px solid var(--ql-border);
+  color: var(--ql-text);
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Main Content */
+.mobile-container {
+  padding: 16px 12px;
+  max-width: 100%;
+}
+
+/* Quick Stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: var(--ql-card);
+  border: 1px solid var(--ql-border);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(2,8,23,.3);
+}
+
+body.light .stat-card {
+  box-shadow: 0 4px 12px rgba(2,8,23,.08);
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--ql-primary);
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  color: var(--ql-sub);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Action Grid */
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.action-tile {
+  background: var(--ql-card);
+  border: 1px solid var(--ql-border);
+  border-radius: 16px;
+  padding: 20px 12px;
+  text-align: center;
+  text-decoration: none;
+  color: var(--ql-text);
+  transition: all 0.2s ease;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(2,8,23,.3);
+}
+
+body.light .action-tile {
+  box-shadow: 0 4px 12px rgba(2,8,23,.08);
+}
+
+.action-tile:hover {
+  transform: translateY(-2px);
+  border-color: var(--ql-primary);
+  text-decoration: none;
+  color: var(--ql-text);
+  box-shadow: 0 8px 20px rgba(59,130,246,0.2);
+}
+
+.action-icon {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+}
+
+.action-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+/* Recent Activity */
+.activity-card {
+  background: var(--ql-card);
+  border: 1px solid var(--ql-border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(2,8,23,.3);
+}
+
+body.light .activity-card {
+  box-shadow: 0 4px 12px rgba(2,8,23,.08);
+}
+
+.activity-header {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ql-text);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.activity-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--ql-border);
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-text {
+  font-size: 0.9rem;
+  color: var(--ql-text);
+}
+
+.activity-time {
+  font-size: 0.8rem;
+  color: var(--ql-sub);
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--ql-panel);
+  border-top: 1px solid var(--ql-border);
+  padding: 8px 0;
+  z-index: 1000;
+}
+
+.nav-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 4px;
+  text-decoration: none;
+  color: var(--ql-sub);
+  transition: all 0.2s ease;
+}
+
+.nav-item.active,
+.nav-item:hover {
+  color: var(--ql-primary);
+  text-decoration: none;
+}
+
+.nav-icon {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+.nav-label {
+  font-size: 10px;
+  font-weight: 500;
+}
+
+/* Touch-friendly improvements */
+@media (pointer: coarse) {
+  .action-tile, .stat-card {
+    min-height: 80px;
+  }
+  
+  .theme-btn, .profile-btn {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+    </style>
+    <script>
+(function(){
+  try {
+    const saved = localStorage.getItem('ql-theme');
+    if(saved === 'light'){ document.addEventListener('DOMContentLoaded', ()=> document.body.classList.add('light')); }
+  } catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const btn = document.getElementById('theme-toggle');
+    if(btn){
+      btn.addEventListener('click', function(){
+        document.body.classList.toggle('light');
+        const isLight = document.body.classList.contains('light');
+        btn.textContent = isLight ? '☀️' : '🌙';
+        try { localStorage.setItem('ql-theme', isLight ? 'light' : 'dark'); } catch(e){}
+      });
+      if(document.body.classList.contains('light')) btn.textContent = '☀️';
+    }
+  });
+})();
+    </script>
+</head>
+<body>
+<!-- Mobile Header -->
+<header class="mobile-header">
+  <div class="header-content">
+    <div class="app-title">
+      <span>🟦</span>
+      QR LEGENDS
+    </div>
+    <div class="header-actions">
+      <button class="theme-btn" id="theme-toggle" aria-label="Toggle theme">🌙</button>
+      <button class="profile-btn" onclick="window.location.href='/profile_page'">👤</button>
+    </div>
+  </div>
+</header>
+
+<!-- Main Content -->
+<div class="mobile-container">
+  <!-- Quick Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-value">847</div>
+      <div class="stat-label">Items</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">23</div>
+      <div class="stat-label">Orders</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">96%</div>
+      <div class="stat-label">Accuracy</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">12</div>
+      <div class="stat-label">Active</div>
+    </div>
+  </div>
+
+  <!-- Main Actions -->
+  <div class="actions-grid">
+    <a href="/receiving" class="action-tile">
+      <div class="action-icon">📦</div>
+      <div class="action-label">Receiving</div>
+    </a>
+    <a href="/putaway" class="action-tile">
+      <div class="action-icon">🧱</div>
+      <div class="action-label">Put Away</div>
+    </a>
+    <a href="/order_picking" class="action-tile">
+      <div class="action-icon">📋</div>
+      <div class="action-label">Picking</div>
+    </a>
+    <a href="/inventory" class="action-tile">
+      <div class="action-icon">📊</div>
+      <div class="action-label">Inventory</div>
+    </a>
+    <a href="/transfers" class="action-tile">
+      <div class="action-icon">🔄</div>
+      <div class="action-label">Transfers</div>
+    </a>
+    <a href="/problem_solving" class="action-tile">
+      <div class="action-icon">🔧</div>
+      <div class="action-label">Problem Solve</div>
+    </a>
+    <a href="/qr_generator" class="action-tile">
+      <div class="action-icon">📱</div>
+      <div class="action-label">QR Generator</div>
+    </a>
+    <a href="/analytics_dashboard" class="action-tile">
+      <div class="action-icon">📈</div>
+      <div class="action-label">Analytics</div>
+    </a>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="activity-card">
+    <div class="activity-header">
+      📋 Recent Activity
+    </div>
+    <div class="activity-item">
+      <div class="activity-text">Received PO-12345</div>
+      <div class="activity-time">2 min ago</div>
+    </div>
+    <div class="activity-item">
+      <div class="activity-text">Completed cycle count</div>
+      <div class="activity-time">15 min ago</div>
+    </div>
+    <div class="activity-item">
+      <div class="activity-text">Put away 24 items</div>
+      <div class="activity-time">1 hour ago</div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <div class="nav-grid">
+    <a href="/mobile_dashboard" class="nav-item active">
+      <div class="nav-icon">🏠</div>
+      <div class="nav-label">Home</div>
+    </a>
+    <a href="/inventory" class="nav-item">
+      <div class="nav-icon">📊</div>
+      <div class="nav-label">Inventory</div>
+    </a>
+    <a href="/qr_generator" class="nav-item">
+      <div class="nav-icon">📱</div>
+      <div class="nav-label">QR Scan</div>
+    </a>
+    <a href="/employee_messaging" class="nav-item">
+      <div class="nav-icon">💬</div>
+      <div class="nav-label">Messages</div>
+    </a>
+    <a href="/help_hub" class="nav-item">
+      <div class="nav-icon">❓</div>
+      <div class="nav-label">Help</div>
+    </a>
+  </div>
+</nav>
+
+<script>
+function logout() {
+    try {
+        localStorage.removeItem('persistent_token');
+        sessionStorage.clear();
+        
+        fetch('/api/auth/logout', {
+            method: 'POST',
+            credentials: 'include'
+        }).finally(() => {
+            window.location.href = '/company_login';
+        });
+    } catch (error) {
+        console.error('Logout error:', error);
+        window.location.href = '/company_login';
+    }
+}
+
+// Update bottom navigation active state
+document.addEventListener('DOMContentLoaded', function() {
+    const navItems = document.querySelectorAll('.nav-item');
+    const currentPath = window.location.pathname;
+    
+    navItems.forEach(item => {
+        const href = item.getAttribute('href');
+        if (href === currentPath) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+    
+    console.log('Mobile dashboard loaded successfully');
+});
+</script>
+</body>
+</html>

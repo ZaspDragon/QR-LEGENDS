@@ -1,0 +1,409 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drop-Off Location QR Generator - QR Legends</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .card { background: white; padding: 20px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn { padding: 12px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .form-group { margin: 15px 0; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .header { background: linear-gradient(135deg, #007bff, #0056b3); color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .qr-display { text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; margin: 20px 0; }
+        .location-list { display: grid; gap: 15px; }
+        .location-item { border: 1px solid #ddd; padding: 15px; border-radius: 8px; background: #fafafa; }
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+<style>
+/* === QRLegends Unified Theme (Dark/Light) === */
+:root{
+  --ql-bg: #0b1724;
+  --ql-panel: #0f2340;
+  --ql-card: #102846;
+  --ql-text: #dbe8ff;
+  --ql-sub: #97a6c1;
+  --ql-primary: #3b82f6;
+  --ql-success: #22c55e;
+  --ql-warning: #f59e0b;
+  --ql-danger: #ef4444;
+  --ql-accent: #6366f1;
+  --ql-border: rgba(255,255,255,.12);
+  --ql-surface: rgba(255,255,255,.06);
+}
+/* Light mode overrides */
+body.light{
+  --ql-bg: #f2f6fb;
+  --ql-panel: #ffffff;
+  --ql-card: #ffffff;
+  --ql-text: #1d2840;
+  --ql-sub: #51607c;
+  --ql-primary: #2563eb;
+  --ql-success: #16a34a;
+  --ql-warning: #d97706;
+  --ql-danger: #dc2626;
+  --ql-accent: #4f46e5;
+  --ql-border: rgba(0,0,0,.12);
+  --ql-surface: rgba(15,23,42,.04);
+}
+
+html,body{height:100%;}
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed;
+  color: var(--ql-text);
+  font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+  line-height: 1.45;
+}
+body.light{
+  background: linear-gradient(180deg,#f7faff,#eef3fb);
+}
+
+.ql-header{
+  position: sticky; top:0; z-index:1000;
+  background: rgba(8,27,46,.7);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--ql-border);
+}
+body.light .ql-header{
+  background: rgba(255,255,255,.75);
+}
+.ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
+.ql-title{display:flex; align-items:center; gap:10px;}
+.ql-h1{font-size:1.25rem; margin:0; letter-spacing:.2px;}
+.ql-nav{display:flex; gap:8px; flex-wrap:wrap;}
+.ql-btn{
+  display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
+  background: var(--ql-surface); border: 1px solid var(--ql-border);
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+  transition: transform .08s ease, background .2s ease, border-color .2s ease;
+}
+.ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+body.light .ql-btn:hover{ background: rgba(15,23,42,.08); }
+.ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
+
+.ql-theme-toggle{
+  margin-left:12px; cursor:pointer; border:1px solid var(--ql-border);
+  background: var(--ql-surface); color: var(--ql-text);
+  border-radius:10px; padding:8px 10px; font-size:16px;
+}
+
+.ql-container{ max-width:1200px; margin:22px auto; padding:0 20px; }
+.ql-grid{ display:grid; gap:16px; grid-template-columns: repeat(12, 1fr);}
+.ql-card{
+  grid-column: span 12;
+  background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+  border: 1px solid var(--ql-border);
+  box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+  border-radius:16px; padding:16px 16px;
+}
+body.light .ql-card{
+  background: var(--ql-card);
+  box-shadow: 0 10px 30px rgba(2,8,23,.08);
+}
+
+@media(min-width:900px){
+  .ql-card.half{ grid-column: span 6; }
+  .ql-card.third{ grid-column: span 4; }
+}
+
+.ql-card h2{ font-size:1.05rem; margin:0 0 10px 0; color: #bcd5ff; letter-spacing:.2px; }
+body.light .ql-card h2{ color:#234073; }
+
+.ql-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+.ql-input, .ql-select, input[type="text"], input[type="date"], textarea, select {
+  width:100%; background: var(--ql-surface); color: var(--ql-text); border: 1px solid var(--ql-border);
+  padding:10px 12px; border-radius:10px; outline:none;
+}
+.ql-input::placeholder{ color: #9fb0cc; }
+body.light .ql-input::placeholder{ color: #6b7b92; }
+
+/* dashboard bubble */
+.ql-fab{ position: fixed; right: 18px; bottom: 18px; background: var(--ql-accent); color:white; border:none;
+  border-radius:999px; padding:10px 14px; font-weight:600; box-shadow: 0 14px 30px rgba(0,0,0,.35);}
+</style>
+<script>
+(function(){
+  try {
+    const saved = localStorage.getItem('ql-theme');
+    if(saved === 'light'){ document.addEventListener('DOMContentLoaded', ()=> document.body.classList.add('light')); }
+  } catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const btn = document.getElementById('ql-theme-toggle');
+    if(btn){
+      btn.addEventListener('click', function(){
+        document.body.classList.toggle('light');
+        const isLight = document.body.classList.contains('light');
+        btn.textContent = isLight ? '☀️' : '🌙';
+        try { localStorage.setItem('ql-theme', isLight ? 'light' : 'dark'); } catch(e){}
+      });
+      if(document.body.classList.contains('light')) btn.textContent = '☀️';
+    }
+    document.querySelectorAll('button:not([type])').forEach(b=> b.setAttribute('type','button'));
+  });
+})();
+</script>
+</head>
+<body>
+<!-- Unified QR Legends Header -->
+<header class="ql-header">
+  <div class="ql-header-inner">
+    <div class="ql-title">
+      <span class="ql-logo">🟦</span>
+      <h1 class="ql-h1">Drop-Off Location QR Generator - QR Legends</h1>
+    </div>
+    <nav class="ql-nav">
+      <a class="ql-btn ql-secondary" href="main_dashboard.html">🏠 Dashboard</a>
+      <a class="ql-btn ql-tertiary" href="order_picking.html">📦 Order Picking</a>
+      <a class="ql-btn ql-tertiary" href="inbound_hub.html">⬅️ Inbound</a>
+      <a class="ql-btn ql-tertiary" href="outbound_hub.html">➡️ Outbound</a>
+      <a class="ql-btn ql-tertiary" href="putaway.html">🧱 Putaway</a>
+      <a class="ql-btn ql-tertiary" href="inventory_management.html">📊 Inventory</a>
+    </nav>
+    <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<div class='ql-container'>
+    <div class="container">
+        <div class="header">
+            <h1>📍 Drop-Off Location QR Generator</h1>
+            <p>Create permanent QR codes for your warehouse drop-off locations</p>
+        </div>
+
+        <div class="grid">
+            <!-- Location Setup -->
+            <div class="card">
+                <h3>🏢 Create Drop-Off Location</h3>
+                <div class="form-group">
+                    <label>Location Name *</label>
+                    <input type="text" id="locationName" placeholder="e.g., Main Warehouse Bay 3" required>
+                </div>
+                <div class="form-group">
+                    <label>Full Address *</label>
+                    <textarea id="address" rows="3" placeholder="Complete street address for GPS navigation" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Contact Information</label>
+                    <input type="text" id="contactInfo" placeholder="Phone number or email for drivers">
+                </div>
+                <div class="form-group">
+                    <label>Special Instructions</label>
+                    <textarea id="specialInstructions" rows="2" placeholder="Special delivery instructions, gate codes, etc."></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="generateLocationQR()">🔗 Generate Location QR</button>
+                <div id="qrResult"></div>
+            </div>
+
+            <!-- QR Code Preview -->
+            <div class="card">
+                <h3>📱 QR Code Preview</h3>
+                <div id="qrPreview" style="text-align: center; color: #666;">
+                    Generate a location QR code to see preview here
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 5px;">
+                    <h5>📋 How It Works:</h5>
+                    <ol>
+                        <li>Driver scans QR code with phone camera</li>
+                        <li>Opens mobile-optimized delivery form</li>
+                        <li>Driver fills out BOL info and signs</li>
+                        <li>Uploads photos of freight/documents</li>
+                        <li>GPS location automatically captured</li>
+                        <li>Everything sent to warehouse admin instantly</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Generated Locations -->
+        <div class="card">
+            <h3>📍 Your Drop-Off Locations</h3>
+            <div id="locationsList" class="location-list">
+                <p style="text-align: center; color: #666;">No locations generated yet</p>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="card">
+            <h3>💡 Setup Instructions</h3>
+            <div class="grid">
+                <div>
+                    <h4>🖨️ Print & Post</h4>
+                    <ul>
+                        <li>Print QR codes on weather-resistant labels</li>
+                        <li>Post at delivery bays, dock doors, or receiving areas</li>
+                        <li>Include backup URL for drivers without QR scanners</li>
+                        <li>Add your company contact info below QR code</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>📧 Automatic Notifications</h4>
+                    <ul>
+                        <li>All submissions automatically emailed to warehouse admin</li>
+                        <li>Driver receives confirmation with tracking number</li>
+                        <li>GPS location and timestamp captured for security</li>
+                        <li>Documents stored securely in cloud storage</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let generatedLocations = [];
+
+        async function generateLocationQR() {
+            const locationName = document.getElementById('locationName').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const contactInfo = document.getElementById('contactInfo').value.trim();
+            const specialInstructions = document.getElementById('specialInstructions').value.trim();
+
+            if (!locationName || !address) {
+                alert('Please fill in location name and address');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/dropoff/generate-location-qr', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        location_name: locationName,
+                        address: address,
+                        contact_info: contactInfo,
+                        special_instructions: specialInstructions
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to generate location QR');
+                }
+
+                const result = await response.json();
+
+                // Show QR code preview
+                document.getElementById('qrPreview').innerHTML = `
+                    <div class="qr-display">
+                        <h4>✅ Location QR Generated</h4>
+                        <img src="${result.qr_image}" alt="Location QR Code" style="max-width: 300px;">
+                        <p><strong>Location:</strong> ${locationName}</p>
+                        <p><strong>URL:</strong> <small>${result.form_url}</small></p>
+                        <div style="margin-top: 15px;">
+                            <button class="btn btn-success" onclick="printLocationQR('${result.location_id}')">🖨️ Print QR Label</button>
+                            <button class="btn btn-primary" onclick="downloadLocationQR('${result.location_id}')">📥 Download</button>
+                        </div>
+                    </div>
+                `;
+
+                // Add to locations list
+                generatedLocations.push(result);
+                updateLocationsList();
+
+                // Clear form
+                document.getElementById('locationName').value = '';
+                document.getElementById('address').value = '';
+                document.getElementById('contactInfo').value = '';
+                document.getElementById('specialInstructions').value = '';
+
+            } catch (error) {
+                alert('Error generating location QR: ' + error.message);
+            }
+        }
+
+        function updateLocationsList() {
+            const listContainer = document.getElementById('locationsList');
+            
+            if (generatedLocations.length === 0) {
+                listContainer.innerHTML = '<p style="text-align: center; color: #666;">No locations generated yet</p>';
+                return;
+            }
+
+            listContainer.innerHTML = generatedLocations.map(location => `
+                <div class="location-item">
+                    <div style="display: grid; grid-template-columns: auto 1fr auto; gap: 15px; align-items: center;">
+                        <img src="${location.qr_image}" alt="QR Code" style="width: 80px; height: 80px;">
+                        <div>
+                            <h4 style="margin: 0 0 5px 0;">${location.location_data.location_name}</h4>
+                            <p style="margin: 0 0 5px 0; color: #666; font-size: 14px;">${location.location_data.address}</p>
+                            <p style="margin: 0; font-size: 12px; color: #999;">Created: ${new Date(location.location_data.created_at).toLocaleString()}</p>
+                        </div>
+                        <div style="display: flex; gap: 5px; flex-direction: column;">
+                            <button class="btn" style="background: #17a2b8; color: white; font-size: 12px; padding: 8px 12px;" onclick="printLocationQR('${location.location_id}')">Print</button>
+                            <button class="btn" style="background: #6c757d; color: white; font-size: 12px; padding: 8px 12px;" onclick="downloadLocationQR('${location.location_id}')">Download</button>
+                        </div>
+                    </div>
+                    ${location.location_data.special_instructions ? `
+                        <div style="margin-top: 10px; padding: 10px; background: #fff3cd; border-radius: 5px; font-size: 14px;">
+                            <strong>Instructions:</strong> ${location.location_data.special_instructions}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function printLocationQR(locationId) {
+            const location = generatedLocations.find(l => l.location_id === locationId);
+            if (!location) {
+                alert('Location not found');
+                return;
+            }
+
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Print Location QR - ${location.location_data.location_name}</title>
+                    <style>
+                        body { text-align: center; font-family: Arial, sans-serif; margin: 40px; }
+                        .label { border: 3px solid #000; padding: 30px; margin: 20px; display: inline-block; page-break-inside: avoid; }
+                        .qr-code { margin: 20px 0; }
+                        .instructions { font-size: 14px; margin-top: 20px; text-align: left; }
+                    </style>
+                </head>
+                <body>
+                    <div class="label">
+                        <h2>${location.location_data.location_name}</h2>
+                        <div class="qr-code">
+                            <img src="${location.qr_image}" alt="QR Code" style="width: 200px; height: 200px;">
+                        </div>
+                        <p><strong>Scan to Start Delivery Process</strong></p>
+                        <div class="instructions">
+                            <p><strong>Address:</strong> ${location.location_data.address}</p>
+                            ${location.location_data.contact_info ? `<p><strong>Contact:</strong> ${location.location_data.contact_info}</p>` : ''}
+                            ${location.location_data.special_instructions ? `<p><strong>Instructions:</strong> ${location.location_data.special_instructions}</p>` : ''}
+                        </div>
+                    </div>
+                    <script>window.print();</script>
+                </body>
+                </html>
+            `);
+        }
+
+        function downloadLocationQR(locationId) {
+            const location = generatedLocations.find(l => l.location_id === locationId);
+            if (!location) {
+                alert('Location not found');
+                return;
+            }
+
+            // Create download link for the QR code image
+            const link = document.createElement('a');
+            link.href = location.qr_image;
+            link.download = `${location.location_data.location_name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_qr.png`;
+            link.click();
+        }
+    </script>
+</div>
+<button class='ql-fab' onclick="location.href='main_dashboard.html'">🏠 Dashboard</button>
+</body>
+</html>

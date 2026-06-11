@@ -1,0 +1,426 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Label Printing - QR Legends</title>
+    <script src="/static/copyright_notice.js"></script>
+    <style>
+        body {font-family: Arial, sans-serif margin: 0 padding: 20px background-color: #f5f5f5}
+        .container {max-width: 1200px margin: 0 auto}
+        .page-header {background: linear-gradient(135deg, #6c757d, #495057) color: white padding: 20px border-radius: 10px; text-align: center; margin-bottom: 30px}
+        .card {background: white padding: 20px margin: 15px 0 border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+        .btn {padding: 10px 20px margin: 5px border: none border-radius: 5px; cursor: pointer; font-weight: bold}
+        .btn-primary {background: #007bff color: white}
+        .btn-success {background: #28a745 color: white}
+        .btn-warning {background: #ffc107 color: #212529}
+        .label-grid {display: grid grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) gap: 20px}
+        .label-card {border: 2px solid #dee2e6 border-radius: 8px padding: 15px text-align: center; cursor: pointer; transition: all 0.3s ease}
+        .label-card:hover {transform: translateY(-2px) box-shadow: 0 4px 12px rgba(0,0,0,0.15)}
+        .label-icon {font-size: 3rem margin-bottom: 15px}
+        .form-group {margin: 15px 0}
+        .form-group label {display: block margin-bottom: 5px font-weight: bold}
+        .form-group input, .form-group select {width: 100% padding: 10px border: 1px solid #ddd border-radius: 4px; box-sizing: border-box}
+        .label-preview {background: #f8f9fa border: 2px dashed #dee2e6 padding: 20px text-align: center; margin: 15px 0; min-height: 150px}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>🖨️ Label Printing</h1>
+            <p>Print location, item, and shipping labels</p>
+        </div>
+
+        <div class="card">
+            <h3>🏷️ Label Types</h3>
+            <div class="label-grid">
+                <div class="label-card" onclick="selectLabelType('item')">
+                    <div class="label-icon">📦</div>
+                    <h4>Item Labels</h4>
+                    <p>Product and inventory labels</p>
+                </div>
+                
+                <div class="label-card" onclick="selectLabelType('location')">
+                    <div class="label-icon">📍</div>
+                    <h4>Location Labels</h4>
+                    <p>Warehouse location and bin labels</p>
+                </div>
+                
+                <div class="label-card" onclick="selectLabelType('shipping')">
+                    <div class="label-icon">📮</div>
+                    <h4>Shipping Labels</h4>
+                    <p>Shipping and address labels</p>
+                </div>
+                
+                <div class="label-card" onclick="selectLabelType('container')">
+                    <div class="label-icon">🗃️</div>
+                    <h4>Container Labels</h4>
+                    <p>Container and pallet labels</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="labelForm" style="display: none;">
+            <h3 id="labelFormTitle">Label Configuration</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div>
+                    <div class="form-group">
+                        <label>Label Size</label>
+                        <select id="labelSize">
+                            <option value="4x6">4" x 6" (Standard)</option>
+                            <option value="3x5">3" x 5" (Medium)</option>
+                            <option value="2x1">2" x 1" (Small)</option>
+                            <option value="1x1">1" x 1" (Mini)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Printer</label>
+                        <select id="printerSelect">
+                            <option value="zebra_01">Zebra ZT610 - Dock 1</option>
+                            <option value="zebra_02">Zebra ZT410 - Dock 2</option>
+                            <option value="dymo_01">DYMO LabelWriter</option>
+                        </select>
+                    </div>
+                    
+                    <div id="dynamicFields">
+                        <!-- Dynamic fields based on label type -->
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Quantity</label>
+                        <input type="number" id="labelQuantity" value="1" min="1" max="100">
+                    </div>
+                    
+                    <button class="btn btn-success" onclick="generatePreview()">🔍 Preview Label</button>
+                    <button class="btn btn-primary" onclick="printLabel()">🖨️ Print Label</button>
+                </div>
+                
+                <div>
+                    <h4>Label Preview</h4>
+                    <div id="labelPreview" class="label-preview">
+                        <p style="color: #6c757d;">Select label type and click Preview to see label design</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>📄 Recent Print Jobs</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8f9fa;">
+                        <th style="padding: 10px; text-align: left; border: 1px solid #dee2e6;">Time</th>
+                        <th style="padding: 10px; text-align: left; border: 1px solid #dee2e6;">Type</th>
+                        <th style="padding: 10px; text-align: left; border: 1px solid #dee2e6;">Content</th>
+                        <th style="padding: 10px; text-align: left; border: 1px solid #dee2e6;">Quantity</th>
+                        <th style="padding: 10px; text-align: left; border: 1px solid #dee2e6;">Status</th>
+                        <th style="padding: 10px; text-align: left; border: 1px solid #dee2e6;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="printJobsTable">
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #dee2e6;">14:23</td>
+                        <td style="padding: 10px; border: 1px solid #dee2e6;">Item</td>
+                        <td style="padding: 10px; border: 1px solid #dee2e6;">ABC-123 Widget</td>
+                        <td style="padding: 10px; border: 1px solid #dee2e6;">5</td>
+                        <td style="padding: 10px; border: 1px solid #dee2e6;"><span style="background: #d4edda; padding: 4px 8px; border-radius: 4px;">Completed</span></td>
+                        <td style="padding: 10px; border: 1px solid #dee2e6;">
+                            <button class="btn btn-primary" onclick="reprintJob('job1')">Reprint</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #dee2e6;">14:15</td>
+                        <td style="padding: 10px; border: 1px solid #dee2e6;">Location</td>
+                        <td style="padding: 10px; border: 1px solid #dee2e6;">A-15-3</td>
+                        <td style="padding: 10px; border: 1px solid #dee2e6;">1</td>
+                        <td style="padding: 10px; border: 1px solid #dee2e6;"><span style="background: #d4edda; padding: 4px 8px; border-radius: 4px;">Completed</span></td>
+                        <td style="padding: 10px; border: 1px solid #dee2e6;">
+                            <button class="btn btn-primary" onclick="reprintJob('job2')">Reprint</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let currentLabelType = null;
+
+        function selectLabelType(type) {currentLabelType = type
+            document.getElementById('labelForm').style.display = 'block'
+            document.getElementById('labelFormTitle').textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} Label Configuration`;
+            
+            const dynamicFields = document.getElementById('dynamicFields');
+            dynamicFields.innerHTML = '';
+            
+            switch(type) {case 'item':
+                    dynamicFields.innerHTML = `
+                        <div class="form-group">
+                            <label>Item Number</label>
+                            <input type="text" id="itemNumber" placeholder="Enter item number">
+                        </div>
+                        <div class="form-group">
+                            <label>Item Name</label>
+                            <input type="text" id="itemName" placeholder="Enter item name">
+                        </div>
+                        <div class="form-group">
+                            <label>Barcode/QR Code</label>
+                            <input type="text" id="itemBarcode" placeholder="Enter barcode data">
+                        </div>
+                    `
+                    break
+                case 'location':
+                    dynamicFields.innerHTML = `
+                        <div class="form-group">
+                            <label>Location Code</label>
+                            <input type="text" id="locationCode" placeholder="e.g., A-15-3">
+                        </div>
+                        <div class="form-group">
+                            <label>Zone</label>
+                            <select id="locationZone">
+                                <option value="A">Zone A - Receiving</option>
+                                <option value="B">Zone B - Storage</option>
+                                <option value="C">Zone C - Shipping</option>
+                            </select>
+                        </div>
+                    `
+                    break;
+                case 'shipping':
+                    dynamicFields.innerHTML = `
+                        <div class="form-group">
+                            <label>Tracking Number</label>
+                            <input type="text" id="trackingNumber" placeholder="Enter tracking number">
+                        </div>
+                        <div class="form-group">
+                            <label>Recipient Address</label>
+                            <textarea id="shippingAddress" rows="3" placeholder="Enter shipping address"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Carrier</label>
+                            <select id="carrier">
+                                <option value="ups">UPS</option>
+                                <option value="fedex">FedEx</option>
+                                <option value="usps">USPS</option>
+                            </select>
+                        </div>
+                    `;
+                    break;
+                case 'container':
+                    dynamicFields.innerHTML = `
+                        <div class="form-group">
+                            <label>Container ID</label>
+                            <input type="text" id="containerId" placeholder="Enter container ID">
+                        </div>
+                        <div class="form-group">
+                            <label>Container Type</label>
+                            <select id="containerType">
+                                <option value="pallet">Pallet</option>
+                                <option value="bin">Storage Bin</option>
+                                <option value="tote">Tote</option>
+                            </select>
+                        </div>
+                    `;
+                    break;}
+        }
+
+        function generatePreview() {const previewDiv = document.getElementById('labelPreview')
+            const size = document.getElementById('labelSize').value
+            
+            let previewContent = ''
+            
+            switch(currentLabelType) {
+                case 'item':
+                    const itemNumber = document.getElementById('itemNumber').value || 'ABC-123';
+                    const itemName = document.getElementById('itemName').value || 'Sample Item';
+                    previewContent = `
+                        <div style="border: 2px solid #333; padding: 15px; background: white; margin: 10px;">
+                            <div style="text-align: center; border-bottom: 1px solid #ccc; padding-bottom: 10px; margin-bottom: 10px;">
+                                <strong>${itemName}</strong>
+                            </div>
+                            <div style="text-align: center; font-family: monospace; font-size: 14px;">
+                                ${itemNumber}
+                            </div>
+                            <div style="text-align: center; margin: 10px 0;">
+                                <div style="width: 100px; height: 100px; background: #000; margin: 0 auto; position: relative;">
+                                    <div style="color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">QR</div>
+                                </div>
+                            </div>
+                            <div style="text-align: center; font-size: 10px; color: #666;">
+                                Size: ${size}
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'location':
+                    const locationCode = document.getElementById('locationCode').value || 'A-15-3';
+                    const zone = document.getElementById('locationZone').value || 'A';
+                    previewContent = `
+                        <div style="border: 2px solid #333; padding: 15px; background: white; margin: 10px;">
+                            <div style="text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 10px;">
+                                ZONE ${zone}
+                            </div>
+                            <div style="text-align: center; font-size: 24px; font-weight: bold; color: #007bff;">
+                                ${locationCode}
+                            </div>
+                            <div style="text-align: center; margin: 10px 0;">
+                                <div style="width: 80px; height: 80px; background: #000; margin: 0 auto; position: relative;">
+                                    <div style="color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">QR</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'shipping':
+                    const trackingNumber = document.getElementById('trackingNumber').value || '1Z999AA1234567890';
+                    const carrier = document.getElementById('carrier').value || 'ups';
+                    previewContent = `
+                        <div style="border: 2px solid #333; padding: 15px; background: white; margin: 10px;">
+                            <div style="text-align: center; font-weight: bold; margin-bottom: 10px;">
+                                ${carrier.toUpperCase()} SHIPPING LABEL
+                            </div>
+                            <div style="text-align: center; font-family: monospace; margin-bottom: 10px;">
+                                ${trackingNumber}
+                            </div>
+                            <div style="border: 1px solid #ccc; padding: 8px; margin: 10px 0; text-align: left; font-size: 12px;">
+                                TO:<br>
+                                ${document.getElementById('shippingAddress').value || 'Customer Address\n123 Main St\nAnytown, ST 12345'}
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="width: 200px; height: 50px; background: #000; margin: 0 auto; color: white; display: flex; align-items: center; justify-content: center;">
+                                    BARCODE
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'container':
+                    const containerId = document.getElementById('containerId').value || 'CNT-001';
+                    const containerType = document.getElementById('containerType').value || 'pallet';
+                    previewContent = `
+                        <div style="border: 2px solid #333; padding: 15px; background: white; margin: 10px;">
+                            <div style="text-align: center; font-weight: bold; margin-bottom: 10px;">
+                                ${containerType.toUpperCase()}
+                            </div>
+                            <div style="text-align: center; font-size: 20px; font-weight: bold; color: #dc3545;">
+                                ${containerId}
+                            </div>
+                            <div style="text-align: center; margin: 10px 0;">
+                                <div style="width: 100px; height: 100px; background: #000; margin: 0 auto; position: relative;">
+                                    <div style="color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">QR</div>
+                                </div>
+                            </div>
+                            <div style="text-align: center; font-size: 10px; color: #666;">
+                                QR Legends WMS
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            previewDiv.innerHTML = previewContent;
+        }
+
+        function printLabel() {const quantity = document.getElementById('labelQuantity').value
+            const printer = document.getElementById('printerSelect').value
+            const size = document.getElementById('labelSize').value
+            
+            alert(`Printing ${quantity} ${currentLabelType} label(s) to ${printer} (${size})`);
+            
+            // Add to recent jobs
+            addToPrintJobs(currentLabelType, quantity);
+        }
+
+        function addToPrintJobs(type, quantity) {const tableBody = document.getElementById('printJobsTable')
+            const newRow = tableBody.insertRow(0)
+            const now = new Date()
+            
+            newRow.innerHTML = `
+                <td style="padding: 10px border: 1px solid #dee2e6">${now.toLocaleTimeString().slice(0,5)}</td>
+                <td style="padding: 10px border: 1px solid #dee2e6;">${type.charAt(0).toUpperCase() + type.slice(1)}</td>
+                <td style="padding: 10px; border: 1px solid #dee2e6;">${getCurrentLabelContent()}</td>
+                <td style="padding: 10px; border: 1px solid #dee2e6;">${quantity}</td>
+                <td style="padding: 10px; border: 1px solid #dee2e6;"><span style="background: #d4edda; padding: 4px 8px; border-radius: 4px;">Completed</span></td>
+                <td style="padding: 10px; border: 1px solid #dee2e6;">
+                    <button class="btn btn-primary" onclick="reprintJob('new')">Reprint</button>
+                </td>
+            `;
+        }
+
+        function getCurrentLabelContent() {switch(currentLabelType) {
+                case 'item':
+                    return (document.getElementById('itemNumber').value || 'ABC-123') + ' ' + (document.getElementById('itemName').value || 'Item')
+                case 'location':
+                    return document.getElementById('locationCode').value || 'A-15-3'
+                case 'shipping':
+                    return document.getElementById('trackingNumber').value || '1Z999AA1234567890'
+                case 'container':
+                    return document.getElementById('containerId').value || 'CNT-001';
+                default: return 'Unknown'}
+        }
+
+        function reprintJob(jobId) {
+            alert(`Reprinting job: ${jobId}`);
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Label Printing - QR Legends</title>
+    <style>
+        * {margin: 0 padding: 0 box-sizing: border-box}
+        body {font-family: Arial, sans-serif background: #f5f5f5}
+        .container {max-width: 1200px margin: 0 auto padding: 20px}
+        .header {background: #34495e color: white padding: 20px border-radius: 10px; margin-bottom: 20px}
+        .grid {display: grid grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) gap: 20px}
+        .card {background: white padding: 20px border-radius: 10px box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+        .btn {background: #34495e color: white border: none padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px}
+        .btn:hover {background: #2c3e50}
+        .btn-success {background: #27ae60}
+        .btn-warning {background: #f39c12}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏷️ Label Printing</h1>
+            <p>Print shipping labels, product labels, and barcode tags</p>
+        </div>
+        
+        <div class="grid">
+            <div class="card">
+                <h3>📦 Shipping Labels</h3>
+                <p>Print shipping labels for orders and deliveries</p>
+                <button class="btn">Print Labels</button>
+                <button class="btn btn-success">Batch Print</button>
+            </div>
+            
+            <div class="card">
+                <h3>🏷️ Product Labels</h3>
+                <p>Print product labels with QR codes and barcodes</p>
+                <button class="btn">Print Product Labels</button>
+                <button class="btn btn-warning">Custom Labels</button>
+            </div>
+            
+            <div class="card">
+                <h3>🖨️ Printer Management</h3>
+                <p>Manage connected printers and print queues</p>
+                <button class="btn">Printer Status</button>
+                <button class="btn">Print Queue</button>
+            </div>
+            
+            <div class="card">
+                <h3>⚙️ Label Templates</h3>
+                <p>Create and manage custom label templates</p>
+                <button class="btn">Manage Templates</button>
+                <button class="btn btn-success">New Template</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

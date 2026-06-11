@@ -1,0 +1,440 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRLegends ERP Ultra - Complete Business Suite</title>
+    <style>
+        * {margin: 0
+            padding: 0
+            box-sizing: border-box}
+
+        body {font-family: 'Arial', sans-serif
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            min-height: 100vh
+            padding: 20px}
+
+        .container {max-width: 1400px
+            margin: 0 auto}
+
+        .header {text-align: center
+            color: white
+            margin-bottom: 30px}
+
+        .header h1 {font-size: 2.5rem
+            margin-bottom: 10px
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3)}
+
+        .tagline {font-size: 1.2rem
+            opacity: 0.9
+            margin-bottom: 20px}
+
+        .modules-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr))
+            gap: 25px
+            margin-bottom: 30px}
+
+        .module-card {background: white
+            border-radius: 15px
+            padding: 25px
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden}
+
+        .module-card:hover {transform: translateY(-5px)
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3)}
+
+        .module-header {display: flex
+            align-items: center
+            margin-bottom: 15px}
+
+        .module-icon {font-size: 2.5rem
+            margin-right: 15px}
+
+        .module-title {flex: 1}
+
+        .module-title h3 {color: #333
+            font-size: 1.3rem
+            margin-bottom: 5px}
+
+        .module-subtitle {color: #666
+            font-size: 0.9rem}
+
+        .feature-list {list-style: none
+            margin-bottom: 20px}
+
+        .feature-list li {padding: 5px 0
+            color: #555
+            position: relative
+            padding-left: 20px}
+
+        .feature-list li: before {content: "✓"
+            position: absolute
+            left: 0
+            color: #4CAF50;
+            font-weight: bold}
+
+        .module-actions {display: flex
+            gap: 10px
+            flex-wrap: wrap}
+
+        .btn {padding: 8px 16px
+            border: none
+            border-radius: 8px
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease}
+
+        .btn-primary {background: #667eea
+            color: white}
+
+        .btn-primary:hover {background: #5a6fd8}
+
+        .btn-secondary {background: #f1f3f4
+            color: #333}
+
+        .btn-secondary:hover {background: #e8eaed}
+
+        .stats-banner {background: rgba(255,255,255,0.95)
+            border-radius: 15px
+            padding: 20px
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px}
+
+        .stat-item {text-align: center}
+
+        .stat-value {font-size: 2rem
+            font-weight: bold
+            color: #667eea
+            margin-bottom: 5px}
+
+        .stat-label {color: #666
+            font-size: 0.9rem}
+
+        .competitive-advantages {background: rgba(255,255,255,0.95)
+            border-radius: 15px
+            padding: 25px
+            margin-top: 30px}
+
+        .competitive-advantages h2 {color: #333
+            margin-bottom: 20px
+            text-align: center}
+
+        .advantages-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr))
+            gap: 20px}
+
+        .advantage-item {display: flex
+            align-items: center
+            padding: 15px
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea}
+
+        .advantage-icon {font-size: 1.5rem
+            margin-right: 15px}
+
+        .advantage-text {flex: 1}
+
+        .advantage-title {font-weight: bold
+            color: #333
+            margin-bottom: 5px}
+
+        .advantage-desc {color: #666
+            font-size: 0.9rem}
+
+        @media (max-width: 768px) {.modules-grid {
+                grid-template-columns: 1fr}
+            
+            .header h1 {font-size: 2rem}
+            
+            .stats-banner {grid-template-columns: repeat(2, 1fr)}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚡ QRLegends ERP Ultra</h1>
+            <div class="tagline">All the power of SAP, Oracle, and Odoo — without the headaches</div>
+        </div>
+
+        <div class="stats-banner">
+            <div class="stat-item">
+                <div class="stat-value">8</div>
+                <div class="stat-label">Core Modules</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">50+</div>
+                <div class="stat-label">Features</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">∞</div>
+                <div class="stat-label">Users Included</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">QR</div>
+                <div class="stat-label">Native Integration</div>
+            </div>
+        </div>
+
+        <div class="modules-grid">
+            <!-- Finance & Accounting Module -->
+            <div class="module-card">
+                <div class="module-header">
+                    <div class="module-icon">🏛</div>
+                    <div class="module-title">
+                        <h3>Finance & Accounting</h3>
+                        <div class="module-subtitle">SAP / Sage Intacct / NetSuite Style</div>
+                    </div>
+                </div>
+                <ul class="feature-list">
+                    <li>Multi-entity, multi-currency support</li>
+                    <li>Real-time dashboards (cash flow, P&L)</li>
+                    <li>Automated invoicing & payments</li>
+                    <li>AI-driven budget forecasts</li>
+                    <li>Tax compliance automation</li>
+                </ul>
+                <div class="module-actions">
+                    <a href="/erp_financial_reports" class="btn btn-primary">Financial Reports</a>
+                    <a href="/accounts_payable" class="btn btn-secondary">A/P</a>
+                    <a href="/accounts_receivable" class="btn btn-secondary">A/R</a>
+                </div>
+            </div>
+
+            <!-- Inventory & Supply Chain Module -->
+            <div class="module-card">
+                <div class="module-header">
+                    <div class="module-icon">📦</div>
+                    <div class="module-title">
+                        <h3>Inventory & Supply Chain</h3>
+                        <div class="module-subtitle">Epicor / Syspro / Plex Style</div>
+                    </div>
+                </div>
+                <ul class="feature-list">
+                    <li>QR-powered real-time inventory</li>
+                    <li>Smart warehouse placement (AI)</li>
+                    <li>Cross-dock, pick/pack/ship workflows</li>
+                    <li>Vendor management & procurement</li>
+                    <li>Freight & logistics integration</li>
+                </ul>
+                <div class="module-actions">
+                    <a href="/inventory_hub" class="btn btn-primary">Inventory Hub</a>
+                    <a href="/erp_suppliers" class="btn btn-secondary">Suppliers</a>
+                    <a href="/purchase_orders" class="btn btn-secondary">Purchase Orders</a>
+                </div>
+            </div>
+
+            <!-- Human Resources & Payroll Module -->
+            <div class="module-card">
+                <div class="module-header">
+                    <div class="module-icon">👥</div>
+                    <div class="module-title">
+                        <h3>Human Resources & Payroll</h3>
+                        <div class="module-subtitle">Workday / Dynamics Style</div>
+                    </div>
+                </div>
+                <ul class="feature-list">
+                    <li>Employee onboarding portal</li>
+                    <li>Time & attendance tracking</li>
+                    <li>Payroll with auto-tax compliance</li>
+                    <li>AI-powered workforce planning</li>
+                    <li>Self-service employee app</li>
+                </ul>
+                <div class="module-actions">
+                    <a href="/hr_dashboard" class="btn btn-primary">HR Dashboard</a>
+                    <a href="/payroll_processing" class="btn btn-secondary">Payroll</a>
+                    <a href="/workforce_planning" class="btn btn-secondary">Workforce</a>
+                </div>
+            </div>
+
+            <!-- CRM & Sales Module -->
+            <div class="module-card">
+                <div class="module-header">
+                    <div class="module-icon">💼</div>
+                    <div class="module-title">
+                        <h3>CRM & Sales</h3>
+                        <div class="module-subtitle">NetSuite / Odoo / Dolibarr Style</div>
+                    </div>
+                </div>
+                <ul class="feature-list">
+                    <li>Lead → Quote → Order → Invoice pipeline</li>
+                    <li>Customer self-service portal</li>
+                    <li>Email & SMS automation</li>
+                    <li>Built-in chat & support tickets</li>
+                    <li>Integration with WhatsApp, Gmail</li>
+                </ul>
+                <div class="module-actions">
+                    <a href="/salespad_dashboard" class="btn btn-primary">Sales Dashboard</a>
+                    <a href="/customer_portal" class="btn btn-secondary">Customer Portal</a>
+                    <a href="/quotes_pricing" class="btn btn-secondary">Quotes</a>
+                </div>
+            </div>
+
+            <!-- Manufacturing & Production Module -->
+            <div class="module-card">
+                <div class="module-header">
+                    <div class="module-icon">🏭</div>
+                    <div class="module-title">
+                        <h3>Manufacturing & Production</h3>
+                        <div class="module-subtitle">Epicor / Syspro / Plex Style</div>
+                    </div>
+                </div>
+                <ul class="feature-list">
+                    <li>Bill of Materials (BoM) management</li>
+                    <li>Production scheduling (drag & drop)</li>
+                    <li>Plant floor tracking with QR</li>
+                    <li>Quality control (ISO standards)</li>
+                    <li>IoT integration for machines</li>
+                </ul>
+                <div class="module-actions">
+                    <a href="/manufacturing_dashboard" class="btn btn-primary">Manufacturing</a>
+                    <a href="/production_orders" class="btn btn-secondary">Production</a>
+                    <a href="/quality_control" class="btn btn-secondary">Quality</a>
+                </div>
+            </div>
+
+            <!-- Project Management Module -->
+            <div class="module-card">
+                <div class="module-header">
+                    <div class="module-icon">📊</div>
+                    <div class="module-title">
+                        <h3>Project Management</h3>
+                        <div class="module-subtitle">Deltek / Acumatica / Priority Style</div>
+                    </div>
+                </div>
+                <ul class="feature-list">
+                    <li>Kanban + Gantt charts built-in</li>
+                    <li>Budget vs actual project costing</li>
+                    <li>Resource planning (staff/equipment)</li>
+                    <li>Real-time progress tracking</li>
+                    <li>Perfect for construction & services</li>
+                </ul>
+                <div class="module-actions">
+                    <a href="/project_dashboard" class="btn btn-primary">Project Hub</a>
+                    <a href="/gantt_charts" class="btn btn-secondary">Gantt</a>
+                    <a href="/resource_planning" class="btn btn-secondary">Resources</a>
+                </div>
+            </div>
+
+            <!-- Analytics & AI Module -->
+            <div class="module-card">
+                <div class="module-header">
+                    <div class="module-icon">🤖</div>
+                    <div class="module-title">
+                        <h3>Analytics & AI</h3>
+                        <div class="module-subtitle">Everyone + QRLegends Twist</div>
+                    </div>
+                </div>
+                <ul class="feature-list">
+                    <li>Real-time KPI dashboards</li>
+                    <li>Predictive analytics (forecasting)</li>
+                    <li>Machine learning demand planning</li>
+                    <li>Visual reports (Excel, PDF export)</li>
+                    <li>Voice assistant for queries</li>
+                </ul>
+                <div class="module-actions">
+                    <a href="/analytics_dashboard" class="btn btn-primary">Analytics</a>
+                    <a href="/ai_insights" class="btn btn-secondary">AI Insights</a>
+                    <a href="/performance_metrics" class="btn btn-secondary">Metrics</a>
+                </div>
+            </div>
+
+            <!-- Industry-Specific Add-ons -->
+            <div class="module-card">
+                <div class="module-header">
+                    <div class="module-icon">🏢</div>
+                    <div class="module-title">
+                        <h3>Industry-Specific Add-ons</h3>
+                        <div class="module-subtitle">IFS / Infor / SAP Style</div>
+                    </div>
+                </div>
+                <ul class="feature-list">
+                    <li>Healthcare: Patient billing, compliance</li>
+                    <li>Retail: POS + e-commerce (Shopify)</li>
+                    <li>Field Services: Work orders, dispatch</li>
+                    <li>Logistics: Fleet tracking, routes</li>
+                    <li>Gov/Defense: Compliance (FAR, DFARS)</li>
+                </ul>
+                <div class="module-actions">
+                    <a href="/industry_modules" class="btn btn-primary">Industry Hub</a>
+                    <a href="/healthcare_billing" class="btn btn-secondary">Healthcare</a>
+                    <a href="/retail_pos" class="btn btn-secondary">Retail</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="competitive-advantages">
+            <h2>🚀 What Makes QRLegends ERP Ultra Better & Smoother</h2>
+            <div class="advantages-grid">
+                <div class="advantage-item">
+                    <div class="advantage-icon">🎨</div>
+                    <div class="advantage-text">
+                        <div class="advantage-title">UI/UX First</div>
+                        <div class="advantage-desc">No clunky SAP-style menus. Card/grid based, mobile-friendly</div>
+                    </div>
+                </div>
+                <div class="advantage-item">
+                    <div class="advantage-icon">🧩</div>
+                    <div class="advantage-text">
+                        <div class="advantage-title">Modular Flexibility</div>
+                        <div class="advantage-desc">Like Odoo, turn modules on/off as needed</div>
+                    </div>
+                </div>
+                <div class="advantage-item">
+                    <div class="advantage-icon">💰</div>
+                    <div class="advantage-text">
+                        <div class="advantage-title">Flat Pricing</div>
+                        <div class="advantage-desc">No per-user nonsense; unlimited seats included</div>
+                    </div>
+                </div>
+                <div class="advantage-item">
+                    <div class="advantage-icon">📱</div>
+                    <div class="advantage-text">
+                        <div class="advantage-title">QR Code Native</div>
+                        <div class="advantage-desc">QR drives workflows instead of outdated scan guns</div>
+                    </div>
+                </div>
+                <div class="advantage-item">
+                    <div class="advantage-icon">☁️</div>
+                    <div class="advantage-text">
+                        <div class="advantage-title">Cloud + Offline Hybrid</div>
+                        <div class="advantage-desc">Works offline, syncs back when online</div>
+                    </div>
+                </div>
+                <div class="advantage-item">
+                    <div class="advantage-icon">🤖</div>
+                    <div class="advantage-text">
+                        <div class="advantage-title">AI Everywhere</div>
+                        <div class="advantage-desc">Forecasting, automation, error-checking built-in</div>
+                    </div>
+                </div>
+                <div class="advantage-item">
+                    <div class="advantage-icon">🔌</div>
+                    <div class="advantage-text">
+                        <div class="advantage-title">Plug & Play Integrations</div>
+                        <div class="advantage-desc">Quick connects to Shopify, QuickBooks, Salesforce</div>
+                    </div>
+                </div>
+                <div class="advantage-item">
+                    <div class="advantage-icon">⚡</div>
+                    <div class="advantage-text">
+                        <div class="advantage-title">No-Code Customization</div>
+                        <div class="advantage-desc">Drag/drop workflow builder for customization</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/floating_chat_widget.js"></script>
+    <script src="/employee_messaging_widget.js"></script>
+    <script src="/universal_dashboard_button.js"></script>
+</body>
+</html>

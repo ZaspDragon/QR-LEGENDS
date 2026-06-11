@@ -1,0 +1,618 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard - QR Legends</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            padding-top: 80px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .card-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .dashboard-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .dashboard-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .stats-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .user-profile {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .profile-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .access-badges-container {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .access-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .badge-executive { background: #dc2626; }
+        .badge-manager { background: #3b82f6; }
+        .badge-admin { background: #f59e0b; }
+        .badge-user { background: #22c55e; }
+
+        .widget-dashboard {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .loading-widget {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 50px;
+        }
+
+        .widget-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .widget-card.executive-level {
+            border-left-color: #dc2626;
+        }
+
+        .widget-card.manager-level {
+            border-left-color: #3b82f6;
+        }
+
+        .widget-card.admin-level {
+            border-left-color: #f59e0b;
+        }
+
+        .widget-card.user-level {
+            border-left-color: #22c55e;
+        }
+
+        .widget-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .widget-level-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .access-badges-container {
+                margin-top: 10px;
+            }
+
+            .user-profile {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+<style>
+/* === QRLegends Unified Theme (Dark/Light) === */
+:root{
+  --ql-bg: #0b1724;
+  --ql-panel: #0f2340;
+  --ql-card: #102846;
+  --ql-text: #dbe8ff;
+  --ql-sub: #97a6c1;
+  --ql-primary: #3b82f6;
+  --ql-success: #22c55e;
+  --ql-warning: #f59e0b;
+  --ql-danger: #ef4444;
+  --ql-accent: #6366f1;
+  --ql-border: rgba(255,255,255,.12);
+  --ql-surface: rgba(255,255,255,.06);
+}
+/* Light mode overrides */
+body.light{
+  --ql-bg: #f2f6fb;
+  --ql-panel: #ffffff;
+  --ql-card: #ffffff;
+  --ql-text: #1d2840;
+  --ql-sub: #51607c;
+  --ql-primary: #2563eb;
+  --ql-success: #16a34a;
+  --ql-warning: #d97706;
+  --ql-danger: #dc2626;
+  --ql-accent: #4f46e5;
+  --ql-border: rgba(0,0,0,.12);
+  --ql-surface: rgba(15,23,42,.04);
+}
+
+html,body{height:100%;}
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed;
+  color: var(--ql-text);
+  font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+  line-height: 1.45;
+}
+body.light{
+  background: linear-gradient(180deg,#f7faff,#eef3fb);
+}
+
+.ql-header{
+  position: sticky; top:0; z-index:1000;
+  background: rgba(8,27,46,.7);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--ql-border);
+}
+body.light .ql-header{
+  background: rgba(255,255,255,.75);
+}
+.ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
+.ql-title{display:flex; align-items:center; gap:10px;}
+.ql-h1{font-size:1.25rem; margin:0; letter-spacing:.2px;}
+.ql-nav{display:flex; gap:8px; flex-wrap:wrap;}
+.ql-btn{
+  display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
+  background: var(--ql-surface); border: 1px solid var(--ql-border);
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+  transition: transform .08s ease, background .2s ease, border-color .2s ease;
+}
+.ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+body.light .ql-btn:hover{ background: rgba(15,23,42,.08); }
+.ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
+
+.ql-theme-toggle{
+  margin-left:12px; cursor:pointer; border:1px solid var(--ql-border);
+  background: var(--ql-surface); color: var(--ql-text);
+  border-radius:10px; padding:8px 10px; font-size:16px;
+}
+
+.ql-container{ max-width:1200px; margin:22px auto; padding:0 20px; }
+.ql-grid{ display:grid; gap:16px; grid-template-columns: repeat(12, 1fr);}
+.ql-card{
+  grid-column: span 12;
+  background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+  border: 1px solid var(--ql-border);
+  box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+  border-radius:16px; padding:16px 16px;
+}
+body.light .ql-card{
+  background: var(--ql-card);
+  box-shadow: 0 10px 30px rgba(2,8,23,.08);
+}
+
+@media(min-width:900px){
+  .ql-card.half{ grid-column: span 6; }
+  .ql-card.third{ grid-column: span 4; }
+}
+
+.ql-card h2{ font-size:1.05rem; margin:0 0 10px 0; color: #bcd5ff; letter-spacing:.2px; }
+body.light .ql-card h2{ color:#234073; }
+
+.ql-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+.ql-input, .ql-select, input[type="text"], input[type="date"], textarea, select {
+  width:100%; background: var(--ql-surface); color: var(--ql-text); border: 1px solid var(--ql-border);
+  padding:10px 12px; border-radius:10px; outline:none;
+}
+.ql-input::placeholder{ color: #9fb0cc; }
+body.light .ql-input::placeholder{ color: #6b7b92; }
+
+/* dashboard bubble */
+.ql-fab{ position: fixed; right: 18px; bottom: 18px; background: var(--ql-accent); color:white; border:none;
+  border-radius:999px; padding:10px 14px; font-weight:600; box-shadow: 0 14px 30px rgba(0,0,0,.35);}
+</style>
+<script>
+(function(){
+  try {
+    const saved = localStorage.getItem('ql-theme');
+    if(saved === 'light'){ document.addEventListener('DOMContentLoaded', ()=> document.body.classList.add('light')); }
+  } catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const btn = document.getElementById('ql-theme-toggle');
+    if(btn){
+      btn.addEventListener('click', function(){
+        document.body.classList.toggle('light');
+        const isLight = document.body.classList.contains('light');
+        btn.textContent = isLight ? '☀️' : '🌙';
+        try { localStorage.setItem('ql-theme', isLight ? 'light' : 'dark'); } catch(e){}
+      });
+      if(document.body.classList.contains('light')) btn.textContent = '☀️';
+    }
+    document.querySelectorAll('button:not([type])').forEach(b=> b.setAttribute('type','button'));
+  });
+})();
+</script>
+</head>
+<body>
+<!-- Unified QR Legends Header -->
+<header class="ql-header">
+  <div class="ql-header-inner">
+    <div class="ql-title">
+      <span class="ql-logo">🟦</span>
+      <h1 class="ql-h1">Employee Dashboard - QR Legends</h1>
+    </div>
+    <nav class="ql-nav">
+      <a class="ql-btn ql-secondary" href="main_dashboard.html">🏠 Dashboard</a>
+      <a class="ql-btn ql-tertiary" href="order_picking.html">📦 Order Picking</a>
+      <a class="ql-btn ql-tertiary" href="inbound_hub.html">⬅️ Inbound</a>
+      <a class="ql-btn ql-tertiary" href="outbound_hub.html">➡️ Outbound</a>
+      <a class="ql-btn ql-tertiary" href="putaway.html">🧱 Putaway</a>
+      <a class="ql-btn ql-tertiary" href="inventory_management.html">📊 Inventory</a>
+    </nav>
+    <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<div class='ql-container'>
+    <div class="container">
+        <div class="header">
+            <h1>👨‍💼 Employee Dashboard</h1>
+            <p>Welcome to your warehouse management workspace</p>
+        </div>
+
+        <div class="content">
+            <!-- User Info and Role Display -->
+            <div class="stats-section" id="userInfoSection">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="margin: 0; color: #333;">👤 Employee Profile</h2>
+                    <div id="accessLevelBadges" class="access-badges-container"></div>
+                </div>
+                <div id="userProfile" class="user-profile">
+                    <p>Loading profile...</p>
+                </div>
+            </div>
+
+            <!-- Employee Statistics -->
+            <div class="stats-section">
+                <h2 style="margin-bottom: 20px; color: #333;">📊 Today's Performance</h2>
+                <div class="stats-grid" id="employeeStats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="tasksCompleted">0</div>
+                        <div class="stat-label">Tasks Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="itemsScanned">0</div>
+                        <div class="stat-label">Items Scanned</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="hoursWorked">0</div>
+                        <div class="stat-label">Hours Worked</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="efficiency">0%</div>
+                        <div class="stat-label">Efficiency Rating</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Role-Based Widget Dashboard -->
+            <div class="widget-dashboard">
+                <h2 style="margin-bottom: 20px; color: #333;">🧩 Available Widgets</h2>
+                <div id="widgetContainer" class="dashboard-grid">
+                    <div class="loading-widget">
+                        <p>Loading your personalized widgets...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let userProfile = null;
+        let availableWidgets = [];
+
+        // Load user profile and widget access
+        async function loadUserProfile() {
+            try {
+                const response = await fetch('/api/auth/profile');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    userProfile = data;
+                    displayUserProfile(data);
+                    displayAccessLevels(data.widget_access_levels || ['user']);
+                    loadWidgets();
+                } else {
+                    console.error('Failed to load profile:', data.error);
+                    document.getElementById('userProfile').innerHTML = 
+                        '<p style="color: #dc3545;">Error loading profile. Please login again.</p>';
+                }
+            } catch (error) {
+                console.error('Error loading user profile:', error);
+                document.getElementById('userProfile').innerHTML = 
+                    '<p style="color: #dc3545;">Network error loading profile.</p>';
+            }
+        }
+
+        // Display user profile information
+        function displayUserProfile(profile) {
+            const profileContainer = document.getElementById('userProfile');
+            profileContainer.innerHTML = `
+                <div class="profile-item">
+                    <strong>Name:</strong> ${profile.username || 'Unknown'}
+                </div>
+                <div class="profile-item">
+                    <strong>Role:</strong> ${profile.role ? profile.role.toUpperCase() : 'USER'}
+                </div>
+                <div class="profile-item">
+                    <strong>Department:</strong> ${profile.department || 'Unknown'}
+                </div>
+                <div class="profile-item">
+                    <strong>Employee ID:</strong> ${profile.employee_id || 'N/A'}
+                </div>
+            `;
+        }
+
+        // Display access level badges
+        function displayAccessLevels(accessLevels) {
+            const badgesContainer = document.getElementById('accessLevelBadges');
+            badgesContainer.innerHTML = accessLevels.map(level => 
+                `<span class="access-badge badge-${level}">${level.toUpperCase()}</span>`
+            ).join('');
+        }
+
+        // Load widgets based on role
+        async function loadWidgets() {
+            try {
+                const response = await fetch('/api/widget-access');
+                const data = await response.json();
+                
+                if (data.success) {
+                    availableWidgets = data.available_widgets;
+                    displayWidgets(data.available_widgets);
+                } else {
+                    console.error('Failed to load widgets:', data.error);
+                }
+            } catch (error) {
+                console.error('Error loading widgets:', error);
+                document.getElementById('widgetContainer').innerHTML = 
+                    '<div class="loading-widget"><p style="color: #dc3545;">Error loading widgets</p></div>';
+            }
+        }
+
+        // Display widgets in dashboard
+        function displayWidgets(widgets) {
+            const widgetContainer = document.getElementById('widgetContainer');
+            
+            if (widgets.length === 0) {
+                widgetContainer.innerHTML = 
+                    '<div class="loading-widget"><p>No widgets available for your role.</p></div>';
+                return;
+            }
+
+            // Group widgets by access level
+            const levelOrder = ['executive', 'manager', 'admin', 'user'];
+            const widgetsByLevel = {};
+            
+            widgets.forEach(widget => {
+                // Determine widget level based on common patterns
+                let level = 'user';
+                if (widget.name.includes('Board') || widget.name.includes('Financial') || widget.name.includes('Strategic')) {
+                    level = 'executive';
+                } else if (widget.name.includes('Management') || widget.name.includes('Performance') || widget.name.includes('Overview')) {
+                    level = 'manager';
+                } else if (widget.name.includes('Control') || widget.name.includes('Exception') || widget.name.includes('Quality')) {
+                    level = 'admin';
+                }
+                
+                if (!widgetsByLevel[level]) widgetsByLevel[level] = [];
+                widgetsByLevel[level].push(widget);
+            });
+
+            let widgetHTML = '';
+            
+            levelOrder.forEach(level => {
+                if (widgetsByLevel[level]) {
+                    widgetsByLevel[level].forEach(widget => {
+                        widgetHTML += `
+                            <div class="dashboard-card widget-card ${level}-level" onclick="location.href='${widget.url}'">
+                                <span class="widget-level-badge badge-${level}">${level.toUpperCase()}</span>
+                                <span class="card-icon">${widget.icon}</span>
+                                <h3>${widget.name}</h3>
+                                <p>Access level: ${level}</p>
+                                <a href="${widget.url}" class="btn btn-primary">Open ${widget.name}</a>
+                            </div>
+                        `;
+                    });
+                }
+            });
+
+            widgetContainer.innerHTML = widgetHTML;
+        }
+
+        // Load employee statistics
+        async function loadEmployeeStats() {
+            try {
+                // Mock stats for demo
+                const mockStats = {
+                    tasks_completed: Math.floor(Math.random() * 20) + 5,
+                    items_scanned: Math.floor(Math.random() * 100) + 50,
+                    hours_worked: Math.floor(Math.random() * 8) + 1,
+                    efficiency: Math.floor(Math.random() * 30) + 70
+                };
+                
+                document.getElementById('tasksCompleted').textContent = mockStats.tasks_completed;
+                document.getElementById('itemsScanned').textContent = mockStats.items_scanned;
+                document.getElementById('hoursWorked').textContent = mockStats.hours_worked;
+                document.getElementById('efficiency').textContent = mockStats.efficiency + '%';
+            } catch (error) {
+                console.error('Error loading employee stats:', error);
+            }
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserProfile();
+            loadEmployeeStats();
+        });
+    </script>
+</div>
+<button class='ql-fab' onclick="location.href='main_dashboard.html'">🏠 Dashboard</button>
+</body>
+</html>

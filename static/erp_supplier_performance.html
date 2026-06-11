@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supplier Performance - QR LEGENDS ERP</title>
+    <style>
+        * {margin: 0
+            padding: 0
+            box-sizing: border-box}
+
+        body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            min-height: 100vh
+            padding: 20px}
+
+        .container {max-width: 1400px
+            margin: 0 auto
+            padding: 20px}
+
+        .back-button {display: inline-block
+            margin-bottom: 20px
+            padding: 10px 20px
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease}
+
+        .back-button:hover {background: rgba(255, 255, 255, 0.3)}
+
+        h1 {color: white
+            text-align: center
+            margin-bottom: 30px
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);}
+
+        .metrics-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
+            gap: 20px
+            margin-bottom: 30px}
+
+        .metric-card {background: white
+            border-radius: 12px
+            padding: 20px
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);}
+
+        .metric-header {display: flex
+            justify-content: space-between
+            align-items: center
+            margin-bottom: 15px}
+
+        .metric-title {font-size: 1.1rem
+            font-weight: 600
+            color: #333}
+
+        .metric-value {font-size: 2rem
+            font-weight: bold
+            margin-bottom: 10px}
+
+        .metric-good {color: #28a745}
+        .metric-warning {color: #ffc107}
+        .metric-danger {color: #dc3545}
+
+        .performance-table {background: white
+            border-radius: 12px
+            overflow: hidden
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);}
+
+        table {width: 100%
+            border-collapse: collapse}
+
+        th, td {padding: 15px
+            text-align: left
+            border-bottom: 1px solid #eee}
+
+        th {background: #f8f9fa
+            font-weight: 600
+            color: #333}
+
+        tr:hover {background: #f8f9fa}
+
+        .btn {padding: 8px 16px
+            border: none
+            border-radius: 8px
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block}
+
+        .btn-primary {background: #007bff color: white}
+        .btn-success {background: #28a745 color: white}
+        .btn-warning {background: #ffc107 color: #333}
+
+        .btn:hover {transform: translateY(-2px)
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2)}
+
+        @media (max-width: 768px) {.metrics-grid {
+                grid-template-columns: 1fr}
+        }
+    </style>
+</head>
+<body>
+    <a href="/erp_hub" class="back-button">← Back to ERP Hub</a>
+
+    <div class="container">
+        <h1>📊 Supplier Performance</h1>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-title">Average On-Time Delivery</div>
+                </div>
+                <div class="metric-value metric-good">94.2%</div>
+                <div>Industry benchmark: 92%</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-title">Quality Rating</div>
+                </div>
+                <div class="metric-value metric-good">96.8%</div>
+                <div>Defect rate: 3.2%</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-title">Cost Performance</div>
+                </div>
+                <div class="metric-value metric-warning">-2.1%</div>
+                <div>vs. budget variance</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-title">Active Suppliers</div>
+                </div>
+                <div class="metric-value metric-good">45</div>
+                <div>12 new this quarter</div>
+            </div>
+        </div>
+
+        <div class="performance-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Supplier</th>
+                        <th>On-Time %</th>
+                        <th>Quality Score</th>
+                        <th>Total Orders</th>
+                        <th>Total Value</th>
+                        <th>Performance</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Global Manufacturing Inc</strong></td>
+                        <td class="metric-good">98.5%</td>
+                        <td class="metric-good">9.8/10</td>
+                        <td>156</td>
+                        <td>$245,000</td>
+                        <td><span class="metric-good">Excellent</span></td>
+                        <td>
+                            <button class="btn btn-primary">View Details</button>
+                            <button class="btn btn-success">Contact</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Parts & Components LLC</strong></td>
+                        <td class="metric-good">92.1%</td>
+                        <td class="metric-good">9.2/10</td>
+                        <td>89</td>
+                        <td>$187,500</td>
+                        <td><span class="metric-good">Good</span></td>
+                        <td>
+                            <button class="btn btn-primary">View Details</button>
+                            <button class="btn btn-success">Contact</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Quality Services Co</strong></td>
+                        <td class="metric-warning">87.3%</td>
+                        <td class="metric-warning">8.1/10</td>
+                        <td>67</td>
+                        <td>$98,000</td>
+                        <td><span class="metric-warning">Fair</span></td>
+                        <td>
+                            <button class="btn btn-primary">View Details</button>
+                            <button class="btn btn-warning">Review</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="btn btn-success" style="padding: 15px 30px; font-size: 1.1rem;">📊 Generate Performance Report</button>
+            <button class="btn btn-primary" style="padding: 15px 30px; font-size: 1.1rem; margin-left: 15px;">📧 Schedule Report</button>
+        </div>
+    </div>
+
+    <script>
+        console.log('Supplier Performance page loaded');
+    </script>
+</body>
+</html>

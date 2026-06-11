@@ -1,0 +1,539 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Dock Assignment - QR LEGENDS</title>
+    <link rel="icon" type="image/png" href="/static/qr_legends_logo.png">
+    <style>
+/* === QRLegends Unified Theme (Dark/Light) === */
+:root{
+  --ql-bg: #0b1724;
+  --ql-panel: #0f2340;
+  --ql-card: #102846;
+  --ql-text: #dbe8ff;
+  --ql-sub: #97a6c1;
+  --ql-primary: #3b82f6;
+  --ql-success: #22c55e;
+  --ql-warning: #f59e0b;
+  --ql-danger: #ef4444;
+  --ql-accent: #6366f1;
+  --ql-border: rgba(255,255,255,.12);
+  --ql-surface: rgba(255,255,255,.06);
+}
+/* Light mode overrides */
+body.light{
+  --ql-bg: #f2f6fb;
+  --ql-panel: #ffffff;
+  --ql-card: #ffffff;
+  --ql-text: #1d2840;
+  --ql-sub: #51607c;
+  --ql-primary: #2563eb;
+  --ql-success: #16a34a;
+  --ql-warning: #d97706;
+  --ql-danger: #dc2626;
+  --ql-accent: #4f46e5;
+  --ql-border: rgba(0,0,0,.12);
+  --ql-surface: rgba(15,23,42,.04);
+}
+
+html,body{height:100%;}
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed;
+  color: var(--ql-text);
+  font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+  line-height: 1.45;
+}
+body.light{
+  background: linear-gradient(180deg,#f7faff,#eef3fb);
+}
+
+.ql-header{
+  position: sticky; top:0; z-index:1000;
+  background: rgba(8,27,46,.7);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--ql-border);
+}
+body.light .ql-header{
+  background: rgba(255,255,255,.75);
+}
+.ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
+.ql-title{display:flex; align-items:center; gap:10px;}
+.ql-h1{font-size:1.25rem; margin:0; letter-spacing:.2px;}
+.ql-nav{display:flex; gap:8px; flex-wrap:wrap;}
+.ql-btn{
+  display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
+  background: var(--ql-surface); border: 1px solid var(--ql-border);
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+  transition: transform .08s ease, background .2s ease, border-color .2s ease;
+}
+.ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+body.light .ql-btn:hover{ background: rgba(15,23,42,.08); }
+.ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
+
+.ql-theme-toggle{
+  margin-left:12px; cursor:pointer; border:1px solid var(--ql-border);
+  background: var(--ql-surface); color: var(--ql-text);
+  border-radius:10px; padding:8px 10px; font-size:16px;
+}
+
+.ql-container{ max-width:1200px; margin:22px auto; padding:0 20px; }
+.ql-grid{ display:grid; gap:16px; grid-template-columns: repeat(12, 1fr);}
+.ql-card{
+  grid-column: span 12;
+  background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+  border: 1px solid var(--ql-border);
+  box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+  border-radius:16px; padding:16px 16px;
+}
+body.light .ql-card{
+  background: var(--ql-card);
+  box-shadow: 0 10px 30px rgba(2,8,23,.08);
+}
+
+@media(min-width:900px){
+  .ql-card.half{ grid-column: span 6; }
+  .ql-card.third{ grid-column: span 4; }
+}
+
+.ql-card h2{ font-size:1.05rem; margin:0 0 10px 0; color: #bcd5ff; letter-spacing:.2px; }
+body.light .ql-card h2{ color:#234073; }
+
+.ql-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+.ql-input, .ql-select, input[type="text"], input[type="date"], textarea, select {
+  width:100%; background: var(--ql-surface); color: var(--ql-text); border: 1px solid var(--ql-border);
+  padding:10px 12px; border-radius:10px; outline:none;
+}
+.ql-input::placeholder{ color: #9fb0cc; }
+body.light .ql-input::placeholder{ color: #6b7b92; }
+
+/* dashboard bubble */
+.ql-fab{ position: fixed; right: 18px; bottom: 18px; background: var(--ql-accent); color:white; border:none;
+  border-radius:999px; padding:10px 14px; font-weight:600; box-shadow: 0 14px 30px rgba(0,0,0,.35);}
+
+/* QR Scanner Button */
+.qr-scanner-btn {
+  position: fixed;
+  right: 20px;
+  bottom: 80px;
+  background: linear-gradient(135deg, #ff6b35, #ff8e53);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+  transition: all 0.3s ease;
+  z-index: 999;
+}
+
+.qr-scanner-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.6);
+}
+
+/* Smart Dock Specific Styles */
+.dock-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.dock-card {
+  background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+  border: 1px solid var(--ql-border);
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.3s ease;
+}
+
+.dock-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(2,8,23,.6);
+}
+
+.dock-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.dock-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ql-text);
+}
+
+.dock-status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.status-available { background: var(--ql-success); color: white; }
+.status-occupied { background: var(--ql-warning); color: white; }
+.status-maintenance { background: var(--ql-danger); color: white; }
+.status-reserved { background: var(--ql-accent); color: white; }
+
+.dock-info {
+  font-size: 0.9rem;
+  color: var(--ql-sub);
+}
+
+.control-panel {
+  background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+  border: 1px solid var(--ql-border);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.control-row {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12));
+  border: 1px solid rgba(59,130,246,.35);
+  color: var(--ql-text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  background: rgba(59,130,246,.4);
+}
+
+.btn-success { background: linear-gradient(180deg, rgba(34,197,94,.25), rgba(34,197,94,.12)); border-color: rgba(34,197,94,.35); }
+.btn-warning { background: linear-gradient(180deg, rgba(245,158,11,.25), rgba(245,158,11,.12)); border-color: rgba(245,158,11,.35); }
+.btn-danger { background: linear-gradient(180deg, rgba(239,68,68,.25), rgba(239,68,68,.12)); border-color: rgba(239,68,68,.35); }
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.stat-card {
+  background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+  border: 1px solid var(--ql-border);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--ql-primary);
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  color: var(--ql-sub);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .ql-nav { display: none; }
+  .dock-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .control-row { flex-direction: column; }
+}
+    </style>
+    <script>
+(function(){
+  try {
+    const saved = localStorage.getItem('ql-theme');
+    if(saved === 'light'){ document.addEventListener('DOMContentLoaded', ()=> document.body.classList.add('light')); }
+  } catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const btn = document.getElementById('ql-theme-toggle');
+    if(btn){
+      btn.addEventListener('click', function(){
+        document.body.classList.toggle('light');
+        const isLight = document.body.classList.contains('light');
+        btn.textContent = isLight ? '☀️' : '🌙';
+        try { localStorage.setItem('ql-theme', isLight ? 'light' : 'dark'); } catch(e){}
+      });
+      if(document.body.classList.contains('light')) btn.textContent = '☀️';
+    }
+    document.querySelectorAll('button:not([type])').forEach(b=> b.setAttribute('type','button'));
+  });
+})();
+    </script>
+</head>
+<body>
+<!-- Unified QR Legends Header -->
+<header class="ql-header">
+  <div class="ql-header-inner">
+    <div class="ql-title">
+      <span class="ql-logo">🟦</span>
+      <h1 class="ql-h1">Smart Dock Assignment - QR LEGENDS</h1>
+    </div>
+    <nav class="ql-nav">
+      <a class="ql-btn ql-secondary" href="main_dashboard.html">🏠 Dashboard</a>
+      <a class="ql-btn" href="order_picking.html">📦 Order Picking</a>
+      <a class="ql-btn" href="inbound_hub.html">⬅️ Inbound</a>
+      <a class="ql-btn" href="outbound_hub.html">➡️ Outbound</a>
+      <a class="ql-btn" href="putaway.html">🧱 Putaway</a>
+      <a class="ql-btn" href="inventory.html">📊 Inventory</a>
+    </nav>
+    <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<div class="ql-container">
+    <!-- Stats Overview -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">6</div>
+            <div class="stat-label">Active Docks</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">85%</div>
+            <div class="stat-label">Efficiency Rate</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">12</div>
+            <div class="stat-label">Scheduled Today</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">2.1h</div>
+            <div class="stat-label">Avg Turnaround</div>
+        </div>
+    </div>
+
+    <!-- Control Panel -->
+    <div class="control-panel">
+        <h2>🎯 AI Assignment Controls</h2>
+        <div class="control-row">
+            <button class="btn btn-success" onclick="optimizeSchedule()">⚡ Auto-Optimize</button>
+            <button class="btn btn-warning" onclick="manageAppointments()">📋 Manage Appointments</button>
+            <button class="btn btn-danger" onclick="handleEmergency()">🚨 Emergency Assignment</button>
+        </div>
+        <div class="control-row">
+            <button class="btn" onclick="viewAnalytics()">📊 View Analytics</button>
+            <button class="btn" onclick="exportSchedule()">📤 Export Schedule</button>
+            <button class="btn" onclick="refreshData()">🔄 Refresh Data</button>
+        </div>
+    </div>
+
+    <!-- Dock Status Grid -->
+    <div class="ql-card">
+        <h2>🚛 Live Dock Status</h2>
+        <div class="dock-grid">
+            <div class="dock-card" id="dock1">
+                <div class="dock-header">
+                    <div class="dock-title">Dock 1</div>
+                    <div class="dock-status status-occupied">Occupied</div>
+                </div>
+                <div class="dock-info">
+                    <div>Trailer: TRL-4021</div>
+                    <div>ETA Complete: 2:30 PM</div>
+                    <div>Progress: 75%</div>
+                </div>
+            </div>
+
+            <div class="dock-card" id="dock2">
+                <div class="dock-header">
+                    <div class="dock-title">Dock 2</div>
+                    <div class="dock-status status-available">Available</div>
+                </div>
+                <div class="dock-info">
+                    <div>Next: 3:00 PM</div>
+                    <div>Type: Outbound</div>
+                    <div>Ready for assignment</div>
+                </div>
+            </div>
+
+            <div class="dock-card" id="dock3">
+                <div class="dock-header">
+                    <div class="dock-title">Dock 3</div>
+                    <div class="dock-status status-reserved">Reserved</div>
+                </div>
+                <div class="dock-info">
+                    <div>Emergency Use</div>
+                    <div>Available for priority</div>
+                    <div>Clear until 5:00 PM</div>
+                </div>
+            </div>
+
+            <div class="dock-card" id="dock4">
+                <div class="dock-header">
+                    <div class="dock-title">Dock 4</div>
+                    <div class="dock-status status-occupied">Occupied</div>
+                </div>
+                <div class="dock-info">
+                    <div>Trailer: TRL-4033</div>
+                    <div>ETA Complete: 4:15 PM</div>
+                    <div>Progress: 45%</div>
+                </div>
+            </div>
+
+            <div class="dock-card" id="dock5">
+                <div class="dock-header">
+                    <div class="dock-title">Dock 5</div>
+                    <div class="dock-status status-maintenance">Maintenance</div>
+                </div>
+                <div class="dock-info">
+                    <div>Scheduled maintenance</div>
+                    <div>Available: Tomorrow 8AM</div>
+                    <div>Hydraulic service</div>
+                </div>
+            </div>
+
+            <div class="dock-card" id="dock6">
+                <div class="dock-header">
+                    <div class="dock-title">Dock 6</div>
+                    <div class="dock-status status-available">Available</div>
+                </div>
+                <div class="dock-info">
+                    <div>Ready for assignment</div>
+                    <div>Type: Cross-dock capable</div>
+                    <div>High-priority ready</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Recommendations -->
+    <div class="ql-card">
+        <h2>🤖 AI Recommendations</h2>
+        <div style="color: var(--ql-sub); margin: 10px 0;">
+            • Move TRL-4055 to Dock 2 at 3:00 PM for optimal workflow<br>
+            • Reserve Dock 6 for high-priority emergency deliveries<br>
+            • Dock 1 completion ahead of schedule - reassign next load early<br>
+            • Weather delay expected - adjust afternoon schedule by 30 minutes
+        </div>
+        <div class="ql-actions">
+            <button class="btn btn-success" onclick="applyRecommendations()">✅ Apply All Recommendations</button>
+            <button class="btn" onclick="customizeAI()">⚙️ Customize AI Settings</button>
+        </div>
+    </div>
+</div>
+
+<!-- QR Scanner Button -->
+<button class="qr-scanner-btn" onclick="openQRScanner()" title="Open QR Scanner">📱</button>
+
+<!-- Dashboard Button -->
+<button class="ql-fab" onclick="location.href='main_dashboard.html'">🏠 Dashboard</button>
+
+<script src="/static/qr_camera_scanner.js"></script>
+<script src="/static/universal_dashboard_button.js"></script>
+<script src="/static/employee_messaging_widget.js"></script>
+<script src="/static/floating_chat_widget.js"></script>
+<script>
+// Dock status tracking
+let dockStatuses = {
+    1: 'occupied',
+    2: 'available', 
+    3: 'reserved',
+    4: 'occupied',
+    5: 'maintenance',
+    6: 'available'
+};
+
+function updateDockDisplay(dockNum, status) {
+    const dockCard = document.getElementById(`dock${dockNum}`);
+    if (dockCard) {
+        const statusEl = dockCard.querySelector('.dock-status');
+        statusEl.className = `dock-status status-${status}`;
+        statusEl.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+    }
+}
+
+function optimizeSchedule() {
+    alert('🎯 AI Optimization Complete!\n\n✅ Rearranged 3 dock assignments\n✅ Reduced wait time by 25 minutes\n✅ Improved efficiency to 92%\n✅ Dock 2 now available for next 2 hours');
+}
+
+function manageAppointments() {
+    alert('📋 Appointment Management:\n\n⏰ Current Schedule:\n• 2:30 PM: ABC Corp (Priority)\n• 4:00 PM: Emergency delivery\n• 5:15 PM: XYZ Manufacturing\n\n🔧 Available Actions:\n• Reschedule non-priority\n• Add emergency slots\n• Optimize timing gaps');
+}
+
+function handleEmergency() {
+    alert('🚨 Emergency Assignment Protocol:\n\n• Dock 3 cleared and reserved\n• Current truck relocated to Dock 6\n• Emergency ETA: 15 minutes\n• All staff notified\n• Priority lane activated');
+    
+    // Update displays for emergency
+    dockStatuses[3] = 'reserved';
+    updateDockDisplay(3, 'reserved');
+}
+
+function viewAnalytics() {
+    alert('📊 Dock Analytics:\n\n• Average turnaround: 2.1 hours\n• Peak efficiency: 2-4 PM\n• Most used: Dock 1 (89% utilization)\n• Bottleneck: Loading delays (avg 12 min)\n• Recommendation: Add 2nd loader to Dock 4');
+}
+
+function exportSchedule() {
+    alert('📤 Schedule exported to CSV\n\nFile includes:\n• All dock assignments\n• Timing details\n• Driver information\n• Priority levels\n• Expected completion times');
+}
+
+function refreshData() {
+    alert('🔄 Data refreshed successfully!\n\n• Updated dock statuses\n• Refreshed appointment schedule\n• Synced with traffic systems\n• Updated weather delays');
+    
+    // Simulate some status changes
+    if (Math.random() > 0.5) {
+        dockStatuses[2] = 'occupied';
+        updateDockDisplay(2, 'occupied');
+    }
+}
+
+function applyRecommendations() {
+    alert('✅ AI Recommendations Applied!\n\n• TRL-4055 assigned to Dock 2\n• Dock 6 reserved for emergencies\n• Dock 1 next load moved up 30 min\n• Weather adjustments scheduled\n\nEstimated efficiency gain: +15%');
+}
+
+function customizeAI() {
+    alert('⚙️ AI Settings:\n\n📊 Current Configuration:\n• Priority: Efficiency optimization\n• Response time: Immediate\n• Weather integration: Enabled\n• Emergency protocols: Active\n\n🔧 Customize settings in Admin Panel');
+}
+
+function openQRScanner() {
+    if (window.initQRScanner) {
+        window.initQRScanner();
+    } else {
+        alert('📱 QR Scanner starting...\n\nScan dock assignments, trailer IDs, or delivery confirmations');
+    }
+}
+
+// Initialize real-time updates
+setInterval(() => {
+    // Simulate real-time dock status changes
+    if (Math.random() > 0.95) { // 5% chance per interval
+        const dockNum = Math.floor(Math.random() * 6) + 1;
+        if (dockStatuses[dockNum] === 'occupied' && Math.random() > 0.5) {
+            dockStatuses[dockNum] = 'available';
+            updateDockDisplay(dockNum, 'available');
+        }
+    }
+}, 30000); // Check every 30 seconds
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Smart Dock Assignment page loaded successfully');
+    
+    // Load saved theme
+    const savedTheme = localStorage.getItem('ql-theme');
+    if (savedTheme === 'light') {
+        document.body.classList.add('light');
+        const toggle = document.getElementById('ql-theme-toggle');
+        if (toggle) toggle.textContent = '☀️';
+    }
+});
+</script>
+</body>
+</html>

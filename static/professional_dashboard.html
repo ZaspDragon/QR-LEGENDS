@@ -1,0 +1,507 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Dashboard - QR Legends</title>
+    <style>
+/* === QRLegends Unified Theme (Dark/Light) === */
+:root{
+  --ql-bg: #0b1724;
+  --ql-panel: #0f2340;
+  --ql-card: #102846;
+  --ql-text: #dbe8ff;
+  --ql-sub: #97a6c1;
+  --ql-primary: #3b82f6;
+  --ql-success: #22c55e;
+  --ql-warning: #f59e0b;
+  --ql-danger: #ef4444;
+  --ql-accent: #6366f1;
+  --ql-border: rgba(255,255,255,.12);
+  --ql-surface: rgba(255,255,255,.06);
+}
+body.light{
+  --ql-bg: #f2f6fb;
+  --ql-panel: #ffffff;
+  --ql-card: #ffffff;
+  --ql-text: #1d2840;
+  --ql-sub: #51607c;
+  --ql-primary: #2563eb;
+  --ql-success: #16a34a;
+  --ql-warning: #d97706;
+  --ql-danger: #dc2626;
+  --ql-accent: #4f46e5;
+  --ql-border: rgba(0,0,0,.12);
+  --ql-surface: rgba(15,23,42,.04);
+}
+
+html,body{height:100%;}
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed;
+  color: var(--ql-text);
+  font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+  line-height: 1.45;
+}
+body.light{
+  background: linear-gradient(180deg,#f7faff,#eef3fb);
+}
+
+.ql-header{
+  position: sticky; top:0; z-index:1000;
+  background: rgba(8,27,46,.7);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--ql-border);
+}
+body.light .ql-header{
+  background: rgba(255,255,255,.75);
+}
+.ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
+.ql-title{display:flex; align-items:center; gap:10px;}
+.ql-h1{font-size:1.25rem; margin:0; letter-spacing:.2px;}
+.ql-nav{display:flex; gap:8px; flex-wrap:wrap;}
+.ql-btn{
+  display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
+  background: var(--ql-surface); border: 1px solid var(--ql-border);
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+  transition: transform .08s ease, background .2s ease, border-color .2s ease;
+}
+.ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+body.light .ql-btn:hover{ background: rgba(15,23,42,.08); }
+.ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
+
+.ql-theme-toggle{
+  margin-left:12px; cursor:pointer; border:1px solid var(--ql-border);
+  background: var(--ql-surface); color: var(--ql-text);
+  border-radius:10px; padding:8px 10px; font-size:16px;
+}
+
+.ql-container{ max-width:1400px; margin:22px auto; padding:0 20px; }
+
+/* Dashboard Header */
+.dashboard-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(59, 130, 246, 0.05));
+    border-radius: 20px;
+    border: 1px solid var(--ql-border);
+}
+
+.dashboard-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #6366f1, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0 0 10px 0;
+}
+
+.dashboard-subtitle {
+    color: var(--ql-sub);
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+/* Widget Grid */
+.widget-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.widget-card {
+    background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+    border: 1px solid var(--ql-border);
+    box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+    border-radius: 16px;
+    padding: 24px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+body.light .widget-card {
+    background: var(--ql-card);
+    box-shadow: 0 10px 30px rgba(2,8,23,.08);
+}
+
+.widget-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(2,8,23,.6);
+}
+
+.widget-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    display: block;
+}
+
+.widget-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--ql-text);
+    margin: 0 0 8px 0;
+}
+
+.widget-description {
+    color: var(--ql-sub);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Featured Widgets */
+.featured-widgets {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.featured-widget {
+    background: linear-gradient(135deg, var(--ql-card), rgba(34,197,94,.05));
+    border: 1px solid rgba(34,197,94,.3);
+    border-radius: 16px;
+    padding: 32px;
+    text-align: center;
+}
+
+.featured-widget .widget-icon {
+    color: var(--ql-success);
+    margin-bottom: 20px;
+}
+
+/* Category Sections */
+.category-section {
+    margin-bottom: 50px;
+}
+
+.category-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--ql-text);
+    margin: 0 0 20px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--ql-border);
+}
+
+/* Quick Actions */
+.quick-actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.action-btn {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, var(--ql-primary), var(--ql-accent));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+
+.action-btn.secondary {
+    background: linear-gradient(135deg, var(--ql-success), #16a34a);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .widget-grid { grid-template-columns: 1fr; }
+    .featured-widgets { grid-template-columns: 1fr; }
+    .dashboard-title { font-size: 2rem; }
+}
+    </style>
+<script>
+(function(){
+  try {
+    const saved = localStorage.getItem('ql-theme');
+    if(saved === 'light'){ document.addEventListener('DOMContentLoaded', ()=> document.body.classList.add('light')); }
+  } catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const btn = document.getElementById('ql-theme-toggle');
+    if(btn){
+      btn.addEventListener('click', function(){
+        document.body.classList.toggle('light');
+        const isLight = document.body.classList.contains('light');
+        btn.textContent = isLight ? '☀️' : '🌙';
+        try { localStorage.setItem('ql-theme', isLight ? 'light' : 'dark'); } catch(e){}
+      });
+      if(document.body.classList.contains('light')) btn.textContent = '☀️';
+    }
+  });
+})();
+</script>
+</head>
+<body>
+<!-- Unified QR Legends Header -->
+<header class="ql-header">
+  <div class="ql-header-inner">
+    <div class="ql-title">
+      <span class="ql-logo">🎯</span>
+      <h1 class="ql-h1">Professional Dashboard - QR Legends</h1>
+    </div>
+    <nav class="ql-nav">
+      <a class="ql-btn ql-secondary" href="main_dashboard.html">🏠 Dashboard</a>
+      <a class="ql-btn" href="erp_dashboard.html">🏢 ERP</a>
+      <a class="ql-btn" href="admin_dashboard.html">⚙️ Admin</a>
+      <a class="ql-btn" href="analytics_dashboard.html">📊 Analytics</a>
+    </nav>
+    <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<div class='ql-container'>
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">Customizable Dashboard</h1>
+        <p class="dashboard-subtitle">Drag, drop, and customize your perfect workspace</p>
+    </div>
+
+    <!-- Featured Top Row Widgets -->
+    <div class="featured-widgets">
+        <div class="featured-widget widget-card" onclick="window.location.href='/delivery_management'">
+            <span class="widget-icon">🚚</span>
+            <h3 class="widget-title">Delivery Management</h3>
+            <p class="widget-description">Manage freight dropoffs, deliveries, documents, and driver communications</p>
+        </div>
+
+        <div class="featured-widget widget-card" onclick="window.location.href='/driver_management_hub'">
+            <span class="widget-icon">👨‍💼</span>
+            <h3 class="widget-title">Driver Management Hub</h3>
+            <p class="widget-description">AI routing and optimized check-in/out workflow</p>
+        </div>
+
+        <div class="featured-widget widget-card" onclick="window.location.href='/smart_dock_assignment'">
+            <span class="widget-icon">🎯</span>
+            <h3 class="widget-title">Smart Dock Assignment</h3>
+            <p class="widget-description">Intelligent dock assignment with real-time optimization</p>
+        </div>
+
+        <div class="featured-widget widget-card" onclick="window.location.href='/professional_dashboard'">
+            <span class="widget-icon">📊</span>
+            <h3 class="widget-title">Professional Dashboard</h3>
+            <p class="widget-description">Enhanced analytics and professional reporting dashboard</p>
+        </div>
+
+        <div class="featured-widget widget-card" onclick="window.location.href='/regional_manager_mobile'">
+            <span class="widget-icon">📱</span>
+            <h3 class="widget-title">Regional Manager Mobile</h3>
+            <p class="widget-description">Mobile-friendly branch performance dashboard for remote management</p>
+        </div>
+    </div>
+
+    <!-- Executive Level Widgets -->
+    <div class="category-section">
+        <h2 class="category-title">🎯 Executive Dashboard</h2>
+        <div class="widget-grid">
+            <div class="widget-card" onclick="window.location.href='/board_reporting'">
+                <span class="widget-icon">📋</span>
+                <h3 class="widget-title">Board Overview</h3>
+                <p class="widget-description">Executive dashboards</p>
+            </div>
+
+            <div class="widget-card" onclick="window.location.href='/ceo_dashboard'">
+                <span class="widget-icon">👔</span>
+                <h3 class="widget-title">CEO Dashboard</h3>
+                <p class="widget-description">Company Performance</p>
+            </div>
+
+            <div class="widget-card" onclick="window.location.href='/strategic_initiatives'">
+                <span class="widget-icon">🎯</span>
+                <h3 class="widget-title">Strategic Initiatives</h3>
+                <p class="widget-description">Long-term Goals</p>
+            </div>
+
+            <div class="widget-card" onclick="window.location.href='/vp_reports'">
+                <span class="widget-icon">📈</span>
+                <h3 class="widget-title">VP Reports</h3>
+                <p class="widget-description">Department Status</p>
+            </div>
+
+            <div class="widget-card" onclick="window.location.href='/general_manager_dashboard'">
+                <span class="widget-icon">🏢</span>
+                <h3 class="widget-title">General Manager</h3>
+                <p class="widget-description">Operations Overview</p>
+            </div>
+
+            <div class="widget-card" onclick="window.location.href='/regional_performance'">
+                <span class="widget-icon">🌎</span>
+                <h3 class="widget-title">Regional Performance</h3>
+                <p class="widget-description">Multi-site Management</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Management Level Widgets -->
+    <div class="category-section">
+        <h2 class="category-title">📊 Management Level</h2>
+        <div class="widget-grid">
+            <div class="widget-card" onclick="window.location.href='/department_analytics'">
+                <span class="widget-icon">📊</span>
+                <h3 class="widget-title">Department Metrics</h3>
+                <p class="widget-description">Cross-functional KPIs</p>
+            </div>
+
+            <div class="widget-card" onclick="window.location.href='/middle_management_reports'">
+                <span class="widget-icon">📋</span>
+                <h3 class="widget-title">Management Reports</h3>
+                <p class="widget-description">Executive Analytics</p>
+            </div>
+
+            <div class="widget-card" onclick="window.location.href='/supervisor_dashboard'">
+                <span class="widget-icon">👥</span>
+                <h3 class="widget-title">Supervisor Panel</h3>
+                <p class="widget-description">Team Oversight</p>
+            </div>
+
+            <div class="widget-card" onclick="window.location.href='/office_manager_dashboard'">
+                <span class="widget-icon">🏢</span>
+                <h3 class="widget-title">Office Operations</h3>
+                <p class="widget-description">Daily Coordination</p>
+            </div>
+
+            <div class="widget-card" onclick="window.location.href='/team_leader_dashboard'">
+                <span class="widget-icon">⚡</span>
+                <h3 class="widget-title">Team Leadership</h3>
+                <p class="widget-description">Team Performance</p>
+            </div>
+
+            <div class="widget-card" onclick="window.location.href='/shift_supervisor_dashboard'">
+                <span class="widget-icon">⏰</span>
+                <h3 class="widget-title">Shift Management</h3>
+                <p class="widget-description">Real-time Operations</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Operational Widgets -->
+    <div class="category-section">
+        <h2 class="category-title">⚡ Operations</h2>
+        <div class="widget-grid">
+            <div class="widget-card" onclick="window.location.href='/financial_reports'">
+                <span class="widget-icon">💰</span>
+                <h3 class="widget-title">Revenue</h3>
+                <p class="widget-description">Revenue Performance</p>
+            </div>
+
+            <div class="widget-card" onclick="window.location.href='/order_picking'">
+                <span class="widget-icon">📦</span>
+                <h3 class="widget-title">Orders Today</h3>
+                <p class="widget-description">Daily Order Volume</p>
+            </div>
+
+            <div class="widget-card" onclick="window.location.href='/quality_check'">
+                <span class="widget-icon">🎯</span>
+                <h3 class="widget-title">Pick Accuracy</h3>
+                <p class="widget-description">Picking Performance</p>
+            </div>
+
+            <div class="widget-card" onclick="window.location.href='/user_management'">
+                <span class="widget-icon">👥</span>
+                <h3 class="widget-title">Active Users</h3>
+                <p class="widget-description">Online Staff</p>
+            </div>
+
+            <div class="widget-card" onclick="window.location.href='/voice_picking'">
+                <span class="widget-icon">⚡</span>
+                <h3 class="widget-title">Advanced Queue</h3>
+                <p class="widget-description">Workflow Queue</p>
+            </div>
+
+            <div class="widget-card" onclick="window.location.href='/outbound_hub'">
+                <span class="widget-icon">📤</span>
+                <h3 class="widget-title">Outbound Status</h3>
+                <p class="widget-description">Ready to Ship</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory & Analytics -->
+    <div class="category-section">
+        <h2 class="category-title">📦 Inventory & Analytics</h2>
+        <div class="widget-grid">
+            <div class="widget-card" onclick="window.location.href='/inventory_management'">
+                <span class="widget-icon">📊</span>
+                <h3 class="widget-title">Inventory Health</h3>
+                <p class="widget-description">Stock Status</p>
+            </div>
+
+            <div class="widget-card" onclick="window.location.href='/exception_reporting'">
+                <span class="widget-icon">⚠️</span>
+                <h3 class="widget-title">Exception Tracker</h3>
+                <p class="widget-description">Open Issues</p>
+            </div>
+
+            <div class="widget-card" onclick="window.location.href='/erp_sales'">
+                <span class="widget-icon">📋</span>
+                <h3 class="widget-title">Sales Orders</h3>
+                <p class="widget-description">ERP Updates</p>
+            </div>
+
+            <div class="widget-card" onclick="window.location.href='/erp_purchasing'">
+                <span class="widget-icon">🛒</span>
+                <h3 class="widget-title">Purchase Orders</h3>
+                <p class="widget-description">PO Log</p>
+            </div>
+
+            <div class="widget-card" onclick="window.location.href='/erp_finance'">
+                <span class="widget-icon">💳</span>
+                <h3 class="widget-title">Financial Health</h3>
+                <p class="widget-description">Cash Flow</p>
+            </div>
+
+            <div class="widget-card" onclick="window.location.href='/qr_generator'">
+                <span class="widget-icon">📱</span>
+                <h3 class="widget-title">QR Generator</h3>
+                <p class="widget-description">Quick Scan</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <a href="/main_dashboard" class="action-btn">🏠 Main Dashboard</a>
+        <a href="/erp_dashboard" class="action-btn secondary">🏢 ERP Dashboard</a>
+        <a href="/admin_dashboard" class="action-btn">⚙️ Admin Panel</a>
+        <a href="/analytics_dashboard" class="action-btn secondary">📊 Analytics</a>
+    </div>
+
+    <script>
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Professional Dashboard loaded successfully');
+            
+            // Add click animations
+            document.querySelectorAll('.widget-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+        });
+
+        // Widget navigation functions
+        function navigateToWidget(path) {
+            console.log('Navigating to widget:', path);
+            window.location.href = path;
+        }
+    </script>
+</div>
+</body>
+</html>

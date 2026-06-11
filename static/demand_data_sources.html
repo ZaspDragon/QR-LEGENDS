@@ -1,0 +1,251 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demand Data Sources - QR Legends</title>
+    <link rel="icon" type="image/png" href="/static/qr_legends_logo.png">
+    <script src="universal_dashboard_button.js"></script>
+    <style>
+        body {font-family: Arial, sans-serif 
+            margin: 0 
+            padding: 20px 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh}
+        .container {max-width: 1400px 
+            margin: 0 auto 
+            background: white 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden}
+        .header {background: linear-gradient(135deg, #667eea, #764ba2) 
+            color: white 
+            padding: 30px 
+            text-align: center}
+        .content {padding: 30px}
+        .data-source-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
+            gap: 20px
+            margin: 20px 0}
+        .data-source-card {background: #f8f9fa
+            border-radius: 10px
+            padding: 20px
+            border-left: 5px solid #667eea;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
+        .status-active {border-left-color: #28a745}
+        .status-warning {border-left-color: #ffc107}
+        .status-error {border-left-color: #dc3545}
+        .btn {background: #667eea
+            color: white
+            border: none
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s}
+        .btn: hover {background: #764ba2 transform: translateY(-2px)}
+        .data-table {width: 100%
+            border-collapse: collapse
+            margin: 15px 0
+            background: white}
+        .data-table th,
+        .data-table td {padding: 12px
+            text-align: left
+            border-bottom: 1px solid #ddd}
+        .data-table th {background: #667eea
+            color: white}
+        .metric {background: #e8f4fd
+            padding: 15px
+            border-radius: 8px
+            margin: 10px 0}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 AI Demand Prediction Data Sources</h1>
+            <p>Data integration and prediction accuracy monitoring</p>
+        </div>
+        
+        <div class="content">
+            <div class="data-source-grid">
+                <div class="data-source-card status-active">
+                    <h4>📦 Inventory Data</h4>
+                    <div class="metric">
+                        <strong>Current Stock:</strong> 1,247 items tracked<br>
+                        <strong>Last Update:</strong> 2 minutes ago<br>
+                        <strong>Data Quality:</strong> 98.7%
+                    </div>
+                    <p>Real-time inventory levels, reorder points, and stock movement patterns</p>
+                    <button class="btn" onclick="viewInventoryData()">View Inventory Trends</button>
+                    <button class="btn" onclick="window.open('/inventory_analysis', '_blank')">📈 Inventory Analysis</button>
+                </div>
+
+                <div class="data-source-card status-active">
+                    <h4>🛒 Purchase Orders</h4>
+                    <div class="metric">
+                        <strong>Active POs:</strong> 47<br>
+                        <strong>Historical Data:</strong> 2,345 orders<br>
+                        <strong>Supplier Performance:</strong> 94.2%
+                    </div>
+                    <p>Purchase order patterns, supplier lead times, and ordering frequency</p>
+                    <button class="btn" onclick="viewPurchaseData()">View PO Patterns</button>
+                    <button class="btn" onclick="window.open('/erp_purchasing', '_blank')">🛒 Purchase Orders</button>
+                </div>
+
+                <div class="data-source-card status-active">
+                    <h4>📈 Sales History</h4>
+                    <div class="metric">
+                        <strong>Sales Orders:</strong> 1,892 this month<br>
+                        <strong>Growth Rate:</strong> +12.3%<br>
+                        <strong>Top SKUs:</strong> 234 items (80% of sales)
+                    </div>
+                    <p>Sales velocity, customer demand patterns, and seasonal trends</p>
+                    <button class="btn" onclick="viewSalesData()">View Sales Trends</button>
+                    <button class="btn" onclick="window.open('/erp_sales', '_blank')">💰 Sales Dashboard</button>
+                </div>
+
+                <div class="data-source-card status-warning">
+                    <h4>🌍 External Market Data</h4>
+                    <div class="metric">
+                        <strong>Market Indicators:</strong> 45 tracked<br>
+                        <strong>Last Sync:</strong> 1 hour ago<br>
+                        <strong>Reliability:</strong> 87.4%
+                    </div>
+                    <p>Economic indicators, industry trends, and competitive intelligence</p>
+                    <button class="btn" onclick="viewMarketData()">View Market Trends</button>
+                    <button class="btn" onclick="setupExternalData()">⚙️ Configure Sources</button>
+                </div>
+
+                <div class="data-source-card status-active">
+                    <h4>📅 Seasonal Patterns</h4>
+                    <div class="metric">
+                        <strong>Patterns Detected:</strong> 23<br>
+                        <strong>Accuracy:</strong> 96.1%<br>
+                        <strong>Next Event:</strong> Holiday season (42 days)
+                    </div>
+                    <p>Holiday trends, seasonal fluctuations, and cyclical demand patterns</p>
+                    <button class="btn" onclick="viewSeasonalData()">View Seasonal Analysis</button>
+                </div>
+
+                <div class="data-source-card status-active">
+                    <h4>👥 Customer Behavior</h4>
+                    <div class="metric">
+                        <strong>Active Customers:</strong> 456<br>
+                        <strong>Behavior Patterns:</strong> 78 identified<br>
+                        <strong>Predictability:</strong> 91.8%
+                    </div>
+                    <p>Customer ordering patterns, preferences, and demand predictability</p>
+                    <button class="btn" onclick="viewCustomerData()">View Customer Analysis</button>
+                    <button class="btn" onclick="window.open('/erp_crm', '_blank')">👥 Customer Portal</button>
+                </div>
+            </div>
+
+            <div class="data-source-card">
+                <h3>🔄 Data Integration Status</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Data Source</th>
+                            <th>Last Update</th>
+                            <th>Records</th>
+                            <th>Quality Score</th>
+                            <th>Impact on Prediction</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>📦 Inventory Movements</td>
+                            <td>2 min ago</td>
+                            <td>15,847</td>
+                            <td>98.7%</td>
+                            <td>High (35%)</td>
+                            <td style="color: #28a745;">✅ Active</td>
+                        </tr>
+                        <tr>
+                            <td>🛒 Purchase History</td>
+                            <td>15 min ago</td>
+                            <td>2,345</td>
+                            <td>96.2%</td>
+                            <td>High (30%)</td>
+                            <td style="color: #28a745;">✅ Active</td>
+                        </tr>
+                        <tr>
+                            <td>💰 Sales Transactions</td>
+                            <td>5 min ago</td>
+                            <td>8,921</td>
+                            <td>97.4%</td>
+                            <td>Very High (40%)</td>
+                            <td style="color: #28a745;">✅ Active</td>
+                        </tr>
+                        <tr>
+                            <td>📅 Seasonal Data</td>
+                            <td>1 day ago</td>
+                            <td>156</td>
+                            <td>94.8%</td>
+                            <td>Medium (20%)</td>
+                            <td style="color: #28a745;">✅ Active</td>
+                        </tr>
+                        <tr>
+                            <td>🌍 Market Indicators</td>
+                            <td>1 hour ago</td>
+                            <td>45</td>
+                            <td>87.4%</td>
+                            <td>Low (10%)</td>
+                            <td style="color: #ffc107;">⚠️ Delayed</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function viewInventoryData() {alert('📦 Loading inventory trend analysis...\n\n' +
+                  '• Current stock levels and movement patterns\n' +
+                  '• Reorder point effectiveness\n' +
+                  '• Stock velocity by category\n' +
+                  '• ABC analysis results')}
+
+        function viewPurchaseData() {alert('🛒 Loading purchase order analysis...\n\n' +
+                  '• Supplier performance metrics\n' +
+                  '• Lead time patterns\n' +
+                  '• Order frequency analysis\n' +
+                  '• Cost trend analysis')}
+
+        function viewSalesData() {alert('📈 Loading sales trend analysis...\n\n' +
+                  '• Sales velocity by product\n' +
+                  '• Customer demand patterns\n' +
+                  '• Seasonal sales variations\n' +
+                  '• Growth trend analysis')}
+
+        function viewMarketData() {alert('🌍 Loading market trend analysis...\n\n' +
+                  '• Economic indicators impact\n' +
+                  '• Industry trend correlation\n' +
+                  '• Competitive market analysis\n' +
+                  '• External demand drivers')}
+
+        function viewSeasonalData() {alert('📅 Loading seasonal pattern analysis...\n\n' +
+                  '• Holiday demand patterns\n' +
+                  '• Seasonal trend identification\n' +
+                  '• Cyclical demand forecasting\n' +
+                  '• Event-based predictions')}
+
+        function viewCustomerData() {alert('👥 Loading customer behavior analysis...\n\n' +
+                  '• Customer ordering patterns\n' +
+                  '• Demand predictability scoring\n' +
+                  '• Customer segment analysis\n' +
+                  '• Behavior change detection')}
+
+        function setupExternalData() {alert('⚙️ Configure External Data Sources\n\n' +
+                  'Would you like to:\n' +
+                  '• Add new market data APIs\n' +
+                  '• Configure economic indicators\n' +
+                  '• Set up competitive intelligence\n' +
+                  '• Enable industry trend feeds')}
+    </script>
+</body>
+</html>

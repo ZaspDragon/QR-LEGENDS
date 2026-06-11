@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Orders - QR LEGENDS</title>
+    <style>
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;}
+        .container {max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);}
+        .header {text-align: center;
+            margin-bottom: 30px;}
+        .back-btn {position: absolute;
+            top: 20px;
+            left: 20px;
+            background: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-weight: 600;}
+        .toolbar {display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 10px;}
+        .btn {padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 5px;}
+        .btn-primary {background: #667eea; color: white;}
+        .btn-success {background: #28a745; color: white;}
+        .btn-warning {background: #ffc107; color: #333;}
+        .btn-danger {background: #dc3545; color: white;}
+        .btn-info {background: #17a2b8; color: white;}
+        .po-grid {display: grid;
+            gap: 20px;}
+        .po-card {border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            background: #f8f9fa;}
+        .po-header {display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;}
+        .po-number {font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;}
+        .po-status {padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;}
+        .status-pending {background: #fff3cd; color: #856404;}
+        .status-approved {background: #d4edda; color: #155724;}
+        .status-received {background: #cce5ff; color: #004085;}
+        .po-details {display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;}
+        .modal {display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);}
+        .modal-content {background-color: white;
+            margin: 2% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;}
+        .form-group {margin-bottom: 20px;}
+        .form-group label {display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;}
+        .form-group input, .form-group select, .form-group textarea {width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;}
+        .line-items {margin: 20px 0;}
+        .line-item {display: grid;
+            grid-template-columns: 3fr 1fr 1fr 1fr 50px;
+            gap: 10px;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 10px;}
+        .line-item input {padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;}
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='/erp_hub'">← Back to ERP Hub</button>
+
+    <div class="container">
+        <div class="header">
+            <h1>📋 Purchase Orders</h1>
+            <p>Manage purchase orders and supplier relationships</p>
+        </div>
+
+        <div class="toolbar">
+            <div>
+                <input type="text" id="searchInput" placeholder="Search purchase orders..." style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; width: 300px;">
+                <select id="statusFilter" style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    <option value="">All Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="received">Received</option>
+                </select>
+            </div>
+            <div>
+                <button class="btn btn-primary" onclick="showCreatePOModal()">+ Create Purchase Order</button>
+                <button class="btn btn-success" onclick="exportPOs()">📊 Export</button>
+            </div>
+        </div>
+
+        <div id="po-list" class="po-grid">
+            <!-- Purchase orders will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Create/Edit PO Modal -->
+    <div id="po-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="modal-title">Create Purchase Order</h2>
+            <form id="po-form">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label>PO Number</label>
+                        <input type="text" id="po-number" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Supplier</label>
+                        <select id="supplier" required>
+                            <option value="">Select Supplier</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Expected Date</label>
+                        <input type="date" id="expected-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select id="priority">
+                            <option value="normal">Normal</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="line-items">
+                    <h3>Line Items</h3>
+                    <div id="line-items-container">
+                        <!-- Line items will be added here -->
+                    </div>
+                    <button type="button" class="btn btn-success" onclick="addLineItem()">+ Add Item</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="notes" rows="3"></textarea>
+                </div>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <button type="submit" class="btn btn-primary">Save Purchase Order</button>
+                    <button type="button" class="btn" onclick="closePOModal()" style="background: #6c757d; color: white;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- POS QR Generation Section -->
+    <div style="text-align: center; margin-top: 40px; border-top: 2px solid #28a745; padding-top: 30px;">
+        <h2 style="color: #28a745;">💳 Generate Point of Sale (POS) QR Code</h2>
+        <p style="color: #666; margin-bottom: 20px;">Create QR codes for point of sale transactions and customer orders</p>
+        <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto;">
+            <div class="form-group" style="flex: 1;">
+                <label><strong>POS Number *</strong></label>
+                <input type="text" id="posNumber" placeholder="e.g., POS000001234" required style="padding: 12px; font-size: 16px;">
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label><strong>Customer Name</strong></label>
+                <input type="text" id="posCustomer" placeholder="Customer name" style="padding: 12px; font-size: 16px;">
+            </div>
+        </div>
+        <button class="btn btn-success" onclick="generatePOSQR()" style="padding: 15px 30px; font-size: 18px; font-weight: bold;">
+            📱 Generate POS QR Code
+        </button>
+        <div id="qrGenerationResult"></div>
+    </div>
+
+    <!-- SPO QR Generation Section -->
+    <div style="text-align: center; margin-top: 40px; border-top: 2px solid #007bff; padding-top: 30px;">
+        <h2 style="color: #007bff;">📦 Generate Special Purchase Order (SPO) QR Code</h2>
+        <p style="color: #666; margin-bottom: 20px;">Create QR codes for special purchase orders that require priority tracking</p>
+        <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto;">
+            <div class="form-group" style="flex: 1;">
+                <label><strong>SPO Number *</strong></label>
+                <input type="text" id="spoNumber" placeholder="e.g., SPO000004444" required style="padding: 12px; font-size: 16px;">
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label><strong>Priority Level</strong></label>
+                <select id="priorityLevel" style="padding: 12px; font-size: 16px;">
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High" selected>High</option>
+                    <option value="Urgent">Urgent</option>
+                </select>
+            </div>
+        </div>
+        <button class="btn btn-primary" onclick="generateSPOQR()" style="padding: 15px 30px; font-size: 16px; margin-right: 10px;">
+            🔗 Generate SPO QR Code
+        </button>
+        <button class="btn btn-success" onclick="printSPOQR()" style="padding: 15px 30px; font-size: 16px;" disabled id="printSPOBtn">
+            🖨️ Print SPO QR Label
+        </button>
+    </div>
+
+    <!-- Transfer PO QR Generation Section -->
+    <div style="text-align: center; margin-top: 40px; border-top: 2px solid #ffc107; padding-top: 30px;">
+        <h2 style="color: #ffc107;">🚚 Generate Transfer PO QR Code</h2>
+        <p style="color: #666; margin-bottom: 20px;">Create QR codes for tracking inventory transfers between locations</p>
+        <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto;">
+            <div class="form-group" style="flex: 1;">
+                <label><strong>Transfer Number *</strong></label>
+                <input type="text" id="transferNumber" placeholder="e.g., TRN000005678" required style="padding: 12px; font-size: 16px;">
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label><strong>From Location</strong></label>
+                <input type="text" id="fromLocation" placeholder="Origin location" style="padding: 12px; font-size: 16px;">
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label><strong>To Location</strong></label>
+                <input type="text" id="toLocation" placeholder="Destination location" style="padding: 12px; font-size: 16px;">
+            </div>
+        </div>
+        <button class="btn btn-warning" onclick="generateTransferPOQR()" style="padding: 15px 30px; font-size: 16px;">
+            ➡️ Generate Transfer QR
+        </button>
+    </div>
+
+    <!-- Purchase Order QR Generation Section -->
+    <div style="text-align: center; margin-top: 40px; border-top: 2px solid #17a2b8; padding-top: 30px;">
+        <h2 style="color: #17a2b8;">📄 Generate General Purchase Order QR Code</h2>
+        <p style="color: #666; margin-bottom: 20px;">Create QR codes for standard purchase orders for easy referencing</p>
+        <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto;">
+            <div class="form-group" style="flex: 1;">
+                <label><strong>PO Number *</strong></label>
+                <input type="text" id="poNumber" placeholder="e.g., PO000009999" required style="padding: 12px; font-size: 16px;">
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label><strong>Supplier Name</strong></label>
+                <input type="text" id="supplierName" placeholder="Supplier's Name" style="padding: 12px; font-size: 16px;">
+            </div>
+        </div>
+        <button class="btn btn-info" onclick="generatePOQR()" style="padding: 15px 30px; font-size: 16px;">
+            📄 Generate PO QR Code
+        </button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="qr_camera_scanner.js"></script>
+    <script src="copyright_notice.js"></script>
+
+    <script>
+        let purchaseOrders = [];
+        let suppliers = [];
+        let items = [];
+        let generatedQRs = [];
+
+        // Check if QRCode library is loaded
+        if (typeof QRCode === 'undefined') {
+            console.warn('⚠️ QRCode library not loaded - QR generation may not work');
+        }
+
+        // Function to display QR code on page
+        function displayQRCode(qrData, containerId, type, identifier) {
+            const container = document.getElementById(containerId);
+            if (!container) {
+                console.error('Container not found:', containerId);
+                return;
+            }
+
+            // Create QR code canvas
+            const canvas = document.createElement('canvas');
+            QRCode.toCanvas(canvas, qrData, {
+                width: 200,
+                margin: 2,
+                color: {
+                    dark: '#000000',
+                    light: '#FFFFFF'
+                }
+            }, function(error) {
+                if (error) {
+                    console.error('QR Code generation error:', error);
+                    container.innerHTML = `<div style="color: red;">Error generating QR code: ${error.message}</div>`;
+                    return;
+                }
+
+                // Display the QR code with info
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; margin: 20px 0;">
+                        <h4>✅ ${type} QR Code Generated</h4>
+                        <div style="background: #e3f2fd; padding: 10px; border-radius: 5px; margin: 10px 0; font-family: monospace; font-size: 14px;">
+                            ${identifier}
+                        </div>
+                        <div style="margin: 15px 0;">
+                            ${canvas.outerHTML}
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <button onclick="printQRCode('${qrData}', '${type}', '${identifier}')" 
+                                    style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 5px;">
+                                🖨️ Print ${type} Label
+                            </button>
+                            <button onclick="copyQRData('${qrData}')" 
+                                    style="padding: 10px 20px; background: #17a2b8; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 5px;">
+                                📋 Copy QR Data
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                // Store generated QR for later use
+                generatedQRs.push({
+                    type: type,
+                    identifier: identifier,
+                    qrData: qrData,
+                    canvas: canvas.toDataURL(),
+                    timestamp: new Date().toISOString()
+                });
+            });
+        }
+
+        // Function to print QR code label
+        function printQRCode(qrData, type, identifier) {
+            const printWindow = window.open('', '_blank');
+
+            // Generate QR code for printing
+            const canvas = document.createElement('canvas');
+            QRCode.toCanvas(canvas, qrData, {
+                width: 300,
+                margin: 2
+            }, function(error) {
+                if (error) {
+                    console.error('Print QR generation error:', error);
+                    alert('Error generating QR code for printing');
+                    return;
+                }
+
+                const qrImage = canvas.toDataURL();
+
+                printWindow.document.write(`
+                    <html>
+                    <head>
+                        <title>Print ${type} QR Code - ${identifier}</title>
+                        <style>
+                            body { 
+                                text-align: center; 
+                                font-family: Arial, sans-serif; 
+                                margin: 20px;
+                            }
+                            .qr-label { 
+                                border: 2px solid #000; 
+                                padding: 20px; 
+                                margin: 20px auto; 
+                                display: inline-block; 
+                                max-width: 350px;
+                                page-break-inside: avoid;
+                            }
+                            .header { 
+                                font-size: 18px; 
+                                font-weight: bold; 
+                                margin-bottom: 10px;
+                            }
+                            .identifier { 
+                                font-family: monospace; 
+                                font-size: 16px; 
+                                margin: 10px 0; 
+                                font-weight: bold;
+                                background: #f0f0f0;
+                                padding: 5px;
+                                border-radius: 3px;
+                            }
+                            .timestamp {
+                                font-size: 12px;
+                                color: #666;
+                                margin-top: 10px;
+                            }
+                            @media print {
+                                body { margin: 0; }
+                                .qr-label { margin: 10px; }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="qr-label">
+                            <div class="header">QR LEGENDS</div>
+                            <div style="font-size: 14px; margin-bottom: 15px;">${type}</div>
+                            <img src="${qrImage}" style="max-width: 250px;">
+                            <div class="identifier">${identifier}</div>
+                            <div class="timestamp">Generated: ${new Date().toLocaleString()}</div>
+                            <div style="font-size: 10px; margin-top: 10px;">Scan for current data</div>
+                        </div>
+                    </body>
+                    </html>
+                `);
+
+                printWindow.document.close();
+
+                // Auto-print after a short delay
+                setTimeout(() => {
+                    printWindow.print();
+                }, 500);
+            });
+        }
+
+        // Function to copy QR data to clipboard
+        function copyQRData(qrData) {
+            navigator.clipboard.writeText(qrData).then(() => {
+                alert('QR code data copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy QR data:', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = qrData;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('QR code data copied to clipboard!');
+            });
+        }
+
+        // Load data when page loads
+        window.addEventListener('load', function() {
+            loadPurchaseOrders();
+            loadSuppliers();
+            loadItems();
+
+            // Check QR library
+            setTimeout(() => {
+                if (typeof QRCode === 'undefined') {
+                    console.warn('⚠️ QRCode library not loaded - QR generation may not work');
+                } else {
+                    console.log('✅ QRCode library loaded successfully');
+                }
+            }, 1000);
+        });
+
+        async function loadPurchaseOrders() {
+            try {
+                const response = await fetch('/api/erp/purchase-orders');
+                if (response.ok) {
+                    purchaseOrders = await response.json();
+                    displayPurchaseOrders();
+                } else {
+                    // Create sample data if none exists
+                    purchaseOrders = [
+                        {
+                            id: 'PO-001',
+                            supplier: 'ABC Supply Co',
+                            expectedDate: '2025-02-15',
+                            status: 'pending',
+                            total: 2450.00,
+                            items: [
+                                { name: 'Steel Brackets', quantity: 100, price: 15.50 },
+                                { name: 'Mounting Hardware', quantity: 200, price: 3.75 }
+                            ],
+                            notes: 'Urgent delivery required for project deadline'
+                        },
+                        {
+                            id: 'PO-002',
+                            supplier: 'Tech Components Ltd',
+                            expectedDate: '2025-02-20',
+                            status: 'approved',
+                            total: 1875.00,
+                            items: [
+                                { name: 'Circuit Boards', quantity: 25, price: 75.00 }
+                            ],
+                            notes: 'Quality inspection required upon receipt'
+                        }
+                    ];
+                    displayPurchaseOrders();
+                }
+            } catch (error) {
+                console.error('Error loading purchase orders:', error);
+                displayPurchaseOrders(); // Show sample data
+            }
+        }
+
+        async function loadSuppliers() {
+            try {
+                const response = await fetch('/api/erp/suppliers');
+                if (response.ok) {
+                    suppliers = await response.json();
+                } else {
+                    suppliers = [
+                        { id: 'SUP-001', name: 'ABC Supply Co' },
+                        { id: 'SUP-002', name: 'Tech Components Ltd' },
+                        { id: 'SUP-003', name: 'Industrial Parts Inc' }
+                    ];
+                }
+                populateSupplierDropdown();
+            } catch (error) {
+                console.error('Error loading suppliers:', error);
+                populateSupplierDropdown();
+            }
+        }
+
+        async function loadItems() {
+            try {
+                const response = await fetch('/api/erp/items');
+                if (response.ok) {
+                    items = await response.json();
+                } else {
+                    items = [
+                        { id: 'ITM-001', name: 'Steel Brackets', price: 15.50 },
+                        { id: 'ITM-002', name: 'Mounting Hardware', price: 3.75 },
+                        { id: 'ITM-003', name: 'Circuit Boards', price: 75.00 }
+                    ];
+                }
+            } catch (error) {
+                console.error('Error loading items:', error);
+            }
+        }
+
+        function displayPurchaseOrders() {
+            const poList = document.getElementById('po-list');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            let filteredPOs = purchaseOrders.filter(po => {
+                const matchesSearch = po.id.toLowerCase().includes(searchTerm) || 
+                                    po.supplier.toLowerCase().includes(searchTerm);
+                const matchesStatus = !statusFilter || po.status === statusFilter;
+                return matchesSearch && matchesStatus;
+            });
+
+            poList.innerHTML = filteredPOs.map(po => `
+                <div class="po-card">
+                    <div class="po-header">
+                        <div class="po-number">${po.id}</div>
+                        <div class="po-status status-${po.status}">${po.status.toUpperCase()}</div>
+                    </div>
+                    <div class="po-details">
+                        <div><strong>Supplier:</strong> ${po.supplier}</div>
+                        <div><strong>Expected:</strong> ${new Date(po.expectedDate).toLocaleDateString()}</div>
+                        <div><strong>Total:</strong> $${po.total.toFixed(2)}</div>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <strong>Items:</strong> ${po.items.length} line item(s)
+                        <div style="font-size: 0.9rem; color: #666;">
+                            ${po.items.map(item => `${item.name} (${item.quantity})`).join(', ')}
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <button class="btn btn-primary" onclick="editPO('${po.id}')">Edit</button>
+                        <button class="btn btn-success" onclick="receivePO('${po.id}')">Receive</button>
+                        <button class="btn btn-warning" onclick="printPO('${po.id}')">Print</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function populateSupplierDropdown() {
+            const supplierSelect = document.getElementById('supplier');
+            supplierSelect.innerHTML = '<option value="">Select Supplier</option>' +
+                suppliers.map(supplier => `<option value="${supplier.name}">${supplier.name}</option>`).join('');
+        }
+
+        function showCreatePOModal() {
+            document.getElementById('modal-title').textContent = 'Create Purchase Order';
+            document.getElementById('po-form').reset();
+            document.getElementById('po-number').value = 'PO-' + String(purchaseOrders.length + 1).padStart(3, '0');
+            document.getElementById('line-items-container').innerHTML = '';
+            addLineItem();
+            document.getElementById('po-modal').style.display = 'block';
+        }
+
+        function closePOModal() {
+            document.getElementById('po-modal').style.display = 'none';
+        }
+
+        function addLineItem() {
+            const container = document.getElementById('line-items-container');
+            const lineItemHTML = `
+                <div class="line-item">
+                    <select class="item-select" required>
+                        <option value="">Select Item</option>
+                        ${items.map(item => `<option value="${item.name}" data-price="${item.price}">${item.name}</option>`).join('')}
+                    </select>
+                    <input type="number" placeholder="Quantity" class="quantity" required min="1">
+                    <input type="number" placeholder="Unit Price" class="price" required min="0" step="0.01">
+                    <input type="number" placeholder="Total" class="line-total" readonly>
+                    <button type="button" onclick="removeLineItem(this)" style="background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer;">×</button>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', lineItemHTML);
+
+            // Add event listeners for calculation
+            const newLineItem = container.lastElementChild;
+            const itemSelect = newLineItem.querySelector('.item-select');
+            const quantityInput = newLineItem.querySelector('.quantity');
+            const priceInput = newLineItem.querySelector('.price');
+            const totalInput = newLineItem.querySelector('.line-total');
+
+            itemSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                if (selectedOption.dataset.price) {
+                    priceInput.value = selectedOption.dataset.price;
+                    calculateLineTotal();
+                }
+            });
+
+            quantityInput.addEventListener('input', calculateLineTotal);
+            priceInput.addEventListener('input', calculateLineTotal);
+
+            function calculateLineTotal() {
+                const quantity = parseFloat(quantityInput.value) || 0;
+                const price = parseFloat(priceInput.value) || 0;
+                totalInput.value = (quantity * price).toFixed(2);
+            }
+        }
+
+        function removeLineItem(button) {
+            button.closest('.line-item').remove();
+        }
+
+        document.getElementById('po-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = {
+                id: document.getElementById('po-number').value,
+                supplier: document.getElementById('supplier').value,
+                expectedDate: document.getElementById('expected-date').value,
+                priority: document.getElementById('priority').value,
+                notes: document.getElementById('notes').value,
+                status: 'pending',
+                items: [],
+                total: 0
+            };
+
+            // Collect line items
+            const lineItems = document.querySelectorAll('.line-item');
+            lineItems.forEach(item => {
+                const itemName = item.querySelector('.item-select').value;
+                const quantity = parseFloat(item.querySelector('.quantity').value);
+                const price = parseFloat(item.querySelector('.price').value);
+
+                if (itemName && quantity && price) {
+                    formData.items.push({
+                        name: itemName,
+                        quantity: quantity,
+                        price: price
+                    });
+                    formData.total += quantity * price;
+                }
+            });
+
+            try {
+                const response = await fetch('/api/erp/purchase-orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    purchaseOrders.push(formData);
+                    displayPurchaseOrders();
+                    closePOModal();
+                    alert('Purchase order created successfully!');
+                } else {
+                    alert('Failed to create purchase order');
+                }
+            } catch (error) {
+                // For demo, add to local array
+                purchaseOrders.push(formData);
+                displayPurchaseOrders();
+                closePOModal();
+                alert('Purchase order created successfully!');
+            }
+        });
+
+        function editPO(poId) {
+            const po = purchaseOrders.find(p => p.id === poId);
+            if (po) {
+                showCreatePOModal();
+                document.getElementById('modal-title').textContent = 'Edit Purchase Order';
+                document.getElementById('po-number').value = po.id;
+                document.getElementById('supplier').value = po.supplier;
+                document.getElementById('expected-date').value = po.expectedDate;
+                document.getElementById('priority').value = po.priority || 'normal';
+                document.getElementById('notes').value = po.notes || '';
+
+                // Populate line items
+                document.getElementById('line-items-container').innerHTML = '';
+                po.items.forEach(item => {
+                    addLineItem();
+                    const lastLineItem = document.querySelector('.line-item:last-child');
+                    lastLineItem.querySelector('.item-select').value = item.name;
+                    lastLineItem.querySelector('.quantity').value = item.quantity;
+                    lastLineItem.querySelector('.price').value = item.price;
+                    lastLineItem.querySelector('.line-total').value = (item.quantity * item.price).toFixed(2);
+                });
+            }
+        }
+
+        function receivePO(poId) {
+            const po = purchaseOrders.find(p => p.id === poId);
+            if (po && confirm(`Mark purchase order ${poId} as received?`)) {
+                po.status = 'received';
+                po.receivedDate = new Date().toISOString().split('T')[0];
+                displayPurchaseOrders();
+                alert('Purchase order marked as received!');
+            }
+        }
+
+        function printPO(poId) {
+            const po = purchaseOrders.find(p => p.id === poId);
+            if (po) {
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                    <html>
+                        <head><title>Purchase Order ${po.id}</title></head>
+                        <body>
+                            <h1>Purchase Order ${po.id}</h1>
+                            <p><strong>Supplier:</strong> ${po.supplier}</p>
+                            <p><strong>Expected Date:</strong> ${new Date(po.expectedDate).toLocaleDateString()}</p>
+                            <p><strong>Status:</strong> ${po.status}</p>
+                            <h3>Items:</h3>
+                            <table border="1" style="width: 100%; border-collapse: collapse;">
+                                <tr><th>Item</th><th>Quantity</th><th>Price</th><th>Total</th></tr>
+                                ${po.items.map(item => `
+                                    <tr>
+                                        <td>${item.name}</td>
+                                        <td>${item.quantity}</td>
+                                        <td>$${item.price.toFixed(2)}</td>
+                                        <td>$${(item.quantity * item.price).toFixed(2)}</td>
+                                    </tr>
+                                `).join('')}
+                            </table>
+                            <p><strong>Total: $${po.total.toFixed(2)}</strong></p>
+                            <p><strong>Notes:</strong> ${po.notes || 'None'}</p>
+                        </body>
+                    </html>
+                `);
+                printWindow.document.close();
+                printWindow.print();
+            }
+        }
+
+        function exportPOs() {
+            const csv = [
+                ['PO Number', 'Supplier', 'Expected Date', 'Status', 'Total', 'Items'].join(','),
+                ...purchaseOrders.map(po => [
+                    po.id,
+                    po.supplier,
+                    po.expectedDate,
+                    po.status,
+                    po.total.toFixed(2),
+                    po.items.length
+                ].join(','))
+            ].join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv'});
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'purchase_orders.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Search and filter functionality
+        document.getElementById('searchInput').addEventListener('input', displayPurchaseOrders);
+        document.getElementById('statusFilter').addEventListener('change', displayPurchaseOrders);
+
+        // Close modal when clicking outside
+        document.getElementById('po-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePOModal();
+            }
+        });
+
+        // QR Code Generation Functions
+        async function generatePOSQR() {
+            try {
+                const posNumber = document.getElementById('posNumber').value || 'POS-' + Date.now();
+                const customerName = document.getElementById('posCustomer').value || 'Customer';
+
+                // Update field if auto-generated
+                document.getElementById('posNumber').value = posNumber;
+
+                const qrData = JSON.stringify({
+                    type: 'POINT_OF_SALE',
+                    pos_number: posNumber,
+                    customer_name: customerName,
+                    created_at: new Date().toISOString(),
+                    department: 'sales'
+                });
+
+                console.log('Generating POS QR:', posNumber);
+
+                // Try server-side generation first, then fallback to client-side
+                try {
+                    const response = await fetch('/api/qr/generate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            qr_data: qrData,
+                            type: 'POS'
+                        })
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        if (result.success && result.qr_image) {
+                            showQRModal(posNumber, result.qr_image, 'Point of Sale');
+                            console.log('✅ POS QR Generated via Server');
+                            return;
+                        }
+                    }
+                } catch (serverError) {
+                    console.warn('Server QR generation failed, trying client-side');
+                }
+
+                // Fallback to client-side generation
+                await generateLocalQR(posNumber, qrData, 'Point of Sale');
+
+            } catch (error) {
+                console.error('Error generating POS QR:', error);
+                alert('Error generating POS QR code: ' + error.message);
+            }
+        }
+
+        async function generateSPOQR() {
+            const spoNumber = document.getElementById('spoNumber').value.trim();
+            const priority = document.getElementById('priorityLevel').value; // Corrected to use priorityLevel
+
+            if (!spoNumber) {
+                alert('Please enter a SPO number');
+                return;
+            }
+
+            try {
+                // Create comprehensive QR data
+                const qrData = JSON.stringify({
+                    type: 'SPECIAL_PURCHASE_ORDER',
+                    po_number: spoNumber,
+                    priority: priority,
+                    department: 'receiving',
+                    created_at: new Date().toISOString(),
+                    company_id: 'demo'
+                });
+
+                console.log('Generating SPO QR:', spoNumber);
+
+                // Display QR code on page
+                displayQRCode(qrData, 'spoQRDisplay', 'Special Purchase Order', spoNumber);
+
+                // Enable print button
+                const printBtn = document.getElementById('printSPOBtn');
+                if (printBtn) {
+                    printBtn.disabled = false;
+                }
+
+            } catch (error) {
+                console.error('SPO QR Generation Error:', error);
+                alert('Error generating SPO QR: ' + error.message);
+            }
+        }
+
+        async function generateTransferPOQR() {
+            const transferNumber = document.getElementById('transferNumber').value.trim();
+            const fromLocation = document.getElementById('fromLocation').value || 'Location A';
+            const toLocation = document.getElementById('toLocation').value || 'Location B';
+
+            // Update fields if auto-generated
+            document.getElementById('transferNumber').value = transferNumber;
+            if (!document.getElementById('fromLocation').value) {
+                document.getElementById('fromLocation').value = fromLocation;
+            }
+            if (!document.getElementById('toLocation').value) {
+                document.getElementById('toLocation').value = toLocation;
+            }
+
+            const qrData = JSON.stringify({
+                type: 'TRANSFER_ORDER',
+                transfer_number: transferNumber,
+                from_location: fromLocation,
+                to_location: toLocation,
+                department: 'transfers',
+                created_at: new Date().toISOString()
+            });
+
+            console.log('Generating Transfer PO QR:', transferNumber);
+            displayQRCode(qrData, 'transferQRDisplay', 'Transfer Purchase Order', transferNumber);
+        }
+
+        async function generatePOQR() {
+            const poNumber = document.getElementById('poNumber').value.trim();
+            const supplier = document.getElementById('supplierName').value.trim(); // Use supplierName for this specific QR type
+
+            if (!poNumber) {
+                alert('Please enter a PO number');
+                return;
+            }
+
+            try {
+                // Create comprehensive QR data
+                const qrData = JSON.stringify({
+                    type: 'PO',
+                    po_number: poNumber,
+                    supplier: supplier || 'Not specified',
+                    generated_at: new Date().toISOString(),
+                    uid: `PO-${Date.now()}`
+                });
+
+                console.log('Generated PO QR:', `PO-${Date.now()}`);
+
+                // Display QR code on page
+                displayQRCode(qrData, 'poQRDisplay', 'Purchase Order', poNumber);
+
+                // Clear form
+                document.getElementById('poNumber').value = '';
+                document.getElementById('supplierName').value = ''; // Clear the correct input
+
+            } catch (error) {
+                console.error('Error generating PO QR:', error);
+                alert('Error generating PO QR: ' + error.message);
+            }
+        }
+
+        async function generateItemQR() {
+            try {
+                const itemName = prompt('Enter item name:');
+                if (!itemName) return;
+
+                // Create comprehensive QR data
+                const qrData = JSON.stringify({
+                    type: 'ITEM',
+                    item_name: itemName,
+                    generated_at: new Date().toISOString(),
+                    uid: `ITEM-${Date.now()}`
+                });
+
+                console.log('Generated Item QR:', `ITEM-${Date.now()}`);
+
+                // Display QR code on page
+                displayQRCode(qrData, 'receivingQRDisplay', 'Item', itemName);
+
+            } catch (error) {
+                console.error('Error generating Item QR:', error);
+                alert('Error generating Item QR: ' + error.message);
+            }
+        }
+
+        async function generateContainerQR() {
+            try {
+                const containerType = prompt('Enter container type (e.g., Box, Pallet, Crate):');
+                if (!containerType) return;
+
+                // Create comprehensive QR data
+                const qrData = JSON.stringify({
+                    type: 'CONTAINER',
+                    container_type: containerType,
+                    generated_at: new Date().toISOString(),
+                    uid: `CONTAINER-${Date.now()}`
+                });
+
+                console.log('Generated Container QR:', `CONTAINER-${Date.now()}`);
+
+                // Display QR code on page
+                displayQRCode(qrData, 'receivingQRDisplay', 'Container', containerType);
+
+            } catch (error) {
+                console.error('Error generating Container QR:', error);
+                alert('Error generating Container QR: ' + error.message);
+            }
+        }
+
+        async function generateLocalQR(identifier, qrData, type) {
+            try {
+                // Check if QRCode library is loaded
+                if (typeof QRCode === 'undefined') {
+                    console.error('QRCode library not loaded');
+                    // Try loading it dynamically
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
+                    script.onload = () => {
+                        console.log('QRCode library loaded dynamically');
+                        generateLocalQR(identifier, qrData, type);
+                    };
+                    document.head.appendChild(script);
+                    return;
+                }
+
+                // Generate QR code
+                const canvas = document.createElement('canvas');
+                await QRCode.toCanvas(canvas, qrData, {
+                    width: 300,
+                    margin: 2,
+                    color: {
+                        dark: '#000000',
+                        light: '#FFFFFF'
+                    }
+                });
+
+                const qrImageData = canvas.toDataURL();
+                showQRModal(identifier, qrImageData, type);
+
+                console.log(`✅ QR Generated Successfully: ${type} - ${identifier}`);
+
+            } catch (error) {
+                console.error('Local QR generation failed:', error);
+                alert('QR Generation Error: ' + error.message);
+            }
+        }
+
+        function showQRModal(identifier, qrImage, type) {
+            // Create modal HTML
+            const modalHTML = `
+                <div id="qrModal" style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.8);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 1000;
+                ">
+                    <div style="
+                        background: white;
+                        padding: 30px;
+                        border-radius: 15px;
+                        text-align: center;
+                        max-width: 400px;
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                    ">
+                        <h3 style="margin: 0 0 20px 0; color: #333;">📦 ${type}</h3>
+                        <div style="margin: 20px 0;">
+                            <img src="${qrImage}" alt="QR Code" style="max-width: 250px; border: 2px solid #ddd; border-radius: 8px;">
+                        </div>
+                        <p style="font-size: 18px; font-weight: bold; color: #007bff; margin: 15px 0;">${identifier}</p>
+                        <p style="color: #666; margin: 10px 0;">Scan this QR code to access details</p>
+                        <div style="margin-top: 25px;">
+                            <button onclick="printQRCode('${identifier}', '${type}', '${identifier}')" style="
+                                background: #28a745;
+                                color: white;
+                                border: none;
+                                padding: 10px 20px;
+                                margin: 5px;
+                                border-radius: 5px;
+                                cursor: pointer;
+                                font-size: 14px;
+                            ">🖨️ Print</button>
+                            <button onclick="downloadQR('${identifier}', '${qrImage}')" style="
+                                background: #17a2b8;
+                                color: white;
+                                border: none;
+                                padding: 10px 20px;
+                                margin: 5px;
+                                border-radius: 5px;
+                                cursor: pointer;
+                                font-size: 14px;
+                            ">💾 Download</button>
+                            <button onclick="closeQRModal()" style="
+                                background: #6c757d;
+                                color: white;
+                                border: none;
+                                padding: 10px 20px;
+                                margin: 5px;
+                                border-radius: 5px;
+                                cursor: pointer;
+                                font-size: 14px;
+                            ">✕ Close</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Remove existing modal if any
+            const existingModal = document.getElementById('qrModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+
+            // Add modal to page
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        function closeQRModal() {
+            const modal = document.getElementById('qrModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // Add event listener for escape key to close modal
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeQRModal();
+            }
+        });
+
+        function downloadQR(identifier, qrImage) {
+            const link = document.createElement('a');
+            link.download = `QR_${identifier}.png`;
+            link.href = qrImage;
+            link.click();
+        }
+
+        function printSPOQR() {
+            const spoNumber = document.getElementById('spoNumber').value || 'SPO-' + Date.now();
+            // This would print the last generated SPO QR
+            alert('Print function for SPO QR - ' + spoNumber);
+        }
+
+        // Function to print all generated QR codes
+        function printAllGeneratedQRs() {
+            if (generatedQRs.length === 0) {
+                alert('No QR codes have been generated yet.');
+                return;
+            }
+
+            const printWindow = window.open('', '_blank');
+
+            let printContent = `
+                <html>
+                <head>
+                    <title>All Generated QR Codes - QR Legends</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        .qr-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
+                        .qr-item { 
+                            border: 2px solid #000; 
+                            padding: 20px; 
+                            text-align: center; 
+                            page-break-inside: avoid;
+                            margin-bottom: 20px;
+                        }
+                        .qr-header { font-size: 16px; font-weight: bold; margin-bottom: 10px; }
+                        .qr-identifier { font-family: monospace; font-size: 14px; margin: 10px 0; background: #f0f0f0; padding: 5px; }
+                        .qr-timestamp { font-size: 10px; color: #666; margin-top: 10px; }
+                        @media print { 
+                            body { margin: 0; }
+                            .qr-item { margin: 10px; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1 style="text-align: center; margin-bottom: 30px;">QR Legends - Generated QR Codes</h1>
+                    <div class="qr-grid">
+            `;
+
+            generatedQRs.forEach(qr => {
+                printContent += `
+                    <div class="qr-item">
+                        <div class="qr-header">QR LEGENDS - ${qr.type}</div>
+                        <img src="${qr.canvas}" style="max-width: 200px; margin: 15px 0;">
+                        <div class="qr-identifier">${qr.identifier}</div>
+                        <div class="qr-timestamp">Generated: ${new Date(qr.timestamp).toLocaleString()}</div>
+                        <div style="font-size: 10px; margin-top: 5px;">Scan for current data</div>
+                    </div>
+                `;
+            });
+
+            printContent += `
+                    </div>
+                    <div style="text-align: center; margin-top: 30px; font-size: 12px; color: #666;">
+                        Total QR Codes: ${generatedQRs.length} | Generated on: ${new Date().toLocaleString()}
+                    </div>
+                </body>
+                </html>
+            `;
+
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+
+            setTimeout(() => {
+                printWindow.print();
+            }, 500);
+        }
+
+        // Function to export QR data
+        function exportQRData() {
+            if (generatedQRs.length === 0) {
+                alert('No QR codes to export.');
+                return;
+            }
+
+            const exportData = {
+                export_timestamp: new Date().toISOString(),
+                total_qrs: generatedQRs.length,
+                qr_codes: generatedQRs.map(qr => ({
+                    type: qr.type,
+                    identifier: qr.identifier,
+                    qr_data: qr.qrData,
+                    timestamp: qr.timestamp
+                }))
+            };
+
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `qr_legends_export_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+        }
+
+        // Function to update QR summary
+        function updateQRSummary() {
+            const summaryDiv = document.getElementById('qrSummary');
+            if (generatedQRs.length === 0) {
+                summaryDiv.innerHTML = '<p style="color: #666; text-align: center;">No QR codes generated yet</p>';
+                return;
+            }
+
+            const summary = generatedQRs.reduce((acc, qr) => {
+                acc[qr.type] = (acc[qr.type] || 0) + 1;
+                return acc;
+            }, {});
+
+            summaryDiv.innerHTML = `
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                    <h4>Generated QR Codes Summary</h4>
+                    ${Object.entries(summary).map(([type, count]) => 
+                        `<span style="display: inline-block; margin: 5px; padding: 5px 10px; background: #e3f2fd; border-radius: 15px; font-size: 12px;">
+                            ${type}: ${count}
+                        </span>`
+                    ).join('')}
+                    <div style="margin-top: 10px; font-size: 14px; color: #666;">
+                        Total: ${generatedQRs.length} QR codes generated
+                    </div>
+                </div>
+            `;
+        }
+
+        // Override the original functions to update summary
+        const originalDisplayQRCode = displayQRCode;
+        displayQRCode = function(...args) {
+            originalDisplayQRCode.apply(this, args);
+            updateQRSummary();
+        };
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Purchase Orders page loaded');
+            updateQRSummary();
+
+            // Test QR Scanner components
+            // testQRScannerComponents(); // Assuming this function exists and is needed
+        });
+    </script>
+</body>
+</html>

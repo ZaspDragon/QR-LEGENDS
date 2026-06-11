@@ -1,0 +1,237 @@
+
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>QR Legends — Preview</title>
+<style>
+/* === QRLegends Unified Theme (Dark/Light) === */
+:root{
+  --ql-bg: #0b1724;
+  --ql-panel: #0f2340;
+  --ql-card: #102846;
+  --ql-text: #dbe8ff;
+  --ql-sub: #97a6c1;
+  --ql-primary: #3b82f6;
+  --ql-success: #22c55e;
+  --ql-warning: #f59e0b;
+  --ql-danger: #ef4444;
+  --ql-accent: #6366f1;
+  --ql-border: rgba(255,255,255,.12);
+  --ql-surface: rgba(255,255,255,.06);
+}
+/* Light mode overrides */
+body.light{
+  --ql-bg: #f2f6fb;
+  --ql-panel: #ffffff;
+  --ql-card: #ffffff;
+  --ql-text: #1d2840;
+  --ql-sub: #51607c;
+  --ql-primary: #2563eb;
+  --ql-success: #16a34a;
+  --ql-warning: #d97706;
+  --ql-danger: #dc2626;
+  --ql-accent: #4f46e5;
+  --ql-border: rgba(0,0,0,.12);
+  --ql-surface: rgba(15,23,42,.04);
+}
+
+html,body{height:100%;}
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed;
+  color: var(--ql-text);
+  font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+  line-height: 1.45;
+}
+body.light{
+  background: linear-gradient(180deg,#f7faff,#eef3fb);
+}
+
+.ql-header{
+  position: sticky; top:0; z-index:1000;
+  background: rgba(8,27,46,.7);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--ql-border);
+}
+body.light .ql-header{
+  background: rgba(255,255,255,.75);
+}
+.ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
+.ql-title{display:flex; align-items:center; gap:10px;}
+.ql-h1{font-size:1.25rem; margin:0; letter-spacing:.2px;}
+.ql-nav{display:flex; gap:8px; flex-wrap:wrap;}
+.ql-btn{
+  display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
+  background: var(--ql-surface); border: 1px solid var(--ql-border);
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+  transition: transform .08s ease, background .2s ease, border-color .2s ease;
+}
+.ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+body.light .ql-btn:hover{ background: rgba(15,23,42,.08); }
+.ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
+
+.ql-theme-toggle{
+  margin-left:12px; cursor:pointer; border:1px solid var(--ql-border);
+  background: var(--ql-surface); color: var(--ql-text);
+  border-radius:10px; padding:8px 10px; font-size:16px;
+}
+
+.ql-container{ max-width:1200px; margin:22px auto; padding:0 20px; }
+.ql-grid{ display:grid; gap:16px; grid-template-columns: repeat(12, 1fr);}
+.ql-card{
+  grid-column: span 12;
+  background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+  border: 1px solid var(--ql-border);
+  box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+  border-radius:16px; padding:16px 16px;
+}
+body.light .ql-card{
+  background: var(--ql-card);
+  box-shadow: 0 10px 30px rgba(2,8,23,.08);
+}
+
+@media(min-width:900px){
+  .ql-card.half{ grid-column: span 6; }
+  .ql-card.third{ grid-column: span 4; }
+}
+
+.ql-card h2{ font-size:1.05rem; margin:0 0 10px 0; color: #bcd5ff; letter-spacing:.2px; }
+body.light .ql-card h2{ color:#234073; }
+
+.ql-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+.ql-input, .ql-select, input[type="text"], input[type="date"], textarea, select {
+  width:100%; background: var(--ql-surface); color: var(--ql-text); border: 1px solid var(--ql-border);
+  padding:10px 12px; border-radius:10px; outline:none;
+}
+.ql-input::placeholder{ color: #9fb0cc; }
+body.light .ql-input::placeholder{ color: #6b7b92; }
+
+/* dashboard bubble */
+.ql-fab{ position: fixed; right: 18px; bottom: 18px; background: var(--ql-accent); color:white; border:none;
+  border-radius:999px; padding:10px 14px; font-weight:600; box-shadow: 0 14px 30px rgba(0,0,0,.35);}
+</style>
+<script>
+(function(){
+  try {
+    const saved = localStorage.getItem('ql-theme');
+    if(saved === 'light'){ document.addEventListener('DOMContentLoaded', ()=> document.body.classList.add('light')); }
+  } catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const btn = document.getElementById('ql-theme-toggle');
+    if(btn){
+      btn.addEventListener('click', function(){
+        document.body.classList.toggle('light');
+        const isLight = document.body.classList.contains('light');
+        btn.textContent = isLight ? '☀️' : '🌙';
+        try { localStorage.setItem('ql-theme', isLight ? 'light' : 'dark'); } catch(e){}
+      });
+      if(document.body.classList.contains('light')) btn.textContent = '☀️';
+    }
+    document.querySelectorAll('button:not([type])').forEach(b=> b.setAttribute('type','button'));
+  });
+})();
+</script>
+
+</head><body>
+
+<!-- Unified QR Legends Header -->
+<header class="ql-header">
+  <div class="ql-header-inner">
+    <div class="ql-title">
+      <span class="ql-logo">🟦</span>
+      <h1 class="ql-h1">QR Legends — All Pages Preview</h1>
+    </div>
+    <nav class="ql-nav">
+      <a class="ql-btn ql-secondary" href="main_dashboard.html">🏠 Dashboard</a>
+      <a class="ql-btn ql-tertiary" href="order_picking.html">📦 Order Picking</a>
+      <a class="ql-btn ql-tertiary" href="inbound_hub.html">⬅️ Inbound</a>
+      <a class="ql-btn ql-tertiary" href="outbound_hub.html">➡️ Outbound</a>
+      <a class="ql-btn ql-tertiary" href="putaway.html">🧱 Putaway</a>
+      <a class="ql-btn ql-tertiary" href="inventory_management.html">📊 Inventory</a>
+    </nav>
+    <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<div class="ql-container"><div class="ql-card"><h2>Open any page (local preview)</h2>
+<ul class="ql-actions" style="list-style:none; padding-left:0;">
+<li><a class='ql-btn' href='access_denied.html'>access_denied.html</a></li>
+<li><a class='ql-btn' href='admin_dashboard.html'>admin_dashboard.html</a></li>
+<li><a class='ql-btn' href='admin_freight.html'>admin_freight.html</a></li>
+<li><a class='ql-btn' href='admin_hub.html'>admin_hub.html</a></li>
+<li><a class='ql-btn' href='admin_tracking.html'>admin_tracking.html</a></li>
+<li><a class='ql-btn' href='ai_item_finder.html'>ai_item_finder.html</a></li>
+<li><a class='ql-btn' href='analytics_dashboard.html'>analytics_dashboard.html</a></li>
+<li><a class='ql-btn' href='app_installer.html'>app_installer.html</a></li>
+<li><a class='ql-btn' href='backup_management.html'>backup_management.html</a></li>
+<li><a class='ql-btn' href='billing_dashboard.html'>billing_dashboard.html</a></li>
+<li><a class='ql-btn' href='billing_notification_panel.html'>billing_notification_panel.html</a></li>
+<li><a class='ql-btn' href='camera_test.html'>camera_test.html</a></li>
+<li><a class='ql-btn' href='code_download.html'>code_download.html</a></li>
+<li><a class='ql-btn' href='company_employee_management.html'>company_employee_management.html</a></li>
+<li><a class='ql-btn' href='company_integrations.html'>company_integrations.html</a></li>
+<li><a class='ql-btn' href='company_inventory.html'>company_inventory.html</a></li>
+<li><a class='ql-btn' href='company_login.html'>company_login.html</a></li>
+<li><a class='ql-btn' href='company_training.html'>company_training.html</a></li>
+<li><a class='ql-btn' href='contact.html'>contact.html</a></li>
+<li><a class='ql-btn' href='container_management.html'>container_management.html</a></li>
+<li><a class='ql-btn' href='cross_docking.html'>cross_docking.html</a></li>
+<li><a class='ql-btn' href='customer_support.html'>customer_support.html</a></li>
+<li><a class='ql-btn' href='delivery_management.html'>delivery_management.html</a></li>
+<li><a class='ql-btn' href='delivery_qr_generator.html'>delivery_qr_generator.html</a></li>
+<li><a class='ql-btn' href='demo.html'>demo.html</a></li>
+<li><a class='ql-btn' href='demo_access.html'>demo_access.html</a></li>
+<li><a class='ql-btn' href='department_group_chat.html'>department_group_chat.html</a></li>
+<li><a class='ql-btn' href='driver_dropoff.html'>driver_dropoff.html</a></li>
+<li><a class='ql-btn' href='dropoff_location_generator.html'>dropoff_location_generator.html</a></li>
+<li><a class='ql-btn' href='email_test.html'>email_test.html</a></li>
+<li><a class='ql-btn' href='employee_dashboard.html'>employee_dashboard.html</a></li>
+<li><a class='ql-btn' href='employee_login.html'>employee_login.html</a></li>
+<li><a class='ql-btn' href='employee_messaging.html'>employee_messaging.html</a></li>
+<li><a class='ql-btn' href='erp_dashboard.html'>erp_dashboard.html</a></li>
+<li><a class='ql-btn' href='exceptions_hub.html'>exceptions_hub.html</a></li>
+<li><a class='ql-btn' href='help_hub.html'>help_hub.html</a></li>
+<li><a class='ql-btn' href='home.html'>home.html</a></li>
+<li><a class='ql-btn' href='inbound_hub.html'>inbound_hub.html</a></li>
+<li><a class='ql-btn' href='index.html'>index.html</a></li>
+<li><a class='ql-btn' href='integration_management.html'>integration_management.html</a></li>
+<li><a class='ql-btn' href='intro_tour.html'>intro_tour.html</a></li>
+<li><a class='ql-btn' href='inventory.html'>inventory.html</a></li>
+<li><a class='ql-btn' href='inventory_hub.html'>inventory_hub.html</a></li>
+<li><a class='ql-btn' href='it_support_request.html'>it_support_request.html</a></li>
+<li><a class='ql-btn' href='main_dashboard.html'>main_dashboard.html</a></li>
+<li><a class='ql-btn' href='messaging_system.html'>messaging_system.html</a></li>
+<li><a class='ql-btn' href='notification_center.html'>notification_center.html</a></li>
+<li><a class='ql-btn' href='onboarding.html'>onboarding.html</a></li>
+<li><a class='ql-btn' href='order_picking.html'>order_picking.html</a></li>
+<li><a class='ql-btn' href='outbound_hub.html'>outbound_hub.html</a></li>
+<li><a class='ql-btn' href='packing.html'>packing.html</a></li>
+<li><a class='ql-btn' href='phone_measurement.html'>phone_measurement.html</a></li>
+<li><a class='ql-btn' href='printer_wms_setup.html'>printer_wms_setup.html</a></li>
+<li><a class='ql-btn' href='problem_solving.html'>problem_solving.html</a></li>
+<li><a class='ql-btn' href='profile_page.html'>profile_page.html</a></li>
+<li><a class='ql-btn' href='putaway.html'>putaway.html</a></li>
+<li><a class='ql-btn' href='qr_generator.html'>qr_generator.html</a></li>
+<li><a class='ql-btn' href='quality_check.html'>quality_check.html</a></li>
+<li><a class='ql-btn' href='receiving.html'>receiving.html</a></li>
+<li><a class='ql-btn' href='reports_hub.html'>reports_hub.html</a></li>
+<li><a class='ql-btn' href='reset_password.html'>reset_password.html</a></li>
+<li><a class='ql-btn' href='returns.html'>returns.html</a></li>
+<li><a class='ql-btn' href='rf_handheld.html'>rf_handheld.html</a></li>
+<li><a class='ql-btn' href='salespad_dashboard.html'>salespad_dashboard.html</a></li>
+<li><a class='ql-btn' href='shipping.html'>shipping.html</a></li>
+<li><a class='ql-btn' href='slot_qr_generator.html'>slot_qr_generator.html</a></li>
+<li><a class='ql-btn' href='stripe_test.html'>stripe_test.html</a></li>
+<li><a class='ql-btn' href='subscription_suspended.html'>subscription_suspended.html</a></li>
+<li><a class='ql-btn' href='super_admin.html'>super_admin.html</a></li>
+<li><a class='ql-btn' href='system_config.html'>system_config.html</a></li>
+<li><a class='ql-btn' href='tools_hub.html'>tools_hub.html</a></li>
+<li><a class='ql-btn' href='transfers.html'>transfers.html</a></li>
+<li><a class='ql-btn' href='two_factor_setup.html'>two_factor_setup.html</a></li>
+<li><a class='ql-btn' href='user_management.html'>user_management.html</a></li>
+<li><a class='ql-btn' href='voice_picking.html'>voice_picking.html</a></li>
+<li><a class='ql-btn' href='warehouse_video_scanner.html'>warehouse_video_scanner.html</a></li>
+<li><a class='ql-btn' href='website_integration_setup.html'>website_integration_setup.html</a></li>
+</ul>
+</div></div>
+
+<button class='ql-fab' onclick="location.href='main_dashboard.html'">🏠 Dashboard</button>
+</body></html>

@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cycle Counting - QR Legends</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'qr-blue': '#2563eb',
+                        'qr-dark': '#0b1220',
+                        'qr-gray': '#1f2937'
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="/static/auto_theme_injector.js"></script>
+    <style>
+        body {background: linear-gradient(135deg, #0b1220 0%, #1e293b 100%) !important;
+            min-height: 100vh !important;}
+        .glass-effect {background: rgba(255, 255, 255, 0.05)
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);}
+        .gradient-border {background: linear-gradient(45deg, #2563eb, #3b82f6)
+            padding: 2px;
+            border-radius: 12px;}
+        .inner-content {background: rgba(15, 23, 42, 0.8)
+            border-radius: 10px;
+            padding: 1.5rem;}
+        .tab-active {background: linear-gradient(45deg, #2563eb, #3b82f6)
+            color: white;}
+        .btn-primary {background: linear-gradient(45deg, #2563eb, #3b82f6)
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;}
+        .btn-primary:hover {transform: translateY(-2px)
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);}
+        .btn-success {background: linear-gradient(45deg, #059669, #10b981)
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;}
+        .btn-warning {background: linear-gradient(45deg, #d97706, #f59e0b)
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;}
+        .form-input {background: rgba(255, 255, 255, 0.05)
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: white;
+            width: 100%;}
+        .form-input:focus {outline: none
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);}
+        .card {background: rgba(255, 255, 255, 0.05)
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;}
+        .card:hover {transform: translateY(-2px)
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);}
+        .nav-tab {background: rgba(255, 255, 255, 0.05)
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s ease;}
+        .nav-tab.active {background: linear-gradient(45deg, #2563eb, #3b82f6)
+            color: white;
+            border-color: #2563eb;}
+        .tab-content {display: none
+            animation: fadeIn 0.3s ease-in-out;}
+        .tab-content.active {display: block}
+        @keyframes fadeIn {from { opacity: 0 transform: translateY(10px);}
+            to {opacity: 1 transform: translateY(0);}
+        }
+        .floating-dashboard-btn {position: fixed
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #2563eb, #3b82f6);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+            z-index: 1000;
+            transition: all 0.3s ease;}
+        .floating-dashboard-btn:hover {transform: translateY(-3px)
+            box-shadow: 0 15px 35px rgba(37, 99, 235, 0.4);}
+        .count-item {background: rgba(255, 255, 255, 0.05)
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;}
+        .count-item:hover {background: rgba(255, 255, 255, 0.1)}
+        .count-item.current {border-color: #f59e0b
+            background: rgba(245, 158, 11, 0.1);}
+        .count-item.completed {border-color: #10b981
+            background: rgba(16, 185, 129, 0.1);}
+        .variance-indicator {padding: 4px 8px
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;}
+        .variance-good {background: #d1fae5
+            color: #047857;}
+        .variance-warning {background: #fef3c7
+            color: #92400e;}
+        .variance-bad {background: #fee2e2
+            color: #dc2626;}
+    </style>
+</head>
+<body class="text-white">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-4">
+                🔢 Cycle Counting Department
+            </h1>
+            <p class="text-gray-300 text-lg">Maintain inventory accuracy through systematic counting and variance analysis.</p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex flex-wrap gap-4 mb-8 justify-center">
+            <button class="nav-tab active" onclick="switchTab('counting_dashboard')">📊 Dashboard</button>
+            <button class="nav-tab" onclick="switchTab('active_counts')">📋 Active Counts</button>
+            <button class="nav-tab" onclick="switchTab('variance_analysis')">⚖️ Variance Analysis</button>
+            <button class="nav-tab" onclick="switchTab('schedule_management')">📅 Schedule</button>
+            <button class="nav-tab" onclick="switchTab('reporting')">📈 Reports</button>
+        </div>
+
+        <!-- QR Scanner Section -->
+        <div class="card mb-8">
+            <h3 class="text-xl font-bold text-blue-400 mb-4">📱 QR Code Scanner</h3>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Scan Location/Item QR</label>
+                    <input type="text" id="qrScanInput" placeholder="Click here and scan QR code" 
+                           class="form-input" autofocus autocomplete="off">
+                </div>
+                <div class="flex gap-2 items-end">
+                    <button class="btn-primary" onclick="processScannedQR()">Process QR</button>
+                    <button class="btn-success" onclick="focusScanner()">Focus Scanner</button>
+                    <button type="button" onclick="openCameraScanner()" style="padding: 8px 16px; background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; margin-left: 10px;">
+                        📷 Camera
+                    </button>
+                </div>
+            </div>
+            <div id="scanProcessingResult" class="mt-4"></div>
+        </div>
+
+        <!-- Counting Dashboard Tab -->
+        <div id="counting_dashboard" class="tab-content active">
+            <div class="grid lg:grid-cols-3 gap-6">
+                <!-- Today's Counts Overview -->
+                <div class="gradient-border">
+                    <div class="inner-content">
+                        <h3 class="text-xl font-bold text-blue-400 mb-4">📊 Today's Overview</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300">Counts Scheduled</span>
+                                <span class="text-white font-bold text-xl">24</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300">Counts Completed</span>
+                                <span class="text-green-400 font-bold text-xl">18</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300">Variance Items</span>
+                                <span class="text-yellow-400 font-bold text-xl">3</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300">Accuracy Rate</span>
+                                <span class="text-blue-400 font-bold text-xl">94.2%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="gradient-border">
+                    <div class="inner-content">
+                        <h3 class="text-xl font-bold text-green-400 mb-4">⚡ Quick Actions</h3>
+                        <div class="space-y-3">
+                            <button class="btn-primary w-full" onclick="startRandomCount()">🎲 Start Random Count</button>
+                            <button class="btn-success w-full" onclick="startZoneCount()">🏢 Start Zone Count</button>
+                            <button class="btn-warning w-full" onclick="reviewVariances()">⚖️ Review Variances</button>
+                            <button class="btn-primary w-full" onclick="generateCycleSchedule()">📅 Generate Schedule</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QR Generation Section -->
+                <div class="gradient-border">
+                    <div class="inner-content">
+                        <h3 class="text-xl font-bold text-purple-400 mb-4">📍 Generate Location QR</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm text-gray-300 mb-1">Section</label>
+                                <select id="sectionSelect" class="form-input">
+                                    <option>Section A</option>
+                                    <option>Section B</option>
+                                    <option>Section C</option>
+                                    <option>Section D</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="block text-sm text-gray-300 mb-1">Row</label>
+                                    <input type="number" id="rowInput" value="1" min="1" max="99" class="form-input">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-300 mb-1">Shelf</label>
+                                    <input type="number" id="shelfInput" value="1" min="1" max="99" class="form-input">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-300 mb-1">Slot</label>
+                                    <input type="number" id="slotInput" value="1" min="1" max="99" class="form-input">
+                                </div>
+                            </div>
+                            <button class="btn-primary w-full" onclick="generateLocationQR()">🔗 Generate Location QR</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Counts Tab -->
+        <div id="active_counts" class="tab-content">
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Active Count Session -->
+                <div class="card">
+                    <h3 class="text-xl font-bold text-blue-400 mb-4">🔄 Active Count Session</h3>
+                    <div id="activeCountSession">
+                        <div class="count-item current">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-bold">Location: A1-B2-C3</span>
+                                <span class="variance-indicator variance-warning">Current</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <strong>Expected:</strong> Wireless Mouse x15<br>
+                                    <strong>System Qty:</strong> 15
+                                </div>
+                                <div>
+                                    <strong>Counted:</strong> <span id="countedQty">0</span><br>
+                                    <strong>Variance:</strong> <span id="varianceQty">-15</span>
+                                </div>
+                            </div>
+                            <div class="flex gap-2 mt-4">
+                                <input type="text" id="slotQRInput" placeholder="Scan slot QR code" class="form-input flex-1" style="margin-bottom: 8px;" autocomplete="off">
+                                <button type="button" onclick="openSlotCameraScanner()" style="padding: 8px 16px; background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px;">📷 Scan Slot</button>
+                            </div>
+                            <div class="flex gap-2 mt-2">
+                                <input type="number" id="physicalCount" placeholder="Physical count" class="form-input flex-1">
+                                <button class="btn-success" onclick="recordCount()">✅ Record</button>
+                                <button class="btn-warning" onclick="flagVariance()">⚠️ Flag</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Count Queue -->
+                <div class="card">
+                    <h3 class="text-xl font-bold text-green-400 mb-4">📋 Count Queue</h3>
+                    <div class="max-h-96 overflow-y-auto">
+                        <div class="count-item">
+                            <div class="flex justify-between items-center">
+                                <span><strong>A1-B2-C4:</strong> Computer Keyboards</span>
+                                <span class="variance-indicator variance-good">Pending</span>
+                            </div>
+                            <div class="text-sm text-gray-300 mt-1">Expected: 8 units</div>
+                        </div>
+                        <div class="count-item">
+                            <div class="flex justify-between items-center">
+                                <span><strong>B3-A1-D2:</strong> Office Chairs</span>
+                                <span class="variance-indicator variance-good">Pending</span>
+                            </div>
+                            <div class="text-sm text-gray-300 mt-1">Expected: 12 units</div>
+                        </div>
+                        <div class="count-item completed">
+                            <div class="flex justify-between items-center">
+                                <span><strong>C1-D3-A5:</strong> Desk Lamps</span>
+                                <span class="variance-indicator variance-good">Completed</span>
+                            </div>
+                            <div class="text-sm text-gray-300 mt-1">Counted: 20/20 ✅</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Variance Analysis Tab -->
+        <div id="variance_analysis" class="tab-content">
+            <div class="card">
+                <h3 class="text-xl font-bold text-orange-400 mb-4">⚖️ Variance Analysis</h3>
+                <div class="grid md:grid-cols-4 gap-4 mb-6">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-red-400" id="negativeVariances">5</div>
+                        <div class="text-gray-300">Negative Variances</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-green-400" id="positiveVariances">2</div>
+                        <div class="text-gray-300">Positive Variances</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-yellow-400" id="varianceValue">$1,247</div>
+                        <div class="text-gray-300">Total Variance Value</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-blue-400" id="accuracyRate">94.2%</div>
+                        <div class="text-gray-300">Overall Accuracy</div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="count-item">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-bold">A1-B2-C3: Wireless Mouse</span>
+                            <span class="variance-indicator variance-bad">-3 units</span>
+                        </div>
+                        <div class="text-sm text-gray-300">System: 15 | Counted: 12 | Value Impact: -$89.97</div>
+                        <div class="flex gap-2 mt-2">
+                            <button class="btn-warning" onclick="investigateVariance('A1B2C3')">🔍 Investigate</button>
+                            <button class="btn-success" onclick="adjustInventory('A1B2C3')">✅ Adjust</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schedule Management Tab -->
+        <div id="schedule_management" class="tab-content">
+            <div class="card">
+                <h3 class="text-xl font-bold text-purple-400 mb-4">📅 Cycle Count Schedule</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="text-lg font-bold text-gray-300 mb-4">Create Schedule</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Schedule Type</label>
+                                <select class="form-input">
+                                    <option>ABC Analysis Based</option>
+                                    <option>Zone Based</option>
+                                    <option>Random Sampling</option>
+                                    <option>High Movement Items</option>
+                                    <option>Custom Selection</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Frequency</label>
+                                <select class="form-input">
+                                    <option>Daily</option>
+                                    <option>Weekly</option>
+                                    <option>Monthly</option>
+                                    <option>Quarterly</option>
+                                </select>
+                            </div>
+                            <button class="btn-primary w-full" onclick="generateSchedule()">📋 Generate Schedule</button>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-bold text-gray-300 mb-4">Upcoming Counts</h4>
+                        <div class="space-y-2 max-h-64 overflow-y-auto">
+                            <div class="count-item">
+                                <div class="flex justify-between">
+                                    <span>Zone A - High Value</span>
+                                    <span class="text-sm text-gray-400">Tomorrow</span>
+                                </div>
+                            </div>
+                            <div class="count-item">
+                                <div class="flex justify-between">
+                                    <span>Fast Moving Items</span>
+                                    <span class="text-sm text-gray-400">Jan 30</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reporting Tab -->
+        <div id="reporting" class="tab-content">
+            <div class="card">
+                <h3 class="text-xl font-bold text-indigo-400 mb-4">📈 Cycle Count Reports</h3>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <button class="btn-primary" onclick="generateAccuracyReport()">📊 Accuracy Report</button>
+                    <button class="btn-success" onclick="generateVarianceReport()">⚖️ Variance Report</button>
+                    <button class="btn-warning" onclick="generateProductivityReport()">⚡ Productivity Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Dashboard Button -->
+    <a href="/main_dashboard" class="floating-dashboard-btn">
+        🏠 Dashboard
+    </a>
+
+    <script>
+        // Tab switching functionality
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            const selectedTabContent = document.getElementById(tabName);
+            if (selectedTabContent) {
+                selectedTabContent.classList.add('active');
+            }
+
+            const clickedTab = document.querySelector(`[onclick="switchTab('${tabName}')"]`);
+            if (clickedTab) {
+                clickedTab.classList.add('active');
+            }
+        }
+
+        // QR Scanner Functions
+        function focusScanner() {
+            const scanInput = document.getElementById('qrScanInput');
+            scanInput.focus();
+            scanInput.select();
+        }
+
+        function processScannedQR() {
+            const qrData = document.getElementById('qrScanInput').value.trim();
+            const resultDiv = document.getElementById('scanProcessingResult');
+
+            if (!qrData) {
+                resultDiv.innerHTML = `
+                    <div class="p-4 bg-yellow-900 border border-yellow-600 rounded-lg text-yellow-200">
+                        ⚠️ Please scan or enter a QR code first
+                    </div>
+                `;
+                return;
+            }
+
+            resultDiv.innerHTML = `
+                <div class="p-4 bg-green-900 border border-green-600 rounded-lg text-green-200">
+                    ✅ Location scanned: ${qrData} - Starting count session
+                </div>
+            `;
+
+            document.getElementById('qrScanInput').value = '';
+            document.getElementById('qrScanInput').focus();
+        }
+
+        function openCameraScanner() {
+            console.log('Opening camera scanner...');
+            if (window.QRCameraScanner) {
+                try {
+                    window.QRCameraScanner.openScanner(function(qrData) {
+                        console.log('QR Data received:', qrData);
+                        document.getElementById('qrScanInput').value = qrData;
+                        processScannedQR();
+                    });
+                } catch (error) {
+                    console.error('QRCameraScanner failed:', error);
+                    fallbackToManualEntry('qr');
+                }
+            } else {
+                console.error('QRCameraScanner not available');
+                fallbackToManualEntry('qr');
+            }
+        }
+
+        function openSlotCameraScanner() {
+            if (typeof QRCameraScanner !== 'undefined') {
+                try {
+                    const scanner = new QRCameraScanner();
+                    scanner.initCamera(function(qrData) {
+                        document.getElementById('slotQRInput').value = qrData;
+                        processSlotScan();
+                    }).catch(error => {
+                        console.error('Slot camera scanner error:', error);
+                        fallbackToManualEntry('slot');
+                    });
+                } catch (error) {
+                    console.error('Scanner initialization failed:', error);
+                    fallbackToManualEntry('slot');
+                }
+            } else {
+                fallbackToManualEntry('slot');
+            }
+        }
+
+        function processSlotScan() {
+            const slotData = document.getElementById('slotQRInput').value.trim();
+            if (!slotData) return;
+            
+            console.log('Processing slot scan:', slotData);
+            // Add slot processing logic here
+            alert(`Slot scanned: ${slotData}`);
+        }
+
+        function fallbackToManualEntry(type) {
+            const message = type === 'qr' ?
+                'Camera scanner not available. Please enter QR code manually:' :
+                type === 'location' ?
+                'Camera scanner not available. Please enter location code manually:' :
+                'Camera scanner not available. Please enter the code manually:';
+
+            const qrCode = prompt(message);
+            if (qrCode && qrCode.trim()) {
+                if (type === 'qr') {
+                    document.getElementById('qrScanInput').value = qrCode.trim();
+                    processScannedQR();
+                } else if (type === 'location') {
+                    document.getElementById('qrScanInput').value = qrCode.trim();
+                    processScannedQR();
+                } else if (type === 'slot') {
+                    document.getElementById('slotQRInput').value = qrCode.trim();
+                    processSlotScan();
+                }
+            }
+        }
+
+        // QR Generation Functions
+        function generateLocationQR() {
+            const section = document.getElementById('sectionSelect').value;
+            const row = document.getElementById('rowInput').value;
+            const shelf = document.getElementById('shelfInput').value;
+            const slot = document.getElementById('slotInput').value;
+            
+            const location = `${section}-${row.padStart(2, '0')}-${shelf.padStart(2, '0')}-${slot.padStart(2, '0')}`;
+            
+            // Generate QR code for the location
+            const qrWindow = window.open('', '_blank', 'width=400,height=400');
+            qrWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Location QR Code</title>
+                    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"><\/script>
+                </head>
+                <body style="text-align: center; padding: 20px; font-family: Arial, sans-serif;">
+                    <h3>Location QR Code</h3>
+                    <p><strong>Location:</strong> ${location}</p>
+                    <canvas id="qrcode"></canvas>
+                    <br><br>
+                    <button onclick="window.print()">Print QR Code</button>
+                    <script>
+                        QRCode.toCanvas(document.getElementById('qrcode'), 'LOC:${location}', function(error) {
+                            if (error) console.error(error);
+                        });
+                    <\/script>
+                </body>
+                </html>
+            `);
+        }
+
+        function showQRResult(locationCode, qrImageData) {
+            const resultDiv = document.getElementById('scanProcessingResult');
+
+            let qrImageHtml = '';
+            if (qrImageData && qrImageData !== '${qrImageData}' && qrImageData.trim() !== '') {
+                qrImageHtml = `<img src="${qrImageData}" style="max-width: 200px; margin: 10px 0;" alt="QR Code">`;
+            } else {
+                qrImageHtml = `<div style="background: #f0f0f0; padding: 20px; text-align: center; border: 2px dashed #999; margin: 10px 0;">QR Code: ${locationCode || 'Unknown'}</div>`;
+            }
+
+            resultDiv.innerHTML = `
+                <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid #22c55e; padding: 20px; border-radius: 8px; text-align: center;">
+                    <h4 style="color: #22c55e; margin: 0 0 10px 0;">✅ Location QR Generated!</h4>
+                    <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                        ${qrImageHtml}
+                        <div style="font-family: monospace; font-size: 14px; margin-top: 10px; color: #333;">
+                            <strong>Location Code:</strong> ${locationCode}
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <button class="btn-success" onclick="printLocationQR('${locationCode}', '')">🖨️ Print Label</button>
+                        <button class="btn-primary" onclick="useForCounting('${locationCode}')">📋 Use for Counting</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function printLocationQR(locationCode, qrImageData) {
+            const printWindow = window.open('', '_blank');
+            const qrContent = (qrImageData && qrImageData !== '${qrImageData}' && qrImageData.trim() !== '') ? 
+                `<img src="${qrImageData}" style="max-width: 150px;">` : 
+                `<div style="border: 2px solid #000; padding: 10px; font-family: monospace;">${locationCode}</div>`;
+
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Location QR Label - ${locationCode}</title>
+                    <style>
+                        body { text-align: center; font-family: Arial, sans-serif; margin: 20px; }
+                        .label { border: 2px solid #000; padding: 20px; margin: 20px; display: inline-block; }
+                        .location-code { font-family: monospace; font-size: 16px; margin: 10px 0; font-weight: bold; }
+                    </style>
+                </head>
+                <body>
+                    <div class="label">
+                        <h3>QR LEGENDS</h3>
+                        <div>WAREHOUSE LOCATION</div>
+                        ${qrContent}
+                        <div class="location-code">${locationCode}</div>
+                        <div style="font-size: 12px;">Cycle Counting Location</div>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function useForCounting(locationCode) {
+            document.getElementById('qrScanInput').value = locationCode;
+            processScannedQR();
+            alert(`Location ${locationCode} loaded for counting!`);
+        }
+
+        function loadLocationData() { 
+            console.log('Loading location data...');
+            generateLocationQR();
+        }
+
+        function processSlotScan() {
+            const slotData = document.getElementById('slotInput').value.trim();
+            if (!slotData) return;
+
+            // Process the scanned slot data
+            console.log('Processing slot scan:', slotData);
+            // Add your slot processing logic here
+        }
+
+        // Count Functions
+        function recordCount() {
+            const physicalCount = document.getElementById('physicalCount').value;
+            if (!physicalCount) {
+                alert('Please enter the physical count');
+                return;
+            }
+
+            document.getElementById('countedQty').textContent = physicalCount;
+            const variance = parseInt(physicalCount) - 15;
+            document.getElementById('varianceQty').textContent = variance;
+
+            alert('Count recorded successfully!');
+        }
+
+        // Placeholder functions
+        function startRandomCount() { alert('Starting random count...'); }
+        function startZoneCount() { alert('Starting zone count...'); }
+        function reviewVariances() { alert('Opening variance review...'); }
+        function generateCycleSchedule() { alert('Generating cycle schedule...'); }
+        function startNewCount() { alert('Starting new count session...'); }
+        function flagVariance() { alert('Variance flagged for investigation...'); }
+        function investigateVariance(location) { alert(`Investigating variance at ${location}...`); }
+        function adjustInventory(location) { alert(`Adjusting inventory for ${location}...`); }
+        function generateSchedule() { alert('Generating count schedule...'); }
+        function generateAccuracyReport() { alert('Generating accuracy report...'); }
+        function generateVarianceReport() { alert('Generating variance report...'); }
+        function generateProductivityReport() { alert('Generating productivity report...'); }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            focusScanner();
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="/static/qr_camera_scanner.js"></script>
+    <script src="/static/copyright_notice.js"></script>
+    <script src="/static/floating_chat_widget.js"></script>
+    <script src="/static/employee_messaging_widget.js"></script>
+    <script src="/static/universal_dashboard_button.js"></script>
+</body>
+</html>

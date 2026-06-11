@@ -1,0 +1,522 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VP Reports - QR Legends</title>
+    <style>
+/* === QRLegends Unified Theme (Dark/Light) === */
+:root{
+  --ql-bg: #0b1724;
+  --ql-panel: #0f2340;
+  --ql-card: #102846;
+  --ql-text: #dbe8ff;
+  --ql-sub: #97a6c1;
+  --ql-primary: #3b82f6;
+  --ql-success: #22c55e;
+  --ql-warning: #f59e0b;
+  --ql-danger: #ef4444;
+  --ql-accent: #6366f1;
+  --ql-border: rgba(255,255,255,.12);
+  --ql-surface: rgba(255,255,255,.06);
+}
+body.light{
+  --ql-bg: #f2f6fb;
+  --ql-panel: #ffffff;
+  --ql-card: #ffffff;
+  --ql-text: #1d2840;
+  --ql-sub: #51607c;
+  --ql-primary: #2563eb;
+  --ql-success: #16a34a;
+  --ql-warning: #d97706;
+  --ql-danger: #dc2626;
+  --ql-accent: #4f46e5;
+  --ql-border: rgba(0,0,0,.12);
+  --ql-surface: rgba(15,23,42,.04);
+}
+
+html,body{height:100%;}
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed;
+  color: var(--ql-text);
+  font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+  line-height: 1.45;
+}
+body.light{
+  background: linear-gradient(180deg,#f7faff,#eef3fb);
+}
+
+.ql-header{
+  position: sticky; top:0; z-index:1000;
+  background: rgba(8,27,46,.7);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--ql-border);
+}
+body.light .ql-header{
+  background: rgba(255,255,255,.75);
+}
+.ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
+.ql-title{display:flex; align-items:center; gap:10px;}
+.ql-h1{font-size:1.25rem; margin:0; letter-spacing:.2px;}
+.ql-nav{display:flex; gap:8px; flex-wrap:wrap;}
+.ql-btn{
+  display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
+  background: var(--ql-surface); border: 1px solid var(--ql-border);
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+  transition: transform .08s ease, background .2s ease, border-color .2s ease;
+}
+.ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+body.light .ql-btn:hover{ background: rgba(15,23,42,.08); }
+.ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
+
+.ql-theme-toggle{
+  margin-left:12px; cursor:pointer; border:1px solid var(--ql-border);
+  background: var(--ql-surface); color: var(--ql-text);
+  border-radius:10px; padding:8px 10px; font-size:16px;
+}
+
+.ql-container{ max-width:1400px; margin:22px auto; padding:0 20px; }
+.ql-card{
+  background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+  border: 1px solid var(--ql-border);
+  box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+  border-radius:16px; padding:20px;
+  margin-bottom: 20px;
+}
+body.light .ql-card{
+  background: var(--ql-card);
+  box-shadow: 0 10px 30px rgba(2,8,23,.08);
+}
+
+.dashboard-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(59, 130, 246, 0.05));
+    border-radius: 20px;
+    border: 1px solid var(--ql-border);
+}
+
+.department-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
+.department-card {
+    background: var(--ql-card);
+    border: 1px solid var(--ql-border);
+    border-radius: 16px;
+    padding: 24px;
+    transition: all 0.3s ease;
+}
+
+.department-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(2,8,23,.6);
+}
+
+.department-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.department-icon {
+    font-size: 2rem;
+    padding: 12px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--ql-primary), var(--ql-accent));
+}
+
+.department-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--ql-text);
+    margin: 0;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.metric-item {
+    background: var(--ql-surface);
+    border: 1px solid var(--ql-border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+}
+
+.metric-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--ql-primary);
+    margin-bottom: 4px;
+}
+
+.metric-label {
+    color: var(--ql-sub);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 12px;
+}
+
+.status-excellent { background: rgba(34, 197, 94, 0.2); color: var(--ql-success); }
+.status-good { background: rgba(59, 130, 246, 0.2); color: var(--ql-primary); }
+.status-attention { background: rgba(249, 115, 22, 0.2); color: var(--ql-warning); }
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 5px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--ql-primary), var(--ql-accent));
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+    </style>
+<script>
+(function(){
+  try {
+    const saved = localStorage.getItem('ql-theme');
+    if(saved === 'light'){ document.addEventListener('DOMContentLoaded', ()=> document.body.classList.add('light')); }
+  } catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const btn = document.getElementById('ql-theme-toggle');
+    if(btn){
+      btn.addEventListener('click', function(){
+        document.body.classList.toggle('light');
+        const isLight = document.body.classList.contains('light');
+        btn.textContent = isLight ? '☀️' : '🌙';
+        try { localStorage.setItem('ql-theme', isLight ? 'light' : 'dark'); } catch(e){}
+      });
+      if(document.body.classList.contains('light')) btn.textContent = '☀️';
+    }
+  });
+})();
+</script>
+</head>
+<body>
+<header class="ql-header">
+  <div class="ql-header-inner">
+    <div class="ql-title">
+      <span class="ql-logo">📈</span>
+      <h1 class="ql-h1">VP Reports - QR LEGENDS</h1>
+    </div>
+    <nav class="ql-nav">
+      <a class="ql-btn ql-secondary" href="main_dashboard.html">🏠 Dashboard</a>
+      <a class="ql-btn" href="professional_dashboard.html">📊 Professional</a>
+      <a class="ql-btn" href="ceo_dashboard.html">👔 CEO</a>
+      <a class="ql-btn" href="strategic_initiatives.html">🎯 Strategic</a>
+    </nav>
+    <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<div class='ql-container'>
+    <div class="dashboard-header">
+        <h1 style="font-size: 2.5rem; margin: 0 0 10px 0; color: var(--ql-text);">📈 VP Department Reports</h1>
+        <p style="color: var(--ql-sub); margin: 0; font-size: 1.1rem;">Executive-level department status and performance metrics</p>
+    </div>
+
+    <!-- Department Performance Cards -->
+    <div class="department-grid">
+        <!-- Operations -->
+        <div class="department-card">
+            <div class="department-header">
+                <span class="department-icon">🏭</span>
+                <h3 class="department-title">Operations</h3>
+            </div>
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-value">97.8%</div>
+                    <div class="metric-label">Efficiency</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">1,247</div>
+                    <div class="metric-label">Orders/Day</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">99.2%</div>
+                    <div class="metric-label">Accuracy</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">342</div>
+                    <div class="metric-label">Active Staff</div>
+                </div>
+            </div>
+            <div class="status-indicator status-excellent">✅ Excellent Performance</div>
+            <div style="margin-top: 16px;">
+                <a href="/analytics_dashboard" class="btn btn-primary">View Details</a>
+            </div>
+        </div>
+
+        <!-- Finance -->
+        <div class="department-card">
+            <div class="department-header">
+                <span class="department-icon">💰</span>
+                <h3 class="department-title">Finance</h3>
+            </div>
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-value">$4.2M</div>
+                    <div class="metric-label">Monthly Revenue</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">18.7%</div>
+                    <div class="metric-label">Profit Margin</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">$847K</div>
+                    <div class="metric-label">Pending AR</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">12</div>
+                    <div class="metric-label">Days Sales Out</div>
+                </div>
+            </div>
+            <div class="status-indicator status-good">✅ Good Performance</div>
+            <div style="margin-top: 16px;">
+                <a href="/erp_finance" class="btn btn-primary">View Details</a>
+            </div>
+        </div>
+
+        <!-- Sales -->
+        <div class="department-card">
+            <div class="department-header">
+                <span class="department-icon">📊</span>
+                <h3 class="department-title">Sales</h3>
+            </div>
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-value">127%</div>
+                    <div class="metric-label">Quota Attainment</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">89</div>
+                    <div class="metric-label">New Customers</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">$2.1M</div>
+                    <div class="metric-label">Pipeline Value</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">24%</div>
+                    <div class="metric-label">Win Rate</div>
+                </div>
+            </div>
+            <div class="status-indicator status-excellent">✅ Excellent Performance</div>
+            <div style="margin-top: 16px;">
+                <a href="/erp_sales" class="btn btn-primary">View Details</a>
+            </div>
+        </div>
+
+        <!-- Human Resources -->
+        <div class="department-card">
+            <div class="department-header">
+                <span class="department-icon">👥</span>
+                <h3 class="department-title">Human Resources</h3>
+            </div>
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-value">94.2%</div>
+                    <div class="metric-label">Retention Rate</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">23</div>
+                    <div class="metric-label">New Hires</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">4.6/5</div>
+                    <div class="metric-label">Satisfaction</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">127</div>
+                    <div class="metric-label">Training Hours</div>
+                </div>
+            </div>
+            <div class="status-indicator status-excellent">✅ Excellent Performance</div>
+            <div style="margin-top: 16px;">
+                <a href="/erp_hr" class="btn btn-primary">View Details</a>
+            </div>
+        </div>
+
+        <!-- IT & Technology -->
+        <div class="department-card">
+            <div class="department-header">
+                <span class="department-icon">💻</span>
+                <h3 class="department-title">IT & Technology</h3>
+            </div>
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-value">99.7%</div>
+                    <div class="metric-label">System Uptime</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">2.3m</div>
+                    <div class="metric-label">Avg Response</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">47</div>
+                    <div class="metric-label">Open Tickets</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">94%</div>
+                    <div class="metric-label">User Satisfaction</div>
+                </div>
+            </div>
+            <div class="status-indicator status-good">✅ Good Performance</div>
+            <div style="margin-top: 16px;">
+                <a href="/admin_dashboard" class="btn btn-primary">View Details</a>
+            </div>
+        </div>
+
+        <!-- Quality Assurance -->
+        <div class="department-card">
+            <div class="department-header">
+                <span class="department-icon">🎯</span>
+                <h3 class="department-title">Quality Assurance</h3>
+            </div>
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-value">99.4%</div>
+                    <div class="metric-label">Quality Score</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">8</div>
+                    <div class="metric-label">Defects/1000</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">24</div>
+                    <div class="metric-label">Audits Completed</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">97%</div>
+                    <div class="metric-label">Compliance</div>
+                </div>
+            </div>
+            <div class="status-indicator status-excellent">✅ Excellent Performance</div>
+            <div style="margin-top: 16px;">
+                <a href="/quality_check" class="btn btn-primary">View Details</a>
+            </div>
+        </div>
+
+        <!-- Supply Chain -->
+        <div class="department-card">
+            <div class="department-header">
+                <span class="department-icon">🚚</span>
+                <h3 class="department-title">Supply Chain</h3>
+            </div>
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-value">96.8%</div>
+                    <div class="metric-label">On-Time Delivery</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">14.2</div>
+                    <div class="metric-label">Inventory Turns</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">$1.8M</div>
+                    <div class="metric-label">Inventory Value</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">2.1%</div>
+                    <div class="metric-label">Stockout Rate</div>
+                </div>
+            </div>
+            <div class="status-indicator status-attention">⚠️ Needs Attention</div>
+            <div style="margin-top: 16px;">
+                <a href="/erp_purchasing" class="btn btn-primary">View Details</a>
+            </div>
+        </div>
+
+        <!-- Customer Service -->
+        <div class="department-card">
+            <div class="department-header">
+                <span class="department-icon">📞</span>
+                <h3 class="department-title">Customer Service</h3>
+            </div>
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-value">4.8/5</div>
+                    <div class="metric-label">CSAT Score</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">1.2m</div>
+                    <div class="metric-label">Avg Response</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">94%</div>
+                    <div class="metric-label">First Call Res.</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">247</div>
+                    <div class="metric-label">Cases Closed</div>
+                </div>
+            </div>
+            <div class="status-indicator status-excellent">✅ Excellent Performance</div>
+            <div style="margin-top: 16px;">
+                <a href="/customer_support" class="btn btn-primary">View Details</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="text-align: center; margin-top: 40px;">
+        <a href="/ceo_dashboard" class="btn btn-primary">👔 CEO Dashboard</a>
+        <a href="/strategic_initiatives" class="btn btn-primary">🎯 Strategic Initiatives</a>
+        <a href="/board_reporting" class="btn btn-primary">📋 Board Reports</a>
+        <a href="/professional_dashboard" class="btn btn-primary">📊 Professional Dashboard</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('VP Reports dashboard loaded');
+            
+            // Add hover effects to department cards
+            document.querySelectorAll('.department-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-4px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

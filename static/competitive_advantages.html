@@ -1,0 +1,315 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Legends - Competitive Advantages</title>
+    <style>
+        * {margin: 0
+            padding: 0
+            box-sizing: border-box}
+
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            color: white
+            line-height: 1.6;
+            min-height: 100vh}
+
+        .header {background: rgba(255, 255, 255, 0.1)
+            padding: 20px
+            text-align: center
+            backdrop-filter: blur(10px)}
+
+        .header h1 {font-size: 2.5rem
+            margin-bottom: 10px
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3)}
+
+        .tagline {font-size: 1.2rem
+            opacity: 0.9
+            font-style: italic}
+
+        .container {max-width: 1200px
+            margin: 0 auto
+            padding: 40px 20px}
+
+        .advantages-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr))
+            gap: 30px
+            margin-bottom: 40px}
+
+        .advantage-card {background: rgba(255, 255, 255, 0.15)
+            border-radius: 20px
+            padding: 30px
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden}
+
+        .advantage-card::before {content: ''
+            position: absolute
+            top: 0
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            background-size: 400% 100%;
+            animation: gradient 3s ease infinite}
+
+        @keyframes gradient {0%, 100% { background-position: 0% 50%}
+            50% {background-position: 100% 50%}
+        }
+
+        .advantage-card:hover {transform: translateY(-10px)
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3)}
+
+        .advantage-icon {font-size: 3rem
+            margin-bottom: 20px
+            display: block}
+
+        .advantage-title {font-size: 1.5rem
+            font-weight: 700
+            margin-bottom: 15px
+            color: #fff}
+
+        .advantage-description {margin-bottom: 20px
+            opacity: 0.9}
+
+        .advantage-features {list-style: none
+            margin-bottom: 20px}
+
+        .advantage-features li {padding: 8px 0
+            padding-left: 25px
+            position: relative}
+
+        .advantage-features li: :before {content: '✓'
+            position: absolute
+            left: 0
+            color: #4ecdc4;
+            font-weight: bold}
+
+        .advantage-tagline {background: linear-gradient(135deg, #ff6b6b, #4ecdc4)
+            -webkit-background-clip: text
+            -webkit-text-fill-color: transparent
+            background-clip: text;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px}
+
+        .back-btn {position: fixed
+            top: 20px
+            left: 20px
+            background: white;
+            color: #333;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            z-index: 1000}
+
+        .back-btn:hover {transform: translateY(-2px)
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3)}
+
+        .cta-section {text-align: center
+            margin-top: 60px
+            padding: 40px
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px)}
+
+        .cta-title {font-size: 2rem
+            margin-bottom: 20px
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4)
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text}
+
+        .cta-buttons {display: flex
+            gap: 20px
+            justify-content: center
+            flex-wrap: wrap;
+            margin-top: 30px}
+
+        .cta-btn {background: linear-gradient(135deg, #ff6b6b, #4ecdc4)
+            color: white
+            text-decoration: none
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);}
+
+        .cta-btn:hover {transform: translateY(-3px)
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3)}
+
+        @media (max-width: 768px) {.advantages-grid {
+                grid-template-columns: 1fr
+                gap: 20px}
+
+            .header h1 {font-size: 2rem}
+
+            .advantage-card {padding: 20px}
+
+            .cta-buttons {flex-direction: column
+                align-items: center}
+        }
+    </style>
+</head>
+<body>
+    <a href="/main_dashboard" class="back-btn">← Back to Dashboard</a>
+
+    <div class="header">
+        <h1>🚀 QR Legends Competitive Advantages</h1>
+        <p class="tagline">"While SAP and Oracle bury you in modules you'll never use, we give you what you actually need"</p>
+    </div>
+
+    <div class="container">
+        <div class="advantages-grid">
+            <!-- QR-First Workflow -->
+            <div class="advantage-card">
+                <span class="advantage-icon">📱</span>
+                <h3 class="advantage-title">QR-First, Touchless Workflow</h3>
+                <p class="advantage-description">
+                    Most big ERPs still rely heavily on RF guns or manual entry. We revolutionize warehouse operations with comprehensive QR code integration.
+                </p>
+                <ul class="advantage-features">
+                    <li>Check-in, putaway, pick, pack via QR</li>
+                    <li>Exception handling with QR codes</li>
+                    <li>HR clock-in/out with QR</li>
+                    <li>Mobile-native with offline caching</li>
+                    <li>Lower hardware costs</li>
+                </ul>
+                <div class="advantage-tagline">"Run your entire warehouse from a phone"</div>
+            </div>
+
+            <!-- Widget-Based Dashboards -->
+            <div class="advantage-card">
+                <span class="advantage-icon">🎛️</span>
+                <h3 class="advantage-title">Widget-Based, Role-Customizable Dashboards</h3>
+                <p class="advantage-description">
+                    Big ERPs are rigid with pre-canned reports. Our drag-drop widget system lets managers build mini-apps for their teams.
+                </p>
+                <ul class="advantage-features">
+                    <li>Drag-drop widget interface</li>
+                    <li>Role-based custom layouts</li>
+                    <li>Shareable team dashboards</li>
+                    <li>Real-time data widgets</li>
+                    <li>Unlimited customization</li>
+                </ul>
+                <div class="advantage-tagline">"Every role gets their own ERP"</div>
+            </div>
+
+            <!-- AI-Driven Warehouse Brain -->
+            <div class="advantage-card">
+                <span class="advantage-icon">🤖</span>
+                <h3 class="advantage-title">AI-Driven Warehouse Brain</h3>
+                <p class="advantage-description">
+                    Competitors use static rules. Our AI learns your daily operations and makes intelligent recommendations.
+                </p>
+                <ul class="advantage-features">
+                    <li>Predictive wave planning</li>
+                    <li>Optimal putaway suggestions</li>
+                    <li>Exception prediction</li>
+                    <li>Route optimization</li>
+                    <li>Learning algorithms</li>
+                </ul>
+                <div class="advantage-tagline">"A warehouse that thinks for itself"</div>
+            </div>
+
+            <!-- Real-Time Collaboration -->
+            <div class="advantage-card">
+                <span class="advantage-icon">💬</span>
+                <h3 class="advantage-title">Real-Time Collaboration Built In</h3>
+                <p class="advantage-description">
+                    No more radios or email chaos. Slack-like chat with security levels embedded directly in your ERP.
+                </p>
+                <ul class="advantage-features">
+                    <li>@mention system for managers</li>
+                    <li>Department-specific channels</li>
+                    <li>Private IMs for sensitive issues</li>
+                    <li>Conversations linked to records</li>
+                    <li>Multi-level security</li>
+                </ul>
+                <div class="advantage-tagline">"No more radios. No more email. Just warehouse chat."</div>
+            </div>
+
+            <!-- Exception-First Design -->
+            <div class="advantage-card">
+                <span class="advantage-icon">⚠️</span>
+                <h3 class="advantage-title">Exception-First Design</h3>
+                <p class="advantage-description">
+                    Big ERPs hide problems. We surface them before they cost you money with our signature exception management.
+                </p>
+                <ul class="advantage-features">
+                    <li>Unified exception inbox</li>
+                    <li>SLA countdown timers</li>
+                    <li>Cost impact analysis</li>
+                    <li>Problem heatmaps</li>
+                    <li>Automated task assignment</li>
+                </ul>
+                <div class="advantage-tagline">"See problems before they cost you"</div>
+            </div>
+
+            <!-- Plug-and-Play Modules -->
+            <div class="advantage-card">
+                <span class="advantage-icon">🔧</span>
+                <h3 class="advantage-title">Plug-and-Play ERP Modules</h3>
+                <p class="advantage-description">
+                    SAP/Oracle = months of integration. Our modular approach lets you grow your ERP at your own pace.
+                </p>
+                <ul class="advantage-features">
+                    <li>Optional snap-in modules</li>
+                    <li>Finance, HR, CRM, Sales</li>
+                    <li>QR-aware integrations</li>
+                    <li>Lightweight architecture</li>
+                    <li>Rapid deployment</li>
+                </ul>
+                <div class="advantage-tagline">"Grow your ERP at your own pace"</div>
+            </div>
+
+            <!-- Transparent Pricing -->
+            <div class="advantage-card">
+                <span class="advantage-icon">💰</span>
+                <h3 class="advantage-title">Transparent Pricing & Rapid Deployment</h3>
+                <p class="advantage-description">
+                    Legacy ERPs hide behind "call for quote." We offer flat, transparent pricing with rapid deployment.
+                </p>
+                <ul class="advantage-features">
+                    <li>Transparent per-site pricing</li>
+                    <li>No hidden implementation costs</li>
+                    <li>Deploy in weeks, not months</li>
+                    <li>Pre-configured templates</li>
+                    <li>Predictable ROI timeline</li>
+                </ul>
+                <div class="advantage-tagline">"ERP you can actually afford and implement this quarter"</div>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h2 class="cta-title">🎯 Ready to Transform Your Warehouse?</h2>
+            <p>Experience the future of warehouse management with QR Legends - where innovation meets practicality.</p>
+            <div class="cta-buttons">
+                <a href="/demo" class="cta-btn">🚀 Start Free Demo</a>
+                <a href="/contact" class="cta-btn">📞 Schedule Consultation</a>
+                <a href="/main_dashboard" class="cta-btn">📊 Explore Dashboard</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Universal Dashboard Button -->
+    <script src="/static/universal_dashboard_button.js"></script>
+    <!-- Include Floating Chat Widget -->
+    <script src="/static/floating_chat_widget.js"></script>
+    <!-- Include Employee Messaging Widget -->
+    <script src="/static/employee_messaging_widget.js"></script>
+    <script src="/static/copyright_notice.js"></script>
+</body>
+</html>

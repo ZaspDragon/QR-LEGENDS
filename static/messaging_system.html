@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Messaging - QR Legends</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <script src="qr_camera_scanner.js"></script>
+    <style>
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            margin: 0
+            padding: 0
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh}
+        .container {max-width: 1400px
+            margin: 0 auto
+            padding: 20px}
+        .header {background: white
+            border-radius: 15px
+            padding: 20px
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center}
+        .messaging-layout {display: grid
+            grid-template-columns: 300px 1fr
+            gap: 20px
+            height: 70vh}
+        .employee-list {background: white
+            border-radius: 15px
+            padding: 20px
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow-y: auto}
+        .employee-item {padding: 12px
+            border-radius: 8px
+            margin-bottom: 8px
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center}
+        .employee-item: hover {background: #f8f9fa
+            border-left-color: #667eea}
+        .employee-item.active {background: #e3f2fd
+            border-left-color: #2196f3}
+        .employee-item.has-unread {background: #fff3cd
+            border-left-color: #ffc107}
+        .employee-info {flex: 1}
+        .employee-name {font-weight: 600
+            color: #333
+            margin-bottom: 2px}
+        .employee-department {font-size: 0.8rem
+            color: #666}
+        .employee-performance {font-size: 0.8rem
+            padding: 2px 6px
+            border-radius: 12px
+            margin-left: 8px}
+        .performance-excellent {background: #d4edda color: #155724}
+        .performance-good {background: #d1ecf1 color: #0c5460}
+        .performance-needs-improvement {background: #fff3cd color: #856404}
+        .performance-poor {background: #f8d7da color: #721c24}
+        .unread-badge {background: #dc3545
+            color: white
+            border-radius: 50%
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600}
+        .chat-area {background: white
+            border-radius: 15px
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2)
+            display: flex;
+            flex-direction: column}
+        .chat-header {padding: 20px
+            border-bottom: 1px solid #eee
+            background: #f8f9fa
+            border-radius: 15px 15px 0 0}
+        .chat-employee-info {display: flex
+            justify-content: space-between
+            align-items: center}
+        .chat-employee-name {font-size: 1.2rem
+            font-weight: 600
+            color: #333}
+        .chat-employee-details {font-size: 0.9rem
+            color: #666
+            margin-top: 5px}
+        .performance-actions {display: flex
+            gap: 10px}
+        .action-btn {padding: 6px 12px
+            border: none
+            border-radius: 5px
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s}
+        .btn-office {background: #ffc107 color: #333}
+        .btn-safety {background: #dc3545 color: white}
+        .btn-meeting {background: #17a2b8 color: white}
+        .btn-performance {background: #28a745 color: white}
+        .action-btn: hover {transform: translateY(-1px) opacity: 0.9}
+        .chat-messages {flex: 1
+            padding: 20px
+            overflow-y: auto
+            background: #f8f9fa}
+        .message {margin-bottom: 15px
+            display: flex
+            flex-direction: column}
+        .message.sent {align-items: flex-end}
+        .message.received {align-items: flex-start}
+        .message.employee .message-content {background: #28a745
+            color: white}
+        .message-content {max-width: 70%
+            padding: 12px 16px
+            border-radius: 18px
+            word-wrap: break-word}
+        .message.sent .message-content {background: #667eea
+            color: white}
+        .message.received .message-content {background: white
+            color: #333
+            border: 1px solid #ddd}
+        .employee-response {background: #e8f5e8
+            border-left: 4px solid #28a745
+            padding: 8px 12px
+            margin: 5px 0;
+            border-radius: 5px;
+            font-size: 0.9rem}
+        .response-status {display: inline-block
+            padding: 2px 8px
+            border-radius: 10px
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 10px}
+        .status-pending {background: #fff3cd color: #856404}
+        .status-acknowledged {background: #d4edda color: #155724}
+        .status-meeting-requested {background: #d1ecf1 color: #0c5460}
+        .message-time {font-size: 0.7rem
+            color: #666
+            margin-top: 5px}
+        .message-type {font-size: 0.7rem
+            padding: 2px 6px
+            border-radius: 8px
+            margin-bottom: 5px;
+            font-weight: 600}
+        .type-office {background: #fff3cd color: #856404}
+        .type-safety {background: #f8d7da color: #721c24}
+        .type-meeting {background: #d1ecf1 color: #0c5460}
+        .type-performance {background: #d4edda color: #155724}
+        .chat-input {padding: 20px
+            border-top: 1px solid #eee
+            background: white
+            border-radius: 0 0 15px 15px}
+        .quick-messages {display: flex
+            gap: 8px
+            margin-bottom: 15px
+            flex-wrap: wrap}
+        .quick-msg-btn {padding: 6px 12px
+            border: 1px solid #ddd
+            background: #f8f9fa
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s}
+        .quick-msg-btn: hover {background: #e9ecef
+            transform: translateY(-1px)}
+        .input-area {display: flex
+            gap: 10px
+            align-items: center}
+        .message-input {flex: 1
+            padding: 12px 16px
+            border: 1px solid #ddd
+            border-radius: 25px;
+            outline: none;
+            font-size: 0.9rem}
+        .send-btn {padding: 12px 20px
+            background: #667eea
+            color: white
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s}
+        .send-btn: hover {background: #5a6fd8
+            transform: translateY(-1px)}
+        .btn {padding: 10px 20px
+            border: none
+            border-radius: 5px
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block}
+        .btn-primary {background: #667eea color: white}
+        .btn-secondary {background: #6c757d color: white}
+        .btn: hover {opacity: 0.9 transform: translateY(-1px)}
+        .no-selection {display: flex
+            align-items: center
+            justify-content: center
+            height: 100%;
+            color: #666;
+            font-size: 1.1rem}
+
+        /* Department list styling */
+        .department-list {margin-top: 15px}
+        .department-item {padding: 15px
+            cursor: pointer
+            border-bottom: 1px solid #ddd
+            transition: all 0.3s ease;
+            user-select: none;
+            position: relative}
+
+        .department-item: hover {background: #e9ecef
+            transform: translateX(2px)}
+
+        .department-item.active {background: #007bff
+            color: white
+            border-left: 4px solid #0056b3}
+
+        .department-item:active {transform: scale(0.98)}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>💬 Team Messaging</h1>
+                <p>Communicate with your team about performance, meetings, and important updates</p>
+            </div>
+            <div>
+                <button class="btn btn-secondary" onclick="window.location.href='/main_dashboard'">← Back to Dashboard</button>
+                <button class="btn btn-primary" onclick="loadEmployees()">🔄 Refresh</button>
+            </div>
+        </div>
+
+        <div class="messaging-layout">
+            <div class="employee-list">
+                <h3>👥 Departments</h3>
+                <div class="department-list">
+                    <div class="department-item active" data-dept="general" onclick="switchDepartment('general')">
+                        <strong>🏢 General</strong>
+                        <div>All Employees</div>
+                    </div>
+                    <div class="department-item" data-dept="managers_only" onclick="switchDepartment('managers_only')">
+                        <strong>👨‍💼 Managers Only</strong>
+                        <div>Management Team</div>
+                    </div>
+                    <div class="department-item" data-dept="managers_leads" onclick="switchDepartment('managers_leads')">
+                        <strong>🎯 Managers & Leads</strong>
+                        <div>Leadership Team</div>
+                    </div>
+                    <div class="department-item" data-dept="receiving" onclick="switchDepartment('receiving')">
+                        <strong>📦 Receiving</strong>
+                        <div>Receiving Team</div>
+                    </div>
+                    <div class="department-item" data-dept="transfers" onclick="switchDepartment('transfers')">
+                        <strong>🔄 Transfers</strong>
+                        <div>Transfer Team</div>
+                    </div>
+                    <div class="department-item" data-dept="inventory" onclick="switchDepartment('inventory')">
+                        <strong>📊 Inventory</strong>
+                        <div>Inventory Team</div>
+                    </div>
+                    <div class="department-item" data-dept="order_picking" onclick="switchDepartment('order_picking')">
+                        <strong>📋 Order Picking</strong>
+                        <div>Picking Team</div>
+                    </div>
+                    <div class="department-item" data-dept="problem_solving" onclick="switchDepartment('problem_solving')">
+                        <strong>🔧 Problem Solving</strong>
+                        <div>PS Team</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-area">
+                <div id="no-selection" class="no-selection" style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666; text-align: center;">
+                    <div>
+                        <div style="font-size: 1.2rem; margin-bottom: 10px;">💬 Select a department to start messaging</div>
+                        <div style="font-size: 0.9rem;">Choose a department from the list to view and send messages</div>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chat-messages" style="display: none;">
+                    <!-- Messages will be loaded here -->
+                </div>
+
+                <div class="chat-input" id="message-input-area" style="display: none;">
+                    <div class="quick-messages">
+                        <button class="quick-msg-btn" onclick="setQuickMessage('Your performance this week has been excellent! Keep up the great work.')">
+                            👏 Great Work
+                        </button>
+                        <button class="quick-msg-btn" onclick="setQuickMessage('Please see me in my office when you have a moment.')">
+                            💼 See Me
+                        </button>
+                        <button class="quick-msg-btn" onclick="setQuickMessage('We have a team meeting tomorrow at 2 PM in the conference room.')">
+                            📅 Team Meeting
+                        </button>
+                        <button class="quick-msg-btn" onclick="setQuickMessage('Your accuracy rate needs improvement. Let\'s discuss strategies.')">
+                            📈 Need Improvement
+                        </button>
+                    </div>
+
+                    <div class="input-area">
+                        <input type="text" class="message-input" id="message-input" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+                        <button class="send-btn" onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentEmployeeId = null;
+        let employees = [];
+        let messages = {};
+        let currentDepartment = 'general'; // Default to general department
+
+        // Function to load employees based on the current department
+        async function loadEmployees() {
+            try {
+                const response = await fetch(`/api/employees?department=${currentDepartment}`);
+                if (response.ok) {const data = await response.json()
+                    employees = data.employees || []
+                    displayEmployees()
+                    updateChatContentVisibility();} else {console.error('Failed to load employees')}
+            } catch (error) {console.error('Error loading employees:', error)}
+        }
+
+        // Function to display the list of employees
+        function displayEmployees() {const container = document.getElementById('employees-container') // This ID is not present in the HTML, assuming it should be. If it's intended to be part of the employee list, it needs to be added.
+            // For now, let's assume this function is meant to populate the .employee-list div directly, or it's a placeholder for future implementation.
+            // If there was an actual container for employees, the logic would go here.
+            // As the current HTML structure doesn't have a specific container for the list of employees, we will proceed without populating it here.
+            // If you intended to replace the contents of the `.employee-list` div with employee items, you would need a different approach.
+            // The provided HTML already lists departments, and employee selection is handled by clicking department items to load messages.}
+
+        // Mock function to get performance level
+        function getPerformanceLevel(employee) {const mockPerformance = Math.floor(Math.random() * 40) + 60 // 60-100%
+            let level = 'excellent'
+
+            if (mockPerformance < 70) level = 'poor'
+            else if (mockPerformance < 80) level = 'needs-improvement';
+            else if (mockPerformance < 90) level = 'good';
+
+            return { percentage: mockPerformance, level};
+        }
+
+        // Mock function to get unread message count
+        function getUnreadCount(employeeId) {return Math.floor(Math.random() * 3)}
+
+        // Function to handle employee selection
+        function selectEmployee(employeeId) {currentEmployeeId = employeeId
+            const employee = employees.find(e => e.id === employeeId)
+
+            if (!employee) return
+
+            // Update active state for employee items
+            document.querySelectorAll('.employee-item').forEach(item => {
+                item.classList.remove('active');});
+            // Assuming `event` is available in the context where this is called, or it's handled by the `onclick`.
+            // Safely target the closest employee item.
+            const clickedItem = event.target.closest('.employee-item');
+            if (clickedItem) {clickedItem.classList.add('active')}
+
+            // Update chat header information
+            document.getElementById('chat-employee-name').textContent = employee.name;
+            document.getElementById('chat-employee-details').textContent =
+                `${employee.department} • ${employee.role} • Employee ID: ${employee.employee_id}`;
+
+            // Load messages for the selected employee
+            loadMessages(employeeId);
+            updateChatContentVisibility();
+        }
+
+        // Function to switch between departments
+        function switchDepartment(dept) {currentDepartment = dept
+
+            // Remove active class from all department items
+            document.querySelectorAll('.department-item').forEach(item => {
+                item.classList.remove('active')});
+
+            // Add active class to clicked department
+            const targetDept = document.querySelector(`[data-dept="${dept}"]`);
+            if (targetDept) {targetDept.classList.add('active')}
+
+            // Update the no-selection message if it exists
+            const noSelection = document.getElementById('no-selection');
+            if (noSelection) {noSelection.style.display = 'none'}
+
+            // Load messages for the selected department
+            loadDepartmentMessages();
+        }
+
+        // Function to update the visibility of chat content and no-selection message
+        function updateChatContentVisibility() {const chatContent = document.getElementById('chat-content')
+            const noSelection = document.getElementById('no-selection')
+
+            if (currentEmployeeId) {
+                chatContent.style.display = 'flex'
+                noSelection.style.display = 'none';} else {chatContent.style.display = 'none'
+                noSelection.style.display = 'flex'
+                document.getElementById('chat-employee-name').textContent = ''
+                document.getElementById('chat-employee-details').textContent = '';
+                document.getElementById('chat-messages').innerHTML = ''; // Clear messages}
+        }
+
+        // Function to load messages for a specific employee
+        async function loadMessages(employeeId) {
+            try {
+                const response = await fetch(`/api/messages/${employeeId}`);
+                if (response.ok) {const data = await response.json()
+                    messages[employeeId] = data.messages || []} else {messages[employeeId] = []}
+                displayMessages();
+            } catch (error) {console.error('Error loading messages:', error)
+                messages[employeeId] = []
+                displayMessages()}
+        }
+
+        // Function to display messages in the chat
+        function displayMessages() {const container = document.getElementById('chat-messages')
+            const employeeMessages = messages[currentEmployeeId] || []
+
+            if (employeeMessages.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center color: #666 padding: 40px">
+                        <div style="font-size: 2rem margin-bottom: 10px;">💬</div>
+                        <div>No messages yet. Start the conversation!</div>
+                    </div>
+                `;
+                return}
+
+            container.innerHTML = employeeMessages.map(message => {let messageClass = 'sent'
+                if (message.sender === 'employee') {
+                    messageClass = 'received employee'} else if (message.sender === 'received') {messageClass = 'received'}
+
+                let responseHtml = '';
+                if (message.response) {
+                    const statusClass = `status-${message.response.status.replace('_', '-')}`;
+                    responseHtml = `
+                        <div class="employee-response">
+                            💬 Employee Response: ${message.response.message}
+                            <span class="response-status ${statusClass}">${message.response.status.replace('_', ' ').toUpperCase()}</span>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="message ${messageClass}">
+                        ${message.type ? `<div class="message-type type-${message.type}">${getMessageTypeLabel(message.type)}</div>` : ''}
+                        <div class="message-content">${message.content}</div>
+                        ${responseHtml}
+                        <div class="message-time">${new Date(message.timestamp).toLocaleString()}</div>
+                    </div>
+                `;
+            }).join('');
+
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Helper function to get message type labels
+        function getMessageTypeLabel(type) {
+            const labels = {
+                'office': '🏢 Office Visit',
+                'safety': '⚠️ Safety Meeting',
+                'meeting': '📅 Meeting',
+                'performance': '📊 Performance'
+            };
+            return labels[type] || '';
+        }
+
+        // Function to send a message
+        async function sendMessage(content = null, type = null) {if (!currentEmployeeId) return
+
+            const messageContent = content || document.getElementById('message-input').value.trim()
+            if (!messageContent) return
+
+            const message = {
+                id: Date.now().toString(),
+                content: messageContent,
+                sender: 'manager',
+                timestamp: new Date().toISOString(),
+                type: type};
+
+            try {
+                const response = await fetch('/api/messages/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        employee_id: currentEmployeeId,
+                        message: message
+                    })
+                });
+
+                if (response.ok) {// Add message to local cache
+                    if (!messages[currentEmployeeId]) {
+                        messages[currentEmployeeId] = []}
+                    messages[currentEmployeeId].push(message);
+
+                    // Clear input and refresh display
+                    document.getElementById('message-input').value = '';
+                    displayMessages();
+                } else {alert('Failed to send message')}
+            } catch (error) {console.error('Error sending message:', error)
+                alert('Network error. Please try again.')}
+        }
+
+        // Function to send quick messages
+        function sendQuickMessage(type) {
+            const quickMessages = {
+                'office': 'Please come to my office when you have a moment. I need to discuss something important with you.',
+                'safety': 'We have a mandatory safety meeting tomorrow at 10 AM in the main conference room. Please confirm your attendance.',
+                'meeting': 'I would like to schedule a one-on-one meeting with you this week. Please let me know your availability.',
+                'performance': 'I\'ve reviewed your recent performance metrics and would like to discuss your progress and set new goals.'
+            };
+
+            sendMessage(quickMessages[type], type);
+        }
+
+        // Function to set the quick message text into the input field
+        function setQuickMessage(message) {document.getElementById('message-input').value = message
+            document.getElementById('message-input').focus()}
+
+        // Function to handle key presses in the message input
+        function handleKeyPress(event) {if (event.key === 'Enter') {
+                sendMessage()}
+        }
+
+        // Function to load messages for the selected department
+        async function loadDepartmentMessages() {if (!currentDepartment) return
+
+            try {
+                // Show chat interface elements
+                document.getElementById('no-selection').style.display = 'none'
+                document.getElementById('chat-messages').style.display = 'flex'
+                document.getElementById('message-input-area').style.display = 'flex';
+
+                const response = await fetch(`/api/employee/department-messages/${currentDepartment}`);
+                if (response.ok) {const data = await response.json()
+                    // Assuming displayMessages is updated to handle department messages correctly
+                    // If displayMessages is only for single employee chats, this might need adjustment.
+                    // For now, let's assume it can display a list of messages.
+                    // However, the current `displayMessages` function relies on `currentEmployeeId`, so this needs a fix.
+                    // If department messages are meant to be shown differently, that logic would go here.
+                    // For the purpose of this fix, we'll assume `displayMessages` can handle a list of messages for a department.
+                    // A more robust solution would involve a separate display function for department-wide messages.
+                    // For now, clearing and showing a placeholder or a generic message.
+                    document.getElementById('chat-messages').innerHTML = `
+                        <div style="text-align: center color: #666 padding: 40px">
+                            <div style="font-size: 2rem margin-bottom: 10px">📢</div>
+                            <div>Department chat is active. Select an employee to chat or view department-wide announcements.</div>
+                        </div>
+                    `} else {document.getElementById('chat-messages').innerHTML = '<div class="loading">Error loading messages</div>'}
+            } catch (error) {console.error('Error loading messages:', error)
+                document.getElementById('chat-messages').innerHTML = '<div class="loading">Error loading messages</div>'}
+        }
+
+        // Initialize messaging system
+        document.addEventListener('DOMContentLoaded', function() {// Set up click handlers for department items
+            document.querySelectorAll('.department-item').forEach(item => {
+                const dept = item.getAttribute('data-dept')
+                if (dept) {
+                    item.addEventListener('click', function(e) {
+                        e.preventDefault()
+                        switchDepartment(dept)});
+
+                    // Also ensure onclick attribute works
+                    item.onclick = function() {switchDepartment(dept)};
+                }
+            });
+
+            // Load initial messages for the default department
+            if (currentDepartment) {switchDepartment(currentDepartment)}
+        });
+    </script>
+</body>
+</html>

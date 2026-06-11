@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASN Form - QR Legends</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #2d3748;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 18px;
+            color: #2d3748;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            color: #4a5568;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .required {
+            color: #ef4444;
+        }
+
+        .pallet-card {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .pallet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .pallet-header h3 {
+            font-size: 16px;
+            color: #2d3748;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        thead {
+            background: white;
+        }
+
+        th {
+            padding: 10px 8px;
+            text-align: left;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 12px;
+        }
+
+        td {
+            padding: 8px;
+        }
+
+        td input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .add-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 id="formTitle">Create ASN</h1>
+            <div class="header-actions">
+                <a href="/asn_list" class="btn btn-secondary">← Cancel</a>
+                <button onclick="saveAsn()" class="btn btn-success" id="saveBtn">Save ASN</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📋 PO & Vendor Information</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>PO Number <span class="required">*</span></label>
+                    <input type="text" id="po_number" placeholder="PO-12345" required>
+                </div>
+                <div class="form-group">
+                    <label>Vendor <span class="required">*</span></label>
+                    <input type="text" id="vendor" placeholder="Vendor Name" required>
+                </div>
+                <div class="form-group">
+                    <label>Vendor Email</label>
+                    <input type="email" id="vendor_email" placeholder="vendor@example.com">
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🚚 Shipping Information</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Ship From</label>
+                    <input type="text" id="ship_from" placeholder="Origin location">
+                </div>
+                <div class="form-group">
+                    <label>Ship To</label>
+                    <input type="text" id="ship_to" placeholder="Destination location">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>ETA</label>
+                    <input type="date" id="eta">
+                </div>
+                <div class="form-group">
+                    <label>Carrier</label>
+                    <input type="text" id="carrier" placeholder="FedEx, UPS, etc.">
+                </div>
+                <div class="form-group">
+                    <label>PRO/Tracking Number</label>
+                    <input type="text" id="pro" placeholder="Tracking number">
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0; border: none; padding: 0;">📦 Pallets</h2>
+                <button onclick="addPallet()" class="btn btn-primary">+ Add Pallet</button>
+            </div>
+            <div id="palletsContainer">
+                <p style="color: #718096; text-align: center; padding: 20px;">No pallets added yet. Click "Add Pallet" to begin.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const asnId = urlParams.get('id');
+        let pallets = [];
+
+        async function loadAsn() {
+            if (!asnId) return;
+
+            try {
+                const response = await fetch(`/api/asns/${asnId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const asn = data.asn;
+                    document.getElementById('formTitle').textContent = `Edit ASN ${asn.asn_id}`;
+                    document.getElementById('saveBtn').textContent = 'Update ASN';
+
+                    document.getElementById('po_number').value = asn.po_number || '';
+                    document.getElementById('vendor').value = asn.vendor || '';
+                    document.getElementById('vendor_email').value = asn.vendor_email || '';
+                    document.getElementById('ship_from').value = asn.ship_from || '';
+                    document.getElementById('ship_to').value = asn.ship_to || '';
+                    document.getElementById('eta').value = asn.eta || '';
+                    document.getElementById('carrier').value = asn.carrier || '';
+                    document.getElementById('pro').value = asn.pro || '';
+
+                    pallets = asn.pallets || [];
+                    renderPallets();
+                }
+            } catch (error) {
+                console.error('Error loading ASN:', error);
+                alert('Failed to load ASN');
+            }
+        }
+
+        function addPallet() {
+            pallets.push({
+                pallet_id: `PLT-${Date.now()}`,
+                sequence: `${pallets.length + 1}/${pallets.length + 1}`,
+                weight_lb: null,
+                dims_in: [48, 40, 60],
+                lines: []
+            });
+            renderPallets();
+        }
+
+        function removePallet(index) {
+            if (confirm('Remove this pallet?')) {
+                pallets.splice(index, 1);
+                renderPallets();
+            }
+        }
+
+        function addLine(palletIndex) {
+            pallets[palletIndex].lines.push({
+                sku: '',
+                desc: '',
+                cases: 0,
+                units: 0,
+                lot: '',
+                exp: ''
+            });
+            renderPallets();
+        }
+
+        function removeLine(palletIndex, lineIndex) {
+            pallets[palletIndex].lines.splice(lineIndex, 1);
+            renderPallets();
+        }
+
+        function updatePalletField(index, field, value) {
+            pallets[index][field] = value;
+        }
+
+        function updateLineField(palletIndex, lineIndex, field, value) {
+            pallets[palletIndex].lines[lineIndex][field] = value;
+        }
+
+        function renderPallets() {
+            const container = document.getElementById('palletsContainer');
+
+            if (pallets.length === 0) {
+                container.innerHTML = '<p style="color: #718096; text-align: center; padding: 20px;">No pallets added yet. Click "Add Pallet" to begin.</p>';
+                return;
+            }
+
+            container.innerHTML = pallets.map((pallet, pIndex) => `
+                <div class="pallet-card">
+                    <div class="pallet-header">
+                        <h3>Pallet ${pIndex + 1} of ${pallets.length}</h3>
+                        <button onclick="removePallet(${pIndex})" class="btn btn-danger">Remove</button>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Weight (lb)</label>
+                            <input type="number" value="${pallet.weight_lb || ''}" 
+                                   onchange="updatePalletField(${pIndex}, 'weight_lb', this.value ? Number(this.value) : null)"
+                                   placeholder="Weight in pounds">
+                        </div>
+                        <div class="form-group">
+                            <label>Dimensions (L × W × H in inches)</label>
+                            <input type="text" value="${(pallet.dims_in || [48,40,60]).join('×')}" 
+                                   onchange="updatePalletField(${pIndex}, 'dims_in', this.value.split(/[×x]/).map(v => parseInt(v.trim()) || 0))"
+                                   placeholder="48×40×60">
+                        </div>
+                    </div>
+
+                    <label style="margin-top: 15px; margin-bottom: 10px; display: block; font-weight: 600; color: #2d3748;">Line Items</label>
+                    ${pallet.lines.length === 0 ? 
+                        '<p style="color: #718096; font-size: 13px; margin-bottom: 10px;">No line items yet.</p>' : 
+                        `<table>
+                            <thead>
+                                <tr>
+                                    <th>SKU</th>
+                                    <th>Description</th>
+                                    <th>Cases</th>
+                                    <th>Units</th>
+                                    <th>Lot</th>
+                                    <th>Exp</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${pallet.lines.map((line, lIndex) => `
+                                    <tr>
+                                        <td><input type="text" value="${line.sku}" onchange="updateLineField(${pIndex}, ${lIndex}, 'sku', this.value)"></td>
+                                        <td><input type="text" value="${line.desc}" onchange="updateLineField(${pIndex}, ${lIndex}, 'desc', this.value)"></td>
+                                        <td><input type="number" value="${line.cases}" onchange="updateLineField(${pIndex}, ${lIndex}, 'cases', Number(this.value))"></td>
+                                        <td><input type="number" value="${line.units}" onchange="updateLineField(${pIndex}, ${lIndex}, 'units', Number(this.value))"></td>
+                                        <td><input type="text" value="${line.lot || ''}" onchange="updateLineField(${pIndex}, ${lIndex}, 'lot', this.value)"></td>
+                                        <td><input type="text" value="${line.exp || ''}" onchange="updateLineField(${pIndex}, ${lIndex}, 'exp', this.value)"></td>
+                                        <td><button onclick="removeLine(${pIndex}, ${lIndex})" class="btn btn-danger" style="padding: 6px 12px; font-size: 12px;">×</button></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>`
+                    }
+                    <div class="add-button">
+                        <button onclick="addLine(${pIndex})" class="btn btn-secondary">+ Add Line Item</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function saveAsn() {
+            const poNumber = document.getElementById('po_number').value.trim();
+            const vendor = document.getElementById('vendor').value.trim();
+
+            if (!poNumber) {
+                alert('PO Number is required');
+                return;
+            }
+
+            if (!vendor) {
+                alert('Vendor is required');
+                return;
+            }
+
+            const asnData = {
+                po_number: poNumber,
+                vendor: vendor,
+                vendor_email: document.getElementById('vendor_email').value.trim(),
+                ship_from: document.getElementById('ship_from').value.trim(),
+                ship_to: document.getElementById('ship_to').value.trim(),
+                eta: document.getElementById('eta').value,
+                carrier: document.getElementById('carrier').value.trim(),
+                pro: document.getElementById('pro').value.trim(),
+                pallets: pallets
+            };
+
+            try {
+                document.getElementById('saveBtn').disabled = true;
+                document.getElementById('saveBtn').textContent = 'Saving...';
+
+                const url = asnId ? `/api/asns/${asnId}` : '/api/asns';
+                const method = asnId ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(asnData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(asnId ? 'ASN updated successfully!' : 'ASN created successfully!');
+                    window.location.href = `/asn_detail?id=${data.asn.asn_id}`;
+                } else {
+                    alert('Failed to save ASN: ' + (data.error || 'Unknown error'));
+                    document.getElementById('saveBtn').disabled = false;
+                    document.getElementById('saveBtn').textContent = asnId ? 'Update ASN' : 'Save ASN';
+                }
+            } catch (error) {
+                console.error('Error saving ASN:', error);
+                alert('Failed to save ASN');
+                document.getElementById('saveBtn').disabled = false;
+                document.getElementById('saveBtn').textContent = asnId ? 'Update ASN' : 'Save ASN';
+            }
+        }
+
+        loadAsn();
+    </script>
+</body>
+</html>

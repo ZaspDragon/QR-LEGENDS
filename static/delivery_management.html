@@ -1,0 +1,614 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Management - QR Legends</title>
+    <style>
+        /* === QRLegends Unified Theme (Dark/Light) === */
+        :root{
+          --ql-bg: #0b1724;
+          --ql-panel: #0f2340;
+          --ql-card: #102846;
+          --ql-text: #dbe8ff;
+          --ql-sub: #97a6c1;
+          --ql-primary: #3b82f6;
+          --ql-success: #22c55e;
+          --ql-warning: #f59e0b;
+          --ql-danger: #ef4444;
+          --ql-accent: #6366f1;
+          --ql-border: rgba(255,255,255,.12);
+          --ql-surface: rgba(255,255,255,.06);
+        }
+
+        /* Light mode overrides */
+        body.light{
+          --ql-bg: #f2f6fb;
+          --ql-panel: #ffffff;
+          --ql-card: #ffffff;
+          --ql-text: #1d2840;
+          --ql-sub: #51607c;
+          --ql-primary: #2563eb;
+          --ql-success: #16a34a;
+          --ql-warning: #d97706;
+          --ql-danger: #dc2626;
+          --ql-accent: #4f46e5;
+          --ql-border: rgba(0,0,0,.12);
+          --ql-surface: rgba(15,23,42,.04);
+        }
+
+        html,body{height:100%;}
+        body{
+          margin:0;
+          background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed;
+          color: var(--ql-text);
+          font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+          line-height: 1.45;
+        }
+        body.light{
+          background: linear-gradient(180deg,#f7faff,#eef3fb);
+        }
+
+        .ql-header{
+          position: sticky; top:0; z-index:1000;
+          background: rgba(8,27,46,.7);
+          backdrop-filter: blur(6px);
+          border-bottom: 1px solid var(--ql-border);
+        }
+        body.light .ql-header{
+          background: rgba(255,255,255,.75);
+        }
+        
+        .ql-header-inner{
+          display:flex; align-items:center; justify-content:space-between; 
+          max-width:1200px; margin:0 auto; padding:14px 20px;
+        }
+        
+        .ql-title{display:flex; align-items:center; gap:10px;}
+        .ql-h1{font-size:1.25rem; margin:0; letter-spacing:.2px;}
+        .ql-nav{display:flex; gap:8px; flex-wrap:wrap;}
+        
+        .ql-btn{
+          display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
+          background: var(--ql-surface); border: 1px solid var(--ql-border);
+          box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+          transition: transform .08s ease, background .2s ease, border-color .2s ease;
+        }
+        
+        .ql-btn:hover{ 
+          transform: translateY(-1px); 
+          background: rgba(255,255,255,.12); 
+          text-decoration: none;
+        }
+        body.light .ql-btn:hover{ background: rgba(15,23,42,.08); }
+        
+        .ql-secondary{ 
+          background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); 
+          border-color: rgba(59,130,246,.35);
+        }
+
+        .ql-theme-toggle{
+          margin-left:12px; cursor:pointer; border:1px solid var(--ql-border);
+          background: var(--ql-surface); color: var(--ql-text);
+          border-radius:10px; padding:8px 10px; font-size:16px;
+        }
+
+        .ql-container{ max-width:1200px; margin:22px auto; padding:0 20px; }
+        .ql-grid{ display:grid; gap:16px; grid-template-columns: repeat(12, 1fr);}
+        
+        .ql-card{
+          grid-column: span 12;
+          background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+          border: 1px solid var(--ql-border);
+          box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+          border-radius:16px; padding:16px;
+          margin-bottom: 20px;
+        }
+        body.light .ql-card{
+          background: var(--ql-card);
+          box-shadow: 0 10px 30px rgba(2,8,23,.08);
+        }
+
+        @media(min-width:900px){
+          .ql-card.half{ grid-column: span 6; }
+          .ql-card.third{ grid-column: span 4; }
+        }
+
+        .ql-card h2{ font-size:1.05rem; margin:0 0 10px 0; color: #bcd5ff; letter-spacing:.2px; }
+        body.light .ql-card h2{ color:#234073; }
+
+        .ql-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+        
+        .ql-input, .ql-select, input[type="text"], input[type="date"], textarea, select {
+          width:100%; background: var(--ql-surface); color: var(--ql-text); border: 1px solid var(--ql-border);
+          padding:10px 12px; border-radius:10px; outline:none;
+        }
+        .ql-input::placeholder{ color: #9fb0cc; }
+        body.light .ql-input::placeholder{ color: #6b7b92; }
+
+        /* Dashboard specific styles */
+        .stats-grid { 
+          display: grid; 
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+          gap: 16px; 
+          margin-bottom: 24px; 
+        }
+        
+        .stat-card {
+          background: linear-gradient(135deg, rgba(34,197,94,.15), rgba(34,197,94,.05));
+          border: 1px solid rgba(34,197,94,.2);
+          color: var(--ql-text); 
+          padding: 20px; 
+          border-radius: 16px; 
+          text-align: center;
+        }
+
+        .stat-card.warning {
+          background: linear-gradient(135deg, rgba(245,158,11,.15), rgba(245,158,11,.05));
+          border: 1px solid rgba(245,158,11,.2);
+        }
+
+        .stat-card.info {
+          background: linear-gradient(135deg, rgba(59,130,246,.15), rgba(59,130,246,.05));
+          border: 1px solid rgba(59,130,246,.2);
+        }
+
+        .stat-card.accent {
+          background: linear-gradient(135deg, rgba(99,102,241,.15), rgba(99,102,241,.05));
+          border: 1px solid rgba(99,102,241,.2);
+        }
+
+        .delivery-list { margin-top: 20px; }
+        
+        .delivery-item {
+          border: 1px solid var(--ql-border); 
+          padding: 20px; 
+          margin: 16px 0; 
+          border-radius: 16px; 
+          background: var(--ql-surface);
+          backdrop-filter: blur(10px);
+        }
+        
+        .status-pending { border-left: 5px solid var(--ql-warning); }
+        .status-in-transit { border-left: 5px solid var(--ql-primary); }
+        .status-completed { border-left: 5px solid var(--ql-success); }
+
+        .btn {
+          padding: 10px 16px; 
+          margin: 4px; 
+          border: none; 
+          border-radius: 10px; 
+          cursor: pointer; 
+          font-size: 12px;
+          background: var(--ql-surface);
+          color: var(--ql-text);
+          border: 1px solid var(--ql-border);
+          transition: all 0.2s ease;
+        }
+        
+        .btn:hover {
+          transform: translateY(-1px);
+          background: rgba(255,255,255,.12);
+        }
+
+        .btn-primary { 
+          background: linear-gradient(135deg, var(--ql-primary), rgba(59,130,246,.8)); 
+          color: white;
+          border: 1px solid var(--ql-primary);
+        }
+        
+        .btn-success { 
+          background: linear-gradient(135deg, var(--ql-success), rgba(34,197,94,.8)); 
+          color: white;
+          border: 1px solid var(--ql-success);
+        }
+        
+        .btn-info { 
+          background: linear-gradient(135deg, var(--ql-accent), rgba(99,102,241,.8)); 
+          color: white;
+          border: 1px solid var(--ql-accent);
+        }
+
+        .btn-warning { 
+          background: linear-gradient(135deg, var(--ql-warning), rgba(245,158,11,.8)); 
+          color: white;
+          border: 1px solid var(--ql-warning);
+        }
+
+        /* QR Scanner Button - Orange theme for workflow pages */
+        .qr-scanner-btn {
+          position: fixed;
+          bottom: 80px;
+          right: 20px;
+          background: linear-gradient(135deg, #ff6b35, #f7931e);
+          color: white;
+          border: none;
+          border-radius: 50%;
+          width: 60px;
+          height: 60px;
+          font-size: 20px;
+          cursor: pointer;
+          box-shadow: 0 4px 20px rgba(255, 107, 53, 0.4);
+          z-index: 1000;
+          transition: all 0.3s ease;
+        }
+
+        .qr-scanner-btn:hover {
+          transform: scale(1.1);
+          box-shadow: 0 6px 25px rgba(255, 107, 53, 0.6);
+        }
+
+        /* FAB Dashboard button */
+        .ql-fab{ 
+          position: fixed; 
+          right: 18px; 
+          bottom: 18px; 
+          background: var(--ql-accent); 
+          color:white; 
+          border:none;
+          border-radius:999px; 
+          padding:10px 14px; 
+          font-weight:600; 
+          box-shadow: 0 14px 30px rgba(0,0,0,.35);
+          text-decoration: none;
+          cursor: pointer;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+          .ql-header-inner {
+            flex-direction: column;
+            gap: 12px;
+            padding: 12px 20px;
+          }
+          
+          .ql-nav {
+            justify-content: center;
+          }
+          
+          .stats-grid {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+          }
+          
+          .delivery-item {
+            padding: 16px;
+          }
+          
+          .delivery-item > div {
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
+          }
+          
+          .qr-scanner-btn {
+            bottom: 90px;
+            right: 15px;
+            width: 50px;
+            height: 50px;
+            font-size: 16px;
+          }
+        }
+    </style>
+<script>
+(function(){
+  try {
+    const saved = localStorage.getItem('ql-theme');
+    if(saved === 'light'){ document.addEventListener('DOMContentLoaded', ()=> document.body.classList.add('light')); }
+  } catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const btn = document.getElementById('ql-theme-toggle');
+    if(btn){
+      btn.addEventListener('click', function(){
+        document.body.classList.toggle('light');
+        const isLight = document.body.classList.contains('light');
+        btn.textContent = isLight ? '☀️' : '🌙';
+        try { localStorage.setItem('ql-theme', isLight ? 'light' : 'dark'); } catch(e){}
+      });
+      if(document.body.classList.contains('light')) btn.textContent = '☀️';
+    }
+    document.querySelectorAll('button:not([type])').forEach(b=> b.setAttribute('type','button'));
+  });
+})();
+</script>
+</head>
+<body>
+<!-- Unified QR Legends Header -->
+<header class="ql-header">
+  <div class="ql-header-inner">
+    <div class="ql-title">
+      <span class="ql-logo">🟦</span>
+      <h1 class="ql-h1">🚛 Delivery Management</h1>
+    </div>
+    <nav class="ql-nav">
+      <a class="ql-btn ql-secondary" href="main_dashboard.html">🏠 Dashboard</a>
+      <a class="ql-btn" href="order_picking.html">📦 Order Picking</a>
+      <a class="ql-btn" href="inbound_hub.html">⬅️ Inbound</a>
+      <a class="ql-btn" href="outbound_hub.html">➡️ Outbound</a>
+      <a class="ql-btn" href="putaway.html">🧱 Putaway</a>
+      <a class="ql-btn" href="inventory.html">📊 Inventory</a>
+    </nav>
+    <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<div class='ql-container'>
+    <div class="ql-card">
+        <h2>📋 Delivery Overview</h2>
+        <p style="color: var(--ql-sub); margin-bottom: 24px;">Track deliveries, view BOL documents, and manage driver drop-offs</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3 style="margin: 0 0 8px 0; color: var(--ql-success); font-size: 0.9rem;">📦 Pending Deliveries</h3>
+                <div style="font-size: 2em; font-weight: bold;" id="pendingCount">0</div>
+            </div>
+            <div class="stat-card info">
+                <h3 style="margin: 0 0 8px 0; color: var(--ql-primary); font-size: 0.9rem;">🚛 In Transit</h3>
+                <div style="font-size: 2em; font-weight: bold;" id="transitCount">0</div>
+            </div>
+            <div class="stat-card">
+                <h3 style="margin: 0 0 8px 0; color: var(--ql-success); font-size: 0.9rem;">✅ Completed Today</h3>
+                <div style="font-size: 2em; font-weight: bold;" id="completedCount">0</div>
+            </div>
+            <div class="stat-card accent">
+                <h3 style="margin: 0 0 8px 0; color: var(--ql-accent); font-size: 0.9rem;">📄 BOL Generated</h3>
+                <div style="font-size: 2em; font-weight: bold;" id="bolCount">0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ql-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+            <h2>📋 Active Deliveries</h2>
+            <div class="ql-actions">
+                <button class="btn btn-primary" onclick="window.location.href='/delivery_qr_generator'">+ Generate New Delivery QR</button>
+                <button class="btn btn-success" onclick="refreshDeliveries()">🔄 Refresh</button>
+            </div>
+        </div>
+        <div id="deliveriesContainer" class="delivery-list">
+            <p style="text-align: center; color: var(--ql-sub);">Loading deliveries...</p>
+        </div>
+    </div>
+</div>
+
+<!-- QR Scanner Button -->
+<button class="qr-scanner-btn" onclick="openQRScanner()" title="Scan QR Code">
+    📱
+</button>
+
+<!-- Dashboard FAB -->
+<button class='ql-fab' onclick="location.href='main_dashboard.html'">🏠 Dashboard</button>
+
+<!-- Load QR Scanner Widget -->
+<script src="/static/qr_camera_scanner.js"></script>
+<script src="/static/employee_messaging_widget.js"></script>
+<script src="/static/floating_chat_widget.js"></script>
+<script src="/static/universal_dashboard_button.js"></script>
+
+<script>
+    let deliveries = [];
+    let completions = [];
+
+    async function loadDeliveries() {
+        // In a real implementation, this would fetch from the API
+        // For demo, we'll simulate some data
+        deliveries = [
+            {
+                id: 'DEL-001',
+                po_number: 'PO-2025-001',
+                receiver: 'ABC Distribution Center',
+                carrier: 'Express Logistics',
+                status: 'pending_delivery',
+                created_at: new Date().toISOString(),
+                expected_items: [
+                    {name: 'Widget Set A', quantity: 50, weight: '125 lbs'},
+                    {name: 'Component Pack B', quantity: 25, weight: '75 lbs'}
+                ]
+            },
+            {
+                id: 'DEL-002',
+                po_number: 'PO-2025-002',
+                receiver: 'XYZ Manufacturing',
+                carrier: 'Prime Transport',
+                status: 'in_transit',
+                created_at: new Date(Date.now() - 3600000).toISOString(),
+                expected_items: [
+                    {name: 'Assembly Kit C', quantity: 10, weight: '200 lbs'}
+                ]
+            }
+        ];
+
+        completions = [
+            {
+                id: 'COMP-001',
+                delivery_id: 'DEL-003',
+                driver_info: {
+                    name: 'John Smith',
+                    license: 'DL123456',
+                    phone: '555-0123'
+                },
+                bol_number: 'BOL-' + (Date.now() - 7200000),
+                completed_at: new Date(Date.now() - 7200000).toISOString()
+            }
+        ];
+
+        updateStats();
+        displayDeliveries();
+    }
+
+    function updateStats() {
+        const pending = deliveries.filter(d => d.status === 'pending_delivery').length;
+        const transit = deliveries.filter(d => d.status === 'in_transit').length;
+        const completedToday = completions.filter(c => {
+            const completedDate = new Date(c.completed_at);
+            const today = new Date();
+            return completedDate.toDateString() === today.toDateString();
+        }).length;
+
+        document.getElementById('pendingCount').textContent = pending;
+        document.getElementById('transitCount').textContent = transit;
+        document.getElementById('completedCount').textContent = completedToday;
+        document.getElementById('bolCount').textContent = completions.length;
+    }
+
+    function displayDeliveries() {
+        const container = document.getElementById('deliveriesContainer');
+        
+        if (deliveries.length === 0) {
+            container.innerHTML = '<p style="text-align: center; color: var(--ql-sub);">No active deliveries found</p>';
+            return;
+        }
+
+        const deliveriesHTML = deliveries.map(delivery => {
+            const statusClass = `status-${delivery.status.replace('_', '-')}`;
+            const statusText = delivery.status.replace('_', ' ').toUpperCase();
+            const itemsText = delivery.expected_items.map(item => `${item.quantity} ${item.name}`).join(', ');
+
+            return `
+                <div class="delivery-item ${statusClass}">
+                    <div style="display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: start;">
+                        <div>
+                            <h4 style="margin: 0 0 10px 0; color: var(--ql-text);">${delivery.po_number} - ${delivery.receiver}</h4>
+                            <p style="margin: 5px 0; color: var(--ql-text);"><strong>Delivery ID:</strong> ${delivery.id}</p>
+                            <p style="margin: 5px 0; color: var(--ql-text);"><strong>Carrier:</strong> ${delivery.carrier}</p>
+                            <p style="margin: 5px 0; color: var(--ql-text);"><strong>Status:</strong> 
+                                <span style="background: ${getStatusColor(delivery.status)}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px;">
+                                    ${statusText}
+                                </span>
+                            </p>
+                            <p style="margin: 5px 0; color: var(--ql-text);"><strong>Items:</strong> ${itemsText}</p>
+                            <p style="margin: 5px 0; font-size: 12px; color: var(--ql-sub);">
+                                <strong>Created:</strong> ${new Date(delivery.created_at).toLocaleString()}
+                            </p>
+                        </div>
+                        <div style="text-align: right;">
+                            <button class="btn btn-info" onclick="viewDeliveryDetails('${delivery.id}')">📄 View Details</button>
+                            <button class="btn btn-primary" onclick="printDeliveryQR('${delivery.id}')">🖨️ Print QR</button>
+                            ${delivery.status === 'pending_delivery' ? 
+                                `<button class="btn btn-success" onclick="markInTransit('${delivery.id}')">🚛 Mark In Transit</button>` : 
+                                ''
+                            }
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Add completed deliveries
+        const completedHTML = completions.map(completion => {
+            const completion_delivery = {
+                po_number: `PO-${completion.delivery_id.split('-')[1]}`,
+                receiver: 'Completed Delivery'
+            };
+
+            return `
+                <div class="delivery-item status-completed">
+                    <div style="display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: start;">
+                        <div>
+                            <h4 style="margin: 0 0 10px 0; color: var(--ql-text);">✅ ${completion_delivery.po_number} - COMPLETED</h4>
+                            <p style="margin: 5px 0; color: var(--ql-text);"><strong>Delivery ID:</strong> ${completion.delivery_id}</p>
+                            <p style="margin: 5px 0; color: var(--ql-text);"><strong>Driver:</strong> ${completion.driver_info.name}</p>
+                            <p style="margin: 5px 0; color: var(--ql-text);"><strong>BOL Number:</strong> ${completion.bol_number}</p>
+                            <p style="margin: 5px 0; font-size: 12px; color: var(--ql-sub);">
+                                <strong>Completed:</strong> ${new Date(completion.completed_at).toLocaleString()}
+                            </p>
+                        </div>
+                        <div style="text-align: right;">
+                            <button class="btn btn-info" onclick="viewBOL('${completion.bol_number}')">📄 View BOL</button>
+                            <button class="btn btn-success" onclick="downloadBOL('${completion.bol_number}')">📥 Download</button>
+                            <button class="btn btn-warning" onclick="sendDocuments('${completion.delivery_id}', '${completion.bol_number}')">📧 Send Both</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        container.innerHTML = deliveriesHTML + completedHTML;
+    }
+
+    function getStatusColor(status) {
+        switch(status) {
+            case 'pending_delivery': return 'var(--ql-warning)';
+            case 'in_transit': return 'var(--ql-primary)';
+            case 'completed': return 'var(--ql-success)';
+            default: return 'var(--ql-sub)';
+        }
+    }
+
+    function viewDeliveryDetails(deliveryId) {
+        const delivery = deliveries.find(d => d.id === deliveryId);
+        if (delivery) {
+            const itemsDetails = delivery.expected_items.map(item => 
+                `• ${item.name} - Qty: ${item.quantity} (${item.weight})`
+            ).join('\n');
+
+            alert(`Delivery Details:\n\n` +
+                  `PO Number: ${delivery.po_number}\n` +
+                  `Receiver: ${delivery.receiver}\n` +
+                  `Carrier: ${delivery.carrier}\n` +
+                  `Status: ${delivery.status.replace('_', ' ').toUpperCase()}\n\n` +
+                  `Expected Items:\n${itemsDetails}\n\n` +
+                  `Created: ${new Date(delivery.created_at).toLocaleString()}`);
+        }
+    }
+
+    function printDeliveryQR(deliveryId) {
+        alert(`Printing delivery QR code for ${deliveryId}...\n\nThis would open the print dialog with the QR code label.`);
+    }
+
+    function markInTransit(deliveryId) {
+        const delivery = deliveries.find(d => d.id === deliveryId);
+        if (delivery) {
+            delivery.status = 'in_transit';
+            updateStats();
+            displayDeliveries();
+            alert(`${deliveryId} marked as In Transit`);
+        }
+    }
+
+    function viewBOL(bolNumber) {
+        alert(`Viewing BOL: ${bolNumber}\n\nThis would open the full BOL document with all delivery details, signatures, and item information.`);
+    }
+
+    function downloadBOL(bolNumber) {
+        alert(`Downloading BOL: ${bolNumber}\n\nThis would download the PDF BOL document to your computer.`);
+    }
+
+    function sendDocuments(deliveryId, bolNumber) {
+        const completion = completions.find(c => c.bol_number === bolNumber);
+        if (!completion) {
+            alert('Completion record not found');
+            return;
+        }
+
+        const recipientEmail = prompt('Enter recipient email address:', 'warehouse@company.com');
+        if (!recipientEmail) return;
+
+        alert(`📧 Sending Documents...\n\nSending BOL and Packing Slip to: ${recipientEmail}\n\n✅ BOL-${bolNumber}.pdf\n✅ PackingSlip-${deliveryId}.pdf\n\nDocuments sent successfully!`);
+    }
+
+    function refreshDeliveries() {
+        loadDeliveries();
+    }
+
+    function openQRScanner() {
+        if (window.QRCameraScanner) {
+            window.QRCameraScanner.openScanner();
+        } else {
+            alert('📱 QR Scanner\n\nScanning QR codes for delivery tracking...\n\nThis would open the camera scanner for delivery QR codes.');
+        }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadDeliveries();
+        
+        // Auto-refresh every 30 seconds
+        setInterval(loadDeliveries, 30000);
+
+        console.log('Delivery Management page loaded successfully');
+    });
+</script>
+</body>
+</html>

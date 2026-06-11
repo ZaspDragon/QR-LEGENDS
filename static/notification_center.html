@@ -1,0 +1,241 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification Center - QR Legends</title>
+    <style>
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            margin: 0
+            padding: 0
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            min-height: 100vh}
+        .container {max-width: 1200px
+            margin: 0 auto
+            padding: 20px}
+        .header {background: white
+            border-radius: 15px
+            padding: 20px
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2)
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center}
+        .notification-grid {display: grid
+            grid-template-columns: 1fr 1fr
+            gap: 20px}
+        .notification-section {background: white
+            border-radius: 15px
+            padding: 20px
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2)}
+        .notification-item {padding: 15px
+            border-left: 4px solid #667eea
+            margin-bottom: 10px
+            background: #f8f9fa
+            border-radius: 5px;
+            position: relative}
+        .notification-item.urgent {border-left-color: #dc3545
+            background: #fff5f5}
+        .notification-item.warning {border-left-color: #ffc107
+            background: #fffbf0}
+        .notification-item.success {border-left-color: #28a745
+            background: #f0fff4}
+        .notification-title {font-weight: 600
+            color: #333
+            margin-bottom: 5px}
+        .notification-message {color: #666
+            font-size: 0.9rem
+            margin-bottom: 5px}
+        .notification-time {color: #999
+            font-size: 0.8rem}
+        .mark-read {position: absolute
+            top: 10px
+            right: 10px
+            background: #28a745
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 2px 6px;
+            cursor: pointer;
+            font-size: 0.7rem}
+        .notification-controls {display: flex
+            gap: 10px
+            margin-bottom: 20px}
+        .btn {padding: 8px 16px
+            border: none
+            border-radius: 5px
+            cursor: pointer
+            font-weight: 600;
+            transition: all 0.3s}
+        .btn-primary {background: #667eea color: white}
+        .btn-success {background: #28a745 color: white}
+        .btn-warning {background: #ffc107 color: #333}
+        .btn-danger {background: #dc3545 color: white}
+        .btn: hover {opacity: 0.9 transform: translateY(-1px)}
+        .activity-log {max-height: 500px
+            overflow-y: auto}
+        .log-entry {padding: 10px
+            border-bottom: 1px solid #eee
+            font-size: 0.9rem}
+        .log-time {color: #999
+            font-size: 0.8rem}
+        .log-user {color: #667eea
+            font-weight: 600}
+        .log-action {color: #333}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>🔔 Notification Center</h1>
+                <p>Stay updated with real-time alerts and activity logs</p>
+            </div>
+            <div>
+                <button class="btn btn-primary" onclick="window.location.href='/main_dashboard'">← Back</button>
+                <button class="btn btn-success" onclick="markAllRead()">✓ Mark All Read</button>
+            </div>
+        </div>
+
+        <div class="notification-grid">
+            <div class="notification-section">
+                <h3>🚨 Active Alerts</h3>
+                <div class="notification-controls">
+                    <button class="btn btn-primary" onclick="loadNotifications('all')">All</button>
+                    <button class="btn btn-danger" onclick="loadNotifications('urgent')">Urgent</button>
+                    <button class="btn btn-warning" onclick="loadNotifications('warning')">Warnings</button>
+                    <button class="btn btn-success" onclick="loadNotifications('success')">Success</button>
+                </div>
+                <div id="notifications-list">
+                    <!-- Notifications will be loaded here -->
+                </div>
+            </div>
+
+            <div class="notification-section">
+                <h3>📋 Activity Log</h3>
+                <div class="notification-controls">
+                    <select id="log-filter" onchange="filterActivityLog()">
+                        <option value="all">All Activities</option>
+                        <option value="transfers">Transfers</option>
+                        <option value="inventory">Inventory</option>
+                        <option value="users">User Actions</option>
+                        <option value="system">System Events</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="exportActivityLog()">📊 Export</button>
+                </div>
+                <div id="activity-log" class="activity-log">
+                    <!-- Activity log will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let notifications = [];
+        let activityLog = [];
+
+        async function loadNotifications(filter = 'all') {
+            try {
+                const response = await fetch(`/api/notifications?filter=${filter}`);
+                if (response.ok) {const data = await response.json()
+                    notifications = data.notifications
+                    displayNotifications()}
+            } catch (error) {console.error('Error loading notifications:', error)}
+        }
+
+        async function loadActivityLog() {try {
+                const response = await fetch('/api/activity-log')
+                if (response.ok) {
+                    const data = await response.json()
+                    activityLog = data.activities
+                    displayActivityLog()}
+            } catch (error) {console.error('Error loading activity log:', error)}
+        }
+
+        function displayNotifications() {const container = document.getElementById('notifications-list')
+            
+            if (notifications.length === 0) {
+                container.innerHTML = '<p style="text-align: center color: #666">No notifications</p>'
+                return}
+
+            container.innerHTML = notifications.map(notification => `
+                <div class="notification-item ${notification.priority}" data-id="${notification.id}">
+                    <div class="notification-title">${notification.title}</div>
+                    <div class="notification-message">${notification.message}</div>
+                    <div class="notification-time">${new Date(notification.timestamp).toLocaleString()}</div>
+                    ${!notification.read ? '<button class="mark-read" onclick="markRead(\'' + notification.id + '\')">✓</button>' : ''}
+                </div>
+            `).join('');
+        }
+
+        function displayActivityLog() {const container = document.getElementById('activity-log')
+            
+            if (activityLog.length === 0) {
+                container.innerHTML = '<p style="text-align: center color: #666">No activity recorded</p>'
+                return}
+
+            container.innerHTML = activityLog.map(log => `
+                <div class="log-entry">
+                    <div class="log-time">${new Date(log.timestamp).toLocaleString()}</div>
+                    <div>
+                        <span class="log-user">${log.user_name}</span>
+                        <span class="log-action">${log.action}</span>
+                        ${log.details ? `<br><small style="color: #666">${log.details}</small>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function markRead(notificationId) {
+            try {
+                const response = await fetch(`/api/notifications/${notificationId}/mark-read`, {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {loadNotifications()}
+            } catch (error) {console.error('Error marking notification as read:', error)}
+        }
+
+        async function markAllRead() {
+            try {
+                const response = await fetch('/api/notifications/mark-all-read', {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {loadNotifications()}
+            } catch (error) {console.error('Error marking all notifications as read:', error)}
+        }
+
+        function filterActivityLog() {const filter = document.getElementById('log-filter').value
+            loadActivityLog(filter)}
+
+        function exportActivityLog() {// Create CSV content
+            const csvContent = "data:text/csvcharset=utf-8," + 
+                "Timestamp,User,Action,Details\n" +
+                activityLog.map(log => 
+                    `"${log.timestamp}","${log.user_name}","${log.action}","${log.details || ''}"`
+                ).join("\n");
+
+            // Download CSV
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `activity-log-${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {loadNotifications()
+            loadActivityLog()
+            
+            // Auto-refresh every 30 seconds
+            setInterval(() => {
+                loadNotifications()
+                loadActivityLog()}, 30000);
+        });
+    </script>
+</body>
+</html>

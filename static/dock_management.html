@@ -1,0 +1,379 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dock & Yard Management - QR Legends</title>
+    <link rel="icon" type="image/png" href="/static/qr_legends_logo.png">
+    <style>
+        * {margin: 0
+            padding: 0
+            box-sizing: border-box}
+
+        body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            min-height: 100vh
+            color: #1a1a1a}
+
+        .header {background: rgba(255, 255, 255, 0.95)
+            backdrop-filter: blur(10px)
+            padding: 16px 24px
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);}
+
+        .logo {display: flex
+            align-items: center
+            gap: 12px
+            font-size: 20px;
+            font-weight: 700;
+            color: #2563eb;
+            text-decoration: none}
+
+        .header-actions {display: flex
+            gap: 8px}
+
+        .header-btn {padding: 8px 16px
+            border: none
+            border-radius: 8px
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s ease}
+
+        .header-btn.primary {background: #2563eb
+            color: white}
+
+        .header-btn.secondary {background: rgba(0, 0, 0, 0.1)
+            color: #4b5563}
+
+        .main-content {padding: 32px 24px
+            max-width: 1400px
+            margin: 0 auto}
+
+        .page-header {text-align: center
+            margin-bottom: 40px}
+
+        .page-title {font-size: 36px
+            font-weight: 800
+            color: white
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);}
+
+        .page-subtitle {font-size: 16px
+            color: rgba(255, 255, 255, 0.8)}
+
+        .stats-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr))
+            gap: 24px
+            margin-bottom: 32px}
+
+        .stat-card {background: rgba(255, 255, 255, 0.95)
+            border-radius: 16px
+            padding: 24px
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center}
+
+        .stat-value {font-size: 32px
+            font-weight: 700
+            color: #2563eb
+            margin-bottom: 8px}
+
+        .stat-label {font-size: 14px
+            color: #6b7280
+            font-weight: 500}
+
+        .dock-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
+            gap: 24px
+            margin-bottom: 32px}
+
+        .dock-card {background: rgba(255, 255, 255, 0.95)
+            border-radius: 16px
+            padding: 24px
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);}
+
+        .dock-header {display: flex
+            justify-content: space-between
+            align-items: center
+            margin-bottom: 16px}
+
+        .dock-title {font-size: 18px
+            font-weight: 600
+            color: #1f2937}
+
+        .dock-status {padding: 4px 12px
+            border-radius: 20px
+            font-size: 12px
+            font-weight: 500}
+
+        .status-occupied {background: #fef2f2
+            color: #dc2626}
+
+        .status-available {background: #f0fdf4
+            color: #16a34a}
+
+        .status-scheduled {background: #fffbeb
+            color: #d97706}
+
+        .dock-info {display: grid
+            gap: 8px}
+
+        .info-row {display: flex
+            justify-content: space-between
+            font-size: 14px}
+
+        .info-label {color: #6b7280}
+
+        .info-value {font-weight: 500
+            color: #1f2937}
+
+        .schedule-table {background: rgba(255, 255, 255, 0.95)
+            border-radius: 16px
+            padding: 24px
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 32px}
+
+        .table-header {font-size: 20px
+            font-weight: 600
+            color: #1f2937
+            margin-bottom: 16px}
+
+        table {width: 100%
+            border-collapse: collapse}
+
+        th, td {padding: 12px
+            text-align: left
+            border-bottom: 1px solid #e5e7eb}
+
+        th {background: #f9fafb
+            font-weight: 600
+            color: #374151}
+
+        .priority-high {color: #dc2626
+            font-weight: 600}
+
+        .priority-medium {color: #d97706
+            font-weight: 600}
+
+        .priority-low {color: #16a34a
+            font-weight: 600}
+
+        .action-btn {padding: 6px 12px
+            border: none
+            border-radius: 6px
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            background: #2563eb;
+            color: white;
+            transition: all 0.2s ease}
+
+        .action-btn:hover {background: #1d4ed8}
+
+        @media (max-width: 768px) {.main-content {
+                padding: 24px 16px}
+
+            .stats-grid {grid-template-columns: repeat(2, 1fr)}
+
+            .dock-grid {grid-template-columns: 1fr}
+
+            table {font-size: 12px}
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/" class="logo">
+            🚛 Dock & Yard Management
+        </a>
+        <div class="header-actions">
+            <a href="/main_dashboard" class="header-btn secondary">🏠 Dashboard</a>
+            <a href="/inbound_hub" class="header-btn secondary">📥 Inbound</a>
+            <a href="/outbound_hub" class="header-btn primary">📤 Outbound</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Dock & Yard Management</h1>
+            <p class="page-subtitle">Real-time dock scheduling and yard coordination</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">78%</div>
+                <div class="stat-label">Dock Utilization</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">12</div>
+                <div class="stat-label">Active Docks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">8</div>
+                <div class="stat-label">Scheduled Arrivals</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">2.3h</div>
+                <div class="stat-label">Avg Dwell Time</div>
+            </div>
+        </div>
+
+        <div class="dock-grid">
+            <div class="dock-card">
+                <div class="dock-header">
+                    <div class="dock-title">Dock 1</div>
+                    <div class="dock-status status-occupied">Occupied</div>
+                </div>
+                <div class="dock-info">
+                    <div class="info-row">
+                        <span class="info-label">Trailer:</span>
+                        <span class="info-value">TRL-4021</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Driver:</span>
+                        <span class="info-value">Mike Johnson</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Start Time:</span>
+                        <span class="info-value">08:30 AM</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Estimated Complete:</span>
+                        <span class="info-value">11:45 AM</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dock-card">
+                <div class="dock-header">
+                    <div class="dock-title">Dock 2</div>
+                    <div class="dock-status status-available">Available</div>
+                </div>
+                <div class="dock-info">
+                    <div class="info-row">
+                        <span class="info-label">Next Scheduled:</span>
+                        <span class="info-value">12:00 PM</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Type:</span>
+                        <span class="info-value">Outbound</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dock-card">
+                <div class="dock-header">
+                    <div class="dock-title">Dock 3</div>
+                    <div class="dock-status status-scheduled">Scheduled</div>
+                </div>
+                <div class="dock-info">
+                    <div class="info-row">
+                        <span class="info-label">Incoming:</span>
+                        <span class="info-value">TRL-4055</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">ETA:</span>
+                        <span class="info-value">1:30 PM</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Type:</span>
+                        <span class="info-value">Inbound</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dock-card">
+                <div class="dock-header">
+                    <div class="dock-title">Dock 4</div>
+                    <div class="dock-status status-occupied">Occupied</div>
+                </div>
+                <div class="dock-info">
+                    <div class="info-row">
+                        <span class="info-label">Trailer:</span>
+                        <span class="info-value">TRL-4033</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Progress:</span>
+                        <span class="info-value">65% Complete</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Start Time:</span>
+                        <span class="info-value">10:15 AM</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="schedule-table">
+            <div class="table-header">📅 Today's Schedule</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Dock</th>
+                        <th>Trailer</th>
+                        <th>Type</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>12:00 PM</td>
+                        <td>Dock 2</td>
+                        <td>TRL-4044</td>
+                        <td>Outbound</td>
+                        <td class="priority-high">High</td>
+                        <td>Scheduled</td>
+                        <td><button class="action-btn">Check In</button></td>
+                    </tr>
+                    <tr>
+                        <td>1:30 PM</td>
+                        <td>Dock 3</td>
+                        <td>TRL-4055</td>
+                        <td>Inbound</td>
+                        <td class="priority-medium">Medium</td>
+                        <td>En Route</td>
+                        <td><button class="action-btn">Track</button></td>
+                    </tr>
+                    <tr>
+                        <td>3:00 PM</td>
+                        <td>Dock 1</td>
+                        <td>TRL-4061</td>
+                        <td>Inbound</td>
+                        <td class="priority-low">Low</td>
+                        <td>Scheduled</td>
+                        <td><button class="action-btn">Reschedule</button></td>
+                    </tr>
+                    <tr>
+                        <td>4:15 PM</td>
+                        <td>Dock 5</td>
+                        <td>TRL-4072</td>
+                        <td>Cross-Dock</td>
+                        <td class="priority-high">High</td>
+                        <td>Confirmed</td>
+                        <td><button class="action-btn">Prepare</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Real-time updates
+        setInterval(() => {console.log('Updating dock status...')
+            // In a real app, this would fetch live data}, 30000);
+
+        // Initialize dock management
+        document.addEventListener('DOMContentLoaded', function() {console.log('Dock & Yard Management system loaded')});
+    </script>
+</body>
+</html>

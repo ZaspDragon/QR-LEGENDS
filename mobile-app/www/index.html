@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>QR Legends</title>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4a90e2;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        #webview {
+            width: 100%;
+            height: 100vh;
+            border: none;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Loading QR Legends...</p>
+    </div>
+    
+    <iframe id="webview" src=""></iframe>
+    
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript">
+        document.addEventListener('deviceready', onDeviceReady, false);
+        
+        function onDeviceReady() {
+            console.log('Device is ready');
+            
+            // Your Replit app URL - update this with your deployment URL
+            const appUrl = 'https://your-repl-name.replit.app';
+            
+            const webview = document.getElementById('webview');
+            const loading = document.getElementById('loading');
+            
+            webview.src = appUrl;
+            
+            webview.onload = function() {
+                loading.style.display = 'none';
+                webview.style.display = 'block';
+            };
+            
+            // Handle camera permissions for QR scanning
+            if (window.plugins && window.plugins.permissions) {
+                const permissions = window.plugins.permissions;
+                permissions.requestPermission(permissions.CAMERA, success, error);
+                
+                function success(status) {
+                    console.log('Camera permission granted');
+                }
+                
+                function error() {
+                    console.log('Camera permission denied');
+                }
+            }
+        }
+        
+        // Enhanced camera access for QR scanning
+        function openNativeCamera() {
+            if (navigator.camera) {
+                const options = {
+                    quality: 75,
+                    destinationType: Camera.DestinationType.DATA_URL,
+                    sourceType: Camera.PictureSourceType.CAMERA,
+                    encodingType: Camera.EncodingType.JPEG,
+                    targetWidth: 300,
+                    targetHeight: 300
+                };
+                
+                navigator.camera.getPicture(onCameraSuccess, onCameraError, options);
+            }
+        }
+        
+        function onCameraSuccess(imageData) {
+            // Process QR code from camera image
+            // You can integrate a QR code library here
+            console.log('Camera image captured');
+        }
+        
+        function onCameraError(message) {
+            console.log('Camera error: ' + message);
+        }
+        
+        // Make camera function available globally
+        window.openNativeCamera = openNativeCamera;
+    </script>
+</body>
+</html>

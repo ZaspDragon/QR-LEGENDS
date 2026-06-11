@@ -1,0 +1,300 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Test - QR LEGENDS</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <script src="qr_camera_scanner.js"></script>
+    <style>
+        body {font-family: Arial, sans-serif
+            max-width: 800px
+            margin: 0 auto
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh}
+        .container {background: white
+            padding: 30px
+            border-radius: 15px
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);}
+        .test-section {margin: 20px 0
+            padding: 15px
+            border: 1px solid #ddd
+            border-radius: 8px;
+            background: #f9f9f9}
+        .btn {padding: 10px 20px
+            margin: 5px
+            border: none
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px}
+        .btn-primary {background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%) color: white box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3)}
+        .btn-success {background: #28a745 color: white}
+        .btn-warning {background: #ffc107 color: black}
+        .btn-danger {background: #dc3545 color: white}
+        .status {margin: 10px 0
+            padding: 10px
+            border-radius: 5px}
+        .status.success {background: #d4edda color: #155724}
+        .status.error {background: #f8d7da color: #721c24}
+        .status.info {background: #d1ecf1 color: #0c5460}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📷 Camera Function Test Suite</h1>
+        <p>Use this page to test camera functionality across the QR Legends system.</p>
+
+        <div class="test-section">
+            <h3>🔍 Basic Camera Test</h3>
+            <p>Test if camera initializes and can scan QR codes</p>
+            <button class="btn btn-primary" onclick="testBasicCamera()">🟠 Start Basic Test</button>
+            <div id="basicTestResult" class="status" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📱 Device Compatibility</h3>
+            <p>Check device and browser compatibility</p>
+            <button class="btn btn-success" onclick="checkCompatibility()">Check Compatibility</button>
+            <div id="compatibilityResult" class="status" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📷 Camera Permissions</h3>
+            <p>Test camera permission handling</p>
+            <button class="btn btn-warning" onclick="testPermissions()">Test Permissions</button>
+            <div id="permissionResult" class="status" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔄 Scanner Classes</h3>
+            <p>Verify QR scanner classes are loaded</p>
+            <button class="btn btn-primary" onclick="checkClasses()">Check Classes</button>
+            <div id="classResult" class="status" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📝 Manual Entry Fallback</h3>
+            <p>Test manual QR entry when camera fails</p>
+            <button class="btn btn-danger" onclick="testManualEntry()">Test Manual Entry</button>
+        </div>
+
+        <div class="test-section">
+            <h3>🏠 Navigation</h3>
+            <button class="btn btn-primary" onclick="window.location.href='/main_dashboard'">Back to Dashboard</button>
+        </div>
+    </div>
+
+    <script>
+        let stream = null;
+        let scanning = false;
+
+        async function startCamera() {
+            try {
+                const constraints = {
+                    video: {
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        facingMode: 'environment'
+                    }
+                };
+
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+                const video = document.getElementById('cameraPreview');
+                video.srcObject = stream;
+                
+                document.getElementById('startBtn').style.display = 'none';
+                document.getElementById('stopBtn').style.display = 'inline-block';
+                
+                showResult('Camera started successfully!', 'success');
+            } catch (error) {showResult('Camera error: ' + error.message, 'error')}
+        }
+
+        function stopCamera() {if (stream) {
+                stream.getTracks().forEach(track => track.stop())
+                stream = null
+                
+                const video = document.getElementById('cameraPreview')
+                video.srcObject = null;
+                
+                document.getElementById('startBtn').style.display = 'inline-block';
+                document.getElementById('stopBtn').style.display = 'none';
+                
+                showResult('Camera stopped', 'info');}
+        }
+
+        function showResult(message, type) {const resultDiv = document.getElementById('result')
+            resultDiv.textContent = message
+            resultDiv.className = 'result ' + type
+            resultDiv.style.display = 'block';}
+
+        function checkCameraPermissions() {
+            navigator.permissions.query({ name: 'camera' }).then(function(result) {showResult('Camera permission: ' + result.state, 'info')});
+        }
+
+        // Initialize camera permissions check
+        document.addEventListener('DOMContentLoaded', function() {checkCameraPermissions()});
+    </script>
+</body>
+</html>
+        </div>
+    </div>
+
+    <script>
+        function showResult(elementId, message, type) {const element = document.getElementById(elementId)
+            element.innerHTML = message
+            element.className = 'status ' + type
+            element.style.display = 'block';}
+
+        function testBasicCamera() {showResult('basicTestResult', '🔄 Initializing camera...', 'info')
+            
+            if (typeof QRCameraScanner !== 'undefined') {
+                const scanner = new QRCameraScanner()
+                scanner.initCamera(function(qrData) {
+                    showResult('basicTestResult', `✅ Camera test successful! Scanned: ${qrData}`, 'success');
+                }).catch(error => {
+                    showResult('basicTestResult', `❌ Camera test failed: ${error.message}`, 'error');
+                });
+            } else {showResult('basicTestResult', '❌ QRCameraScanner class not found', 'error')}
+        }
+
+        async function checkCompatibility() {let results = []
+            
+            // Check if device is mobile
+            const isMobile = QRCameraScanner.isMobileDevice()
+            results.push(`📱 Mobile Device: ${isMobile ? 'Yes' : 'No'}`);
+            
+            // Check camera support
+            const hasCamera = await QRCameraScanner.hasCameraSupport();
+            results.push(`📷 Camera Support: ${hasCamera ? 'Yes' : 'No'}`);
+            
+            // Check navigator.mediaDevices
+            const hasMediaDevices = !!navigator.mediaDevices;
+            results.push(`🔧 MediaDevices API: ${hasMediaDevices ? 'Yes' : 'No'}`);
+            
+            // Check getUserMedia
+            const hasGetUserMedia = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+            results.push(`🎥 getUserMedia: ${hasGetUserMedia ? 'Yes' : 'No'}`);
+            
+            // Check jsQR library
+            const hasJsQR = typeof jsQR !== 'undefined';
+            results.push(`📖 jsQR Library: ${hasJsQR ? 'Yes' : 'No'}`);
+            
+            const status = hasCamera && hasMediaDevices && hasGetUserMedia ? 'success' : 'warning';
+            showResult('compatibilityResult', results.join('<br>'), status);
+        }
+
+        async function testPermissions() {showResult('permissionResult', '🔄 Testing camera permissions...', 'info')
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment'}
+                });
+                
+                // Stop the stream immediately
+                stream.getTracks().forEach(track => track.stop());
+                
+                showResult('permissionResult', '✅ Camera permissions granted successfully', 'success');
+            } catch (error) {let message = '❌ Permission test failed: '
+                if (error.name === 'NotAllowedError') {
+                    message += 'Permission denied by user'} else if (error.name === 'NotFoundError') {message += 'No camera found'} else if (error.name === 'NotSupportedError') {message += 'Camera not supported'} else {message += error.message}
+                showResult('permissionResult', message, 'error');
+            }
+        }
+
+        function checkClasses() {let results = []
+            
+            // Check QRCameraScanner
+            const hasQRCameraScanner = typeof QRCameraScanner !== 'undefined'
+            results.push(`🔍 QRCameraScanner: ${hasQRCameraScanner ? 'Loaded ✅' : 'Not Found ❌'}`);
+            
+            // Check other global objects
+            const hasUniversalDashboard = typeof window.universalDashboard !== 'undefined';
+            results.push(`🏠 Universal Dashboard: ${hasUniversalDashboard ? 'Loaded ✅' : 'Not Found ❌'}`);
+            
+            const hasEmployeeMessaging = typeof EmployeeMessagingWidget !== 'undefined';
+            results.push(`💬 Employee Messaging: ${hasEmployeeMessaging ? 'Loaded ✅' : 'Not Found ❌'}`);
+            
+            showResult('classResult', results.join('<br>'), 'info');
+        }' : 'Missing'}`);
+            
+            // Check global functions
+            const hasStartQRCamera = typeof startQRCamera === 'function';
+            results.push(`📷 startQRCamera: ${hasStartQRCamera ? 'Available' : 'Missing'}`);
+            
+            const hasHandleQRScanSuccess = typeof handleQRScanSuccess === 'function';
+            results.push(`✅ handleQRScanSuccess: ${hasHandleQRScanSuccess ? 'Available' : 'Missing'}`);
+            
+            const hasStartManualQREntry = typeof startManualQREntry === 'function';
+            results.push(`📝 startManualQREntry: ${hasStartManualQREntry ? 'Available' : 'Missing'}`);
+            
+            const status = hasQRCameraScanner && hasStartQRCamera ? 'success' : 'error';
+            showResult('classResult', results.join('<br>'), status);
+        }
+
+        async function checkCompatibility() {let results = []
+            
+            // Check if device is mobile
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+            results.push(`📱 Mobile Device: ${isMobile ? 'Yes' : 'No'}`);
+            
+            // Check camera support
+            const hasMediaDevices = navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
+            results.push(`📷 Camera Support: ${hasMediaDevices ? 'Yes' : 'No'}`);
+            
+            // Check navigator.mediaDevices
+            results.push(`🔧 MediaDevices API: ${navigator.mediaDevices ? 'Available' : 'Missing'}`);
+            
+            const status = hasMediaDevices ? 'success' : 'error';
+            showResult('compatibilityResult', results.join('<br>'), status);
+        }
+
+        async function testPermissions() {showResult('permissionResult', '🔄 Testing camera permissions...', 'info')
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment'}
+                });
+                
+                // Stop the stream immediately
+                stream.getTracks().forEach(track => track.stop());
+                
+                showResult('permissionResult', '✅ Camera permissions granted successfully', 'success');
+            } catch (error) {let message = '❌ Permission test failed: '
+                if (error.name === 'NotAllowedError') {
+                    message += 'Permission denied by user'} else if (error.name === 'NotFoundError') {message += 'No camera found'} else if (error.name === 'NotSupportedError') {message += 'Camera not supported'} else {message += error.message}
+                showResult('permissionResult', message, 'error');
+            }
+        }
+    </script>
+    
+    <script src="/static/qr_camera_scanner.js"></script>
+    <script src="/static/copyright_notice.js"></script>
+</body>
+</html>' : 'Missing'}`);
+            
+            // Check global functions
+            const hasStartQRCamera = typeof startQRCamera === 'function';
+            results.push(`📷 startQRCamera: ${hasStartQRCamera ? 'Available' : 'Missing'}`);
+            
+            const hasHandleQRScanSuccess = typeof handleQRScanSuccess === 'function';
+            results.push(`✅ handleQRScanSuccess: ${hasHandleQRScanSuccess ? 'Available' : 'Missing'}`);
+            
+            const hasStartManualQREntry = typeof startManualQREntry === 'function';
+            results.push(`📝 startManualQREntry: ${hasStartManualQREntry ? 'Available' : 'Missing'}`);
+            
+            const status = hasQRCameraScanner && hasStartQRCamera ? 'success' : 'error';
+            showResult('classResult', results.join('<br>'), status);
+        }
+
+        function testManualEntry() {if (typeof startManualQREntry === 'function') {
+                startManualQREntry()} else {alert('Manual entry function not available')}
+        }
+
+        // Auto-run compatibility check on load
+        document.addEventListener('DOMContentLoaded', function() {setTimeout(checkCompatibility, 1000)
+            setTimeout(checkClasses, 1500)});
+    </script>
+</body>
+</html>

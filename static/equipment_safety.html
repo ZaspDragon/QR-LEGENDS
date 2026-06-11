@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipment Safety Guide - QR Legends</title>
+    <style>
+        body {font-family: Arial, sans-serif 
+            margin: 20px 
+            background-color: #f5f5f5 
+            padding-top: 70px;
+            padding-bottom: 120px}
+        .container {max-width: 1200px margin: 0 auto}
+        .card {background: white padding: 20px margin: 10px 0 border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+        .grid {display: grid grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) gap: 20px}
+        .btn {padding: 10px 20px margin: 5px border: none border-radius: 5px; cursor: pointer}
+        .btn-primary {background: #007bff color: white}
+        .btn-success {background: #28a745 color: white}
+        .btn-warning {background: #ffc107 color: black}
+        .btn-danger {background: #dc3545 color: white}
+        .form-group {margin: 15px 0}
+        .form-group label {display: block margin-bottom: 5px font-weight: bold}
+        .form-group input, .form-group select, .form-group textarea {width: 100% padding: 8px border: 1px solid #ddd border-radius: 4px}
+        .safety-checklist {background: #f8f9fa padding: 15px border-radius: 5px margin: 10px 0}
+        .checklist-item {margin: 10px 0 display: flex align-items: center}
+        .checklist-item input[type="checkbox"] {margin-right: 10px}
+        .equipment-card {border: 1px solid #ddd padding: 15px margin: 10px 0 border-radius: 5px}
+        .equipment-card.active {background: #d4edda border-color: #28a745}
+        .qr-display {text-align: center padding: 20px background: #f8f9fa border-radius: 8px; margin: 20px 0}
+
+        /* Page Header */
+        .page-header {background: linear-gradient(135deg, #dc3545 0%, #c82333 100%)
+            color: white
+            padding: 20px
+            margin: -20px -20px 20px -20px;
+            border-radius: 10px 10px 0 0;
+            text-align: center}
+
+        .page-header h1 {margin: 0
+            font-size: 1.8rem
+            font-weight: 600}
+
+        .page-header p {margin: 10px 0 0 0
+            opacity: 0.9
+            font-size: 14px}
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {body { padding-top: 60px padding-bottom: 110px}
+            .card {padding: 12px margin: 8px 0}
+            .page-header {margin: -15px -15px 15px -15px padding: 15px}
+        }
+
+        @media (max-width: 480px) {body { padding-top: 50px padding-bottom: 100px}
+            .card {padding: 10px margin: 5px 0}
+            .page-header {margin: -10px -10px 10px -10px padding: 12px}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>⚠️ Equipment Safety Guide</h1>
+            <p>Generate QR codes for equipment → Operators scan to check-in → Complete OSHA checklist daily</p>
+        </div>
+
+        <div class="grid">
+            <!-- Generate Equipment QR Code -->
+            <div class="card" style="border: 2px solid #dc3545;">
+                <h3 style="color: #dc3545;">🏷️ Generate Equipment QR Code</h3>
+
+                <div class="form-group">
+                    <label>Equipment Type *</label>
+                    <select id="equipmentType" required>
+                        <option value="">Select Equipment Type</option>
+                        <option value="forklift">Forklift</option>
+                        <option value="pallet_jack">Pallet Jack</option>
+                        <option value="reach_truck">Reach Truck</option>
+                        <option value="order_picker">Order Picker</option>
+                        <option value="scissor_lift">Scissor Lift</option>
+                        <option value="boom_lift">Boom Lift</option>
+                        <option value="conveyor">Conveyor System</option>
+                        <option value="crane">Crane</option>
+                        <option value="other">Other Equipment</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Equipment Model</label>
+                    <input type="text" id="equipmentModel" placeholder="Make and model">
+                </div>
+
+                <div class="form-group">
+                    <label>Serial Number</label>
+                    <input type="text" id="serialNumber" placeholder="Equipment serial number">
+                </div>
+
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" id="equipmentLocation" placeholder="Where is this equipment located?">
+                </div>
+
+                <button class="btn btn-danger" onclick="generateEquipmentQR()">🔗 Generate Safety QR Code</button>
+
+                <div id="equipmentQRResult" style="margin-top: 15px;"></div>
+            </div>
+
+            <!-- Equipment Check-In Scanner -->
+            <div class="card" style="border: 2px solid #28a745;">
+                <h3 style="color: #28a745;">📱 Equipment Check-In Scanner</h3>
+
+                <div class="form-group">
+                    <label>Scan Equipment QR Code</label>
+                    <input type="text" id="equipmentQRScan" placeholder="Scan equipment QR code" autofocus>
+                </div>
+
+                <div style="margin: 15px 0;">
+                    <button class="btn btn-primary" onclick="processEquipmentScan()">Process Scan</button>
+                    <button class="btn btn-success" onclick="openEquipmentCamera()">📷 Open Camera</button>
+                </div>
+
+                <div id="equipmentScanResult" style="margin-top: 15px;"></div>
+            </div>
+
+            <!-- OSHA Daily Checklist -->
+            <div class="card" style="border: 2px solid #ffc107;">
+                <h3 style="color: #e0a800;">📋 OSHA Daily Safety Checklist</h3>
+                <div id="oshaChecklistContainer" style="display: none;">
+
+                    <div class="form-group">
+                        <label>Operator Name</label>
+                        <input type="text" id="operatorName" placeholder="Your full name">
+                    </div>
+
+                    <div class="safety-checklist">
+                        <h4>Pre-Operation Safety Check</h4>
+
+                        <!-- Basic Equipment Inspection -->
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_visual_inspection">
+                            <label for="check_visual_inspection">Visual inspection completed (damage, leaks, loose parts)</label>
+                        </div>
+
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_controls">
+                            <label for="check_controls">All controls tested and functioning properly</label>
+                        </div>
+
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_safety_devices">
+                            <label for="check_safety_devices">Safety devices and alarms tested</label>
+                        </div>
+
+                        <!-- Fluid and Battery Checks -->
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_fluids">
+                            <label for="check_fluids">Fluid levels checked (oil, hydraulic, coolant)</label>
+                        </div>
+
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_battery">
+                            <label for="check_battery">Battery condition and charge level verified</label>
+                        </div>
+
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_fuel">
+                            <label for="check_fuel">Fuel level adequate for shift operations</label>
+                        </div>
+
+                        <!-- Tires and Wheels -->
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_tires">
+                            <label for="check_tires">Tires/wheels inspected for damage and proper pressure</label>
+                        </div>
+
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_wheel_nuts">
+                            <label for="check_wheel_nuts">Wheel nuts and bolts properly tightened</label>
+                        </div>
+
+                        <!-- Forks and Attachments -->
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_forks">
+                            <label for="check_forks">Forks inspected for cracks, bends, or wear</label>
+                        </div>
+
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_attachments">
+                            <label for="check_attachments">All attachments properly secured and functional</label>
+                        </div>
+
+                        <!-- Hydraulic System -->
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_hydraulic_system">
+                            <label for="check_hydraulic_system">Hydraulic system operates smoothly without jerking</label>
+                        </div>
+
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_hydraulic_leaks">
+                            <label for="check_hydraulic_leaks">No visible hydraulic leaks detected</label>
+                        </div>
+
+                        <!-- Brakes and Steering -->
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_brakes">
+                            <label for="check_brakes">Service and parking brakes tested and functional</label>
+                        </div>
+
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_steering">
+                            <label for="check_steering">Steering operates smoothly without excessive play</label>
+                        </div>
+
+                        <!-- Lights and Signals -->
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_lights">
+                            <label for="check_lights">All lights functional (headlights, taillights, warning)</label>
+                        </div>
+
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_backup_alarm">
+                            <label for="check_backup_alarm">Backup alarm and warning signals working</label>
+                        </div>
+
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_horn">
+                            <label for="check_horn">Horn operates at proper volume</label>
+                        </div>
+
+                        <!-- Load Handling -->
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_load_capacity">
+                            <label for="check_load_capacity">Load capacity plate visible and understood</label>
+                        </div>
+
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_load_center">
+                            <label for="check_load_center">Load center specifications verified</label>
+                        </div>
+
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_overhead_guard">
+                            <label for="check_overhead_guard">Overhead guard in good condition</label>
+                        </div>
+
+                        <!-- Safety Equipment -->
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_seatbelt">
+                            <label for="check_seatbelt">Seatbelt present and functional</label>
+                        </div>
+
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_fire_extinguisher">
+                            <label for="check_fire_extinguisher">Fire extinguisher mounted and charged</label>
+                        </div>
+
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_first_aid">
+                            <label for="check_first_aid">First aid kit accessible and stocked</label>
+                        </div>
+
+                        <!-- Personal Protective Equipment -->
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_ppe">
+                            <label for="check_ppe">Required PPE worn (hard hat, safety vest, steel toes)</label>
+                        </div>
+
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_safety_glasses">
+                            <label for="check_safety_glasses">Safety glasses/goggles worn if required</label>
+                        </div>
+
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_hearing_protection">
+                            <label for="check_hearing_protection">Hearing protection available if needed</label>
+                        </div>
+
+                        <!-- Operator Requirements -->
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_certification">
+                            <label for="check_certification">Valid certification for this equipment type</label>
+                        </div>
+
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_training_current">
+                            <label for="check_training_current">Safety training current and up to date</label>
+                        </div>
+
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_medical_clearance">
+                            <label for="check_medical_clearance">Medical clearance current if required</label>
+                        </div>
+
+                        <!-- Environmental Conditions -->
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_work_area">
+                            <label for="check_work_area">Work area clear of obstructions and hazards</label>
+                        </div>
+
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_surface_conditions">
+                            <label for="check_surface_conditions">Floor/surface conditions safe for operation</label>
+                        </div>
+
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_overhead_clearance">
+                            <label for="check_overhead_clearance">Adequate overhead clearance verified</label>
+                        </div>
+
+                        <!-- Emergency Procedures -->
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_emergency_stops">
+                            <label for="check_emergency_stops">Emergency stop locations known</label>
+                        </div>
+
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_spill_kit">
+                            <label for="check_spill_kit">Spill response kit location known</label>
+                        </div>
+
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check_emergency_contacts">
+                            <label for="check_emergency_contacts">Emergency contact numbers available</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Additional Notes</label>
+                        <textarea id="safetyNotes" placeholder="Any safety concerns or observations" rows="3"></textarea>
+                    </div>
+
+                    <button class="btn btn-success" onclick="submitSafetyChecklist()">✅ Complete Check-In</button>
+                </div>
+
+                <div id="checklistResult" style="margin-top: 15px;"></div>
+            </div>
+
+            <!-- Active Equipment Usage -->
+            <div class="card">
+                <h3>🚨 Active Equipment Usage</h3>
+                <button class="btn btn-primary" onclick="loadActiveEquipment()">🔄 Refresh Status</button>
+
+                <div id="activeEquipmentList" style="margin-top: 15px;">
+                    <p style="color: #666; text-align: center;">Click refresh to load active equipment usage</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Equipment Safety Stats -->
+        <div class="card">
+            <h3>📊 Equipment Safety Statistics</h3>
+            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
+                <div style="text-align: center; background: #d4edda; padding: 15px; border-radius: 8px;">
+                    <div style="font-size: 24px; font-weight: bold;" id="totalEquipment">0</div>
+                    <div style="font-size: 12px;">🏷️ Total Equipment</div>
+                </div>
+                <div style="text-align: center; background: #fff3cd; padding: 15px; border-radius: 8px;">
+                    <div style="font-size: 24px; font-weight: bold;" id="activeOperators">0</div>
+                    <div style="font-size: 12px;">👷 Active Operators</div>
+                </div>
+                <div style="text-align: center; background: #e3f2fd; padding: 15px; border-radius: 8px;">
+                    <div style="font-size: 24px; font-weight: bold;" id="todayCheckIns">0</div>
+                    <div style="font-size: 12px;">📋 Today's Check-ins</div>
+                </div>
+                <div style="text-align: center; background: #f8d7da; padding: 15px; border-radius: 8px;">
+                    <div style="font-size: 24px; font-weight: bold;" id="safetyScore">100%</div>
+                    <div style="font-size: 12px;">⚠️ Safety Score</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Placeholder buttons for functionality -->
+    <div style="text-align: center; margin-top: 30px;">
+        <button class="btn btn-primary" onclick="viewEmergencyProtocols()">View Emergency Protocols</button>
+        <button class="btn btn-success" onclick="viewEquipmentGuidelines()">Equipment Guidelines</button>
+        <button class="btn btn-warning" onclick="viewTrainingRecords()">Training Records</button>
+        <button class="btn btn-danger" onclick="reportIncident()">Report Incident</button>
+    </div>
+
+    <script>
+        let currentEquipmentId = null;
+        let equipmentSafetyData = [];
+
+        // Equipment QR Code Generation
+        async function generateEquipmentQR() {const equipmentType = document.getElementById('equipmentType').value
+            const equipmentModel = document.getElementById('equipmentModel').value
+            const serialNumber = document.getElementById('serialNumber').value
+            const location = document.getElementById('equipmentLocation').value;
+
+            if (!equipmentType) {
+                alert('Please select equipment type');
+                return}
+
+            try {
+                const response = await fetch('/api/equipment/generate-qr', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        equipment_type: equipmentType,
+                        equipment_model: equipmentModel,
+                        serial_number: serialNumber,
+                        location: location,
+                        safety_requirements: getSelectedSafetyRequirements()
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('equipmentQRResult').innerHTML = `
+                        <div class="qr-display">
+                            <h4>✅ Equipment Safety QR Code Generated</h4>
+                            <img src="${result.qr_image}" style="max-width: 250px">
+                            <p><strong>Equipment:</strong> ${equipmentType} - ${equipmentModel || 'N/A'}</p>
+                            <p><strong>Serial:</strong> ${serialNumber || 'N/A'}</p>
+                            <p><strong>Location:</strong> ${location || 'N/A'}</p>
+                            <button class="btn btn-success" onclick="printEquipmentLabel('${result.equipment_id}', '${result.qr_image}', '${equipmentType}', '${serialNumber}')">🖨️ Print Safety Label</button>
+                        </div>
+                    `;
+
+                    // Clear form
+                    document.getElementById('equipmentType').value = '';
+                    document.getElementById('equipmentModel').value = '';
+                    document.getElementById('serialNumber').value = '';
+                    document.getElementById('equipmentLocation').value = '';
+
+                } else {alert('Error generating QR code: ' + result.message)}
+            } catch (error) {alert('Error: ' + error.message)}
+        }
+
+        function getSelectedSafetyRequirements() {return ['OSHA Certified Operator', 'Pre-Operation Inspection', 'PPE Required']}
+
+        function printEquipmentLabel(equipmentId, qrImage, equipmentType, serialNumber) {const printWindow = window.open('', '_blank')
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Equipment Safety Label - ${equipmentType}</title>
+                    <style>
+                        body {font-family: Arial, sans-serif margin: 20px text-align: center}
+                        .label {border: 3px solid #dc3545 padding: 20px margin: 20px display: inline-block}
+                        .warning {background: #dc3545 color: white padding: 10px margin: 10px 0; font-weight: bold}
+                        .qr-code {margin: 15px 0}
+                        .equipment-info {text-align: left margin: 10px 0}
+                    </style>
+                </head>
+                <body>
+                    <div class="label">
+                        <div class="warning">⚠️ EQUIPMENT SAFETY - SCAN BEFORE USE ⚠️</div>
+                        <h2>${equipmentType.toUpperCase()}</h2>
+                        <div class="qr-code">
+                            <img src="${qrImage}" style="width: 200px; height: 200px;">
+                        </div>
+                        <div class="equipment-info">
+                            <strong>Serial Number:</strong> ${serialNumber || 'N/A'}<br>
+                            <strong>Equipment ID:</strong> ${equipmentId}<br>
+                            <strong>Generated:</strong> ${new Date().toLocaleString()}
+                        </div>
+                        <div style="font-size: 12px; margin-top: 15px;">
+                            <strong>SCAN QR CODE TO:</strong><br>
+                            • Record operator check-in<br>
+                            • Complete OSHA daily checklist<br>
+                            • Verify safety certification
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // Equipment Scanning
+        async function openEquipmentCamera() {try {
+                if (typeof QRCameraScanner !== 'undefined') {
+                    const scanner = new QRCameraScanner()
+                    await scanner.initCamera(function(qrData) {
+                        document.getElementById('equipmentQRScan').value = qrData
+                        processEquipmentScan()});
+                } else {const qrCode = prompt('Camera scanner not available. Please enter QR code manually: ')
+                    if (qrCode && qrCode.trim()) {
+                        document.getElementById('equipmentQRScan').value = qrCode.trim()
+                        processEquipmentScan()}
+                }
+            } catch (error) {alert('Camera access failed. Please allow camera permission and try again.')}
+        }
+
+        function processEquipmentScan() {const qrData = document.getElementById('equipmentQRScan').value.trim()
+            const resultDiv = document.getElementById('equipmentScanResult')
+
+            if (!qrData) {
+                resultDiv.innerHTML = `
+                    <div style="background: #fff3cd padding: 10px border-radius: 5px">
+                        ⚠️ Please scan or enter equipment QR code
+                    </div>
+                `;
+                return}
+
+            if (qrData.startsWith('EQUIPMENT:')) {const parts = qrData.split(':')
+                currentEquipmentId = parts[1]
+                const equipmentType = parts[3]
+
+                resultDiv.innerHTML = `
+                    <div style="background: #d4edda padding: 10px border-radius: 5px">
+                        ✅ Equipment Scanned: ${equipmentType}
+                        <br><em>Please complete the OSHA checklist below</em>
+                    </div>
+                `;
+
+                // Show OSHA checklist
+                document.getElementById('oshaChecklistContainer').style.display = 'block';
+                document.getElementById('equipmentQRScan').value = '';
+
+            } else {resultDiv.innerHTML = `
+                    <div style="background: #f8d7da padding: 10px border-radius: 5px">
+                        ❌ Invalid equipment QR code. Please scan a valid equipment safety QR code.
+                    </div>
+                `}
+        }
+
+        // OSHA Checklist Submission
+        async function submitSafetyChecklist() {const operatorName = document.getElementById('operatorName').value.trim()
+
+            if (!operatorName) {
+                alert('Please enter operator name')
+                return}
+
+            if (!currentEquipmentId) {alert('Please scan equipment QR code first')
+                return}
+
+            // Collect checklist data
+            const checklistItems = [
+                'check_visual_inspection', 'check_controls', 'check_safety_devices',
+                'check_fluids', 'check_battery', 'check_fuel', 'check_tires', 
+                'check_wheel_nuts', 'check_forks', 'check_attachments',
+                'check_hydraulic_system', 'check_hydraulic_leaks', 'check_brakes',
+                'check_steering', 'check_lights', 'check_backup_alarm', 'check_horn',
+                'check_load_capacity', 'check_load_center', 'check_overhead_guard',
+                'check_seatbelt', 'check_fire_extinguisher', 'check_first_aid',
+                'check_ppe', 'check_safety_glasses', 'check_hearing_protection',
+                'check_certification', 'check_training_current', 'check_medical_clearance',
+                'check_work_area', 'check_surface_conditions', 'check_overhead_clearance',
+                'check_emergency_stops', 'check_spill_kit', 'check_emergency_contacts'
+            ];
+
+            const oshaChecklist = {};
+            let completedItems = 0;
+
+            checklistItems.forEach(item => {const isChecked = document.getElementById(item).checked
+                oshaChecklist[item] = isChecked
+                if (isChecked) completedItems++});
+
+            const completionRate = (completedItems / checklistItems.length) * 100;
+
+            if (completionRate < 100) {
+                if (!confirm(`OSHA checklist is only ${completionRate.toFixed(1)}% complete. Continue with check-in?`)) {return}
+            }
+
+            try {
+                const response = await fetch('/api/equipment/check-in', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        equipment_id: currentEquipmentId,
+                        operator_name: operatorName,
+                        osha_checklist: oshaChecklist,
+                        safety_certification: document.getElementById('check_certification').checked,
+                        notes: document.getElementById('safetyNotes').value
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {document.getElementById('checklistResult').innerHTML = `
+                        <div style="background: #d4edda padding: 15px border-radius: 5px">
+                            ✅ <strong>Safety Check-In Complete!</strong><br>
+                            <strong>Operator:</strong> ${operatorName}<br>
+                            <strong>Checklist Completion:</strong> ${completionRate.toFixed(1)}%<br>
+                            <strong>Check-in ID:</strong> ${result.check_in_id}<br>
+                            <strong>Time:</strong> ${new Date().toLocaleString()}<br>
+                            <em>You are now authorized to operate this equipment</em>
+                        </div>
+                    `;
+
+                    // Clear form
+                    document.getElementById('operatorName').value = '';
+                    document.getElementById('safetyNotes').value = '';
+                    checklistItems.forEach(item => {document.getElementById(item).checked = false});
+                    document.getElementById('oshaChecklistContainer').style.display = 'none';
+                    currentEquipmentId = null;
+
+                    loadActiveEquipment();
+                } else {alert('Error: ' + result.error)}
+            } catch (error) {alert('Error submitting checklist: ' + error.message)}
+        }
+
+        // Load Active Equipment
+        async function loadActiveEquipment() {try {
+                const response = await fetch('/api/equipment/status')
+                const result = await response.json()
+
+                if (result.error) {
+                    document.getElementById('activeEquipmentList').innerHTML = `
+                        <p style="color: #dc3545">Error: ${result.error}</p>
+                    `;
+                    return;
+                }
+
+                // Update stats
+                document.getElementById('totalEquipment').textContent = result.total_equipment || 0;
+                document.getElementById('activeOperators').textContent = result.active_usage || 0;
+                document.getElementById('todayCheckIns').textContent = result.recent_check_ins ? result.recent_check_ins.length : 0;
+
+                // Display active operators
+                if (result.active_operators && result.active_operators.length > 0) {let activeHTML = '<h4>Currently Active:</h4>'
+                    result.active_operators.forEach(operator => {
+                        activeHTML += `
+                            <div class="equipment-card active">
+                                <strong>${operator.operator_name}</strong><br>
+                                Equipment: ${operator.equipment_id}<br>
+                                Started: ${new Date(operator.shift_start).toLocaleString()}<br>
+                                <button class="btn btn-warning" onclick="checkOutOperator('${operator.id}')">Check Out</button>
+                            </div>
+                        `;
+                    });
+                    document.getElementById('activeEquipmentList').innerHTML = activeHTML;
+                } else {document.getElementById('activeEquipmentList').innerHTML = `
+                        <p style="color: #666 text-align: center">No equipment currently in use</p>
+                    `}
+
+            } catch (error) {document.getElementById('activeEquipmentList').innerHTML = `
+                    <p style="color: #dc3545">Error loading equipment status: ${error.message}</p>
+                `;
+            }
+        }
+
+        async function checkOutOperator(checkInId) {const notes = prompt('Post-operation notes (optional):')
+            const condition = prompt('Equipment condition (good/damaged/needs_maintenance):', 'good')
+
+            try {
+                const response = await fetch('/api/equipment/check-out', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        check_in_id: checkInId,
+                        post_operation_notes: notes || '',
+                        equipment_condition: condition || 'good'
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {alert('✅ Equipment check-out completed successfully')
+                    loadActiveEquipment()} else {alert('Error: ' + result.error)}
+            } catch (error) {alert('Error checking out: ' + error.message)}
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {console.log('Equipment Safety page loaded')
+            loadActiveEquipment()});
+
+        // Emergency Procedures Functions
+        function viewEmergencyProtocols() {showModal('Emergency Protocols', `
+                <div style="text-align: left">
+                    <h3>🚨 Emergency Evacuation Procedures</h3>
+                    <ol>
+                        <li>Sound the alarm immediately</li>
+                        <li>Evacuate via nearest exit</li>
+                        <li>Proceed to assembly point</li>
+                        <li>Wait for further instructions</li>
+                    </ol>
+
+                    <h3>🏥 Medical Emergency Response</h3>
+                    <ol>
+                        <li>Call 911 immediately</li>
+                        <li>Provide first aid if trained</li>
+                        <li>Notify safety manager</li>
+                        <li>Document incident</li>
+                    </ol>
+
+                    <h3>🔥 Fire Emergency</h3>
+                    <ol>
+                        <li>Alert others immediately</li>
+                        <li>Use appropriate fire extinguisher if safe</li>
+                        <li>Evacuate if fire spreads</li>
+                        <li>Call fire department</li>
+                    </ol>
+
+                    <h3>☠️ Hazmat Spill Response</h3>
+                    <ol>
+                        <li>Evacuate contaminated area</li>
+                        <li>Contact hazmat team</li>
+                        <li>Follow material safety protocols</li>
+                        <li>Document incident thoroughly</li>
+                    </ol>
+                </div>
+            `)}
+
+        // Equipment Safety Functions
+        function viewEquipmentGuidelines() {showModal('Equipment Safety Guidelines', `
+                <div style="text-align: left">
+                    <h3>🚛 Forklift Operation Guidelines</h3>
+                    <ul>
+                        <li>Daily pre-operation inspection required</li>
+                        <li>Maximum speed: 5 mph in warehouse</li>
+                        <li>Always sound horn at intersections</li>
+                        <li>Never exceed load capacity</li>
+                        <li>Maintain 3-point contact when mounting</li>
+                    </ul>
+
+                    <h3>🏗️ Lifting Equipment Safety</h3>
+                    <ul>
+                        <li>Inspect all rigging before use</li>
+                        <li>Use proper lifting techniques</li>
+                        <li>Never exceed working load limits</li>
+                        <li>Keep clear of suspended loads</li>
+                        <li>Tag defective equipment immediately</li>
+                    </ul>
+
+                    <h3>🔧 Machinery Safety Protocols</h3>
+                    <ul>
+                        <li>Lock out/Tag out before maintenance</li>
+                        <li>Wear appropriate PPE at all times</li>
+                        <li>Report abnormal sounds or vibrations</li>
+                        <li>Follow manufacturer's operating procedures</li>
+                        <li>Keep guards and safety devices in place</li>
+                    </ul>
+                </div>
+            `)}
+
+        // Safety Training Functions
+        function viewTrainingRecords() {showModal('Safety Training Records', `
+                <div style="text-align: left">
+                    <h3>📋 Current Training Status</h3>
+                    <div style="margin: 15px 0">
+                        <div style="background: #e8f5e8 padding: 10px border-radius: 5px margin: 5px 0">
+                            <strong>✅ Forklift Certification</strong><br>
+                            Status: Current | Expires: 12/31/2025<br>
+                            Last Completed: 01/15/2025
+                        </div>
+
+                        <div style="background: #e8f5e8; padding: 10px; border-radius: 5px; margin: 5px 0;">
+                            <strong>✅ OSHA 10-Hour General Industry</strong><br>
+                            Status: Current | Expires: 03/20/2026<br>
+                            Last Completed: 03/20/2024
+                        </div>
+
+                        <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin: 5px 0;">
+                            <strong>⚠️ Hazmat Training</strong><br>
+                            Status: Expires Soon | Expires: 02/15/2025<br>
+                            Last Completed: 02/15/2024
+                        </div>
+
+                        <div style="background: #f8d7da; padding: 10px; border-radius: 5px; margin: 5px 0;">
+                            <strong>❌ First Aid/CPR</strong><br>
+                            Status: Expired | Expired: 01/10/2025<br>
+                            Last Completed: 01/10/2023
+                        </div>
+                    </div>
+
+                    <h3>📅 Upcoming Training Requirements</h3>
+                    <ul>
+                        <li>First Aid/CPR Renewal - Due: Immediately</li>
+                        <li>Hazmat Refresher - Due: 02/15/2025</li>
+                        <li>Fall Protection - Due: 04/30/2025</li>
+                    </ul>
+                </div>
+            `)}
+
+        // Incident Reporting Functions
+        function reportIncident() {showModal('Report Safety Incident', `
+                <form onsubmit="submitIncidentReport(event)" style="text-align: left">
+                    <div style="margin: 10px 0">
+                        <label style="display: block font-weight: bold;">Incident Type:</label>
+                        <select id="incidentType" required style="width: 100%; padding: 8px; margin: 5px 0;">
+                            <option value="">Select incident type...</option>
+                            <option value="injury">Personal Injury</option>
+                            <option value="near_miss">Near Miss</option>
+                            <option value="property_damage">Property Damage</option>
+                            <option value="equipment_failure">Equipment Failure</option>
+                            <option value="spill">Chemical Spill</option>
+                            <option value="fire">Fire/Explosion</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div style="margin: 10px 0;">
+                        <label style="display: block; font-weight: bold;">Date/Time of Incident:</label>
+                        <input type="datetime-local" id="incidentDateTime" required style="width: 100%; padding: 8px; margin: 5px 0;">
+                    </div>
+
+                    <div style="margin: 10px 0;">
+                        <label style="display: block; font-weight: bold;">Location:</label>
+                        <input type="text" id="incidentLocation" placeholder="Specific warehouse location" required style="width: 100%; padding: 8px; margin: 5px 0;">
+                    </div>
+
+                    <div style="margin: 10px 0;">
+                        <label style="display: block; font-weight: bold;">People Involved:</label>
+                        <input type="text" id="peopleInvolved" placeholder="Names of people involved" style="width: 100%; padding: 8px; margin: 5px 0;">
+                    </div>
+
+                    <div style="margin: 10px 0;">
+                        <label style="display: block; font-weight: bold;">Description of Incident:</label>
+                        <textarea id="incidentDescription" rows="4" placeholder="Describe what happened in detail..." required style="width: 100%; padding: 8px; margin: 5px 0;"></textarea>
+                    </div>
+
+                    <div style="margin: 10px 0;">
+                        <label style="display: block; font-weight: bold;">Immediate Actions Taken:</label>
+                        <textarea id="actionsTaken" rows="3" placeholder="What was done immediately after the incident?" style="width: 100%; padding: 8px; margin: 5px 0;"></textarea>
+                    </div>
+
+                    <div style="margin: 10px 0;">
+                        <label style="display: block; font-weight: bold;">Severity Level:</label>
+                        <select id="severityLevel" required style="width: 100%; padding: 8px; margin: 5px 0;">
+                            <option value="">Select severity...</option>
+                            <option value="minor">Minor - No injury/minimal damage</option>
+                            <option value="moderate">Moderate - Minor injury/moderate damage</option>
+                            <option value="serious">Serious - Medical attention required</option>
+                            <option value="critical">Critical - Emergency response required</option>
+                        </select>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button type="submit" style="background: #dc3545; color: white; padding: 12px 24px; border: none; border-radius: 5px; font-weight: bold;">
+                            🚨 Submit Incident Report
+                        </button>
+                    </div>
+                </form>
+            `)}
+
+        function submitIncidentReport(event) {event.preventDefault()
+
+            const incidentData = {
+                type: document.getElementById('incidentType').value,
+                datetime: document.getElementById('incidentDateTime').value,
+                location: document.getElementById('incidentLocation').value,
+                people: document.getElementById('peopleInvolved').value,
+                description: document.getElementById('incidentDescription').value,
+                actions: document.getElementById('actionsTaken').value,
+                severity: document.getElementById('severityLevel').value,
+                reporter: 'Current User',
+                timestamp: new Date().toISOString()};
+
+            // Here you would normally send to backend
+            console.log('Incident Report Submitted:', incidentData);
+
+            closeModal();
+            showMessage('🚨 Incident report submitted successfully. Safety manager has been notified.', 'success');
+        }
+
+        // Utility Functions
+        function showModal(title, content) {const modal = document.createElement('div')
+            modal.style.cssText = `
+                position: fixed top: 0 left: 0; width: 100%; height: 100%; 
+                background: rgba(0,0,0,0.5); z-index: 10000; 
+                display: flex; align-items: center; justify-content: center;
+            `;
+
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: white; padding: 30px; border-radius: 10px; 
+                max-width: 600px; max-height: 80vh; overflow-y: auto;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            `;
+
+            modalContent.innerHTML = `
+                <div style="display: flex justify-content: space-between align-items: center margin-bottom: 20px;">
+                    <h2 style="margin: 0; color: #333;">${title}</h2>
+                    <button onclick="closeModal()" style="background: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer;">
+                        ✕ Close
+                    </button>
+                </div>
+                ${content}
+            `;
+
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            modal.id = 'safetyModal';
+        }
+
+        function closeModal() {const modal = document.getElementById('safetyModal')
+            if (modal) {
+                modal.remove()}
+        }
+
+        function showMessage(message, type) {const messageDiv = document.createElement('div')
+            messageDiv.style.cssText = `
+                position: fixed top: 20px right: 20px; z-index: 10001;
+                background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#ffc107'};
+                color: white; padding: 15px 20px; border-radius: 5px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-weight: bold;
+            `;
+            messageDiv.textContent = message;
+            document.body.appendChild(messageDiv);
+
+            setTimeout(() => messageDiv.remove(), 5000);
+        }
+
+        // Make functions globally available
+        window.viewEmergencyProtocols = viewEmergencyProtocols;
+        window.viewEquipmentGuidelines = viewEquipmentGuidelines;
+        window.viewTrainingRecords = viewTrainingRecords;
+        window.reportIncident = reportIncident;
+        window.closeModal = closeModal;
+    </script>
+
+    <!-- Include necessary scripts -->
+    <script src="/static/qr_camera_scanner.js"></script>
+    <script src="/static/copyright_notice.js"></script>
+    <script src="/static/floating_chat_widget.js"></script>
+    <script src="/static/employee_messaging_widget.js"></script>
+</body>
+</html>

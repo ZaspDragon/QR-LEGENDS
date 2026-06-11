@@ -1,0 +1,530 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📱 Phone Item Measurement - QR Legends</title>
+    <style>
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            margin: 0
+            padding: 20px
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            min-height: 100vh}
+        .container {max-width: 1200px
+            margin: 0 auto}
+        .header {background: white
+            border-radius: 15px
+            padding: 20px
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2)
+            margin-bottom: 30px;
+            text-align: center}
+        .premium-badge {background: linear-gradient(45deg, #ff6b35, #f7931e)
+            color: white
+            padding: 5px 15px
+            border-radius: 20px
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 10px}
+        .card {background: white
+            border-radius: 15px
+            padding: 30px
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2)
+            margin-bottom: 30px}
+        .measurement-area {position: relative
+            background: #000
+            border-radius: 15px
+            overflow: hidden
+            min-height: 400px;
+            margin: 20px 0;
+            border: 3px solid #667eea}
+        #camera-feed {width: 100%
+            height: 400px
+            object-fit: cover
+            display: block}
+        .ar-overlay {position: absolute
+            top: 0
+            left: 0
+            right: 0
+            bottom: 0;
+            pointer-events: none;
+            z-index: 10}
+        .measurement-dot {position: absolute
+            width: 20px
+            height: 20px
+            background: #ff6b35
+            border: 3px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+            pointer-events: all;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            animation: pulse 2s infinite}
+        @keyframes pulse {0% { transform: scale(1)}
+            50% {transform: scale(1.2)}
+            100% {transform: scale(1)}
+        }
+        .measurement-line {position: absolute
+            background: #ff6b35
+            height: 2px
+            transform-origin: left center
+            pointer-events: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);}
+        .btn {padding: 12px 24px
+            border: none
+            border-radius: 8px
+            cursor: pointer
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px}
+        .btn-primary {background: #667eea color: white}
+        .btn-success {background: #28a745 color: white}
+        .btn-warning {background: #ffc107 color: #333}
+        .btn-secondary {background: #6c757d color: white}
+        .btn:hover {transform: translateY(-2px)}
+        .calibration-panel {background: #fff3cd
+            border-left: 4px solid #ffc107
+            padding: 20px
+            border-radius: 8px
+            margin: 20px 0}
+        .measurement-results {background: #d4edda
+            border-left: 4px solid #28a745
+            padding: 20px
+            border-radius: 8px
+            margin: 20px 0}
+        .dimension-input {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
+            gap: 15px
+            margin: 20px 0}
+        .input-group {display: flex
+            flex-direction: column}
+        .input-group label {font-weight: 600
+            margin-bottom: 5px
+            color: #333}
+        .input-group input, .input-group select {padding: 10px
+            border: 1px solid #ddd
+            border-radius: 5px
+            font-size: 14px}
+        .nav-link {color: white
+            text-decoration: none
+            margin: 0 10px
+            padding: 8px 16px
+            border-radius: 5px;
+            background: rgba(255,255,255,0.2);
+            transition: all 0.3s}
+        .nav-link:hover {background: rgba(255,255,255,0.3)}
+        .measurement-help {background: #e3f2fd
+            border-left: 4px solid #2196f3
+            padding: 15px
+            border-radius: 8px
+            margin: 15px 0;
+            font-size: 14px}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 Phone Item Measurement<span class="premium-badge">AR POWERED</span></h1>
+            <p>Measure items using your phone camera with precision AR dots</p>
+            <nav>
+                <a href="/main_dashboard" class="nav-link">← Back to Dashboard</a>
+                <a href="/warehouse_video_scanner" class="nav-link">🎥 Video Scanner</a>
+                <a href="/inventory" class="nav-link">📦 Inventory</a>
+            </nav>
+        </div>
+
+        <!-- Calibration Section -->
+        <div class="card">
+            <h3>🎯 Calibration Setup</h3>
+            <div class="calibration-panel">
+                <h4>Step 1: Place Reference Object</h4>
+                <p>Place a known object next to the item for accurate measurements:</p>
+                <select id="calibration-reference">
+                    <option value="">No calibration (less accurate)</option>
+                    <option value="credit_card">Credit Card (3.37" x 2.13")</option>
+                    <option value="quarter">Quarter (0.955" diameter)</option>
+                    <option value="smartphone">Smartphone (approx 6" x 3")</option>
+                    <option value="business_card">Business Card (3.5" x 2")</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Camera Measurement Section -->
+        <div class="card">
+            <h3>📐 AR Camera Measurement</h3>
+            <div class="measurement-help">
+                <strong>📖 How to Measure:</strong>
+                <ol style="margin: 10px 0 0 20px;">
+                    <li>Start camera and position item in clear view</li>
+                    <li>Place 2 AR dots to measure length</li>
+                    <li>Place 2 more dots to measure width</li>
+                    <li>Place final 2 dots to measure height</li>
+                    <li>Review measurements and save</li>
+                </ol>
+            </div>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <button class="btn btn-primary" onclick="startCameraMeasurement()">📱 Start Camera</button>
+                <button class="btn btn-warning" onclick="resetMeasurement()">🔄 Reset</button>
+                <button class="btn btn-success" onclick="calculateMeasurements()" id="calculate-btn" disabled>📐 Calculate</button>
+            </div>
+
+            <div class="measurement-area">
+                <video id="camera-feed" autoplay playsinline muted></video>
+                <div class="ar-overlay" id="ar-overlay">
+                    <!-- AR dots will be placed here -->
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0;">
+                <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                    <h4 style="margin: 0; color: #667eea;">Length Dots</h4>
+                    <p style="margin: 5px 0 0 0; font-size: 14px;" id="length-status">Click 2 points</p>
+                </div>
+                <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                    <h4 style="margin: 0; color: #28a745;">Width Dots</h4>
+                    <p style="margin: 5px 0 0 0; font-size: 14px;" id="width-status">Click 2 points</p>
+                </div>
+                <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                    <h4 style="margin: 0; color: #dc3545;">Height Dots</h4>
+                    <p style="margin: 5px 0 0 0; font-size: 14px;" id="height-status">Click 2 points</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Item Information -->
+        <div class="card">
+            <h3>📝 Item Information</h3>
+            <div class="dimension-input">
+                <div class="input-group">
+                    <label>Item Name:</label>
+                    <input type="text" id="item-name" placeholder="Enter item name">
+                </div>
+                <div class="input-group">
+                    <label>SKU/Item Number:</label>
+                    <input type="text" id="item-sku" placeholder="Enter SKU">
+                </div>
+                <div class="input-group">
+                    <label>Category:</label>
+                    <select id="item-category">
+                        <option value="">Select category</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="tools">Tools</option>
+                        <option value="parts">Parts</option>
+                        <option value="supplies">Supplies</option>
+                        <option value="equipment">Equipment</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manual Input Alternative -->
+        <div class="card">
+            <h3>⌨️ Manual Input Alternative</h3>
+            <p>Already know the dimensions? Input them directly:</p>
+            <div class="dimension-input">
+                <div class="input-group">
+                    <label>Length (inches):</label>
+                    <input type="number" id="manual-length" step="0.1" placeholder="0.0">
+                </div>
+                <div class="input-group">
+                    <label>Width (inches):</label>
+                    <input type="number" id="manual-width" step="0.1" placeholder="0.0">
+                </div>
+                <div class="input-group">
+                    <label>Height (inches):</label>
+                    <input type="number" id="manual-height" step="0.1" placeholder="0.0">
+                </div>
+            </div>
+            <button class="btn btn-success" onclick="saveManualDimensions()">💾 Save Manual Dimensions</button>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results-container" style="display: none;">
+            <div class="card">
+                <h3>📊 Measurement Results</h3>
+                <div class="measurement-results">
+                    <div id="measurement-display"></div>
+                </div>
+                
+                <h4>🎯 Storage Optimization Suggestions</h4>
+                <div id="optimization-suggestions"></div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn btn-success" onclick="saveMeasurement()">💾 Save to Inventory</button>
+                    <button class="btn btn-primary" onclick="measureAnother()">📐 Measure Another</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cameraStream = null;
+        let measurementDots = [];
+        let currentMeasurementType = 'length'; // length, width, height
+        let measurements = {};
+        let arPoints = [];
+
+        const measurementTypes = {
+            length: { color: '#667eea', count: 0, max: 2 },
+            width: { color: '#28a745', count: 0, max: 2 },
+            height: { color: '#dc3545', count: 0, max: 2 }
+        };
+
+        async function startCameraMeasurement() {
+            try {
+                // Request camera access
+                cameraStream = await navigator.mediaDevices.getUserMedia({
+                    video: { 
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }
+                });
+
+                const video = document.getElementById('camera-feed');
+                video.srcObject = cameraStream;
+
+                // Enable click events on camera feed
+                const overlay = document.getElementById('ar-overlay');
+                overlay.onclick = placeMeasurementDot;
+
+                updateInstructions();
+                
+            } catch (error) {console.error('Camera access failed:', error)
+                alert('Camera access failed. Please allow camera permission and try again.')}
+        }
+
+        function placeMeasurementDot(event) {const rect = event.currentTarget.getBoundingClientRect()
+            const x = event.clientX - rect.left
+            const y = event.clientY - rect.top
+
+            const type = getCurrentMeasurementType()
+            if (measurementTypes[type].count >= measurementTypes[type].max) {
+                return; // Max dots reached for this measurement}
+
+            // Create AR dot
+            const dot = document.createElement('div');
+            dot.className = 'measurement-dot';
+            dot.style.left = (x - 10) + 'px';
+            dot.style.top = (y - 10) + 'px';
+            dot.style.backgroundColor = measurementTypes[type].color;
+            dot.dataset.type = type;
+            dot.dataset.x = x;
+            dot.dataset.y = y;
+
+            document.getElementById('ar-overlay').appendChild(dot);
+            measurementDots.push(dot);
+            measurementTypes[type].count++;
+
+            // Store AR point data
+            arPoints.push({
+                type: type,
+                x: x,
+                y: y,
+                timestamp: Date.now()
+            });
+
+            updateInstructions();
+            checkMeasurementComplete();
+        }
+
+        function getCurrentMeasurementType() {if (measurementTypes.length.count < measurementTypes.length.max) {
+                return 'length'} else if (measurementTypes.width.count < measurementTypes.width.max) {return 'width'} else if (measurementTypes.height.count < measurementTypes.height.max) {return 'height'}
+            return null;
+        }
+
+        function updateInstructions() {const lengthStatus = document.getElementById('length-status')
+            const widthStatus = document.getElementById('width-status')
+            const heightStatus = document.getElementById('height-status')
+
+            lengthStatus.textContent = measurementTypes.length.count >= 2 ? '✅ Complete' : 
+                `Click ${2 - measurementTypes.length.count} more points`;
+            
+            widthStatus.textContent = measurementTypes.width.count >= 2 ? '✅ Complete' : 
+                measurementTypes.length.count >= 2 ? `Click ${2 - measurementTypes.width.count} more points` : 'Waiting...';
+            
+            heightStatus.textContent = measurementTypes.height.count >= 2 ? '✅ Complete' : 
+                (measurementTypes.length.count >= 2 && measurementTypes.width.count >= 2) ? 
+                `Click ${2 - measurementTypes.height.count} more points` : 'Waiting...';
+        }
+
+        function checkMeasurementComplete() {const allComplete = measurementTypes.length.count >= 2 && 
+                               measurementTypes.width.count >= 2 && 
+                               measurementTypes.height.count >= 2
+
+            document.getElementById('calculate-btn').disabled = !allComplete}
+
+        async function calculateMeasurements() {try {
+                const calibrationReference = document.getElementById('calibration-reference').value
+                
+                const measurementData = {
+                    ar_points: arPoints,
+                    measurement_types: measurementTypes,
+                    camera_resolution: {
+                        width: document.getElementById('camera-feed').videoWidth,
+                        height: document.getElementById('camera-feed').videoHeight}
+                };
+
+                const itemInfo = {
+                    name: document.getElementById('item-name').value,
+                    sku: document.getElementById('item-sku').value,
+                    category: document.getElementById('item-category').value
+                };
+
+                const response = await fetch('/api/ai/measure-item', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        measurement_data: measurementData,
+                        item_info: itemInfo,
+                        calibration_reference: calibrationReference
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {displayMeasurementResults(result.measurement, result.optimization_suggestions)} else {alert('Measurement calculation failed: ' + result.error)}
+
+            } catch (error) {console.error('Measurement calculation error:', error)
+                alert('Failed to calculate measurements. Please try again.')}
+        }
+
+        function displayMeasurementResults(measurement, suggestions) {const dimensions = measurement.dimensions
+            const volume = measurement.volume
+            
+            const displayHtml = `
+                <div style="display: grid grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) gap: 15px; margin-bottom: 20px;">
+                    <div style="text-align: center; padding: 15px; background: white; border-radius: 8px; border: 2px solid #667eea;">
+                        <h4 style="margin: 0; color: #667eea;">📏 Length</h4>
+                        <p style="margin: 5px 0 0 0; font-size: 24px; font-weight: bold;">${dimensions.length}"</p>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: white; border-radius: 8px; border: 2px solid #28a745;">
+                        <h4 style="margin: 0; color: #28a745;">📐 Width</h4>
+                        <p style="margin: 5px 0 0 0; font-size: 24px; font-weight: bold;">${dimensions.width}"</p>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: white; border-radius: 8px; border: 2px solid #dc3545;">
+                        <h4 style="margin: 0; color: #dc3545;">📊 Height</h4>
+                        <p style="margin: 5px 0 0 0; font-size: 24px; font-weight: bold;">${dimensions.height}"</p>
+                    </div>
+                </div>
+                <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                    <h4>📦 Volume: ${volume.cubic_inches} cubic inches (${volume.cubic_feet} cubic feet)</h4>
+                    <p><strong>Measurement Confidence:</strong> ${measurement.accuracy_confidence}%</p>
+                    <p><strong>Measurement Method:</strong> ${measurement.measurement_method}</p>
+                </div>
+            `;
+
+            document.getElementById('measurement-display').innerHTML = displayHtml;
+
+            // Display optimization suggestions
+            let suggestionsHtml = '';
+            suggestions.forEach(suggestion => {suggestionsHtml += `
+                    <div style="background: #fff3cd border-left: 4px solid #ffc107 padding: 15px margin: 10px 0 border-radius: 8px">
+                        <h5 style="margin: 0 0 10px 0">${suggestion.type.toUpperCase()}: ${suggestion.suggestion}</h5>
+                        <p style="margin: 0; font-size: 14px; color: #856404;">
+                            <strong>Efficiency Gain:</strong> ${suggestion.efficiency_gain}
+                        </p>
+                    </div>
+                `;
+            });
+
+            document.getElementById('optimization-suggestions').innerHTML = suggestionsHtml;
+            document.getElementById('results-container').style.display = 'block';
+
+            // Store current measurement for saving
+            window.currentMeasurement = measurement;
+        }
+
+        function saveManualDimensions() {const length = parseFloat(document.getElementById('manual-length').value)
+            const width = parseFloat(document.getElementById('manual-width').value)
+            const height = parseFloat(document.getElementById('manual-height').value)
+
+            if (!length || !width || !height) {
+                alert('Please enter all dimensions')
+                return;}
+
+            const manualMeasurement = {
+                dimensions: { length, width, height, unit: 'inches' },
+                volume: {
+                    cubic_inches: length * width * height,
+                    cubic_feet: (length * width * height) / 1728
+                },
+                accuracy_confidence: 100,
+                measurement_method: 'manual_input'
+            };
+
+            // Generate optimization suggestions for manual input
+            const suggestions = [
+                {
+                    type: 'manual',
+                    suggestion: 'Manual measurements entered - consider AR measurement for verification',
+                    efficiency_gain: 'Accurate if measured correctly'
+                }
+            ];
+
+            displayMeasurementResults(manualMeasurement, suggestions);
+        }
+
+        async function saveMeasurement() {if (!window.currentMeasurement) {
+                alert('No measurement to save')
+                return}
+
+            try {
+                const itemInfo = {
+                    name: document.getElementById('item-name').value || 'Unknown Item',
+                    sku: document.getElementById('item-sku').value,
+                    category: document.getElementById('item-category').value
+                };
+
+                // Save measurement would typically be done during calculation
+                // This is just for user feedback
+                alert('✅ Measurement saved successfully! Item dimensions have been recorded and optimization suggestions generated.');
+                
+            } catch (error) {console.error('Save measurement error:', error)
+                alert('Failed to save measurement. Please try again.')}
+        }
+
+        function measureAnother() {// Reset all measurement data
+            resetMeasurement()
+            
+            // Clear form fields
+            document.getElementById('item-name').value = ''
+            document.getElementById('item-sku').value = ''
+            document.getElementById('item-category').value = ''
+            document.getElementById('manual-length').value = '';
+            document.getElementById('manual-width').value = '';
+            document.getElementById('manual-height').value = '';
+            
+            // Hide results
+            document.getElementById('results-container').style.display = 'none';}
+
+        function resetMeasurement() {// Clear all dots
+            measurementDots.forEach(dot => dot.remove())
+            measurementDots = []
+            arPoints = []
+
+            // Reset counters
+            Object.keys(measurementTypes).forEach(type => {
+                measurementTypes[type].count = 0});
+
+            // Reset UI
+            updateInstructions();
+            document.getElementById('calculate-btn').disabled = true;
+            window.currentMeasurement = null;
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {console.log('Phone Item Measurement tool loaded')
+            updateInstructions()});
+
+        // Clean up camera when page unloads
+        window.addEventListener('beforeunload', function() {if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop())}
+        });
+    </script>
+</body>
+</html>

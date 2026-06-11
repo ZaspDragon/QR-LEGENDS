@@ -1,0 +1,394 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - QR LEGENDS</title>
+    <style>
+/* === QRLegends Unified Theme (Dark/Light) === */
+:root{
+  --ql-bg: #0b1724;
+  --ql-panel: #0f2340;
+  --ql-card: #102846;
+  --ql-text: #dbe8ff;
+  --ql-sub: #97a6c1;
+  --ql-primary: #3b82f6;
+  --ql-success: #22c55e;
+  --ql-warning: #f59e0b;
+  --ql-danger: #ef4444;
+  --ql-accent: #6366f1;
+  --ql-border: rgba(255,255,255,.12);
+  --ql-surface: rgba(255,255,255,.06);
+}
+/* Light mode overrides */
+body.light{
+  --ql-bg: #f2f6fb;
+  --ql-panel: #ffffff;
+  --ql-card: #ffffff;
+  --ql-text: #1d2840;
+  --ql-sub: #51607c;
+  --ql-primary: #2563eb;
+  --ql-success: #16a34a;
+  --ql-warning: #d97706;
+  --ql-danger: #dc2626;
+  --ql-accent: #4f46e5;
+  --ql-border: rgba(0,0,0,.12);
+  --ql-surface: rgba(15,23,42,.04);
+}
+
+html,body{height:100%;}
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed;
+  color: var(--ql-text);
+  font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+  line-height: 1.45;
+}
+body.light{
+  background: linear-gradient(180deg,#f7faff,#eef3fb);
+}
+
+.ql-header{
+  position: sticky; top:0; z-index:1000;
+  background: rgba(8,27,46,.7);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--ql-border);
+}
+body.light .ql-header{
+  background: rgba(255,255,255,.75);
+}
+.ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
+.ql-title{display:flex; align-items:center; gap:10px;}
+.ql-h1{font-size:1.25rem; margin:0; letter-spacing:.2px;}
+.ql-nav{display:flex; gap:8px; flex-wrap:wrap;}
+.ql-btn{
+  display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
+  background: var(--ql-surface); border: 1px solid var(--ql-border);
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+  transition: transform .08s ease, background .2s ease, border-color .2s ease;
+}
+.ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+body.light .ql-btn:hover{ background: rgba(15,23,42,.08); }
+.ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
+
+.ql-theme-toggle{
+  margin-left:12px; cursor:pointer; border:1px solid var(--ql-border);
+  background: var(--ql-surface); color: var(--ql-text);
+  border-radius:10px; padding:8px 10px; font-size:16px;
+}
+
+.ql-container{ max-width:1200px; margin:22px auto; padding:0 20px; }
+.ql-grid{ display:grid; gap:16px; grid-template-columns: repeat(12, 1fr);}
+.ql-card{
+  grid-column: span 12;
+  background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+  border: 1px solid var(--ql-border);
+  box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+  border-radius:16px; padding:20px;
+}
+body.light .ql-card{
+  background: var(--ql-card);
+  box-shadow: 0 10px 30px rgba(2,8,23,.08);
+}
+
+.ql-card h2{ font-size:1.25rem; margin:0 0 15px 0; color: #bcd5ff; letter-spacing:.2px; }
+body.light .ql-card h2{ color:#234073; }
+
+.ql-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+.ql-input, .ql-select, input[type="text"], input[type="date"], textarea, select {
+  width:100%; background: var(--ql-surface); color: var(--ql-text); border: 1px solid var(--ql-border);
+  padding:10px 12px; border-radius:10px; outline:none;
+}
+.ql-input::placeholder{ color: #9fb0cc; }
+body.light .ql-input::placeholder{ color: #6b7b92; }
+
+/* Role-specific styling */
+.role-card {
+    display: inline-block;
+    margin: 10px;
+    padding: 15px 25px;
+    border-radius: 10px;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+}
+.role-manager { background: var(--ql-danger); }
+.role-admin { background: var(--ql-warning); }
+.role-user { background: var(--ql-success); }
+
+.employees-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: var(--ql-surface);
+    border-radius: 10px;
+    overflow: hidden;
+}
+.employees-table th,
+.employees-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--ql-border);
+    color: var(--ql-text);
+}
+.employees-table th {
+    background: var(--ql-surface);
+    font-weight: 600;
+}
+.employees-table tr:hover {
+    background: var(--ql-surface);
+}
+
+.role-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin: 0 2px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+.btn-primary { background: var(--ql-primary); color: white; }
+.btn-warning { background: var(--ql-warning); color: white; }
+.btn-danger { background: var(--ql-danger); color: white; }
+.btn:hover { transform: translateY(-1px); opacity: 0.9; }
+
+.loading {
+    text-align: center;
+    color: var(--ql-sub);
+    font-style: italic;
+    padding: 50px;
+}
+
+.hierarchy-info {
+    background: var(--ql-surface);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--ql-border);
+}
+</style>
+<script>
+(function(){
+  try {
+    const saved = localStorage.getItem('ql-theme');
+    if(saved === 'light'){ document.addEventListener('DOMContentLoaded', ()=> document.body.classList.add('light')); }
+  } catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const btn = document.getElementById('ql-theme-toggle');
+    if(btn){
+      btn.addEventListener('click', function(){
+        document.body.classList.toggle('light');
+        const isLight = document.body.classList.contains('light');
+        btn.textContent = isLight ? '☀️' : '🌙';
+        try { localStorage.setItem('ql-theme', isLight ? 'light' : 'dark'); } catch(e){}
+      });
+      if(document.body.classList.contains('light')) btn.textContent = '☀️';
+    }
+    document.querySelectorAll('button:not([type])').forEach(b=> b.setAttribute('type','button'));
+  });
+})();
+</script>
+</head>
+<body>
+<!-- Unified QR Legends Header -->
+<header class="ql-header">
+  <div class="ql-header-inner">
+    <div class="ql-title">
+      <span class="ql-logo">🟦</span>
+      <h1 class="ql-h1">User Management - QR LEGENDS</h1>
+    </div>
+    <nav class="ql-nav">
+      <a class="ql-btn ql-secondary" href="/main_dashboard">🏠 Dashboard</a>
+      <a class="ql-btn" href="/admin_dashboard">🛠️ Admin</a>
+      <a class="ql-btn" href="/company_employee_management">👥 Employees</a>
+    </nav>
+    <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<div class='ql-container'>
+    <div class="ql-card">
+        <h2>👥 User Management</h2>
+        <p style="color: var(--ql-sub); margin-bottom: 30px;">Manage employee roles and permissions</p>
+
+        <div class="hierarchy-info">
+            <h3 style="color: var(--ql-text); margin-bottom: 15px;">Role Hierarchy</h3>
+            <div class="role-card" style="background: #6f42c1; color: white;">COMPANY OWNER</div>
+            <span style="color: var(--ql-text);">></span>
+            <div class="role-card role-manager">MANAGER</div>
+            <span style="color: var(--ql-text);">></span>
+            <div class="role-card role-admin">ADMIN</div>
+            <span style="color: var(--ql-text);">></span>
+            <div class="role-card role-user">USER</div>
+
+            <div style="margin-top: 15px; color: var(--ql-text); line-height: 1.6;">
+                <strong>Company Owner:</strong> Full access to all company features and unlimited user management<br>
+                <strong>Manager:</strong> Full access to all features and user management<br>
+                <strong>Admin:</strong> Administrative access with limited user management<br>
+                <strong>User:</strong> Standard access to department features
+            </div>
+        </div>
+
+        <div id="loading" class="loading">Loading employees...</div>
+
+        <div id="employees-content" style="display: none;">
+            <h3 style="color: var(--ql-text); margin-bottom: 15px;">Company Employees</h3>
+            <table class="employees-table">
+                <thead>
+                    <tr>
+                        <th>Employee ID</th>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Current Role</th>
+                        <th>Joined Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="employees-list">
+                    <!-- Employee rows will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let currentUserRole = 'user';
+        let employees = [];
+
+        async function loadEmployees() {
+            try {
+                // Get current user profile first
+                const profileResponse = await fetch('/api/auth/profile');
+                if (profileResponse.ok) {
+                    const profile = await profileResponse.json();
+                    currentUserRole = profile.user?.role || 'user';
+
+                    // If this is a company account, they have manager privileges
+                    if (profile.user_type === 'company') {
+                        currentUserRole = 'manager';
+                    }
+                }
+
+                // Load employees
+                const response = await fetch('/api/employees');
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        document.getElementById('loading').innerHTML = 
+                            '<p style="color: var(--ql-danger);">⚠️ Access Denied: Company Owner, Admin, or Manager role required</p>';
+                        return;
+                    }
+                    throw new Error('Failed to load employees');
+                }
+
+                const data = await response.json();
+                employees = data.employees;
+                displayEmployees();
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('employees-content').style.display = 'block';
+            } catch (error) {
+                console.error('Error loading employees:', error);
+                document.getElementById('loading').innerHTML = 
+                    '<p style="color: var(--ql-danger);">Error loading employees</p>';
+            }
+        }
+
+        function displayEmployees() {
+            const tbody = document.getElementById('employees-list');
+            tbody.innerHTML = '';
+
+            employees.forEach(employee => {
+                const row = document.createElement('tr');
+
+                const roleClass = `role-${employee.role}`;
+                const canManageRoles = currentUserRole === 'manager' || 
+                    (currentUserRole === 'admin' && employee.role !== 'manager');
+
+                row.innerHTML = `
+                    <td>${employee.employee_id}</td>
+                    <td>${employee.name}</td>
+                    <td>${employee.department}</td>
+                    <td><span class="role-badge ${roleClass}">${employee.role.toUpperCase()}</span></td>
+                    <td>${new Date(employee.created_at).toLocaleDateString()}</td>
+                    <td>
+                        ${canManageRoles ? `
+                            <select onchange="updateRole('${employee.id}', this.value)" class="btn">
+                                <option value="">Change Role</option>
+                                <option value="user">User</option>
+                                <option value="admin">Admin</option>
+                                ${currentUserRole === 'manager' ? '<option value="manager">Manager</option>' : ''}
+                            </select>
+                        ` : '<span style="color: var(--ql-sub);">No permission</span>'}
+                    </td>
+                `;
+
+                tbody.appendChild(row);
+            });
+        }
+
+        async function updateRole(employeeId, newRole) {
+            if (!newRole) return;
+
+            if (!confirm(`Are you sure you want to change this employee's role to ${newRole}?`)) {
+                return;
+            }
+
+            try {
+                // Try company-specific endpoint first (for company accounts)
+                let response = await fetch('/api/company/employees/role', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        employee_id: employeeId,
+                        new_role: newRole
+                    })
+                });
+
+                if (!response.ok) {
+                    // Try generic endpoint
+                    response = await fetch('/api/employees/role', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            employee_id: employeeId,
+                            new_role: newRole
+                        })
+                    });
+                }
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert('Role updated successfully');
+                    loadEmployees(); // Refresh the list
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Error updating role:', error);
+                alert('Failed to update role');
+            }
+        }
+
+        // Load employees when page loads
+        document.addEventListener('DOMContentLoaded', loadEmployees);
+    </script>
+</div>
+</body>
+</html>

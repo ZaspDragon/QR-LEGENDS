@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Transfer Picker - QR Legends</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f172a;--surface:#1e293b;--surface2:#334155;--border:#334155;--text:#f1f5f9;--sub:#94a3b8;--accent:#6366f1;--success:#22c55e;--warning:#f59e0b;--danger:#ef4444;--radius:12px}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{font-weight:800;font-size:18px;color:var(--accent)}
+.role-badge{background:linear-gradient(135deg,#4338ca,#5b21b6);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;color:#fff}
+.topbar-left,.topbar-right{display:flex;align-items:center;gap:10px}
+.btn{padding:10px 18px;border-radius:8px;border:none;cursor:pointer;font-size:14px;font-weight:600;transition:all 0.15s;text-decoration:none;display:inline-flex;align-items:center;gap:6px;min-height:44px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.btn-ghost{background:transparent;color:var(--sub);border:1px solid var(--border)}
+.btn-ghost:active{background:var(--surface2)}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-accent:active{opacity:0.85}
+.btn-success{background:var(--success);color:#fff}
+.btn-warning{background:var(--warning);color:#fff}
+.content{padding:16px;max-width:900px;margin:0 auto}
+.page-header h1{font-size:24px;font-weight:800;margin-bottom:4px;color:var(--accent)}
+.page-header p{color:var(--sub);font-size:14px;margin-bottom:20px}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.stat-mini{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center}
+.stat-num{font-size:24px;font-weight:800;display:block}
+.stat-lbl{font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:0.3px}
+.s-purple{color:var(--accent)} .s-green{color:var(--success)} .s-warn{color:var(--warning)} .s-blue{color:#3b82f6}
+.tabs{display:flex;gap:6px;margin-bottom:16px;background:var(--surface2);border-radius:10px;padding:4px}
+.tab{flex:1;padding:10px;text-align:center;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;color:var(--sub);border:none;background:transparent;touch-action:manipulation}
+.tab.active{background:var(--accent);color:#fff}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+.transfer-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+.transfer-card.urgent{border-left:4px solid var(--danger)}
+.transfer-card.normal{border-left:4px solid var(--accent)}
+.transfer-card.low{border-left:4px solid var(--sub)}
+.transfer-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.transfer-id{font-family:monospace;font-size:13px;color:var(--sub)}
+.transfer-status{font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px}
+.s-pending{background:rgba(245,158,11,0.15);color:var(--warning)}
+.s-inprog{background:rgba(99,102,241,0.15);color:var(--accent)}
+.s-done{background:rgba(34,197,94,0.15);color:var(--success)}
+.transfer-title{font-size:16px;font-weight:700;margin-bottom:8px}
+.transfer-route{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:14px}
+.route-loc{background:var(--surface2);padding:6px 12px;border-radius:6px;font-weight:600}
+.route-arrow{color:var(--sub)}
+.transfer-items{margin-bottom:12px}
+.item-row{display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:6px;background:var(--surface2);margin-bottom:6px;font-size:13px}
+.item-info{display:flex;flex-direction:column}
+.item-name{font-weight:600}
+.item-sku{color:var(--sub);font-size:11px}
+.item-check{display:flex;align-items:center;gap:8px}
+.check-input{width:60px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px;color:var(--text);font-size:14px;text-align:center;outline:none}
+.transfer-actions{display:flex;gap:8px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px}
+.card-title{font-size:16px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.input-label{font-size:13px;font-weight:600;color:var(--sub);margin-bottom:6px;display:block}
+.input-field{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;color:var(--text);font-size:15px;outline:none;-webkit-appearance:none;margin-bottom:12px}
+.input-field:focus{border-color:var(--accent)}
+@media(max-width:480px){.stats-row{grid-template-columns:repeat(2,1fr)}.content{padding:12px}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="logo">QR LEGENDS</span>
+    <span class="role-badge">🔄 Transfer Picker</span>
+  </div>
+  <div class="topbar-right">
+    <a href="/main_dashboard" class="btn btn-ghost">🏠</a>
+    <button onclick="loadTransfers()" class="btn btn-accent">🔄</button>
+  </div>
+</div>
+
+<div class="content">
+  <div class="page-header">
+    <h1>Transfer Tasks</h1>
+    <p>Pick and move items between warehouse locations &bull; <span id="current-time"></span></p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-mini"><span class="stat-num s-warn" id="s-pending">--</span><span class="stat-lbl">Pending</span></div>
+    <div class="stat-mini"><span class="stat-num s-purple" id="s-inprog">--</span><span class="stat-lbl">In Progress</span></div>
+    <div class="stat-mini"><span class="stat-num s-green" id="s-done">--</span><span class="stat-lbl">Completed</span></div>
+    <div class="stat-mini"><span class="stat-num s-blue" id="s-units">--</span><span class="stat-lbl">Units Moved</span></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('transfers',this)">📋 Transfers</button>
+    <button class="tab" onclick="switchTab('scan',this)">📷 Scan</button>
+    <button class="tab" onclick="switchTab('history',this)">🕐 History</button>
+  </div>
+
+  <div class="tab-pane active" id="tab-transfers">
+    <div id="transfer-list">
+      <div style="text-align:center;color:var(--sub);padding:30px">Loading transfers...</div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="tab-scan">
+    <div class="card">
+      <div class="card-title">📷 Scan Transfer QR</div>
+      <button onclick="openScanner()" class="btn btn-accent" style="width:100%;justify-content:center;margin-bottom:16px;padding:20px;font-size:16px">📷 Scan Transfer QR Code</button>
+      <div style="text-align:center;color:var(--sub);margin-bottom:16px;font-size:13px">— or enter Transfer ID manually —</div>
+      <label class="input-label">Transfer ID</label>
+      <input class="input-field" id="scan-txn-id" placeholder="e.g. TXN-2024-0042">
+      <button onclick="lookupTransfer()" class="btn btn-success" style="width:100%;justify-content:center">🔍 Look Up Transfer</button>
+      <div id="scan-result" style="margin-top:16px"></div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="tab-history">
+    <div class="card">
+      <div class="card-title">🕐 Completed Transfers</div>
+      <div id="history-content">
+        <div style="text-align:center;color:var(--sub);padding:20px">No completed transfers today</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/qr_camera_scanner.js"></script>
+<script>
+let transfers = [];
+let completedTransfers = [];
+let totalUnits = 0;
+
+function updateTime() {
+  document.getElementById('current-time').textContent = new Date().toLocaleTimeString();
+}
+setInterval(updateTime, 1000);
+updateTime();
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function generateTransfers() {
+  const routes = [
+    ['Zone A-01','Zone C-03'],['Zone B-05','Zone A-08'],['Receiving Dock','Zone B-02'],
+    ['Zone D-01','Zone A-04'],['Zone C-07','Zone B-09'],['Staging Area','Zone D-03']
+  ];
+  const itemSets = [
+    [{name:'Industrial Bolts',sku:'SKU-1042',qty:50},{name:'Steel Plates',sku:'SKU-2031',qty:12}],
+    [{name:'Packing Tape Rolls',sku:'SKU-0891',qty:100}],
+    [{name:'Electronic Components',sku:'SKU-3342',qty:25},{name:'Wire Harness',sku:'SKU-3343',qty:10}],
+    [{name:'Safety Helmets',sku:'SKU-4001',qty:30}],
+    [{name:'Cardboard Boxes L',sku:'SKU-0120',qty:200},{name:'Cardboard Boxes M',sku:'SKU-0121',qty:150}],
+    [{name:'Motor Parts A',sku:'SKU-5501',qty:8}]
+  ];
+  const urgencies = ['urgent','normal','low'];
+  
+  return routes.map((r,i) => ({
+    id:`TXN-2024-${String(i+1).padStart(4,'0')}`,
+    from:r[0],
+    to:r[1],
+    items:itemSets[i].map(item => ({...item, picked:0})),
+    status:'pending',
+    urgency:urgencies[i%3],
+    created: new Date(Date.now() - i*900000).toLocaleTimeString()
+  }));
+}
+
+function renderTransfers() {
+  const container = document.getElementById('transfer-list');
+  const pending = transfers.filter(t => t.status !== 'done');
+  const inprog = transfers.filter(t => t.status === 'in_progress');
+  const done = completedTransfers.length;
+  
+  document.getElementById('s-pending').textContent = pending.filter(t=>t.status==='pending').length;
+  document.getElementById('s-inprog').textContent = inprog.length;
+  document.getElementById('s-done').textContent = done;
+  document.getElementById('s-units').textContent = totalUnits;
+  
+  if (!pending.length) {
+    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--success)"><div style="font-size:48px;margin-bottom:12px">✅</div><div style="font-size:18px;font-weight:700">All transfers complete!</div></div>';
+    return;
+  }
+  
+  container.innerHTML = transfers.map(t => {
+    if (t.status === 'done') return '';
+    const statusClass = t.status==='in_progress'?'s-inprog':'s-pending';
+    const statusText = t.status==='in_progress'?'In Progress':'Pending';
+    return `
+      <div class="transfer-card ${t.urgency}" id="txn-${t.id}">
+        <div class="transfer-header">
+          <span class="transfer-id">${t.id}</span>
+          <span class="transfer-status ${statusClass}">${statusText}</span>
+        </div>
+        <div class="transfer-route">
+          <span class="route-loc">📍 ${t.from}</span>
+          <span class="route-arrow">→</span>
+          <span class="route-loc">📍 ${t.to}</span>
+        </div>
+        <div class="transfer-items">
+          ${t.items.map((item, idx) => `
+            <div class="item-row">
+              <div class="item-info">
+                <span class="item-name">${item.name}</span>
+                <span class="item-sku">${item.sku} &bull; Need: ${item.qty}</span>
+              </div>
+              <div class="item-check">
+                <input class="check-input" type="number" id="pick-${t.id}-${idx}" 
+                  value="${item.picked}" min="0" max="${item.qty}" inputmode="numeric"
+                  placeholder="0" onchange="updatePicked('${t.id}',${idx},this.value)">
+                <span style="color:var(--sub);font-size:12px">/ ${item.qty}</span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="transfer-actions">
+          ${t.status==='pending' ? `<button class="btn btn-accent" onclick="startTransfer('${t.id}')" style="flex:1;justify-content:center">▶️ Start Picking</button>` : ''}
+          <button class="btn btn-success" onclick="completeTransfer('${t.id}')" style="flex:1;justify-content:center">✅ Complete</button>
+        </div>
+        ${t.urgency==='urgent'?'<div style="margin-top:8px;color:var(--danger);font-size:12px;font-weight:700">🔴 URGENT - High Priority</div>':''}
+      </div>
+    `;
+  }).join('');
+}
+
+function updatePicked(txnId, itemIdx, val) {
+  const t = transfers.find(t => t.id === txnId);
+  if (t) t.items[itemIdx].picked = parseInt(val) || 0;
+}
+
+function startTransfer(id) {
+  const t = transfers.find(t => t.id === id);
+  if (t) { t.status = 'in_progress'; renderTransfers(); }
+}
+
+function completeTransfer(id) {
+  const t = transfers.find(t => t.id === id);
+  if (!t) return;
+  
+  const allPicked = t.items.every(item => item.picked >= item.qty);
+  if (!allPicked) {
+    const incomplete = t.items.filter(i => i.picked < i.qty);
+    const confirm = window.confirm(`Some items not fully picked:\n${incomplete.map(i => `${i.name}: ${i.picked}/${i.qty}`).join('\n')}\n\nComplete anyway?`);
+    if (!confirm) return;
+  }
+  
+  const unitsThisTransfer = t.items.reduce((s, i) => s + (i.picked || 0), 0);
+  totalUnits += unitsThisTransfer;
+  t.status = 'done';
+  completedTransfers.push({...t, completedAt: new Date().toLocaleTimeString()});
+  
+  fetch('/api/warehouse/activity', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({type:'transfer',transfer_id:t.id,from:t.from,to:t.to,items:t.items,units:unitsThisTransfer})
+  }).catch(() => {});
+  
+  renderTransfers();
+  updateHistory();
+  alert(`✅ Transfer ${id} completed!\n${unitsThisTransfer} units moved\n${t.from} → ${t.to}`);
+}
+
+function updateHistory() {
+  const container = document.getElementById('history-content');
+  if (!completedTransfers.length) return;
+  container.innerHTML = completedTransfers.map(t => `
+    <div style="padding:12px;border-radius:8px;margin-bottom:8px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15)">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-weight:700;font-size:13px">${t.id}</span>
+        <span style="color:var(--sub);font-size:12px">${t.completedAt}</span>
+      </div>
+      <div style="color:var(--sub);font-size:12px">${t.from} → ${t.to} &bull; ${t.items.reduce((s,i)=>s+(i.picked||0),0)} units</div>
+    </div>
+  `).join('');
+}
+
+function openScanner() {
+  if (typeof QRCameraScanner !== 'undefined' && QRCameraScanner.openScanner) {
+    QRCameraScanner.openScanner(function(result) {
+      document.getElementById('scan-txn-id').value = result;
+      lookupTransfer();
+    });
+  } else {
+    const id = prompt('Enter Transfer ID:');
+    if (id) { document.getElementById('scan-txn-id').value = id; lookupTransfer(); }
+  }
+}
+
+function lookupTransfer() {
+  const id = document.getElementById('scan-txn-id').value.trim();
+  const container = document.getElementById('scan-result');
+  if (!id) { alert('Please enter a Transfer ID'); return; }
+  
+  const t = transfers.find(t => t.id === id);
+  if (t) {
+    container.innerHTML = `<div style="padding:12px;background:rgba(99,102,241,0.1);border:1px solid var(--accent);border-radius:8px">
+      <div style="font-weight:700;margin-bottom:6px">✅ Found: ${t.id}</div>
+      <div style="font-size:13px;color:var(--sub)">${t.from} → ${t.to} &bull; ${t.items.length} item types</div>
+      <button class="btn btn-accent" onclick="switchTab('transfers',document.querySelectorAll('.tab')[0]);document.getElementById('txn-${t.id}')?.scrollIntoView({behavior:'smooth'})" style="margin-top:10px;width:100%;justify-content:center">View Transfer</button>
+    </div>`;
+  } else {
+    container.innerHTML = `<div style="padding:12px;background:rgba(239,68,68,0.1);border:1px solid var(--danger);border-radius:8px;color:var(--danger)">Transfer "${id}" not found</div>`;
+  }
+}
+
+async function loadTransfers() {
+  try {
+    const res = await fetch('/api/transfers').catch(() => null);
+    if (res && res.ok) {
+      const data = await res.json();
+      if (data.transfers && data.transfers.length) { transfers = data.transfers; renderTransfers(); return; }
+    }
+  } catch(e) {}
+  transfers = generateTransfers();
+  renderTransfers();
+}
+
+loadTransfers();
+</script>
+<script src="/auto_theme_injector.js"></script>
+</body>
+</html>

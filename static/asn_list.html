@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASN Management - QR Legends</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #2d3748;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        thead {
+            background: #f7fafc;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #4a5568;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #2d3748;
+        }
+
+        tbody tr {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        .status-pill {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-draft {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-sent {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-received {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #718096;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-size: 13px;
+            color: #4a5568;
+            font-weight: 600;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 10px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📦 ASN Management</h1>
+            <div class="header-actions">
+                <a href="/receiving" class="btn btn-secondary">← Back to Receiving</a>
+                <a href="/asn_vendor_form" class="btn btn-primary">+ Create ASN</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="stats-row" id="stats">
+                <div class="stat-card">
+                    <h3 id="totalAsns">0</h3>
+                    <p>Total ASNs</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="draftAsns">0</h3>
+                    <p>Draft</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="sentAsns">0</h3>
+                    <p>Sent</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="receivedAsns">0</h3>
+                    <p>Received</p>
+                </div>
+            </div>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Search</label>
+                    <input type="text" id="searchInput" placeholder="Search PO, vendor, ASN...">
+                </div>
+                <div class="filter-group">
+                    <label>Status</label>
+                    <select id="statusFilter">
+                        <option value="">All Statuses</option>
+                        <option value="Draft">Draft</option>
+                        <option value="Sent">Sent</option>
+                        <option value="Received">Received</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="tableContainer">
+                <div class="loading">Loading ASNs...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allAsns = [];
+
+        async function loadAsns() {
+            try {
+                const response = await fetch('/api/asns');
+                const data = await response.json();
+
+                if (data.success) {
+                    allAsns = data.asns;
+                    updateStats();
+                    renderTable();
+                } else {
+                    showError('Failed to load ASNs');
+                }
+            } catch (error) {
+                console.error('Error loading ASNs:', error);
+                showError('Failed to load ASNs');
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('totalAsns').textContent = allAsns.length;
+            document.getElementById('draftAsns').textContent = allAsns.filter(a => a.status === 'Draft').length;
+            document.getElementById('sentAsns').textContent = allAsns.filter(a => a.status === 'Sent').length;
+            document.getElementById('receivedAsns').textContent = allAsns.filter(a => a.status === 'Received').length;
+        }
+
+        function getFilteredAsns() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            return allAsns.filter(asn => {
+                const matchesSearch = !searchTerm || 
+                    asn.asn_id.toLowerCase().includes(searchTerm) ||
+                    asn.po_number.toLowerCase().includes(searchTerm) ||
+                    asn.vendor.toLowerCase().includes(searchTerm) ||
+                    (asn.carrier && asn.carrier.toLowerCase().includes(searchTerm));
+
+                const matchesStatus = !statusFilter || asn.status === statusFilter;
+
+                return matchesSearch && matchesStatus;
+            });
+        }
+
+        function renderTable() {
+            const filteredAsns = getFilteredAsns();
+            const container = document.getElementById('tableContainer');
+
+            if (filteredAsns.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No ASNs found</h3>
+                        <p>Create a new ASN to get started</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ASN #</th>
+                            <th>PO #</th>
+                            <th>Vendor</th>
+                            <th>ETA</th>
+                            <th>Carrier</th>
+                            <th>Pallets</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filteredAsns.map(asn => `
+                            <tr onclick="viewAsn('${asn.asn_id}')">
+                                <td><strong>${asn.asn_id}</strong></td>
+                                <td>${asn.po_number}</td>
+                                <td>${asn.vendor}</td>
+                                <td>${asn.eta || '—'}</td>
+                                <td>${asn.carrier || '—'}</td>
+                                <td>${(asn.pallets || []).length}</td>
+                                <td><span class="status-pill status-${asn.status.toLowerCase()}">${asn.status}</span></td>
+                                <td>${formatDate(asn.created_at)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = tableHTML;
+        }
+
+        function viewAsn(asnId) {
+            window.location.href = `/asn_detail?id=${asnId}`;
+        }
+
+        function formatDate(isoString) {
+            if (!isoString) return '—';
+            const date = new Date(isoString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+
+        function showError(message) {
+            document.getElementById('tableContainer').innerHTML = `
+                <div class="empty-state">
+                    <h3>Error</h3>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        document.getElementById('searchInput').addEventListener('input', renderTable);
+        document.getElementById('statusFilter').addEventListener('change', renderTable);
+
+        loadAsns();
+    </script>
+</body>
+</html>

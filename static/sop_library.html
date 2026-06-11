@@ -1,0 +1,425 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOP Library - QR Legends</title>
+    <style>
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            margin: 0
+            padding: 20px
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh}
+
+        .container {max-width: 1200px
+            margin: 0 auto}
+
+        .header {background: white
+            border-radius: 15px
+            padding: 30px
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            text-align: center}
+
+        .header h1 {color: #333
+            margin: 0 0 10px 0
+            font-size: 2.5rem}
+
+        .header p {color: #666
+            margin: 0
+            font-size: 1.1rem}
+
+        .tab-container {background: white
+            border-radius: 15px
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2)
+            overflow: hidden;
+            margin-bottom: 30px}
+
+        .tab-nav {display: flex
+            background: #f8f9fa
+            border-bottom: 2px solid #e9ecef}
+
+        .tab-btn {flex: 1
+            padding: 15px 20px
+            background: none
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            font-size: 1rem}
+
+        .tab-btn.active {background: #667eea
+            color: white
+            transform: translateY(-2px)}
+
+        .tab-btn: hover:not(.active) {background: #e9ecef
+            color: #333}
+
+        .tab-content {display: none
+            padding: 30px}
+
+        .tab-content.active {display: block}
+
+        .sop-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
+            gap: 20px
+            margin-bottom: 20px}
+
+        .sop-card {background: #f8f9fa
+            border-radius: 10px
+            padding: 20px
+            border-left: 4px solid #667eea;
+            transition: all 0.3s;
+            cursor: pointer}
+
+        .sop-card:hover {transform: translateY(-2px)
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1)}
+
+        .sop-title {font-size: 1.2rem
+            font-weight: bold
+            color: #333
+            margin-bottom: 10px}
+
+        .sop-meta {display: flex
+            justify-content: space-between
+            align-items: center
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #666}
+
+        .sop-description {color: #555
+            line-height: 1.5
+            margin-bottom: 15px}
+
+        .status-badge {padding: 4px 8px
+            border-radius: 12px
+            font-size: 0.8rem
+            font-weight: 600}
+
+        .status-active {background: #d4edda
+            color: #155724}
+
+        .status-draft {background: #fff3cd
+            color: #856404}
+
+        .btn {padding: 10px 20px
+            border: none
+            border-radius: 8px
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px}
+
+        .btn-primary {background: #667eea
+            color: white}
+
+        .btn-secondary {background: #6c757d
+            color: white}
+
+        .btn-success {background: #28a745
+            color: white}
+
+        .btn: hover {opacity: 0.9
+            transform: translateY(-2px)}
+
+        .search-bar {width: 100%
+            padding: 12px 20px
+            border: 2px solid #e9ecef
+            border-radius: 25px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            transition: border-color 0.3s}
+
+        .search-bar: focus {outline: none
+            border-color: #667eea}
+
+        .loading {text-align: center
+            padding: 50px
+            color: #666
+            font-size: 1.1rem}
+
+        .empty-state {text-align: center
+            padding: 50px
+            color: #666}
+
+        .empty-state h3 {color: #333
+            margin-bottom: 10px}
+
+        @media (max-width: 768px) {.tab-nav {
+                flex-direction: column}
+            
+            .tab-btn {text-align: center}
+            
+            .sop-grid {grid-template-columns: 1fr}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 SOP Library</h1>
+            <p>Standard Operating Procedures and Training Materials</p>
+        </div>
+
+        <div class="tab-container">
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="switchTab('all-sops')">📋 All SOPs</button>
+                <button class="tab-btn" onclick="switchTab('scanning')">🔍 Scanning</button>
+                <button class="tab-btn" onclick="switchTab('receiving')">📦 Receiving</button>
+                <button class="tab-btn" onclick="switchTab('safety')">⚠️ Safety</button>
+                <button class="tab-btn" onclick="switchTab('training')">🎓 Training</button>
+            </div>
+
+            <!-- All SOPs Tab -->
+            <div id="all-sops-tab" class="tab-content active">
+                <input type="text" class="search-bar" placeholder="🔍 Search SOPs..." onkeyup="filterSOPs(this.value)">
+                
+                <div class="sop-grid" id="all-sops-grid">
+                    <div class="loading" id="sops-loading">Loading SOPs...</div>
+                </div>
+            </div>
+
+            <!-- Scanning SOPs Tab -->
+            <div id="scanning-tab" class="tab-content">
+                <div class="sop-grid" id="scanning-sops">
+                    <div class="sop-card">
+                        <div class="sop-title">QR Code Scanning Basics</div>
+                        <div class="sop-meta">
+                            <span>Version 1.2</span>
+                            <span class="status-badge status-active">Active</span>
+                        </div>
+                        <div class="sop-description">
+                            Standard procedures for QR code scanning operations, including proper device handling and error recovery.
+                        </div>
+                        <button class="btn btn-primary" onclick="viewSOP('sop_001')">📖 View SOP</button>
+                        <button class="btn btn-secondary" onclick="downloadSOP('sop_001')">⬇️ Download</button>
+                    </div>
+
+                    <div class="sop-card">
+                        <div class="sop-title">Barcode Scanner Maintenance</div>
+                        <div class="sop-meta">
+                            <span>Version 2.0</span>
+                            <span class="status-badge status-active">Active</span>
+                        </div>
+                        <div class="sop-description">
+                            Maintenance procedures for handheld scanners and troubleshooting common issues.
+                        </div>
+                        <button class="btn btn-primary" onclick="viewSOP('sop_102')">📖 View SOP</button>
+                        <button class="btn btn-secondary" onclick="downloadSOP('sop_102')">⬇️ Download</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receiving SOPs Tab -->
+            <div id="receiving-tab" class="tab-content">
+                <div class="sop-grid" id="receiving-sops">
+                    <div class="sop-card">
+                        <div class="sop-title">Receiving Operations Workflow</div>
+                        <div class="sop-meta">
+                            <span>Version 2.1</span>
+                            <span class="status-badge status-active">Active</span>
+                        </div>
+                        <div class="sop-description">
+                            Complete receiving workflow including quality checks, documentation, and inventory recording.
+                        </div>
+                        <button class="btn btn-primary" onclick="viewSOP('sop_002')">📖 View SOP</button>
+                        <button class="btn btn-secondary" onclick="downloadSOP('sop_002')">⬇️ Download</button>
+                    </div>
+
+                    <div class="sop-card">
+                        <div class="sop-title">Freight Documentation</div>
+                        <div class="sop-meta">
+                            <span>Version 1.5</span>
+                            <span class="status-badge status-active">Active</span>
+                        </div>
+                        <div class="sop-description">
+                            Procedures for handling freight delivery documentation and driver interactions.
+                        </div>
+                        <button class="btn btn-primary" onclick="viewSOP('sop_202')">📖 View SOP</button>
+                        <button class="btn btn-secondary" onclick="downloadSOP('sop_202')">⬇️ Download</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Safety SOPs Tab -->
+            <div id="safety-tab" class="tab-content">
+                <div class="sop-grid" id="safety-sops">
+                    <div class="sop-card">
+                        <div class="sop-title">Warehouse Safety Protocols</div>
+                        <div class="sop-meta">
+                            <span>Version 1.0</span>
+                            <span class="status-badge status-active">Active</span>
+                        </div>
+                        <div class="sop-description">
+                            Essential safety procedures and emergency protocols for warehouse operations.
+                        </div>
+                        <button class="btn btn-primary" onclick="viewSOP('sop_003')">📖 View SOP</button>
+                        <button class="btn btn-secondary" onclick="downloadSOP('sop_003')">⬇️ Download</button>
+                    </div>
+
+                    <div class="sop-card">
+                        <div class="sop-title">Equipment Safety Checklist</div>
+                        <div class="sop-meta">
+                            <span>Version 1.3</span>
+                            <span class="status-badge status-active">Active</span>
+                        </div>
+                        <div class="sop-description">
+                            Daily and weekly safety checks for warehouse equipment and machinery.
+                        </div>
+                        <button class="btn btn-primary" onclick="viewSOP('sop_303')">📖 View SOP</button>
+                        <button class="btn btn-secondary" onclick="downloadSOP('sop_303')">⬇️ Download</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Training Tab -->
+            <div id="training-tab" class="tab-content">
+                <div class="sop-grid" id="training-sops">
+                    <div class="sop-card">
+                        <div class="sop-title">New Employee Onboarding</div>
+                        <div class="sop-meta">
+                            <span>Version 3.0</span>
+                            <span class="status-badge status-active">Active</span>
+                        </div>
+                        <div class="sop-description">
+                            Complete onboarding process for new warehouse employees including training requirements.
+                        </div>
+                        <button class="btn btn-primary" onclick="viewSOP('sop_401')">📖 View SOP</button>
+                        <button class="btn btn-secondary" onclick="downloadSOP('sop_401')">⬇️ Download</button>
+                    </div>
+
+                    <div class="sop-card">
+                        <div class="sop-title">Certification Requirements</div>
+                        <div class="sop-meta">
+                            <span>Version 1.1</span>
+                            <span class="status-badge status-active">Active</span>
+                        </div>
+                        <div class="sop-description">
+                            Required certifications and training modules for different warehouse roles.
+                        </div>
+                        <button class="btn btn-primary" onclick="viewSOP('sop_402')">📖 View SOP</button>
+                        <button class="btn btn-secondary" onclick="downloadSOP('sop_402')">⬇️ Download</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="btn btn-secondary" onclick="window.location.href='/main_dashboard'">← Back to Dashboard</button>
+            <button class="btn btn-success" onclick="createNewSOP()">➕ Create New SOP</button>
+        </div>
+    </div>
+
+    <script>
+        let allSOPs = [];
+
+        // Tab switching functionality
+        function switchTab(tabName) {// Remove active class from all tabs and content
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'))
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'))
+
+            // Add active class to clicked tab and corresponding content
+            event.target.classList.add('active')
+            document.getElementById(tabName + '-tab').classList.add('active');
+
+            // Load specific content if needed
+            if (tabName === 'all-sops' && allSOPs.length === 0) {
+                loadSOPs()}
+        }
+
+        // Load SOPs from API
+        async function loadSOPs() {try {
+                const response = await fetch('/api/sop/library')
+                const data = await response.json()
+                
+                if (data.success) {
+                    allSOPs = data.sops
+                    displaySOPs(allSOPs);} else {showError('Failed to load SOPs')}
+            } catch (error) {console.error('Error loading SOPs:', error)
+                showError('Error loading SOPs')}
+        }
+
+        // Display SOPs in the grid
+        function displaySOPs(sops) {const grid = document.getElementById('all-sops-grid')
+            const loading = document.getElementById('sops-loading')
+            
+            if (loading) {
+                loading.style.display = 'none'}
+
+            if (sops.length === 0) {grid.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No SOPs Found</h3>
+                        <p>No Standard Operating Procedures are currently available.</p>
+                        <button class="btn btn-primary" onclick="createNewSOP()">Create First SOP</button>
+                    </div>
+                `
+                return}
+
+            grid.innerHTML = sops.map(sop => `
+                <div class="sop-card">
+                    <div class="sop-title">${sop.title}</div>
+                    <div class="sop-meta">
+                        <span>Version ${sop.version}</span>
+                        <span class="status-badge status-${sop.status}">${sop.status.charAt(0).toUpperCase() + sop.status.slice(1)}</span>
+                    </div>
+                    <div class="sop-description">${sop.description}</div>
+                    <div class="sop-meta" style="margin-top: 10px;">
+                        <small>Last updated: ${sop.last_updated}</small>
+                        <small>Category: ${sop.category}</small>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <button class="btn btn-primary" onclick="viewSOP('${sop.id}')">📖 View SOP</button>
+                        <button class="btn btn-secondary" onclick="downloadSOP('${sop.id}')">⬇️ Download</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter SOPs based on search input
+        function filterSOPs(searchTerm) {if (!searchTerm.trim()) {
+                displaySOPs(allSOPs)
+                return}
+
+            const filtered = allSOPs.filter(sop => 
+                sop.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                sop.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                sop.category.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            displaySOPs(filtered);
+        }
+
+        // View SOP details
+        function viewSOP(sopId) {
+            window.location.href = `/sop_${sopId.split('_')[1]}`;
+        }
+
+        // Download SOP
+        function downloadSOP(sopId) {
+            alert(`Downloading SOP ${sopId}... In a real implementation, this would download the PDF or document.`);
+        }
+
+        // Create new SOP
+        function createNewSOP() {alert('Create New SOP functionality would open a form or redirect to SOP creation page.')}
+
+        // Show error message
+        function showError(message) {const grid = document.getElementById('all-sops-grid')
+            grid.innerHTML = `
+                <div class="empty-state">
+                    <h3>⚠️ Error</h3>
+                    <p>${message}</p>
+                    <button class="btn btn-primary" onclick="loadSOPs()">🔄 Retry</button>
+                </div>
+            `;
+        }
+
+        // Load SOPs on page load
+        document.addEventListener('DOMContentLoaded', function() {loadSOPs()
+            console.log('SOP Library page loaded successfully')});
+    </script>
+</body>
+</html>

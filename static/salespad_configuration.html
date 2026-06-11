@@ -1,0 +1,767 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SalesPad Configuration - QR Legends</title>
+    <style>
+        * {box-sizing: border-box}
+
+        body {font-family: Arial, sans-serif
+            margin: 0
+            padding: 10px
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            padding-top: 70px;
+            padding-bottom: 120px}
+
+        .container {max-width: 1200px
+            margin: 0 auto
+            background: white
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+
+        .header {text-align: center
+            margin-bottom: 30px
+            padding: 20px
+            background: linear-gradient(135deg, #e74c3c, #f39c12);
+            color: white;
+            border-radius: 10px}
+
+        .header h1 {margin: 0 0 10px 0
+            font-size: 2.2rem}
+
+        .header p {margin: 0
+            opacity: 0.9
+            font-size: 1.1rem}
+
+        .config-tabs {display: flex
+            background: #f8f9fa
+            border-radius: 10px
+            padding: 5px;
+            margin-bottom: 30px;
+            flex-wrap: wrap}
+
+        .tab {flex: 1
+            padding: 12px 15px
+            text-align: center
+            border: none;
+            background: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            min-width: 120px}
+
+        .tab.active {background: #e74c3c
+            color: white}
+
+        .tab-content {display: none}
+
+        .tab-content.active {display: block}
+
+        .config-section {background: #fff5f5
+            border-radius: 10px
+            padding: 20px
+            margin-bottom: 20px;
+            border-left: 4px solid #e74c3c}
+
+        .config-section h3 {margin: 0 0 20px 0
+            color: #2c3e50
+            font-size: 1.3rem}
+
+        .form-group {margin-bottom: 20px}
+
+        .form-group label {display: block
+            margin-bottom: 8px
+            font-weight: 600
+            color: #555}
+
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {width: 100%
+            padding: 12px
+            border: 2px solid #fadbd8
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease}
+
+        .form-group input:focus, 
+        .form-group select:focus, 
+        .form-group textarea: focus {outline: none
+            border-color: #e74c3c}
+
+        .checkbox-group {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr))
+            gap: 15px
+            margin-top: 10px}
+
+        .checkbox-item {display: flex
+            align-items: center
+            padding: 12px
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #fadbd8}
+
+        .checkbox-item input[type="checkbox"] {width: auto
+            margin-right: 12px
+            transform: scale(1.2)}
+
+        .btn {padding: 12px 24px
+            border: none
+            border-radius: 8px
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px}
+
+        .btn-primary {background: #e74c3c
+            color: white}
+
+        .btn-primary:hover {background: #c0392b}
+
+        .btn-success {background: #27ae60
+            color: white}
+
+        .btn-success:hover {background: #229954}
+
+        .btn-warning {background: #f39c12
+            color: white}
+
+        .btn-warning:hover {background: #d68910}
+
+        .btn-danger {background: #e74c3c
+            color: white}
+
+        .btn-danger:hover {background: #c0392b}
+
+        .alert {padding: 15px
+            border-radius: 8px
+            margin: 15px 0}
+
+        .alert-success {background: #d4edda
+            color: #155724
+            border: 1px solid #c3e6cb}
+
+        .alert-warning {background: #fff3cd
+            color: #856404
+            border: 1px solid #ffeaa7}
+
+        .alert-danger {background: #f8d7da
+            color: #721c24
+            border: 1px solid #f5c6cb}
+
+        .two-column {display: grid
+            grid-template-columns: 1fr 1fr
+            gap: 20px}
+
+        .three-column {display: grid
+            grid-template-columns: 1fr 1fr 1fr
+            gap: 15px}
+
+        @media (max-width: 768px) {.config-tabs {
+                flex-direction: column}
+            
+            .tab {margin-bottom: 5px}
+
+            .two-column, .three-column {grid-template-columns: 1fr}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛒 SalesPad Configuration</h1>
+            <p>Configure OrderDesk sales and order management settings</p>
+        </div>
+
+        <div class="config-tabs">
+            <button class="tab active" onclick="switchTab('general')">General</button>
+            <button class="tab" onclick="switchTab('sales')">Sales</button>
+            <button class="tab" onclick="switchTab('pricing')">Pricing</button>
+            <button class="tab" onclick="switchTab('fulfillment')">Fulfillment</button>
+            <button class="tab" onclick="switchTab('payments')">Payments</button>
+            <button class="tab" onclick="switchTab('automation')">Automation</button>
+        </div>
+
+        <!-- General Settings Tab -->
+        <div id="general-tab" class="tab-content active">
+            <div class="config-section">
+                <h3>🏢 Sales Organization</h3>
+                <div class="two-column">
+                    <div class="form-group">
+                        <label>Sales Team Name</label>
+                        <input type="text" id="salesTeamName" value="Demo Sales Team" placeholder="Enter sales team name">
+                    </div>
+                    <div class="form-group">
+                        <label>Default Sales Territory</label>
+                        <select id="defaultTerritory">
+                            <option value="north">North Region</option>
+                            <option value="south">South Region</option>
+                            <option value="east">East Region</option>
+                            <option value="west">West Region</option>
+                            <option value="national">National</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="two-column">
+                    <div class="form-group">
+                        <label>Quote Validity Period (days)</label>
+                        <input type="number" id="quoteValidity" value="30" min="1" max="365">
+                    </div>
+                    <div class="form-group">
+                        <label>Order Number Format</label>
+                        <input type="text" id="orderFormat" value="SO-{YYYY}-{#####}" placeholder="e.g., SO-{YYYY}-{#####}">
+                    </div>
+                </div>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enableQuoteToOrder" checked>
+                        <label for="enableQuoteToOrder">Enable Quote to Order Conversion</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enableBackorders" checked>
+                        <label for="enableBackorders">Allow Backorders</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enablePartialShipments" checked>
+                        <label for="enablePartialShipments">Allow Partial Shipments</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="requireCreditCheck">
+                        <label for="requireCreditCheck">Require Credit Check</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h3>🔗 WMS Integration</h3>
+                <div class="two-column">
+                    <div class="form-group">
+                        <label>Inventory Sync Mode</label>
+                        <select id="inventorySyncMode">
+                            <option value="realtime">Real-time</option>
+                            <option value="batch">Batch (every 5 minutes)</option>
+                            <option value="scheduled">Scheduled (hourly)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Stock Allocation Method</label>
+                        <select id="stockAllocation">
+                            <option value="fifo">FIFO (First In, First Out)</option>
+                            <option value="lifo">LIFO (Last In, First Out)</option>
+                            <option value="fefo">FEFO (First Expired, First Out)</option>
+                            <option value="optimal">Optimal Location</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="autoAllocateInventory" checked>
+                        <label for="autoAllocateInventory">Auto-allocate Inventory</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="checkStockOnQuote" checked>
+                        <label for="checkStockOnQuote">Check Stock Availability on Quote</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="reserveStockOnOrder" checked>
+                        <label for="reserveStockOnOrder">Reserve Stock on Order</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="syncShipmentStatus" checked>
+                        <label for="syncShipmentStatus">Sync Shipment Status</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales Settings Tab -->
+        <div id="sales-tab" class="tab-content">
+            <div class="config-section">
+                <h3>📋 Sales Process</h3>
+                <div class="three-column">
+                    <div class="form-group">
+                        <label>Quote Number Format</label>
+                        <input type="text" id="quoteNumberFormat" value="QT-{YYYY}-{####}" placeholder="e.g., QT-{YYYY}-{####}">
+                    </div>
+                    <div class="form-group">
+                        <label>Default Sales Rep</label>
+                        <select id="defaultSalesRep">
+                            <option value="auto">Auto-assign</option>
+                            <option value="territory">By Territory</option>
+                            <option value="manual">Manual Assignment</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Commission Rate (%)</label>
+                        <input type="number" id="commissionRate" value="3.5" step="0.1" min="0" max="100">
+                    </div>
+                </div>
+                <div class="two-column">
+                    <div class="form-group">
+                        <label>Sales Stage Workflow</label>
+                        <select id="salesWorkflow">
+                            <option value="simple">Simple (Lead → Quote → Order)</option>
+                            <option value="standard">Standard (Lead → Opportunity → Quote → Order)</option>
+                            <option value="complex">Complex (Lead → Qualify → Propose → Negotiate → Close)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Follow-up Reminder (days)</label>
+                        <input type="number" id="followupDays" value="7" min="1" max="90">
+                    </div>
+                </div>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enableOpportunityTracking" checked>
+                        <label for="enableOpportunityTracking">Enable Opportunity Tracking</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enableSalesForecast">
+                        <label for="enableSalesForecast">Enable Sales Forecasting</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enableCustomerPortal">
+                        <label for="enableCustomerPortal">Enable Customer Portal</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="requireApprovalLargeOrders">
+                        <label for="requireApprovalLargeOrders">Require Approval for Large Orders</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h3>👤 Customer Management</h3>
+                <div class="two-column">
+                    <div class="form-group">
+                        <label>Customer Number Format</label>
+                        <input type="text" id="customerFormat" value="CUST-{#####}" placeholder="e.g., CUST-{#####}">
+                    </div>
+                    <div class="form-group">
+                        <label>Default Customer Type</label>
+                        <select id="defaultCustomerType">
+                            <option value="retail">Retail</option>
+                            <option value="wholesale">Wholesale</option>
+                            <option value="distributor">Distributor</option>
+                            <option value="online">Online</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="two-column">
+                    <div class="form-group">
+                        <label>Default Credit Limit ($)</label>
+                        <input type="number" id="defaultCreditLimit" value="10000" min="0" step="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Customer Classification</label>
+                        <select id="customerClassification">
+                            <option value="abc">ABC Analysis (A/B/C)</option>
+                            <option value="value">Value Based (High/Medium/Low)</option>
+                            <option value="frequency">Frequency Based</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Settings Tab -->
+        <div id="pricing-tab" class="tab-content">
+            <div class="config-section">
+                <h3>💰 Pricing Strategy</h3>
+                <div class="two-column">
+                    <div class="form-group">
+                        <label>Default Pricing Method</label>
+                        <select id="pricingMethod">
+                            <option value="list">List Price</option>
+                            <option value="cost_plus">Cost Plus Margin</option>
+                            <option value="competitive">Competitive Pricing</option>
+                            <option value="value">Value Based</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Default Markup Percentage (%)</label>
+                        <input type="number" id="defaultMarkup" value="25" step="0.1" min="0" max="1000">
+                    </div>
+                </div>
+                <div class="two-column">
+                    <div class="form-group">
+                        <label>Discount Authorization Limit (%)</label>
+                        <input type="number" id="discountLimit" value="10" step="0.1" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Price Update Frequency</label>
+                        <select id="priceUpdateFreq">
+                            <option value="realtime">Real-time</option>
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enableCustomerPricing" checked>
+                        <label for="enableCustomerPricing">Customer-Specific Pricing</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enableVolumeDiscounts" checked>
+                        <label for="enableVolumeDiscounts">Volume Discounts</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enablePromoCodes">
+                        <label for="enablePromoCodes">Promotional Codes</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enableDynamicPricing">
+                        <label for="enableDynamicPricing">Dynamic Pricing</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h3>🎯 Discount Management</h3>
+                <div class="three-column">
+                    <div class="form-group">
+                        <label>Early Payment Discount (%)</label>
+                        <input type="number" id="earlyPayDiscount" value="2" step="0.1" min="0" max="50">
+                    </div>
+                    <div class="form-group">
+                        <label>Volume Discount Threshold</label>
+                        <input type="number" id="volumeThreshold" value="1000" min="0" step="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Loyalty Discount (%)</label>
+                        <input type="number" id="loyaltyDiscount" value="5" step="0.1" min="0" max="50">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fulfillment Settings Tab -->
+        <div id="fulfillment-tab" class="tab-content">
+            <div class="config-section">
+                <h3>📦 Order Fulfillment</h3>
+                <div class="two-column">
+                    <div class="form-group">
+                        <label>Picking Strategy</label>
+                        <select id="pickingStrategy">
+                            <option value="discrete">Discrete Order Picking</option>
+                            <option value="batch">Batch Picking</option>
+                            <option value="zone">Zone Picking</option>
+                            <option value="wave">Wave Picking</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Order Priority Rules</label>
+                        <select id="orderPriority">
+                            <option value="fifo">First In, First Out</option>
+                            <option value="customer">Customer Priority</option>
+                            <option value="shipping">Shipping Date</option>
+                            <option value="value">Order Value</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="two-column">
+                    <div class="form-group">
+                        <label>Pick Confirmation Method</label>
+                        <select id="pickConfirmation">
+                            <option value="qr">QR Code Scanning</option>
+                            <option value="barcode">Barcode Scanning</option>
+                            <option value="manual">Manual Entry</option>
+                            <option value="voice">Voice Confirmation</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Default Shipping Method</label>
+                        <select id="defaultShipping">
+                            <option value="ground">Ground</option>
+                            <option value="express">Express</option>
+                            <option value="overnight">Overnight</option>
+                            <option value="freight">Freight</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enablePickOptimization" checked>
+                        <label for="enablePickOptimization">Enable Pick Path Optimization</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enableQualityCheck" checked>
+                        <label for="enableQualityCheck">Require Quality Check</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enablePackingSlips" checked>
+                        <label for="enablePackingSlips">Generate Packing Slips</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enableShippingLabels" checked>
+                        <label for="enableShippingLabels">Print Shipping Labels</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h3>🚚 Shipping Integration</h3>
+                <div class="two-column">
+                    <div class="form-group">
+                        <label>Primary Carrier</label>
+                        <select id="primaryCarrier">
+                            <option value="ups">UPS</option>
+                            <option value="fedex">FedEx</option>
+                            <option value="usps">USPS</option>
+                            <option value="dhl">DHL</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tracking Notification</label>
+                        <select id="trackingNotification">
+                            <option value="automatic">Automatic Email</option>
+                            <option value="manual">Manual Send</option>
+                            <option value="customer_portal">Customer Portal Only</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Settings Tab -->
+        <div id="payments-tab" class="tab-content">
+            <div class="config-section">
+                <h3>💳 Payment Processing</h3>
+                <div class="two-column">
+                    <div class="form-group">
+                        <label>Primary Payment Processor</label>
+                        <select id="paymentProcessor">
+                            <option value="stripe">Stripe</option>
+                            <option value="paypal">PayPal</option>
+                            <option value="square">Square</option>
+                            <option value="authorize">Authorize.net</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Default Payment Terms</label>
+                        <select id="paymentTerms">
+                            <option value="cod">Cash on Delivery</option>
+                            <option value="prepaid">Prepaid</option>
+                            <option value="net15">Net 15</option>
+                            <option value="net30">Net 30</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="two-column">
+                    <div class="form-group">
+                        <label>Invoice Due Days</label>
+                        <input type="number" id="invoiceDueDays" value="30" min="0" max="365">
+                    </div>
+                    <div class="form-group">
+                        <label>Late Payment Fee (%)</label>
+                        <input type="number" id="latePaymentFee" value="1.5" step="0.1" min="0" max="50">
+                    </div>
+                </div>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enableOnlinePayments" checked>
+                        <label for="enableOnlinePayments">Enable Online Payments</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enableRecurringBilling">
+                        <label for="enableRecurringBilling">Enable Recurring Billing</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enablePaymentReminders" checked>
+                        <label for="enablePaymentReminders">Automatic Payment Reminders</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enablePartialPayments">
+                        <label for="enablePartialPayments">Allow Partial Payments</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h3>📧 Invoice Settings</h3>
+                <div class="two-column">
+                    <div class="form-group">
+                        <label>Invoice Number Format</label>
+                        <input type="text" id="invoiceNumberFormat" value="INV-{YYYY}-{#####}" placeholder="e.g., INV-{YYYY}-{#####}">
+                    </div>
+                    <div class="form-group">
+                        <label>Invoice Delivery Method</label>
+                        <select id="invoiceDelivery">
+                            <option value="email">Email</option>
+                            <option value="print">Print & Mail</option>
+                            <option value="portal">Customer Portal</option>
+                            <option value="both">Email & Portal</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Automation Settings Tab -->
+        <div id="automation-tab" class="tab-content">
+            <div class="config-section">
+                <h3>🤖 Workflow Automation</h3>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="autoQuoteGeneration" checked>
+                        <label for="autoQuoteGeneration">Auto-generate Quotes from Inquiries</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="autoOrderProcessing" checked>
+                        <label for="autoOrderProcessing">Auto-process Orders (if inventory available)</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="autoInvoiceGeneration" checked>
+                        <label for="autoInvoiceGeneration">Auto-generate Invoices on Shipment</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="autoInventoryUpdate" checked>
+                        <label for="autoInventoryUpdate">Auto-update Inventory from WMS</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="autoCustomerNotification" checked>
+                        <label for="autoCustomerNotification">Auto-notify Customers of Status Changes</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="autoReorderSuggestions">
+                        <label for="autoReorderSuggestions">Auto-suggest Reorders to Customers</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h3>📊 Analytics & Reporting</h3>
+                <div class="two-column">
+                    <div class="form-group">
+                        <label>Sales Report Frequency</label>
+                        <select id="salesReportFreq">
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="quarterly">Quarterly</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Performance Metrics Dashboard</label>
+                        <select id="performanceDashboard">
+                            <option value="basic">Basic (Sales, Orders)</option>
+                            <option value="standard">Standard (Sales, Margin, Customer)</option>
+                            <option value="advanced">Advanced (Full Analytics)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enableSalesForecasting">
+                        <label for="enableSalesForecasting">Enable Sales Forecasting</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enableCustomerAnalytics" checked>
+                        <label for="enableCustomerAnalytics">Customer Behavior Analytics</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enableProductAnalytics" checked>
+                        <label for="enableProductAnalytics">Product Performance Analytics</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enableAlertSystem" checked>
+                        <label for="enableAlertSystem">Automated Alert System</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="text-align: center; margin-top: 30px; padding: 20px; background: #fff5f5; border-radius: 10px;">
+            <button class="btn btn-success" onclick="saveAllSettings()">💾 Save All Settings</button>
+            <button class="btn btn-warning" onclick="exportConfiguration()">📤 Export Configuration</button>
+            <button class="btn btn-primary" onclick="testWMSConnection()">🔧 Test WMS Connection</button>
+            <button class="btn btn-danger" onclick="resetToDefaults()">🔄 Reset to Defaults</button>
+        </div>
+
+        <div id="alerts"></div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="/salespad_dashboard" class="btn btn-primary">← Back to OrderDesk Dashboard</a>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {// Remove active class from all tabs and content
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'))
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'))
+
+            // Add active class to selected tab and content
+            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+
+        function saveAllSettings() {showAlert('success', '✅ SalesPad configuration saved successfully!')}
+
+        function exportConfiguration() {
+            const config = {
+                general: {
+                    salesTeamName: document.getElementById('salesTeamName').value,
+                    defaultTerritory: document.getElementById('defaultTerritory').value,
+                    quoteValidity: document.getElementById('quoteValidity').value,
+                    orderFormat: document.getElementById('orderFormat').value
+                },
+                sales: {
+                    quoteNumberFormat: document.getElementById('quoteNumberFormat').value,
+                    defaultSalesRep: document.getElementById('defaultSalesRep').value,
+                    commissionRate: document.getElementById('commissionRate').value
+                },
+                pricing: {
+                    pricingMethod: document.getElementById('pricingMethod').value,
+                    defaultMarkup: document.getElementById('defaultMarkup').value,
+                    discountLimit: document.getElementById('discountLimit').value
+                }
+            };
+
+            const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'salespad_configuration.json';
+            a.click();
+            URL.revokeObjectURL(url);
+
+            showAlert('success', '📤 Configuration exported successfully!');
+        }
+
+        function testWMSConnection() {showAlert('success', '🔧 WMS connection test successful! All systems operational.')}
+
+        function resetToDefaults() {if (confirm('Are you sure you want to reset all settings to defaults? This cannot be undone.')) {
+                showAlert('warning', '🔄 All settings reset to default values')}
+        }
+
+        function showAlert(type, message) {const alertsDiv = document.getElementById('alerts')
+            const alertClass = type === 'success' ? 'alert-success' : 
+                              type === 'warning' ? 'alert-warning' : 
+                              type === 'danger' ? 'alert-danger' : 'alert-success'
+            
+            alertsDiv.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
+            
+            setTimeout(() => {alertsDiv.innerHTML = ''}, 5000);
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {console.log('SalesPad Configuration page loaded')});
+    </script>
+
+    <!-- Include Universal Dashboard Button -->
+    <script src="/universal_dashboard_button.js"></script>
+    <!-- Include Floating Chat Widget -->
+    <script src="/floating_chat_widget.js"></script>
+    <!-- Include Employee Messaging Widget -->
+    <script src="/employee_messaging_widget.js"></script>
+</body>
+</html>

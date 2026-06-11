@@ -1,0 +1,688 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Support Request - QR Legends</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            padding-top: 80px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .form-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .priority-selector {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .priority-option {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .priority-option input[type="radio"] {
+            display: none;
+        }
+
+        .priority-option label {
+            display: block;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .priority-option input[type="radio"]:checked + label {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .priority-low label {
+            border-color: #28a745;
+        }
+
+        .priority-low input[type="radio"]:checked + label {
+            border-color: #28a745;
+            background: #28a745;
+        }
+
+        .priority-medium label {
+            border-color: #ffc107;
+        }
+
+        .priority-medium input[type="radio"]:checked + label {
+            border-color: #ffc107;
+            background: #ffc107;
+            color: #333;
+        }
+
+        .priority-high label {
+            border-color: #dc3545;
+        }
+
+        .priority-high input[type="radio"]:checked + label {
+            border-color: #dc3545;
+            background: #dc3545;
+        }
+
+        .attachment-zone {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .attachment-zone:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .attachment-zone.dragover {
+            border-color: #667eea;
+            background: #f0f8ff;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-submit {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .contact-info {
+            background: #e8f4fd;
+            border-left: 4px solid #17a2b8;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .contact-info h4 {
+            color: #0c5460;
+            margin-bottom: 10px;
+        }
+
+        .contact-info p {
+            color: #0c5460;
+            margin: 5px 0;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .priority-selector {
+                flex-direction: column;
+            }
+        }
+    </style>
+<style>
+/* === QRLegends Unified Theme (Dark/Light) === */
+:root{
+  --ql-bg: #0b1724;
+  --ql-panel: #0f2340;
+  --ql-card: #102846;
+  --ql-text: #dbe8ff;
+  --ql-sub: #97a6c1;
+  --ql-primary: #3b82f6;
+  --ql-success: #22c55e;
+  --ql-warning: #f59e0b;
+  --ql-danger: #ef4444;
+  --ql-accent: #6366f1;
+  --ql-border: rgba(255,255,255,.12);
+  --ql-surface: rgba(255,255,255,.06);
+}
+/* Light mode overrides */
+body.light{
+  --ql-bg: #f2f6fb;
+  --ql-panel: #ffffff;
+  --ql-card: #ffffff;
+  --ql-text: #1d2840;
+  --ql-sub: #51607c;
+  --ql-primary: #2563eb;
+  --ql-success: #16a34a;
+  --ql-warning: #d97706;
+  --ql-danger: #dc2626;
+  --ql-accent: #4f46e5;
+  --ql-border: rgba(0,0,0,.12);
+  --ql-surface: rgba(15,23,42,.04);
+}
+
+html,body{height:100%;}
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed;
+  color: var(--ql-text);
+  font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+  line-height: 1.45;
+}
+body.light{
+  background: linear-gradient(180deg,#f7faff,#eef3fb);
+}
+
+.ql-header{
+  position: sticky; top:0; z-index:1000;
+  background: rgba(8,27,46,.7);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--ql-border);
+}
+body.light .ql-header{
+  background: rgba(255,255,255,.75);
+}
+.ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
+.ql-title{display:flex; align-items:center; gap:10px;}
+.ql-h1{font-size:1.25rem; margin:0; letter-spacing:.2px;}
+.ql-nav{display:flex; gap:8px; flex-wrap:wrap;}
+.ql-btn{
+  display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
+  background: var(--ql-surface); border: 1px solid var(--ql-border);
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+  transition: transform .08s ease, background .2s ease, border-color .2s ease;
+}
+.ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+body.light .ql-btn:hover{ background: rgba(15,23,42,.08); }
+.ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
+
+.ql-theme-toggle{
+  margin-left:12px; cursor:pointer; border:1px solid var(--ql-border);
+  background: var(--ql-surface); color: var(--ql-text);
+  border-radius:10px; padding:8px 10px; font-size:16px;
+}
+
+.ql-container{ max-width:1200px; margin:22px auto; padding:0 20px; }
+.ql-grid{ display:grid; gap:16px; grid-template-columns: repeat(12, 1fr);}
+.ql-card{
+  grid-column: span 12;
+  background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+  border: 1px solid var(--ql-border);
+  box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+  border-radius:16px; padding:16px 16px;
+}
+body.light .ql-card{
+  background: var(--ql-card);
+  box-shadow: 0 10px 30px rgba(2,8,23,.08);
+}
+
+@media(min-width:900px){
+  .ql-card.half{ grid-column: span 6; }
+  .ql-card.third{ grid-column: span 4; }
+}
+
+.ql-card h2{ font-size:1.05rem; margin:0 0 10px 0; color: #bcd5ff; letter-spacing:.2px; }
+body.light .ql-card h2{ color:#234073; }
+
+.ql-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+.ql-input, .ql-select, input[type="text"], input[type="date"], textarea, select {
+  width:100%; background: var(--ql-surface); color: var(--ql-text); border: 1px solid var(--ql-border);
+  padding:10px 12px; border-radius:10px; outline:none;
+}
+.ql-input::placeholder{ color: #9fb0cc; }
+body.light .ql-input::placeholder{ color: #6b7b92; }
+
+/* dashboard bubble */
+.ql-fab{ position: fixed; right: 18px; bottom: 18px; background: var(--ql-accent); color:white; border:none;
+  border-radius:999px; padding:10px 14px; font-weight:600; box-shadow: 0 14px 30px rgba(0,0,0,.35);}
+</style>
+<script>
+(function(){
+  try {
+    const saved = localStorage.getItem('ql-theme');
+    if(saved === 'light'){ document.addEventListener('DOMContentLoaded', ()=> document.body.classList.add('light')); }
+  } catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const btn = document.getElementById('ql-theme-toggle');
+    if(btn){
+      btn.addEventListener('click', function(){
+        document.body.classList.toggle('light');
+        const isLight = document.body.classList.contains('light');
+        btn.textContent = isLight ? '☀️' : '🌙';
+        try { localStorage.setItem('ql-theme', isLight ? 'light' : 'dark'); } catch(e){}
+      });
+      if(document.body.classList.contains('light')) btn.textContent = '☀️';
+    }
+    document.querySelectorAll('button:not([type])').forEach(b=> b.setAttribute('type','button'));
+  });
+})();
+</script>
+</head>
+<body>
+<!-- Unified QR Legends Header -->
+<header class="ql-header">
+  <div class="ql-header-inner">
+    <div class="ql-title">
+      <span class="ql-logo">🟦</span>
+      <h1 class="ql-h1">IT Support Request - QR Legends</h1>
+    </div>
+    <nav class="ql-nav">
+      <a class="ql-btn ql-secondary" href="main_dashboard.html">🏠 Dashboard</a>
+      <a class="ql-btn ql-tertiary" href="order_picking.html">📦 Order Picking</a>
+      <a class="ql-btn ql-tertiary" href="inbound_hub.html">⬅️ Inbound</a>
+      <a class="ql-btn ql-tertiary" href="outbound_hub.html">➡️ Outbound</a>
+      <a class="ql-btn ql-tertiary" href="putaway.html">🧱 Putaway</a>
+      <a class="ql-btn ql-tertiary" href="inventory_management.html">📊 Inventory</a>
+    </nav>
+    <button class="ql-theme-toggle" id="ql-theme-toggle" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<div class='ql-container'>
+    <div class="container">
+        <div class="header">
+            <h1>🛠️ IT Support Request</h1>
+            <p>Get technical assistance for QR Legends system</p>
+        </div>
+
+        <div class="content">
+            <form id="supportForm" onsubmit="submitSupportRequest(event)">
+                <!-- Contact Information -->
+                <div class="form-section">
+                    <h3>👤 Contact Information</h3>
+                    <div class="form-group">
+                        <label for="fullName">Full Name *</label>
+                        <input type="text" id="fullName" name="fullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="company">Company/Organization</label>
+                        <input type="text" id="company" name="company">
+                    </div>
+                </div>
+
+                <!-- Issue Details -->
+                <div class="form-section">
+                    <h3>🔧 Issue Details</h3>
+                    <div class="form-group">
+                        <label for="issueType">Issue Type *</label>
+                        <select id="issueType" name="issueType" required onchange="updateSubCategories()">
+                            <option value="">Select issue type</option>
+                            <option value="login">Login/Authentication Issues</option>
+                            <option value="scanning">QR Code Scanning Problems</option>
+                            <option value="inventory">Inventory Management Issues</option>
+                            <option value="performance">System Performance</option>
+                            <option value="integration">Third-party Integrations</option>
+                            <option value="mobile">Mobile App Issues</option>
+                            <option value="training">Training Request</option>
+                            <option value="feature">Feature Request</option>
+                            <option value="other">Other Technical Issue</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="subCategory">Sub-category</label>
+                        <select id="subCategory" name="subCategory">
+                            <option value="">Select sub-category</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="priority">Priority Level *</label>
+                        <div class="priority-selector">
+                            <div class="priority-option priority-low">
+                                <input type="radio" id="priorityLow" name="priority" value="low" required>
+                                <label for="priorityLow">🟢 Low<br><small>Can wait 1-2 days</small></label>
+                            </div>
+                            <div class="priority-option priority-medium">
+                                <input type="radio" id="priorityMedium" name="priority" value="medium" required>
+                                <label for="priorityMedium">🟡 Medium<br><small>Need help today</small></label>
+                            </div>
+                            <div class="priority-option priority-high">
+                                <input type="radio" id="priorityHigh" name="priority" value="high" required>
+                                <label for="priorityHigh">🔴 High<br><small>Urgent/blocking work</small></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Problem Description -->
+                <div class="form-section">
+                    <h3>📝 Problem Description</h3>
+                    <div class="form-group">
+                        <label for="summary">Issue Summary *</label>
+                        <input type="text" id="summary" name="summary" placeholder="Brief description of the issue" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Detailed Description *</label>
+                        <textarea id="description" name="description" placeholder="Please provide detailed information about the issue, including:
+- What were you trying to do?
+- What happened instead?
+- Any error messages you saw
+- Steps to reproduce the problem" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="errorMessage">Error Message (if any)</label>
+                        <textarea id="errorMessage" name="errorMessage" placeholder="Copy and paste any error messages here"></textarea>
+                    </div>
+                </div>
+
+                <!-- System Information -->
+                <div class="form-section">
+                    <h3>💻 System Information</h3>
+                    <div class="form-group">
+                        <label for="browser">Browser & Version</label>
+                        <input type="text" id="browser" name="browser" placeholder="e.g., Chrome 118, Safari 16.2">
+                    </div>
+                    <div class="form-group">
+                        <label for="device">Device Type</label>
+                        <select id="device" name="device">
+                            <option value="">Select device type</option>
+                            <option value="desktop">Desktop Computer</option>
+                            <option value="laptop">Laptop</option>
+                            <option value="tablet">Tablet</option>
+                            <option value="smartphone">Smartphone</option>
+                            <option value="scanner">Handheld Scanner</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="operatingSystem">Operating System</label>
+                        <input type="text" id="operatingSystem" name="operatingSystem" placeholder="e.g., Windows 11, macOS 13, iOS 16">
+                    </div>
+                </div>
+
+                <!-- File Attachments -->
+                <div class="form-section">
+                    <h3>📎 Attachments (Optional)</h3>
+                    <div class="form-group">
+                        <div class="attachment-zone" onclick="document.getElementById('fileInput').click()">
+                            <p>🖼️ Click here or drag files to upload</p>
+                            <p><small>Screenshots, error logs, or other relevant files (Max 10MB each)</small></p>
+                            <input type="file" id="fileInput" multiple accept="image/*,.txt,.log,.pdf,.doc,.docx" style="display: none;">
+                        </div>
+                        <div id="fileList" style="margin-top: 10px;"></div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary btn-submit">
+                    📨 Submit Support Request
+                </button>
+            </form>
+
+            <!-- Contact Information -->
+            <div class="contact-info">
+                <h4>📞 Need Immediate Help?</h4>
+                <p><strong>Emergency Support:</strong> Call +1 (555) 123-4567</p>
+                <p><strong>Email:</strong> support@qrlegends.com</p>
+                <p><strong>Business Hours:</strong> Monday-Friday, 8 AM - 6 PM EST</p>
+                <p><strong>Response Time:</strong> High priority within 2 hours, others within 24 hours</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const subCategories = {
+            'login': ['Password Reset', 'Account Locked', '2FA Issues', 'Permission Denied'],
+            'scanning': ['Camera Not Working', 'QR Code Not Recognized', 'Slow Scanning', 'Scanner Hardware'],
+            'inventory': ['Stock Count Errors', 'Location Issues', 'Item Not Found', 'Data Sync Problems'],
+            'performance': ['Slow Loading', 'Timeouts', 'Crashes', 'Memory Issues'],
+            'integration': ['API Errors', 'Data Import/Export', 'Third-party Sync', 'ERP Integration'],
+            'mobile': ['App Crashes', 'Login Issues', 'Sync Problems', 'Installation Issues'],
+            'training': ['User Training', 'Admin Training', 'Feature Demo', 'Best Practices'],
+            'feature': ['New Feature', 'Enhancement', 'Workflow Improvement', 'Custom Integration']
+        };
+
+        function updateSubCategories() {
+            const issueType = document.getElementById('issueType').value;
+            const subCategory = document.getElementById('subCategory');
+            
+            // Clear existing options
+            subCategory.innerHTML = '<option value="">Select sub-category</option>';
+            
+            if (issueType && subCategories[issueType]) {
+                subCategories[issueType].forEach(option => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = option.toLowerCase().replace(/\s+/g, '_');
+                    optionElement.textContent = option;
+                    subCategory.appendChild(optionElement);
+                });
+            }
+        }
+
+        // File upload handling
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            updateFileList(e.target.files);
+        });
+
+        // Drag and drop handling
+        const attachmentZone = document.querySelector('.attachment-zone');
+        
+        attachmentZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+        
+        attachmentZone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+        });
+        
+        attachmentZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            updateFileList(e.dataTransfer.files);
+        });
+
+        function updateFileList(files) {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            
+            Array.from(files).forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.style.cssText = 'padding: 5px; background: #f0f0f0; margin: 5px 0; border-radius: 5px; display: flex; justify-content: space-between; align-items: center;';
+                fileItem.innerHTML = `
+                    <span>📄 ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
+                    <button type="button" onclick="removeFile(${index})" style="background: #dc3545; color: white; border: none; padding: 2px 8px; border-radius: 3px; cursor: pointer;">Remove</button>
+                `;
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        function removeFile(index) {
+            const fileInput = document.getElementById('fileInput');
+            const dt = new DataTransfer();
+            const files = Array.from(fileInput.files);
+            
+            files.forEach((file, i) => {
+                if (i !== index) {
+                    dt.items.add(file);
+                }
+            });
+            
+            fileInput.files = dt.files;
+            updateFileList(fileInput.files);
+        }
+
+        // Auto-fill browser information
+        document.addEventListener('DOMContentLoaded', function() {
+            const browserField = document.getElementById('browser');
+            const osField = document.getElementById('operatingSystem');
+            
+            // Auto-detect browser
+            const userAgent = navigator.userAgent;
+            let browserInfo = '';
+            
+            if (userAgent.includes('Chrome')) {
+                const version = userAgent.match(/Chrome\/(\d+)/)[1];
+                browserInfo = `Chrome ${version}`;
+            } else if (userAgent.includes('Firefox')) {
+                const version = userAgent.match(/Firefox\/(\d+)/)[1];
+                browserInfo = `Firefox ${version}`;
+            } else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) {
+                browserInfo = 'Safari';
+            }
+            
+            browserField.placeholder = browserInfo || 'Unable to detect automatically';
+            
+            // Auto-detect OS
+            let osInfo = '';
+            if (userAgent.includes('Windows')) osInfo = 'Windows';
+            else if (userAgent.includes('Mac')) osInfo = 'macOS';
+            else if (userAgent.includes('Linux')) osInfo = 'Linux';
+            else if (userAgent.includes('Android')) osInfo = 'Android';
+            else if (userAgent.includes('iOS')) osInfo = 'iOS';
+            
+            osField.placeholder = osInfo || 'Unable to detect automatically';
+        });
+
+        function submitSupportRequest(event) {
+            event.preventDefault();
+            
+            // Show loading state
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = '📨 Submitting...';
+            submitBtn.disabled = true;
+            
+            // Simulate form submission
+            setTimeout(() => {
+                alert('✅ Support request submitted successfully!\n\nTicket ID: #' + Math.random().toString(36).substr(2, 9).toUpperCase() + '\n\nYou will receive a confirmation email shortly.');
+                
+                // Reset form
+                document.getElementById('supportForm').reset();
+                document.getElementById('fileList').innerHTML = '';
+                
+                // Reset button
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }, 2000);
+        }
+    </script>
+</div>
+<button class='ql-fab' onclick="location.href='main_dashboard.html'">🏠 Dashboard</button>
+</body>
+</html>

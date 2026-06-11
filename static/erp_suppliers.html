@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supplier Management - QR LEGENDS ERP</title>
+    <style>
+        :root {
+            --ql-primary: #667eea;
+            --ql-secondary: #764ba2;
+            --ql-success: #22c55e;
+            --ql-bg: #0f1419;
+            --ql-surface: #1a1f2e;
+            --ql-text: #e5e7eb;
+            --ql-sub: #9ca3af;
+            --ql-border: #2d3748;
+        }
+        body.light {
+            --ql-bg: #f8fafc;
+            --ql-surface: #ffffff;
+            --ql-text: #1e293b;
+            --ql-sub: #64748b;
+            --ql-border: #e2e8f0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--ql-bg);
+            color: var(--ql-text);
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .ql-header {
+            background: linear-gradient(135deg, var(--ql-primary) 0%, var(--ql-secondary) 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .ql-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        .ql-card {
+            background: var(--ql-surface);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+            border: 1px solid var(--ql-border);
+        }
+        .ql-btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+            background: var(--ql-primary);
+        }
+        .ql-btn:hover { transform: translateY(-2px); }
+        .ql-btn-success { background: var(--ql-success); }
+        .supplier-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        .supplier-card {
+            background: var(--ql-bg);
+            border: 1px solid var(--ql-border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        .supplier-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .supplier-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .supplier-info {
+            color: var(--ql-sub);
+            font-size: 0.9rem;
+            margin: 4px 0;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background: var(--ql-surface);
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            background: var(--ql-bg);
+            color: var(--ql-text);
+            border: 1px solid var(--ql-border);
+            padding: 10px 12px;
+            border-radius: 10px;
+            outline: none;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--ql-primary);
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .badge-active {
+            background: rgba(34,197,94,0.2);
+            color: var(--ql-success);
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--ql-sub);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .ql-header h1 {
+                font-size: 1.2rem !important;
+            }
+            
+            .ql-container {
+                padding: 0 1rem;
+                margin: 1rem auto;
+            }
+
+            /* Touch targets */
+            .ql-btn, button {
+                min-height: 48px;
+                padding: 12px 18px;
+                font-size: 16px;
+            }
+
+            /* Better form inputs */
+            input, select, textarea {
+                min-height: 48px !important;
+                font-size: 16px !important;
+                padding: 12px 14px !important;
+            }
+
+            /* Responsive tables */
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            thead {
+                display: none;
+            }
+
+            tbody {
+                display: block;
+            }
+
+            tr {
+                display: block;
+                margin-bottom: 16px;
+                border: 1px solid var(--ql-border);
+                border-radius: 8px;
+                padding: 12px;
+            }
+
+            td {
+                display: flex;
+                justify-content: space-between;
+                padding: 10px 0;
+                border-bottom: 1px solid rgba(255,255,255,.05);
+            }
+
+            td:last-child {
+                border-bottom: none;
+            }
+
+            td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                margin-right: 10px;
+                color: var(--ql-sub);
+            }
+
+            /* Full width modals */
+            .modal-content {
+                width: 95%;
+                max-width: 95%;
+                margin: 20px auto;
+            }
+
+            /* Stack buttons */
+            .ql-header > div {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 100%;
+                max-width: 100%;
+                margin: 0;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<header class="ql-header">
+    <div style="max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+        <h1 style="font-size: 1.5rem; font-weight: 600;">🏭 Supplier Management</h1>
+        <div>
+            <a class="ql-btn" href="/erp_hub" style="text-decoration: none; background: rgba(255,255,255,0.2);">← ERP Hub</a>
+            <button class="ql-btn ql-btn-success" onclick="openAddSupplierModal()">+ Add Supplier</button>
+        </div>
+    </div>
+</header>
+
+<div class="ql-container">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+        <div class="ql-card" style="text-align: center;">
+            <div style="font-size: 2rem; font-weight: 600; color: var(--ql-primary);" id="stat-total">0</div>
+            <div style="color: var(--ql-sub); font-size: 0.9rem;">Total Suppliers</div>
+        </div>
+        <div class="ql-card" style="text-align: center;">
+            <div style="font-size: 2rem; font-weight: 600; color: var(--ql-success);" id="stat-active">0</div>
+            <div style="color: var(--ql-sub); font-size: 0.9rem;">Active Suppliers</div>
+        </div>
+    </div>
+
+    <div class="ql-card">
+        <input type="text" id="search-input" placeholder="Search suppliers by name, email, or contact..." 
+               style="width: 100%; background: var(--ql-bg); color: var(--ql-text); border: 1px solid var(--ql-border); padding: 10px 12px; border-radius: 10px;" 
+               onkeyup="filterSuppliers()">
+    </div>
+
+    <div id="loading" class="loading">
+        <div style="font-size: 2rem; margin-bottom: 12px;">⏳</div>
+        <div>Loading suppliers...</div>
+    </div>
+
+    <div id="suppliers-grid" class="supplier-grid" style="display: none;"></div>
+
+    <div id="empty-state" style="display: none; text-align: center; padding: 60px 20px; color: var(--ql-sub);">
+        <div style="font-size: 4rem; margin-bottom: 16px; opacity: 0.3;">📭</div>
+        <h3>No Suppliers Yet</h3>
+        <p>Click "Add Supplier" to create your first supplier record.</p>
+    </div>
+</div>
+
+<div id="addSupplierModal" class="modal">
+    <div class="modal-content">
+        <h2 style="color: var(--ql-primary); margin-bottom: 24px;">Add New Supplier</h2>
+        <form id="supplierForm" onsubmit="saveSupplier(event)">
+            <div class="form-group">
+                <label>Vendor Name *</label>
+                <input type="text" id="vendor_name" required>
+            </div>
+            <div class="form-group">
+                <label>Primary Contact</label>
+                <input type="text" id="primary_contact">
+            </div>
+            <div class="form-group">
+                <label>Email *</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" id="phone">
+            </div>
+            <div class="form-group">
+                <label>Address</label>
+                <textarea id="address" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Payment Terms</label>
+                <select id="payment_terms">
+                    <option value="Net 30">Net 30</option>
+                    <option value="Net 60">Net 60</option>
+                    <option value="Net 90">Net 90</option>
+                    <option value="COD">COD</option>
+                    <option value="Prepaid">Prepaid</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button type="button" class="ql-btn" onclick="closeAddSupplierModal()" style="background: var(--ql-sub);">Cancel</button>
+                <button type="submit" class="ql-btn ql-btn-success">Save Supplier</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="/auto_theme_injector.js"></script>
+<script src="/copyright_notice.js"></script>
+<script>
+let allSuppliers = [];
+let editingSupplierId = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadSuppliers();
+});
+
+async function loadSuppliers() {
+    try {
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('suppliers-grid').style.display = 'none';
+        document.getElementById('empty-state').style.display = 'none';
+
+        const response = await fetch('/api/erp/suppliers');
+        
+        if (!response.ok) {
+            throw new Error('Failed to load suppliers');
+        }
+        
+        const data = await response.json();
+        allSuppliers = data.suppliers || [];
+        
+        updateStats();
+        displaySuppliers(allSuppliers);
+        
+    } catch (error) {
+        console.error('Error loading suppliers:', error);
+        document.getElementById('loading').innerHTML = '<div style="color: #ef4444;">❌ Failed to load suppliers</div>';
+    }
+}
+
+function updateStats() {
+    const total = allSuppliers.length;
+    const active = allSuppliers.filter(s => s.status === 'active').length;
+    
+    document.getElementById('stat-total').textContent = total;
+    document.getElementById('stat-active').textContent = active;
+}
+
+function displaySuppliers(suppliers) {
+    document.getElementById('loading').style.display = 'none';
+    
+    if (suppliers.length === 0) {
+        document.getElementById('empty-state').style.display = 'block';
+        document.getElementById('suppliers-grid').style.display = 'none';
+        return;
+    }
+    
+    document.getElementById('empty-state').style.display = 'none';
+    document.getElementById('suppliers-grid').style.display = 'grid';
+    
+    const grid = document.getElementById('suppliers-grid');
+    grid.innerHTML = suppliers.map(supplier => `
+        <div class="supplier-card">
+            <div class="supplier-name">${supplier.vendor_name || 'Unnamed Supplier'}</div>
+            <div class="supplier-info"><strong>Contact:</strong> ${supplier.contact_info?.primary_contact || 'N/A'}</div>
+            <div class="supplier-info"><strong>Email:</strong> ${supplier.contact_info?.email || 'N/A'}</div>
+            <div class="supplier-info"><strong>Phone:</strong> ${supplier.contact_info?.phone || 'N/A'}</div>
+            <div class="supplier-info"><strong>Payment Terms:</strong> ${supplier.payment_terms || 'Net 30'}</div>
+            <div style="margin-top: 12px; display: flex; gap: 8px; align-items: center;">
+                <span class="badge badge-active">${supplier.status || 'active'}</span>
+                <button class="ql-btn" style="padding: 4px 12px; font-size: 0.85rem; background: var(--ql-primary);" onclick='editSupplier(${JSON.stringify(supplier)})'>Edit</button>
+                <button class="ql-btn" style="padding: 4px 12px; font-size: 0.85rem; background: #ef4444;" onclick="deleteSupplier('${supplier.supplier_id}', '${supplier.vendor_name}')">Delete</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function filterSuppliers() {
+    const search = document.getElementById('search-input').value.toLowerCase();
+    
+    if (!search) {
+        displaySuppliers(allSuppliers);
+        return;
+    }
+    
+    const filtered = allSuppliers.filter(supplier => 
+        (supplier.vendor_name || '').toLowerCase().includes(search) ||
+        (supplier.contact_info?.email || '').toLowerCase().includes(search) ||
+        (supplier.contact_info?.primary_contact || '').toLowerCase().includes(search)
+    );
+    
+    displaySuppliers(filtered);
+}
+
+function openAddSupplierModal() {
+    editingSupplierId = null;
+    document.getElementById('supplierForm').reset();
+    document.querySelector('#addSupplierModal h2').textContent = 'Add New Supplier';
+    document.getElementById('addSupplierModal').style.display = 'block';
+}
+
+function closeAddSupplierModal() {
+    editingSupplierId = null;
+    document.querySelector('#addSupplierModal h2').textContent = 'Add New Supplier';
+    document.getElementById('addSupplierModal').style.display = 'none';
+}
+
+async function saveSupplier(event) {
+    event.preventDefault();
+    
+    const supplierData = {
+        vendor_name: document.getElementById('vendor_name').value,
+        primary_contact: document.getElementById('primary_contact').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value,
+        payment_terms: document.getElementById('payment_terms').value
+    };
+    
+    try {
+        let url = '/api/erp/suppliers';
+        let method = 'POST';
+        let successMessage = 'Supplier added successfully!';
+        
+        if (editingSupplierId) {
+            url = `/api/erp/suppliers/${editingSupplierId}`;
+            method = 'PUT';
+            successMessage = 'Supplier updated successfully!';
+        }
+        
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(supplierData)
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok && data.success) {
+            alert(successMessage);
+            closeAddSupplierModal();
+            editingSupplierId = null;
+            loadSuppliers();
+        } else {
+            alert('Error: ' + (data.error || 'Failed to save supplier'));
+        }
+    } catch (error) {
+        console.error('Error saving supplier:', error);
+        alert('Failed to save supplier. Please try again.');
+    }
+}
+
+function editSupplier(supplier) {
+    editingSupplierId = supplier.supplier_id;
+    
+    document.getElementById('vendor_name').value = supplier.vendor_name || '';
+    document.getElementById('primary_contact').value = supplier.contact_info?.primary_contact || '';
+    document.getElementById('email').value = supplier.contact_info?.email || '';
+    document.getElementById('phone').value = supplier.contact_info?.phone || '';
+    document.getElementById('address').value = supplier.contact_info?.address || '';
+    document.getElementById('payment_terms').value = supplier.payment_terms || 'Net 30';
+    
+    document.querySelector('#addSupplierModal h2').textContent = 'Edit Supplier';
+    document.getElementById('addSupplierModal').style.display = 'block';
+}
+
+async function deleteSupplier(supplierId, supplierName) {
+    if (!confirm(`Are you sure you want to delete ${supplierName}? This action cannot be undone.`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/erp/suppliers/${supplierId}`, {
+            method: 'DELETE'
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok && data.success) {
+            alert('Supplier deleted successfully!');
+            loadSuppliers();
+        } else {
+            alert('Error: ' + (data.error || 'Failed to delete supplier'));
+        }
+    } catch (error) {
+        console.error('Error deleting supplier:', error);
+        alert('Failed to delete supplier. Please try again.');
+    }
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById('addSupplierModal');
+    if (event.target == modal) {
+        closeAddSupplierModal();
+    }
+}
+
+console.log('✅ QR Legends Supplier Management loaded');
+</script>
+</body>
+</html>

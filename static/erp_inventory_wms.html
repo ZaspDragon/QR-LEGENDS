@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory/WMS - QR Legends ERP</title>
+    <style>
+        * {box-sizing: border-box}
+        body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+            margin: 0
+            padding: 20px
+            background: #f4f4f5;
+            color: #18181b}
+        .container {max-width: 1400px
+            margin: 0 auto
+            background: white
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);}
+        .header {display: flex
+            justify-content: space-between
+            align-items: center
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e4e4e7}
+        h1 {margin: 0 color: #18181b}
+        .btn {padding: 10px 20px
+            border: 1px solid #e4e4e7
+            border-radius: 8px
+            background: #007BFF;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            margin-right: 10px}
+        .stats-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr))
+            gap: 20px
+            margin-bottom: 30px}
+        .stat-card {background: #f8f9fa
+            padding: 20px
+            border-radius: 12px
+            border: 1px solid #e4e4e7}
+        .stat-value {font-size: 2rem font-weight: bold color: #007BFF}
+        .stat-label {color: #6c757d margin-top: 8px}
+        .wms-actions {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
+            gap: 15px
+            margin-bottom: 30px}
+        .action-card {background: #f8f9fa
+            padding: 20px
+            border-radius: 12px
+            border: 1px solid #e4e4e7;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease}
+        .action-card:hover {transform: translateY(-2px)
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1)}
+        .action-icon {font-size: 2rem margin-bottom: 10px}
+        .action-title {font-weight: 600 margin-bottom: 5px}
+        .action-desc {color: #6c757d font-size: 0.9rem}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📦 Inventory/WMS</h1>
+            <div>
+                <a href="/erp_dashboard" class="btn" style="background: #6c757d;">← Back to ERP</a>
+                <button class="btn" style="background: #28a745;" onclick="syncWithWMS()">🔄 Sync with WMS</button>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">2,456</div>
+                <div class="stat-label">Total SKUs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">$892k</div>
+                <div class="stat-label">Inventory Value</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">97.2%</div>
+                <div class="stat-label">Cycle Count Accuracy</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">7.8</div>
+                <div class="stat-label">Inventory Turns</div>
+            </div>
+        </div>
+        
+        <h3>Warehouse Management Operations</h3>
+        <div class="wms-actions">
+            <div class="action-card" onclick="window.open('/receiving', '_blank')">
+                <div class="action-icon">📥</div>
+                <div class="action-title">Receiving</div>
+                <div class="action-desc">Inbound freight and putaway</div>
+            </div>
+            <div class="action-card" onclick="window.open('/order_picking', '_blank')">
+                <div class="action-icon">📋</div>
+                <div class="action-title">Order Picking</div>
+                <div class="action-desc">Pick waves and fulfillment</div>
+            </div>
+            <div class="action-card" onclick="window.open('/cycle_counting', '_blank')">
+                <div class="action-icon">🔢</div>
+                <div class="action-title">Cycle Counting</div>
+                <div class="action-desc">Inventory accuracy checks</div>
+            </div>
+            <div class="action-card" onclick="window.open('/transfers', '_blank')">
+                <div class="action-icon">↔️</div>
+                <div class="action-title">Transfers</div>
+                <div class="action-desc">Inter-location moves</div>
+            </div>
+            <div class="action-card" onclick="window.open('/returns', '_blank')">
+                <div class="action-icon">↩️</div>
+                <div class="action-title">Returns</div>
+                <div class="action-desc">RMA processing</div>
+            </div>
+            <div class="action-card" onclick="window.open('/inventory_analysis', '_blank')">
+                <div class="action-icon">📊</div>
+                <div class="action-title">Analysis</div>
+                <div class="action-desc">ABC analysis & reports</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function syncWithWMS() {if (confirm('Sync inventory data between ERP and WMS systems?')) {
+                alert('WMS synchronization started. Check sync status for progress.')}
+        }
+    </script>
+</body>
+</html>

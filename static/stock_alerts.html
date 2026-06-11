@@ -1,0 +1,382 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Alerts - QR Legends</title>
+    <style>
+        * {margin: 0 padding: 0 box-sizing: border-box}
+        body {font-family: Arial, sans-serif background: #f5f5f5 padding: 20px}
+        .container {max-width: 1400px margin: 0 auto background: white border-radius: 15px; padding: 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.3);}
+        .header {text-align: center margin-bottom: 30px background: linear-gradient(135deg, #ff6b35, #f7931e) color: white; padding: 20px; border-radius: 10px}
+        .alert-summary {display: grid grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) gap: 20px margin-bottom: 30px}
+        .alert-card {background: #f8f9fa padding: 20px border-radius: 10px text-align: center}
+        .alert-card.critical {border-left: 4px solid #dc3545}
+        .alert-card.warning {border-left: 4px solid #ffc107}
+        .alert-card.info {border-left: 4px solid #17a2b8}
+        .alert-value {font-size: 2rem font-weight: bold}
+        .alert-label {color: #666 margin-top: 5px}
+        .filters {background: #f8f9fa padding: 20px border-radius: 10px margin-bottom: 30px}
+        .filter-row {display: grid grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) gap: 15px align-items: end}
+        .form-group label {display: block margin-bottom: 5px font-weight: 600}
+        .form-group input, .form-group select {width: 100% padding: 10px border: 1px solid #ddd border-radius: 5px}
+        .btn {padding: 10px 20px border: none border-radius: 5px cursor: pointer; font-weight: 600}
+        .btn-primary {background: #ff6b35 color: white}
+        .btn-success {background: #28a745 color: white}
+        .btn-warning {background: #ffc107 color: #333}
+        .btn-danger {background: #dc3545 color: white}
+        .stock-alert {background: white border: 1px solid #ddd border-radius: 8px padding: 20px; margin-bottom: 15px}
+        .stock-alert.critical {border-left: 4px solid #dc3545}
+        .stock-alert.warning {border-left: 4px solid #ffc107}
+        .stock-alert.low {border-left: 4px solid #17a2b8}
+        .alert-header {display: flex justify-content: space-between align-items: center margin-bottom: 15px}
+        .alert-details {display: grid grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) gap: 15px}
+        .actions {display: flex gap: 10px margin-top: 15px}
+        .settings-panel {background: #e9ecef border-radius: 10px padding: 20px margin-bottom: 30px}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚠️ Stock Alerts</h1>
+            <p>Monitor inventory levels and automated alerts</p>
+        </div>
+
+        <div class="alert-summary">
+            <div class="alert-card critical">
+                <div class="alert-value" style="color: #dc3545;" id="criticalAlerts">0</div>
+                <div class="alert-label">Critical (Out of Stock)</div>
+            </div>
+            <div class="alert-card warning">
+                <div class="alert-value" style="color: #ffc107;" id="warningAlerts">0</div>
+                <div class="alert-label">Warning (Low Stock)</div>
+            </div>
+            <div class="alert-card info">
+                <div class="alert-value" style="color: #17a2b8;" id="infoAlerts">0</div>
+                <div class="alert-label">Info (Reorder Point)</div>
+            </div>
+            <div class="alert-card">
+                <div class="alert-value" style="color: #28a745;" id="totalItems">0</div>
+                <div class="alert-label">Total Items Monitored</div>
+            </div>
+        </div>
+
+        <div class="settings-panel">
+            <h3>⚙️ Alert Settings</h3>
+            <div class="filter-row">
+                <div class="form-group">
+                    <label>Critical Threshold (Out of Stock)</label>
+                    <input type="number" id="criticalThreshold" value="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Warning Threshold (Low Stock)</label>
+                    <input type="number" id="warningThreshold" value="10" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Reorder Point Threshold</label>
+                    <input type="number" id="reorderThreshold" value="25" min="1">
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-primary" onclick="updateSettings()">💾 Update Settings</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="filters">
+            <h3>🔍 Filter Alerts</h3>
+            <div class="filter-row">
+                <div class="form-group">
+                    <label>Alert Level</label>
+                    <select id="alertFilter">
+                        <option value="">All Alerts</option>
+                        <option value="critical">Critical</option>
+                        <option value="warning">Warning</option>
+                        <option value="low">Reorder Point</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="categoryFilter">
+                        <option value="">All Categories</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="tools">Tools</option>
+                        <option value="supplies">Supplies</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <select id="locationFilter">
+                        <option value="">All Locations</option>
+                        <option value="A">Section A</option>
+                        <option value="B">Section B</option>
+                        <option value="C">Section C</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-primary" onclick="filterAlerts()">🔍 Filter</button>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3>📋 Active Stock Alerts</h3>
+            <div>
+                <button class="btn btn-success" onclick="refreshAlerts()">🔄 Refresh</button>
+                <button class="btn btn-warning" onclick="createPurchaseOrders()">📝 Create POs</button>
+                <button class="btn btn-primary" onclick="exportAlerts()">📥 Export</button>
+            </div>
+        </div>
+
+        <div id="alertsList">
+            <!-- Alerts will be populated here -->
+        </div>
+    </div>
+
+    <script>
+        let stockAlerts = [];
+        let settings = {
+            critical: 0,
+            warning: 10,
+            reorder: 25
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {loadStockAlerts()
+            updateAlertSummary()});
+
+        function loadStockAlerts() {
+            // Sample stock alert data
+            stockAlerts = [
+                {
+                    id: 'ITEM-001',
+                    name: 'Widget Set A',
+                    category: 'electronics',
+                    current_stock: 0,
+                    reorder_point: 25,
+                    max_stock: 100,
+                    location: 'A-01-02-01',
+                    supplier: 'Acme Supplier',
+                    last_ordered: '2025-01-01',
+                    lead_time: 7,
+                    alert_level: 'critical',
+                    cost_per_unit: 15.50
+                },
+                {
+                    id: 'ITEM-002',
+                    name: 'Component Pack B',
+                    category: 'tools',
+                    current_stock: 5,
+                    reorder_point: 20,
+                    max_stock: 80,
+                    location: 'B-02-01-02',
+                    supplier: 'Tool Masters',
+                    last_ordered: '2025-01-05',
+                    lead_time: 5,
+                    alert_level: 'warning',
+                    cost_per_unit: 8.75
+                },
+                {
+                    id: 'ITEM-003',
+                    name: 'Assembly Kit C',
+                    category: 'supplies',
+                    current_stock: 22,
+                    reorder_point: 25,
+                    max_stock: 75,
+                    location: 'C-01-03-01',
+                    supplier: 'Supply Chain Co',
+                    last_ordered: '2025-01-10',
+                    lead_time: 10,
+                    alert_level: 'low',
+                    cost_per_unit: 12.25
+                },
+                {
+                    id: 'ITEM-004',
+                    name: 'Safety Equipment',
+                    category: 'supplies',
+                    current_stock: 0,
+                    reorder_point: 15,
+                    max_stock: 50,
+                    location: 'A-05-01-01',
+                    supplier: 'Safety First',
+                    last_ordered: '2024-12-15',
+                    lead_time: 3,
+                    alert_level: 'critical',
+                    cost_per_unit: 25.00
+                }
+            ];
+
+            displayAlerts();
+        }
+
+        function displayAlerts() {const container = document.getElementById('alertsList')
+            
+            if (stockAlerts.length === 0) {
+                container.innerHTML = '<div style="text-align: center padding: 50px color: #666;">No stock alerts found</div>';
+                return}
+
+            container.innerHTML = stockAlerts.map(alert => `
+                <div class="stock-alert ${alert.alert_level}">
+                    <div class="alert-header">
+                        <div>
+                            <h4>${alert.name} (${alert.id})</h4>
+                            <span style="background: ${getAlertColor(alert.alert_level)}; color: white; padding: 4px 12px; border-radius: 15px; font-size: 12px;">${alert.alert_level.toUpperCase()}</span>
+                        </div>
+                        <div>
+                            <span style="font-size: 1.5rem; font-weight: bold; color: ${getAlertColor(alert.alert_level)};">${alert.current_stock}</span>
+                            <span style="color: #666;"> / ${alert.max_stock}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="alert-details">
+                        <div><strong>Category:</strong> ${alert.category}</div>
+                        <div><strong>Location:</strong> ${alert.location}</div>
+                        <div><strong>Reorder Point:</strong> ${alert.reorder_point}</div>
+                        <div><strong>Supplier:</strong> ${alert.supplier}</div>
+                        <div><strong>Lead Time:</strong> ${alert.lead_time} days</div>
+                        <div><strong>Cost/Unit:</strong> $${alert.cost_per_unit.toFixed(2)}</div>
+                        <div><strong>Last Ordered:</strong> ${alert.last_ordered}</div>
+                        <div><strong>Suggested Order:</strong> ${alert.max_stock - alert.current_stock} units</div>
+                    </div>
+                    
+                    <div class="actions">
+                        <button class="btn btn-primary" onclick="createPO('${alert.id}')">📝 Create PO</button>
+                        <button class="btn btn-success" onclick="adjustStock('${alert.id}')">📦 Adjust Stock</button>
+                        <button class="btn btn-warning" onclick="updateReorderPoint('${alert.id}')">⚙️ Update Reorder Point</button>
+                        <button class="btn btn-danger" onclick="snoozeAlert('${alert.id}')">😴 Snooze Alert</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getAlertColor(level) {
+            const colors = {
+                'critical': '#dc3545',
+                'warning': '#ffc107',
+                'low': '#17a2b8'
+            };
+            return colors[level] || '#6c757d';
+        }
+
+        function updateAlertSummary() {const critical = stockAlerts.filter(alert => alert.alert_level === 'critical').length
+            const warning = stockAlerts.filter(alert => alert.alert_level === 'warning').length
+            const info = stockAlerts.filter(alert => alert.alert_level === 'low').length
+            const total = stockAlerts.length;
+
+            document.getElementById('criticalAlerts').textContent = critical;
+            document.getElementById('warningAlerts').textContent = warning;
+            document.getElementById('infoAlerts').textContent = info;
+            document.getElementById('totalItems').textContent = total;}
+
+        function updateSettings() {settings.critical = parseInt(document.getElementById('criticalThreshold').value) || 0
+            settings.warning = parseInt(document.getElementById('warningThreshold').value) || 10
+            settings.reorder = parseInt(document.getElementById('reorderThreshold').value) || 25
+
+            // Recalculate alert levels based on new settings
+            stockAlerts.forEach(alert => {
+                if (alert.current_stock <= settings.critical) {
+                    alert.alert_level = 'critical';} else if (alert.current_stock <= settings.warning) {alert.alert_level = 'warning'} else if (alert.current_stock <= alert.reorder_point) {alert.alert_level = 'low'}
+            });
+
+            displayAlerts();
+            updateAlertSummary();
+            alert('Alert settings updated successfully!');
+        }
+
+        function filterAlerts() {const alertFilter = document.getElementById('alertFilter').value
+            const categoryFilter = document.getElementById('categoryFilter').value
+            const locationFilter = document.getElementById('locationFilter').value
+
+            let filtered = stockAlerts;
+
+            if (alertFilter) {
+                filtered = filtered.filter(alert => alert.alert_level === alertFilter);}
+
+            if (categoryFilter) {filtered = filtered.filter(alert => alert.category === categoryFilter)}
+
+            if (locationFilter) {filtered = filtered.filter(alert => alert.location.startsWith(locationFilter))}
+
+            const originalAlerts = [...stockAlerts];
+            stockAlerts = filtered;
+            displayAlerts();
+            updateAlertSummary();
+            stockAlerts = originalAlerts;
+        }
+
+        function createPO(itemId) {const alert = stockAlerts.find(a => a.id === itemId)
+            if (alert) {
+                const suggestedQty = alert.max_stock - alert.current_stock
+                const totalCost = (suggestedQty * alert.cost_per_unit).toFixed(2)
+                
+                if (confirm(`Create Purchase Order for ${alert.name}?\n\nSuggested Quantity: ${suggestedQty}\nCost per Unit: $${alert.cost_per_unit}\nTotal Cost: $${totalCost}\nSupplier: ${alert.supplier}`)) {
+                    alert(`Purchase Order created!\n\nPO ID: PO-${Date.now()}\nItem: ${alert.name}\nQuantity: ${suggestedQty}\nSupplier: ${alert.supplier}\nEstimated Delivery: ${new Date(Date.now() + alert.lead_time * 24 * 60 * 60 * 1000).toDateString()}`);
+                }
+            }
+        }
+
+        function adjustStock(itemId) {const newStock = prompt('Enter new stock quantity: ')
+            if (newStock && !isNaN(newStock)) {
+                const alert = stockAlerts.find(a => a.id === itemId)
+                if (alert) {
+                    alert.current_stock = parseInt(newStock)
+                    
+                    // Recalculate alert level
+                    if (alert.current_stock <= settings.critical) {
+                        alert.alert_level = 'critical'} else if (alert.current_stock <= settings.warning) {alert.alert_level = 'warning'} else if (alert.current_stock <= alert.reorder_point) {alert.alert_level = 'low'} else {// Remove from alerts if stock is sufficient
+                        stockAlerts = stockAlerts.filter(a => a.id !== itemId)}
+                    
+                    displayAlerts();
+                    updateAlertSummary();
+                    alert(`Stock updated to ${newStock} units`);
+                }
+            }
+        }
+
+        function updateReorderPoint(itemId) {const newPoint = prompt('Enter new reorder point:')
+            if (newPoint && !isNaN(newPoint)) {
+                const alert = stockAlerts.find(a => a.id === itemId)
+                if (alert) {
+                    alert.reorder_point = parseInt(newPoint)
+                    displayAlerts();
+                    alert(`Reorder point updated to ${newPoint}`);
+                }
+            }
+        }
+
+        function snoozeAlert(itemId) {const hours = prompt('Snooze alert for how many hours?')
+            if (hours && !isNaN(hours)) {
+                alert(`Alert snoozed for ${hours} hours`);
+                // In real implementation, this would set a timestamp to hide the alert
+            }
+        }
+
+        function refreshAlerts() {alert('Refreshing stock levels...\n\n✅ Stock levels updated\n📊 New alerts calculated\n🔄 Display refreshed')
+            loadStockAlerts()
+            updateAlertSummary()}
+
+        function createPurchaseOrders() {const criticalItems = stockAlerts.filter(alert => alert.alert_level === 'critical').length
+            const warningItems = stockAlerts.filter(alert => alert.alert_level === 'warning').length
+            
+            if (confirm(`Create Purchase Orders for all critical and warning items?\n\nCritical Items: ${criticalItems}\nWarning Items: ${warningItems}\n\nThis will create ${criticalItems + warningItems} purchase orders.`)) {
+                alert(`Bulk Purchase Orders Created!\n\n✅ ${criticalItems + warningItems} POs generated\n📧 Suppliers notified\n📋 Orders added to procurement queue`);
+            }
+        }
+
+        function exportAlerts() {const csvContent = "data:text/csvcharset=utf-8," + 
+                "Item ID,Item Name,Category,Current Stock,Reorder Point,Max Stock,Location,Supplier,Alert Level,Cost per Unit,Suggested Order\n" +
+                stockAlerts.map(alert => 
+                    `${alert.id},${alert.name},${alert.category},${alert.current_stock},${alert.reorder_point},${alert.max_stock},${alert.location},${alert.supplier},${alert.alert_level},${alert.cost_per_unit},${alert.max_stock - alert.current_stock}`
+                ).join("\n");
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "stock_alerts_report.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>

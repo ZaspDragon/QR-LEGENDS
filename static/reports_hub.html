@@ -1,0 +1,499 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports Hub - QR Legends</title>
+    <link rel="icon" type="image/png" href="/static/qr_legends_logo.png">
+    <style>
+        * {margin: 0
+            padding: 0;
+            box-sizing: border-box;}
+
+        body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+            background: radial-gradient(1200px 600px at 60% -100px, #1a2942 0%, #0f1b2e 45%, #0a1220 100%) fixed;
+            min-height: 100vh;
+            color: #dbe8ff;}
+
+        .header {background: rgba(10,18,32,.95);
+            backdrop-filter: blur(12px);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(255,255,255,.12);}
+
+        .logo {display: flex
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #3b82f6;
+            text-decoration: none;}
+
+        .header-actions {display: flex
+            gap: 12px;}
+
+        .btn {padding: 8px 16px
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;}
+
+        .btn-primary {background: #2563eb
+            color: white;}
+
+        .btn-primary:hover {background: #1d4ed8
+            transform: translateY(-1px);}
+
+        .btn-secondary {background: rgba(30,41,59,0.4);
+            color: #dbe8ff;
+            border: 1px solid rgba(71,85,105,0.3);}
+
+        .btn-secondary:hover {background: rgba(51,65,85,0.5);
+            border-color: rgba(100,116,139,0.4);}
+
+        .main-content {padding: 32px 24px
+            max-width: 1200px;
+            margin: 0 auto;}
+
+        .page-header {text-align: center
+            margin-bottom: 40px;}
+
+        .page-title {font-size: 36px
+            font-weight: 800;
+            color: white;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);}
+
+        .page-subtitle {font-size: 18px
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;}
+
+        .reports-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;}
+
+        .report-card {background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(2,8,23,.45);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,.12);
+            transition: all 0.3s ease;}
+
+        .report-card:hover {transform: translateY(-4px)
+            box-shadow: 0 15px 40px rgba(59,130,246,0.2);
+            border-color: #3b82f6;}
+
+        .report-header {display: flex
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;}
+
+        .report-icon {width: 48px
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;}
+
+        .report-title {font-size: 20px
+            font-weight: 700;
+            color: #dbe8ff;
+            margin-bottom: 4px;}
+
+        .report-description {font-size: 14px
+            color: #97a6c1;
+            margin-bottom: 20px;
+            line-height: 1.5;}
+
+        .report-actions {display: flex
+            gap: 8px;
+            flex-wrap: wrap;}
+
+        .btn-report {padding: 12px 18px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 100px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);}
+
+        .btn-view {background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);}
+
+        .btn-view:hover {background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);}
+
+        .btn-download {background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);}
+
+        .btn-download:hover {background: linear-gradient(135deg, #d97706, #b45309);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);}
+
+        .btn-schedule {background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);}
+
+        .btn-schedule:hover {background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);}
+
+        .quick-stats {background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+            box-shadow: 0 10px 30px rgba(2,8,23,.45);
+            border: 1px solid rgba(255,255,255,.12);}
+
+        .stats-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;}
+
+        .stat-item {text-align: center}
+
+        .stat-value {font-size: 32px
+            font-weight: 800;
+            color: #2563eb;
+            margin-bottom: 4px;}
+
+        .stat-label {font-size: 14px
+            color: #97a6c1;
+            font-weight: 500;}
+
+        .recent-reports {background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(2,8,23,.45);
+            border: 1px solid rgba(255,255,255,.12);}
+
+        .recent-header {font-size: 20px
+            font-weight: 700;
+            color: #bcd5ff;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;}
+
+        .recent-list {space-y: 12px}
+
+        .recent-item {display: flex
+            justify-content: between;
+            align-items: center;
+            padding: 12px;
+            background: rgba(15,23,42,.4);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(255,255,255,.08);}
+
+        .recent-info {flex: 1}
+
+        .recent-name {font-weight: 600
+            color: #dbe8ff;
+            margin-bottom: 2px;}
+
+        .recent-date {font-size: 12px
+            color: #97a6c1;}
+
+        .navigation-footer {text-align: center
+            margin-top: 40px;}
+
+        @media (max-width: 768px) {.reports-grid {
+                grid-template-columns: 1fr}
+
+            .stats-grid {grid-template-columns: repeat(2, 1fr)}
+
+            .main-content {padding: 20px 16px}
+
+            .page-title {font-size: 28px}
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/" class="logo">
+            📊 Reports Hub
+        </a>
+        <div class="header-actions">
+            <a href="/main_dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            <button class="btn btn-primary" onclick="generateCustomReport()">📈 Custom Report</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Reports & Analytics</h1>
+            <p class="page-subtitle">Comprehensive reporting and business intelligence</p>
+        </div>
+
+        <div class="quick-stats">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">147</div>
+                    <div class="stat-label">Reports Generated</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">23</div>
+                    <div class="stat-label">Scheduled Reports</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">98.5%</div>
+                    <div class="stat-label">Accuracy Rate</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">5.2s</div>
+                    <div class="stat-label">Avg Generation Time</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="reports-grid">
+            <div class="report-card">
+                <div class="report-header">
+                    <div class="report-icon">📊</div>
+                    <div>
+                        <div class="report-title">Inventory Reports</div>
+                    </div>
+                </div>
+                <div class="report-description">
+                    Stock levels, movement reports, ABC analysis, and inventory valuation reports for comprehensive inventory management.
+                </div>
+                <div class="report-actions">
+                    <a href="/inventory_analysis" class="btn-report btn-view">📈 View Report</a>
+                    <button class="btn-report btn-download" onclick="downloadReport('inventory')">⬇️ Download</button>
+                    <button class="btn-report btn-schedule" onclick="scheduleReport('inventory')">⏰ Schedule</button>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-header">
+                    <div class="report-icon">📦</div>
+                    <div>
+                        <div class="report-title">Receiving Reports</div>
+                    </div>
+                </div>
+                <div class="report-description">
+                    Inbound shipment tracking, receiving accuracy, vendor performance, and dock utilization analytics.
+                </div>
+                <div class="report-actions">
+                    <a href="/erp_receiving_transactions" class="btn-report btn-view">📈 View Report</a>
+                    <button class="btn-report btn-download" onclick="downloadReport('receiving')">⬇️ Download</button>
+                    <button class="btn-report btn-schedule" onclick="scheduleReport('receiving')">⏰ Schedule</button>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-header">
+                    <div class="report-icon">🚚</div>
+                    <div>
+                        <div class="report-title">Shipping Reports</div>
+                    </div>
+                </div>
+                <div class="report-description">
+                    Outbound performance, shipping costs, delivery times, and carrier performance analysis.
+                </div>
+                <div class="report-actions">
+                    <a href="/shipping" class="btn-report btn-view">📈 View Report</a>
+                    <button class="btn-report btn-download" onclick="downloadReport('shipping')">⬇️ Download</button>
+                    <button class="btn-report btn-schedule" onclick="scheduleReport('shipping')">⏰ Schedule</button>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-header">
+                    <div class="report-icon">💰</div>
+                    <div>
+                        <div class="report-title">Financial Reports</div>
+                    </div>
+                </div>
+                <div class="report-description">
+                    Cost analysis, profit margins, budget tracking, and financial performance metrics.
+                </div>
+                <div class="report-actions">
+                    <a href="/financial_reports" class="btn-report btn-view">📈 View Report</a>
+                    <button class="btn-report btn-download" onclick="downloadReport('financial')">⬇️ Download</button>
+                    <button class="btn-report btn-schedule" onclick="scheduleReport('financial')">⏰ Schedule</button>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-header">
+                    <div class="report-icon">👥</div>
+                    <div>
+                        <div class="report-title">Labor Reports</div>
+                    </div>
+                </div>
+                <div class="report-description">
+                    Productivity metrics, labor costs, overtime tracking, and workforce efficiency analysis.
+                </div>
+                <div class="report-actions">
+                    <a href="/labor_management" class="btn-report btn-view">📈 View Report</a>
+                    <button class="btn-report btn-download" onclick="downloadReport('labor')">⬇️ Download</button>
+                    <button class="btn-report btn-schedule" onclick="scheduleReport('labor')">⏰ Schedule</button>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-header">
+                    <div class="report-icon">⚠️</div>
+                    <div>
+                        <div class="report-title">Exception Reports</div>
+                    </div>
+                </div>
+                <div class="report-description">
+                    Error tracking, quality issues, discrepancies, and operational exceptions requiring attention.
+                </div>
+                <div class="report-actions">
+                    <a href="/exception_reports" class="btn-report btn-view">📈 View Report</a>
+                    <button class="btn-report btn-download" onclick="downloadReport('exceptions')">⬇️ Download</button>
+                    <button class="btn-report btn-schedule" onclick="scheduleReport('exceptions')">⏰ Schedule</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="recent-reports">
+            <div class="recent-header">
+                🕒 Recent Reports
+            </div>
+            <div class="recent-list">
+                <div class="recent-item">
+                    <div class="recent-info">
+                        <div class="recent-name">Daily Inventory Summary</div>
+                        <div class="recent-date">Generated 2 hours ago</div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="downloadReport('daily_inventory')">📥</button>
+                </div>
+                <div class="recent-item">
+                    <div class="recent-info">
+                        <div class="recent-name">Weekly Receiving Performance</div>
+                        <div class="recent-date">Generated yesterday</div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="downloadReport('weekly_receiving')">📥</button>
+                </div>
+                <div class="recent-item">
+                    <div class="recent-info">
+                        <div class="recent-name">Monthly Financial Analysis</div>
+                        <div class="recent-date">Generated 3 days ago</div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="downloadReport('monthly_financial')">📥</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="navigation-footer">
+            <a href="/main_dashboard" class="btn btn-primary" style="padding: 15px 30px; font-size: 16px; margin-right: 15px;">
+                🏠 Back to Dashboard
+            </a>
+            <a href="/analytics_dashboard" class="btn btn-secondary" style="padding: 15px 30px; font-size: 16px;">
+                📊 Analytics Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Include Required Scripts -->
+    <script src="/static/employee_messaging_widget.js"></script>
+    <script src="/static/floating_chat_widget.js"></script>
+    <script src="/static/copyright_notice.js"></script>
+
+    <script>
+        // Report generation functions
+        function generateCustomReport() {
+            alert('Custom report builder coming soon! This will allow you to create tailored reports with specific metrics and date ranges.');
+        }
+
+        function downloadReport(reportType) {
+            console.log(`Downloading ${reportType} report...`);
+            
+            // Show loading state
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '⏳ Generating...';
+            button.disabled = true;
+            
+            // Simulate report generation
+            setTimeout(() => {
+                // Create a mock download
+                const link = document.createElement('a');
+                link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(`${reportType.charAt(0).toUpperCase() + reportType.slice(1)} Report\n\nGenerated on: ${new Date().toLocaleDateString()}\n\nThis is a sample ${reportType} report.`);
+                link.download = `${reportType}_report_${new Date().toISOString().split('T')[0]}.txt`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Reset button
+                button.innerHTML = originalText;
+                button.disabled = false;
+                
+                alert(`✅ ${reportType.charAt(0).toUpperCase() + reportType.slice(1)} report downloaded successfully!`);
+            }, 2000);
+        }
+
+        function scheduleReport(reportType) {
+            console.log(`Scheduling ${reportType} report...`);
+            
+            const frequency = prompt('How often would you like this report?\n\n1. Daily\n2. Weekly\n3. Monthly\n\nEnter 1, 2, or 3:', '2');
+            let scheduleText = '';
+            
+            switch(frequency) {
+                case '1':
+                    scheduleText = 'daily';
+                    break;
+                case '2':
+                    scheduleText = 'weekly';
+                    break;
+                case '3':
+                    scheduleText = 'monthly';
+                    break;
+                default:
+                    alert('Invalid selection. Please try again.');
+                    return;
+            }
+            
+            const email = prompt('Enter email address for report delivery:', 'manager@company.com');
+            if (email && email.includes('@')) {
+                alert(`✅ ${reportType.charAt(0).toUpperCase() + reportType.slice(1)} report scheduled ${scheduleText} to ${email}!`);
+            } else {
+                alert('Invalid email address. Please try again.');
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {console.log('Reports Hub loaded successfully')
+            
+            // Add hover effects for cards
+            const reportCards = document.querySelectorAll('.report-card');
+            reportCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-4px)';});
+                
+                card.addEventListener('mouseleave', function() {this.style.transform = 'translateY(0)'});
+            });
+        });
+    </script>
+</body>
+</html>

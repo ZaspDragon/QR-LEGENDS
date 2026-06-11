@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏭 Warehouse Chat - QR Legends</title>
+    <style>
+        * {margin: 0
+            padding: 0
+            box-sizing: border-box}
+
+        body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            min-height: 100vh
+            display: flex}
+
+        .chat-container {display: flex
+            width: 100%
+            height: 100vh
+            background: white;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);}
+
+        .sidebar {width: 320px
+            background: #f8f9fa
+            border-right: 1px solid #e9ecef
+            display: flex;
+            flex-direction: column}
+
+        .sidebar-header {padding: 20px
+            border-bottom: 1px solid #e9ecef
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            color: white}
+
+        .sidebar-title {font-size: 1.5rem
+            font-weight: 700
+            margin-bottom: 8px}
+
+        .sidebar-subtitle {font-size: 0.9rem
+            opacity: 0.9}
+
+        .chat-mode-tabs {display: flex
+            background: white
+            border-bottom: 1px solid #e9ecef}
+
+        .tab-button {flex: 1
+            padding: 12px
+            border: none
+            background: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s}
+
+        .tab-button.active {background: #007bff
+            color: white}
+
+        .channels-list, .dm-list {flex: 1
+            overflow-y: auto
+            padding: 15px}
+
+        .channel-item, .dm-item {padding: 12px
+            border-radius: 8px
+            margin-bottom: 8px
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid transparent}
+
+        .channel-item:hover, .dm-item:hover {background: #e9ecef}
+
+        .channel-item.active, .dm-item.active {background: #e3f2fd
+            border-left-color: #2196f3}
+
+        .channel-name {font-weight: 600
+            font-size: 0.9rem
+            margin-bottom: 4px}
+
+        .channel-meta {font-size: 0.8rem
+            color: #6c757d}
+
+        .unread-badge {background: #dc3545
+            color: white
+            border-radius: 50%
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            float: right}
+
+        .dm-picker {background: white
+            border-radius: 8px
+            padding: 15px
+            margin-bottom: 15px;
+            border: 1px solid #e9ecef}
+
+        .dm-search {width: 100%
+            padding: 8px
+            border: 1px solid #ddd
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 0.9rem}
+
+        .teammate-checkbox {display: flex
+            align-items: center
+            gap: 8px
+            margin-bottom: 8px;
+            padding: 6px;
+            border-radius: 6px;
+            transition: background 0.3s}
+
+        .teammate-checkbox:hover {background: #f8f9fa}
+
+        .selected-chips {display: flex
+            flex-wrap: wrap
+            gap: 6px
+            margin-bottom: 10px}
+
+        .chip {background: #e3f2fd
+            color: #1976d2
+            padding: 4px 8px
+            border-radius: 12px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 4px}
+
+        .chip-close {cursor: pointer
+            font-weight: bold}
+
+        .main-content {flex: 1
+            display: flex
+            flex-direction: column}
+
+        .chat-header {padding: 20px
+            border-bottom: 1px solid #e9ecef
+            background: white
+            display: flex;
+            justify-content: space-between;
+            align-items: center}
+
+        .chat-title {font-size: 1.3rem
+            font-weight: 700
+            color: #333}
+
+        .chat-meta {font-size: 0.9rem
+            color: #6c757d
+            margin-top: 4px}
+
+        .priority-controls {display: flex
+            gap: 10px}
+
+        .priority-btn {padding: 6px 12px
+            border: 1px solid #ddd
+            border-radius: 6px
+            background: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s}
+
+        .priority-btn.high {background: #ffeaa7
+            border-color: #fdcb6e}
+
+        .priority-btn.critical {background: #fab1a0
+            border-color: #e17055}
+
+        .messages-area {flex: 1
+            padding: 20px
+            overflow-y: auto
+            background: #f8f9fa}
+
+        .message {margin-bottom: 15px
+            max-width: 70%}
+
+        .message.sent {margin-left: auto}
+
+        .message-content {background: white
+            padding: 12px 16px
+            border-radius: 18px
+            border: 1px solid #e9ecef;
+            word-wrap: break-word}
+
+        .message.sent .message-content {background: #007bff
+            color: white
+            border-color: #007bff}
+
+        .message.private .message-content {background: #e8f5e8
+            border-color: #4caf50}
+
+        .message-header {font-size: 0.8rem
+            font-weight: 600
+            margin-bottom: 4px
+            display: flex;
+            align-items: center;
+            gap: 8px}
+
+        .message-time {font-size: 0.7rem
+            color: #6c757d
+            margin-top: 4px}
+
+        .status-badge {font-size: 0.7rem
+            padding: 2px 6px
+            border-radius: 8px
+            font-weight: 600}
+
+        .status-seen {background: #d4edda
+            color: #155724}
+
+        .status-private {background: #e2e3f0
+            color: #383f9a}
+
+        .input-section {padding: 20px
+            border-top: 1px solid #e9ecef
+            background: white}
+
+        .input-options {display: flex
+            justify-content: between
+            align-items: center
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+            color: #6c757d}
+
+        .input-checkboxes {display: flex
+            gap: 15px}
+
+        .input-controls {display: flex
+            gap: 10px}
+
+        .rules-btn {padding: 4px 8px
+            background: #f8f9fa
+            border: 1px solid #ddd
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem}
+
+        .message-input {width: 100%
+            padding: 12px 16px
+            border: 1px solid #ddd
+            border-radius: 25px;
+            outline: none;
+            font-size: 0.9rem;
+            margin-bottom: 15px}
+
+        .action-buttons {display: grid
+            grid-template-columns: 1fr 1fr 1fr
+            gap: 10px}
+
+        .action-btn {padding: 10px 16px
+            border: none
+            border-radius: 8px
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s}
+
+        .btn-primary {background: #007bff
+            color: white}
+
+        .btn-secondary {background: #f8f9fa
+            color: #333
+            border: 1px solid #ddd}
+
+        .rules-drawer {position: fixed
+            top: 0
+            right: -100%
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            transition: right 0.3s;
+            z-index: 1000;
+            overflow-y: auto}
+
+        .rules-drawer.open {right: 0}
+
+        .rules-header {padding: 20px
+            border-bottom: 1px solid #e9ecef
+            display: flex
+            justify-content: space-between;
+            align-items: center}
+
+        .rules-content {padding: 20px}
+
+        .rule-item {padding: 15px
+            border: 1px solid #e9ecef
+            border-radius: 8px
+            margin-bottom: 15px;
+            background: #f8f9fa}
+
+        .rule-title {font-weight: 600
+            margin-bottom: 8px}
+
+        .rule-description {font-size: 0.9rem
+            color: #6c757d
+            margin-bottom: 10px}
+
+        .rule-actions {display: flex
+            gap: 8px}
+
+        .rule-btn {padding: 6px 12px
+            border: 1px solid #ddd
+            background: white
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem}
+
+        .backdrop {position: fixed
+            top: 0
+            left: 0
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            z-index: 999}
+
+        @media (max-width: 768px) {.sidebar {
+                width: 280px}
+
+            .chat-container {flex-direction: column}
+
+            .rules-drawer {width: 100%
+                right: -100%}
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">🏭 Warehouse Chat</div>
+                <div class="sidebar-subtitle">Stay connected with your team</div>
+            </div>
+
+            <div class="chat-mode-tabs">
+                <button class="tab-button active" data-mode="channels" onclick="switchChatMode('channels')">
+                    📢 Channels
+                </button>
+                <button class="tab-button" data-mode="dm" onclick="switchChatMode('dm')">
+                    💬 Direct Messages
+                </button>
+            </div>
+
+            <!-- Channels List -->
+            <div id="channels-view" class="channels-list">
+                <div class="channel-item active" data-channel="company_wide" onclick="selectChannel('company_wide')">
+                    <div class="channel-name">🏢 Company Wide</div>
+                    <div class="channel-meta">All locations • 127 members</div>
+                    <span class="unread-badge">3</span>
+                </div>
+
+                <div class="channel-item" data-channel="general" onclick="selectChannel('general')">
+                    <div class="channel-name">💬 General</div>
+                    <div class="channel-meta">Local branch • 43 members</div>
+                </div>
+
+                <div class="channel-item" data-channel="managers_only" onclick="selectChannel('managers_only')">
+                    <div class="channel-name">👨‍💼 Managers Only</div>
+                    <div class="channel-meta">Management team • 8 members</div>
+                    <span class="unread-badge">1</span>
+                </div>
+
+                <div class="channel-item" data-channel="receiving" onclick="selectChannel('receiving')">
+                    <div class="channel-name">📦 Receiving</div>
+                    <div class="channel-meta">Receiving team • 12 members</div>
+                </div>
+
+                <div class="channel-item" data-channel="inventory" onclick="selectChannel('inventory')">
+                    <div class="channel-name">📊 Inventory</div>
+                    <div class="channel-meta">Inventory team • 15 members</div>
+                </div>
+
+                <div class="channel-item" data-channel="transfers" onclick="selectChannel('transfers')">
+                    <div class="channel-name">🔄 Transfers</div>
+                    <div class="channel-meta">Transfer team • 9 members</div>
+                </div>
+
+                <div class="channel-item" data-channel="problem_solving" onclick="selectChannel('problem_solving')">
+                    <div class="channel-name">🔧 Problem Solving</div>
+                    <div class="channel-meta">PS team • 6 members</div>
+                </div>
+            </div>
+
+            <!-- Direct Messages View -->
+            <div id="dm-view" class="dm-list" style="display: none;">
+                <div class="dm-picker">
+                    <input type="text" class="dm-search" placeholder="Search teammates..." onkeyup="filterTeammates(this.value)">
+
+                    <div class="selected-chips" id="selected-chips"></div>
+
+                    <div id="teammate-list">
+                        <label class="teammate-checkbox">
+                            <input type="checkbox" value="sarah_manager" onchange="toggleTeammate('sarah_manager', 'Sarah Johnson')">
+                            <span>👩‍💼 Sarah Johnson (Manager)</span>
+                        </label>
+                        <label class="teammate-checkbox">
+                            <input type="checkbox" value="mike_lead" onchange="toggleTeammate('mike_lead', 'Mike Chen')">
+                            <span>🎯 Mike Chen (Team Lead)</span>
+                        </label>
+                        <label class="teammate-checkbox">
+                            <input type="checkbox" value="lisa_inventory" onchange="toggleTeammate('lisa_inventory', 'Lisa Rodriguez')">
+                            <span>📊 Lisa Rodriguez (Inventory)</span>
+                        </label>
+                        <label class="teammate-checkbox">
+                            <input type="checkbox" value="david_receiving" onchange="toggleTeammate('david_receiving', 'David Kim')">
+                            <span>📦 David Kim (Receiving)</span>
+                        </label>
+                        <label class="teammate-checkbox">
+                            <input type="checkbox" value="emma_transfers" onchange="toggleTeammate('emma_transfers', 'Emma Wilson')">
+                            <span>🔄 Emma Wilson (Transfers)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="dm-item active" onclick="selectDM(['sarah_manager'])">
+                    <div class="channel-name">🔒 Sarah Johnson</div>
+                    <div class="channel-meta">Manager • Last seen 5m ago</div>
+                    <span class="unread-badge">2</span>
+                </div>
+
+                <div class="dm-item" onclick="selectDM(['mike_lead', 'lisa_inventory'])">
+                    <div class="channel-name">🔒 Mike, Lisa</div>
+                    <div class="channel-meta">Group DM • 3 members</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="chat-header">
+                <div>
+                    <div class="chat-title" id="chat-title">🏢 Company Wide</div>
+                    <div class="chat-meta" id="chat-meta">All locations • 127 members online</div>
+                </div>
+
+                <div class="priority-controls" id="priority-controls">
+                    <button class="priority-btn" onclick="setPriority('normal')">Normal</button>
+                    <button class="priority-btn high" onclick="setPriority('high')">High</button>
+                    <button class="priority-btn critical" onclick="setPriority('critical')">Critical</button>
+                </div>
+            </div>
+
+            <div class="messages-area" id="messages-area">
+                <div class="message">
+                    <div class="message-header">
+                        <span>Mike Chen</span>
+                        <span class="status-badge status-seen">Normal</span>
+                    </div>
+                    <div class="message-content">
+                        Printer in receiving is jammed again. Can someone from maintenance take a look?
+                    </div>
+                    <div class="message-time">12:34 PM • 5 minutes ago</div>
+                </div>
+
+                <div class="message sent">
+                    <div class="message-header">
+                        <span>You</span>
+                        <span class="status-badge status-seen">Seen</span>
+                    </div>
+                    <div class="message-content">
+                        On it. Reprinting labels now.
+                    </div>
+                    <div class="message-time">12:35 PM • 4 minutes ago</div>
+                </div>
+
+                <div class="message private">
+                    <div class="message-header">
+                        <span>Sarah Johnson</span>
+                        <span class="status-badge status-private">Private</span>
+                    </div>
+                    <div class="message-content">
+                        🔒 Private message: Can we discuss the inventory discrepancies after your shift?
+                    </div>
+                    <div class="message-time">12:36 PM • 3 minutes ago</div>
+                </div>
+            </div>
+
+            <div class="input-section">
+                <div class="input-options">
+                    <div class="input-checkboxes">
+                        <label><input type="checkbox" id="push-notify"> Push</label>
+                        <label><input type="checkbox" id="override-silent"> Override Silent on Critical</label>
+                    </div>
+                    <div class="input-controls">
+                        <button class="rules-btn" onclick="toggleRulesDrawer()">Notification Rules</button>
+                        <span>Press Enter to send</span>
+                    </div>
+                </div>
+
+                <input type="text" class="message-input" id="message-input" placeholder="Type @name + message..." onkeypress="handleKeyPress(event)">
+
+                <div class="action-buttons">
+                    <button class="action-btn btn-primary" onclick="sendMessage()">Send</button>
+                    <button class="action-btn btn-secondary" onclick="scheduleMessage()">Schedule (5m)</button>
+                    <button class="action-btn btn-secondary" onclick="newChat()" id="new-chat-btn">New Channel</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Rules Drawer -->
+    <div class="rules-drawer" id="rules-drawer">
+        <div class="rules-header">
+            <h3>Auto‑Escalation & Notification Rules</h3>
+            <button onclick="toggleRulesDrawer()">✕</button>
+        </div>
+
+        <div class="rules-content">
+            <div class="rule-item">
+                <div class="rule-title">Rule 1: Critical Escalation</div>
+                <div class="rule-description">
+                    If <strong>Critical</strong> priority in <strong>Public Channels</strong> → notify <strong>@MaintenanceLead</strong>, <strong>@BranchManager</strong> and create <strong>Incident Ticket</strong>
+                </div>
+                <div class="rule-actions">
+                    <button class="rule-btn">Edit</button>
+                    <button class="rule-btn">Disable</button>
+                </div>
+            </div>
+
+            <div class="rule-item">
+                <div class="rule-title">Rule 2: Manager High Priority</div>
+                <div class="rule-description">
+                    If <strong>High</strong> priority in <strong>Managers Only</strong> → send <strong>Push + Email</strong> to <strong>@SalesLead</strong>
+                </div>
+                <div class="rule-actions">
+                    <button class="rule-btn">Edit</button>
+                    <button class="rule-btn">Disable</button>
+                </div>
+            </div>
+
+            <div class="rule-item">
+                <div class="rule-title">Rule 3: DM Group Escalation</div>
+                <div class="rule-description">
+                    If <strong>Critical DM</strong> in <strong>Group Chat</strong> → notify <strong>@OnCall</strong> + create <strong>Emergency Incident</strong>
+                </div>
+                <div class="rule-actions">
+                    <button class="rule-btn">Edit</button>
+                    <button class="rule-btn">Disable</button>
+                </div>
+            </div>
+
+            <button class="action-btn btn-primary" style="margin-top: 20px;">Add New Rule</button>
+        </div>
+    </div>
+
+    <!-- Backdrop -->
+    <div class="backdrop" id="backdrop" style="display: none;" onclick="closeRulesDrawer()"></div>
+
+    <script>
+        let currentMode = 'channels';
+        let currentChannel = 'company_wide';
+        let selectedTeammates = new Set();
+        let currentDM = null;
+        let currentPriority = 'normal';
+
+        function switchChatMode(mode) {currentMode = mode
+
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'))
+            document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+
+            // Show/hide appropriate views
+            if (mode === 'channels') {document.getElementById('channels-view').style.display = 'block'
+                document.getElementById('dm-view').style.display = 'none'
+                document.getElementById('priority-controls').style.display = 'flex'
+                document.getElementById('new-chat-btn').textContent = 'New Channel';
+                document.getElementById('message-input').placeholder = 'Type @name + message...';
+                updateChatHeader('🏢 Company Wide', 'All locations • 127 members online');} else {document.getElementById('channels-view').style.display = 'none'
+                document.getElementById('dm-view').style.display = 'block'
+                document.getElementById('priority-controls').style.display = 'none'
+                document.getElementById('new-chat-btn').textContent = 'New DM';
+                updateDMPlaceholder();}
+
+            loadMessages();
+        }
+
+        function selectChannel(channelId) {currentChannel = channelId
+
+            // Update active state
+            document.querySelectorAll('.channel-item').forEach(item => item.classList.remove('active'))
+            document.querySelector(`[data-channel="${channelId}"]`).classList.add('active');
+
+            // Update header based on channel
+            const channelNames = {
+                'company_wide': ['🏢 Company Wide', 'All locations • 127 members online'],
+                'general': ['💬 General', 'Local branch • 43 members online'],
+                'managers_only': ['👨‍💼 Managers Only', 'Management team • 8 members online'],
+                'receiving': ['📦 Receiving', 'Receiving team • 12 members online'],
+                'inventory': ['📊 Inventory', 'Inventory team • 15 members online'],
+                'transfers': ['🔄 Transfers', 'Transfer team • 9 members online'],
+                'problem_solving': ['🔧 Problem Solving', 'PS team • 6 members online']
+            };
+
+            const [title, meta] = channelNames[channelId];
+            updateChatHeader(title, meta);
+
+            // Update profile picture based on department
+            updateProfilePicture(channelId);
+
+            // Load messages for the selected channel
+            loadDepartmentMessages(channelId);
+        }
+
+        function updateProfilePicture(channelId) {// Get the chat title element to update the icon
+            const chatTitle = document.getElementById('chat-title')
+            if (chatTitle) {
+                // Update the icon based on the selected channel
+                const channelIcons = {
+                    'company_wide': '🏢',
+                    'general': '💬',
+                    'managers_only': '👨‍💼',
+                    'receiving': '📦',
+                    'inventory': '📊',
+                    'transfers': '🔄',
+                    'problem_solving': '🔧'};
+
+                const icon = channelIcons[channelId] || '💬';
+                const titleText = chatTitle.textContent.replace(/^[🏢💬👨‍💼📦📊🔄🔧]\s*/, '');
+                chatTitle.textContent = `${icon} ${titleText}`;
+            }
+
+            // Also update any profile images in the interface
+            const profileElements = document.querySelectorAll('.profile-image, .department-avatar');
+            profileElements.forEach(element => {if (element.tagName === 'IMG') {
+                    // If it's an image element, update src or add a data attribute
+                    element.setAttribute('data-department', channelId)} else {
+                    // If it's a text/emoji element, update the content
+                    const channelEmojis = {
+                        'company_wide': '🏢',
+                        'general': '💬',
+                        'managers_only': '👨‍💼',
+                        'receiving': '📦',
+                        'inventory': '📊',
+                        'transfers': '🔄',
+                        'problem_solving': '🔧'
+                    };
+                    element.textContent = channelEmojis[channelId] || '💬';
+                }
+            });
+        }
+
+        function selectDM(teammates) {currentDM = teammates
+
+            // Update active state
+            document.querySelectorAll('.dm-item').forEach(item => item.classList.remove('active'))
+            event.target.closest('.dm-item').classList.add('active')
+
+            // Update header for DM
+            if (teammates.length === 1) {
+                updateChatHeader(`🔒 Private with ${getTeammateName(teammates[0])}`, 'Direct message • End-to-end encrypted');
+                // Update profile for single DM
+                updateDMProfilePicture(teammates[0]);
+            } else {const names = teammates.map(id => getTeammateName(id)).join(', ')
+                updateChatHeader(`🔒 Group Chat: ${names}`, `${teammates.length + 1} members • Private group`);
+                // Update profile for group DM
+                updateDMProfilePicture('group');
+            }
+
+            updateDMPlaceholder();
+            loadMessages();
+        }
+
+        function updateDMProfilePicture(userId) {// Update profile picture for DMs
+            const profileElements = document.querySelectorAll('.profile-image, .department-avatar')
+            profileElements.forEach(element => {
+                if (userId === 'group') {
+                    element.textContent = '👥' // Group chat icon} else {
+                    // Individual user icons based on their role/name
+                    const userIcons = {
+                        'sarah_manager': '👩‍💼',
+                        'mike_lead': '🎯',
+                        'lisa_inventory': '📊',
+                        'david_receiving': '📦',
+                        'emma_transfers': '🔄'
+                    };
+                    element.textContent = userIcons[userId] || '👤';
+                }
+            });
+        }
+
+        function toggleTeammate(id, name) {if (selectedTeammates.has(id)) {
+                selectedTeammates.delete(id)} else {selectedTeammates.add(id)}
+            updateSelectedChips();
+            updateDMPlaceholder();
+        }
+
+        function updateSelectedChips() {const chipsContainer = document.getElementById('selected-chips')
+            chipsContainer.innerHTML = ''
+
+            selectedTeammates.forEach(id => {
+                const name = getTeammateName(id)
+                const chip = document.createElement('div');
+                chip.className = 'chip';
+                chip.innerHTML = `🔒 ${name} <span class="chip-close" onclick="removeTeammate('${id}')">×</span>`;
+                chipsContainer.appendChild(chip);
+            });
+        }
+
+        function removeTeammate(id) {selectedTeammates.delete(id)
+            document.querySelector(`input[value="${id}"]`).checked = false;
+            updateSelectedChips();
+            updateDMPlaceholder();
+        }
+
+        function updateDMPlaceholder() {const input = document.getElementById('message-input')
+            if (selectedTeammates.size > 0) {
+                const names = Array.from(selectedTeammates).map(id => getTeammateName(id)).join(', ')
+                input.placeholder = `Message ${names}...`;
+            } else if (currentDM) {const names = currentDM.map(id => getTeammateName(id)).join(', ')
+                input.placeholder = `Message ${names}...`;
+            } else {input.placeholder = 'Select teammates to start a private chat...'}
+        }
+
+        function getTeammateName(id) {
+            const names = {
+                'sarah_manager': 'Sarah Johnson',
+                'mike_lead': 'Mike Chen',
+                'lisa_inventory': 'Lisa Rodriguez',
+                'david_receiving': 'David Kim',
+                'emma_transfers': 'Emma Wilson'
+            };
+            return names[id] || id;
+        }
+
+        function updateChatHeader(title, meta) {document.getElementById('chat-title').textContent = title
+            document.getElementById('chat-meta').textContent = meta}
+
+        function setPriority(priority) {currentPriority = priority
+
+            // Update button states
+            document.querySelectorAll('.priority-btn').forEach(btn => {
+                btn.style.background = 'white'
+                btn.style.borderColor = '#ddd'});
+
+            const selectedBtn = document.querySelector(`[onclick="setPriority('${priority}')"]`);
+            if (priority === 'high') {selectedBtn.style.background = '#ffeaa7'
+                selectedBtn.style.borderColor = '#fdcb6e'} else if (priority === 'critical') {selectedBtn.style.background = '#fab1a0'
+                selectedBtn.style.borderColor = '#e17055'}
+        }
+
+        function filterTeammates(query) {const checkboxes = document.querySelectorAll('.teammate-checkbox')
+            checkboxes.forEach(checkbox => {
+                const text = checkbox.textContent.toLowerCase()
+                checkbox.style.display = text.includes(query.toLowerCase()) ? 'flex' : 'none'});
+        }
+
+        function handleKeyPress(event) {if (event.key === 'Enter') {
+                sendMessage()}
+        }
+
+        async function sendMessage() {const input = document.getElementById('message-input')
+            const message = input.value.trim()
+
+            if (!message) return
+
+            try {
+                if (currentMode === 'channels') {
+                    const response = await fetch('/api/employee/department-message', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            department: currentChannel,
+                            content: message,
+                            urgent: currentPriority === 'critical' || currentPriority === 'high'
+                        })
+                    });
+
+                    if (response.ok) {input.value = ''
+                        // Reload messages to show the new message
+                        setTimeout(() => loadDepartmentMessages(currentChannel), 500)} else {throw new Error('Failed to send message')}
+                } else {// Handle DM sending here
+                    console.log('Sending DM not implemented yet')}
+            } catch (error) {console.error('Error sending message:', error)
+                alert('Failed to send message. Please try again.')}
+        }
+
+        function scheduleMessage() {const input = document.getElementById('message-input')
+            const message = input.value.trim()
+
+            if (!message) return
+
+            console.log('Scheduling message for 5 minutes:', message);
+            alert('Message scheduled for 5 minutes from now');
+            input.value = '';}
+
+        function newChat() {if (currentMode === 'channels') {
+                alert('Create new channel functionality')} else {// Start new DM with selected teammates
+                if (selectedTeammates.size > 0) {
+                    selectDM(Array.from(selectedTeammates))
+                    selectedTeammates.clear()
+                    updateSelectedChips()} else {alert('Select teammates to start a new DM')}
+            }
+        }
+
+        function toggleRulesDrawer() {const drawer = document.getElementById('rules-drawer')
+            const backdrop = document.getElementById('backdrop')
+
+            if (drawer.classList.contains('open')) {
+                closeRulesDrawer()} else {drawer.classList.add('open')
+                backdrop.style.display = 'block'}
+        }
+
+        function closeRulesDrawer() {document.getElementById('rules-drawer').classList.remove('open')
+            document.getElementById('backdrop').style.display = 'none'}
+
+        function loadMessages() {if (currentMode === 'channels') {
+                loadDepartmentMessages(currentChannel)} else {// DM mode - would load DM messages
+                console.log('Loading DM messages for:', currentDM)}
+        }
+
+        async function loadDepartmentMessages(department) {
+            try {
+                const response = await fetch(`/api/employee/department-messages/${department}`);
+                if (response.ok) {const data = await response.json()
+                    displayChannelMessages(data.messages || [])} else {console.error('Failed to load messages for department:', department)
+                    displayChannelMessages([])}
+            } catch (error) {console.error('Error loading department messages:', error)
+                displayChannelMessages([])}
+        }
+
+        function displayChannelMessages(messages) {const container = document.getElementById('messages-area')
+
+            if (messages.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center padding: 40px color: #666">
+                        <div style="font-size: 2rem margin-bottom: 10px">💬</div>
+                        <p>No messages in this channel yet.</p>
+                        <p>Be the first to start the conversation!</p>
+                    </div>
+                `;
+                return}
+
+            container.innerHTML = messages.map(msg => {
+                const isOwn = msg.sender_id === 'current_user' // This would be replaced with actual user check
+                return `
+                    <div class="message ${isOwn ? 'sent' : ''}">
+                        <div class="message-header">
+                            <span>${msg.sender_name || 'Anonymous'}</span>
+                            <span class="status-badge ${msg.urgent ? 'status-urgent' : 'status-seen'}">${msg.urgent ? 'URGENT' : 'Normal'}</span>
+                        </div>
+                        <div class="message-content">${msg.content}</div>
+                        <div class="message-time">${new Date(msg.timestamp).toLocaleString()}</div>
+                    </div>
+                `;
+            }).join('');
+
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function addMessageToUI(messageData) {const messagesArea = document.getElementById('messages-area')
+
+            const messageDiv = document.createElement('div')
+            messageDiv.className = `message ${messageData.sent ? 'sent' : ''}`;
+
+            messageDiv.innerHTML = `
+                <div class="message-header">
+                    <span>${messageData.sender}</span>
+                    <span class="status-badge status-seen">${messageData.priority || 'Normal'}</span>
+                </div>
+                <div class="message-content">${messageData.content}</div>
+                <div class="message-time">${messageData.time} • just now</div>
+            `;
+
+            messagesArea.appendChild(messageDiv);
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {console.log('Warehouse Chat initialized')
+            // Set initial profile picture
+            updateProfilePicture(currentChannel)
+            // Load initial messages for company_wide channel
+            loadDepartmentMessages(currentChannel)});
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warehouse Chat - QR Legends</title>
+    <link rel="icon" type="image/png" href="/static/qr_legends_logo.png">
+    <style>
+        * {margin: 0
+            padding: 0
+            box-sizing: border-box}
+
+        body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            min-height: 100vh
+            color: #1a1a1a}
+
+        .header {background: rgba(255, 255, 255, 0.95)
+            backdrop-filter: blur(10px)
+            padding: 16px 24px
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);}
+
+        .logo {display: flex
+            align-items: center
+            gap: 12px
+            font-size: 20px;
+            font-weight: 700;
+            color: #2563eb;
+            text-decoration: none}
+
+        .header-btn {padding: 8px 16px
+            border: none
+            border-radius: 8px
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            background: rgba(0, 0, 0, 0.1);
+            color: #4b5563;
+            transition: all 0.2s ease}
+
+        .main-content {padding: 32px 24px
+            max-width: 1400px
+            margin: 0 auto}
+
+        .page-header {text-align: center
+            margin-bottom: 40px}
+
+        .page-title {font-size: 36px
+            font-weight: 800
+            color: white
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);}
+
+        .chat-container {background: rgba(255, 255, 255, 0.95)
+            border-radius: 16px
+            padding: 32px
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center}
+
+        .chat-placeholder {font-size: 18px
+            color: #6b7280
+            text-align: center}
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/" class="logo">
+            💬 Warehouse Chat
+        </a>
+        <a href="/main_dashboard" class="header-btn">🏠 Dashboard</a>
+    </div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Warehouse Chat</h1>
+        </div>
+
+        <div class="chat-container">
+            <div class="chat-placeholder">Team communication and collaboration hub</div>
+        </div>
+    </div>
+
+    <script src="/static/warehouse_chat_widget.js"></script>
+</body>
+</html>

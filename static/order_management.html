@@ -1,0 +1,428 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management - QR LEGENDS</title>
+    <style>
+        * {margin: 0
+            padding: 0
+            box-sizing: border-box}
+
+        body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            min-height: 100vh
+            padding: 20px}
+
+        .container {max-width: 1400px
+            margin: 0 auto
+            background: white
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);}
+
+        .header {text-align: center
+            margin-bottom: 30px}
+
+        .back-btn {position: absolute
+            top: 20px
+            left: 20px
+            background: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-weight: 600}
+
+        .quick-actions {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
+            gap: 15px
+            margin-bottom: 30px}
+
+        .action-btn {padding: 15px 20px
+            border: none
+            border-radius: 8px
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s}
+
+        .btn-primary {background: #667eea color: white}
+        .btn-success {background: #28a745 color: white}
+        .btn-warning {background: #ffc107 color: #333}
+        .btn-danger {background: #dc3545 color: white}
+
+        .action-btn:hover {transform: translateY(-2px)
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2)}
+
+        .stats-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
+            gap: 20px
+            margin-bottom: 30px}
+
+        .stat-card {background: linear-gradient(135deg, #f8f9fa, #e9ecef)
+            padding: 20px
+            border-radius: 10px
+            text-align: center}
+
+        .stat-value {font-size: 2rem
+            font-weight: bold
+            color: #667eea}
+
+        .stat-label {color: #666
+            margin-top: 5px}
+
+        .main-content {display: grid
+            grid-template-columns: 1fr 350px
+            gap: 30px}
+
+        .orders-section {background: #f8f9fa
+            border-radius: 10px
+            padding: 20px}
+
+        .order-filters {display: flex
+            gap: 10px
+            margin-bottom: 20px
+            flex-wrap: wrap}
+
+        .filter-btn {padding: 8px 16px
+            border: 1px solid #ddd
+            border-radius: 20px
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s}
+
+        .filter-btn.active {background: #667eea
+            color: white
+            border-color: #667eea}
+
+        .orders-list {max-height: 600px
+            overflow-y: auto}
+
+        .order-item {background: white
+            border-radius: 8px
+            padding: 15px
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s}
+
+        .order-item:hover {transform: translateY(-2px)
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1)}
+
+        .order-header {display: flex
+            justify-content: space-between
+            align-items: center
+            margin-bottom: 10px}
+
+        .order-number {font-weight: bold
+            color: #333}
+
+        .order-status {padding: 4px 12px
+            border-radius: 15px
+            font-size: 12px
+            font-weight: 600}
+
+        .status-pending {background: #fff3cd color: #856404}
+        .status-processing {background: #d4edda color: #155724}
+        .status-shipped {background: #cce5ff color: #004085}
+        .status-delivered {background: #d1ecf1 color: #0c5460}
+
+        .order-details {display: grid
+            grid-template-columns: repeat(3, 1fr)
+            gap: 10px
+            font-size: 14px;
+            color: #666}
+
+        .sidebar {background: #f8f9fa
+            border-radius: 10px
+            padding: 20px}
+
+        .form-group {margin-bottom: 15px}
+
+        .form-group label {display: block
+            margin-bottom: 5px
+            font-weight: 600
+            color: #333}
+
+        .form-group input, .form-group select, .form-group textarea {width: 100%
+            padding: 10px
+            border: 1px solid #ddd
+            border-radius: 5px;
+            font-size: 14px}
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea: focus {outline: none
+            border-color: #667eea}
+
+        @media (max-width: 768px) {.main-content {
+                grid-template-columns: 1fr}
+            
+            .quick-actions {grid-template-columns: repeat(2, 1fr)}
+            
+            .stats-grid {grid-template-columns: repeat(2, 1fr)}
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='/salespad_dashboard'">← Back to SalesPad</button>
+
+    <div class="container">
+        <div class="header">
+            <h1>📋 Order Management</h1>
+            <p>Manage sales orders, quotes, and customer fulfillment</p>
+        </div>
+
+        <div class="quick-actions">
+            <button class="action-btn btn-primary" onclick="createNewOrder()">📝 New Order</button>
+            <button class="action-btn btn-success" onclick="createNewQuote()">💰 New Quote</button>
+            <button class="action-btn btn-warning" onclick="processBackorders()">📦 Process Backorders</button>
+            <button class="action-btn btn-danger" onclick="viewPartialShipments()">🚚 Partial Shipments</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalOrders">89</div>
+                <div class="stat-label">Pending Orders</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalQuotes">78</div>
+                <div class="stat-label">Open Quotes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="backorders">12</div>
+                <div class="stat-label">Backorders</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="dailyRevenue">$45,500</div>
+                <div class="stat-label">Today's Sales</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="orders-section">
+                <h3>📋 Orders & Quotes</h3>
+                
+                <div class="order-filters">
+                    <button class="filter-btn active" onclick="filterOrders('all')">All</button>
+                    <button class="filter-btn" onclick="filterOrders('pending')">Pending</button>
+                    <button class="filter-btn" onclick="filterOrders('processing')">Processing</button>
+                    <button class="filter-btn" onclick="filterOrders('shipped')">Shipped</button>
+                    <button class="filter-btn" onclick="filterOrders('quotes')">Quotes</button>
+                </div>
+
+                <div class="orders-list" id="ordersList">
+                    <!-- Orders will be populated here -->
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <h3>🔍 Order Details</h3>
+                <div id="orderDetails">
+                    <p style="text-align: center; color: #666; margin-top: 50px;">
+                        Select an order to view details
+                    </p>
+                </div>
+
+                <h3 style="margin-top: 30px;">➕ Quick Actions</h3>
+                <div style="display: grid; gap: 10px; margin-top: 15px;">
+                    <button class="action-btn btn-primary" onclick="generatePickTicket()">🎯 Generate Pick Ticket</button>
+                    <button class="action-btn btn-success" onclick="processPayment()">💳 Process Payment</button>
+                    <button class="action-btn btn-warning" onclick="updateTracking()">📍 Update Tracking</button>
+                    <button class="action-btn btn-danger" onclick="cancelOrder()">❌ Cancel Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentOrders = [];
+        let selectedOrder = null;
+
+        document.addEventListener('DOMContentLoaded', function() {loadOrders()});
+
+        function loadOrders() {
+            // Sample order data - in production this would come from the API
+            currentOrders = [
+                {
+                    id: 'SO-2025-001',
+                    customer: 'Acme Industries',
+                    date: '2025-01-15',
+                    status: 'pending',
+                    total: 2450.00,
+                    items: 8,
+                    type: 'order'
+                },
+                {
+                    id: 'QT-2025-045',
+                    customer: 'Tech Solutions LLC',
+                    date: '2025-01-15',
+                    status: 'quoted',
+                    total: 5670.00,
+                    items: 12,
+                    type: 'quote'
+                },
+                {
+                    id: 'SO-2025-002',
+                    customer: 'Global Supply Co',
+                    date: '2025-01-14',
+                    status: 'processing',
+                    total: 1890.00,
+                    items: 5,
+                    type: 'order'
+                },
+                {
+                    id: 'SO-2025-003',
+                    customer: 'Metro Distribution',
+                    date: '2025-01-14',
+                    status: 'shipped',
+                    total: 3420.00,
+                    items: 15,
+                    type: 'order'
+                }
+            ];
+            
+            displayOrders();
+        }
+
+        function displayOrders(filter = 'all') {const container = document.getElementById('ordersList')
+            let filteredOrders = currentOrders
+
+            if (filter !== 'all') {
+                filteredOrders = currentOrders.filter(order => {
+                    if (filter === 'quotes') return order.type === 'quote'
+                    return order.status === filter;});
+            }
+
+            container.innerHTML = filteredOrders.map(order => `
+                <div class="order-item" onclick="selectOrder('${order.id}')">
+                    <div class="order-header">
+                        <span class="order-number">${order.id}</span>
+                        <span class="order-status status-${order.status}">${order.status.toUpperCase()}</span>
+                    </div>
+                    <div class="order-details">
+                        <div><strong>Customer:</strong> ${order.customer}</div>
+                        <div><strong>Date:</strong> ${order.date}</div>
+                        <div><strong>Total:</strong> $${order.total.toFixed(2)}</div>
+                        <div><strong>Items:</strong> ${order.items}</div>
+                        <div><strong>Type:</strong> ${order.type.toUpperCase()}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterOrders(filter) {document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'))
+            event.target.classList.add('active')
+            displayOrders(filter)}
+
+        function selectOrder(orderId) {selectedOrder = currentOrders.find(order => order.id === orderId)
+            if (selectedOrder) {
+                document.getElementById('orderDetails').innerHTML = `
+                    <div style="background: white padding: 15px border-radius: 8px">
+                        <h4>${selectedOrder.id}</h4>
+                        <p><strong>Customer:</strong> ${selectedOrder.customer}</p>
+                        <p><strong>Date:</strong> ${selectedOrder.date}</p>
+                        <p><strong>Status:</strong> ${selectedOrder.status}</p>
+                        <p><strong>Total:</strong> $${selectedOrder.total.toFixed(2)}</p>
+                        <p><strong>Items:</strong> ${selectedOrder.items} items</p>
+                        <p><strong>Type:</strong> ${selectedOrder.type.toUpperCase()}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function createNewOrder() {window.open('/new_order', '_blank')}
+
+        function createNewQuote() {window.open('/new_quote', '_blank')}
+
+        function processBackorders() {alert('📦 Processing backorders...\n- Found 12 backorder items\n- 8 now available for fulfillment\n- 4 still pending supplier delivery')}
+
+        function viewPartialShipments() {alert('🚚 Partial Shipments Summary:\n- 5 orders with partial shipments\n- Total value: $12,450\n- Average completion: 65%')}
+
+        function generatePickTicket() {if (!selectedOrder) {
+                alert('Please select an order first')
+                return}
+            alert(`🎯 Pick ticket generated for ${selectedOrder.id}\n- Sent to warehouse\n- Priority: Normal\n- Estimated pick time: 15 minutes`);
+        }
+
+        function processPayment() {if (!selectedOrder) {
+                alert('Please select an order first')
+                return}
+            alert(`💳 Payment processing for ${selectedOrder.id}\n- Amount: $${selectedOrder.total.toFixed(2)}\n- Payment method: Credit Card\n- Status: Approved`);
+        }
+
+        function updateTracking() {if (!selectedOrder) {
+                alert('Please select an order first')
+                return}
+            alert(`📍 Tracking updated for ${selectedOrder.id}\n- Carrier: UPS\n- Tracking: 1Z999AA1234567890\n- Status: In Transit`);
+        }
+
+        function cancelOrder() {if (!selectedOrder) {
+                alert('Please select an order first')
+                return}
+            if (confirm(`Cancel order ${selectedOrder.id}?`)) {
+                alert(`❌ Order ${selectedOrder.id} has been cancelled\n- Reason: Customer request\n- Refund initiated`);
+            }
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management - QR Legends</title>
+    <style>
+        * {margin: 0 padding: 0 box-sizing: border-box}
+        body {font-family: Arial, sans-serif background: #f5f5f5}
+        .container {max-width: 1200px margin: 0 auto padding: 20px}
+        .header {background: #2c3e50 color: white padding: 20px border-radius: 10px; margin-bottom: 20px}
+        .grid {display: grid grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) gap: 20px}
+        .card {background: white padding: 20px border-radius: 10px box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+        .btn {background: #3498db color: white border: none padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px}
+        .btn:hover {background: #2980b9}
+        .btn-success {background: #27ae60}
+        .btn-warning {background: #f39c12}
+        .btn-danger {background: #e74c3c}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Order Management</h1>
+            <p>Manage sales orders, quotes, and customer fulfillment</p>
+        </div>
+        
+        <div class="grid">
+            <div class="card">
+                <h3>📦 Active Orders</h3>
+                <p>Manage current sales orders and fulfillment status</p>
+                <button class="btn">View All Orders</button>
+                <button class="btn btn-success">New Order</button>
+            </div>
+            
+            <div class="card">
+                <h3>📋 Order Queue</h3>
+                <p>Prioritize and manage order processing queue</p>
+                <button class="btn">View Queue</button>
+                <button class="btn btn-warning">Priority Orders</button>
+            </div>
+            
+            <div class="card">
+                <h3>🔄 Backorders</h3>
+                <p>Manage and track backordered items</p>
+                <button class="btn">View Backorders</button>
+                <button class="btn btn-warning">Release Items</button>
+            </div>
+            
+            <div class="card">
+                <h3>📊 Order Analytics</h3>
+                <p>Order fulfillment metrics and performance</p>
+                <button class="btn">View Reports</button>
+                <button class="btn">Export Data</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

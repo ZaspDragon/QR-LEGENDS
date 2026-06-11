@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Manager Dashboard - QR Legends</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f172a;--surface:#1e293b;--surface2:#334155;--border:#334155;
+  --text:#f1f5f9;--sub:#94a3b8;--accent:#3b82f6;--accent2:#6366f1;
+  --success:#22c55e;--warning:#f59e0b;--danger:#ef4444;--info:#06b6d4;
+  --radius:12px;--shadow:0 4px 24px rgba(0,0,0,0.4)
+}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.logo{font-weight:800;font-size:18px;color:var(--accent);letter-spacing:-0.5px}
+.role-badge{background:linear-gradient(135deg,#1d4ed8,#7c3aed);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;color:#fff}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:14px;font-weight:600;transition:all 0.2s;text-decoration:none;display:inline-flex;align-items:center;gap:6px;min-height:40px}
+.btn-ghost{background:transparent;color:var(--sub);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--surface2);color:var(--text)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#2563eb}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover{background:#dc2626}
+.content{padding:24px;max-width:1400px;margin:0 auto}
+.page-header{margin-bottom:28px}
+.page-header h1{font-size:28px;font-weight:800;margin-bottom:6px;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.page-header p{color:var(--sub);font-size:15px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:transform 0.2s,box-shadow 0.2s;cursor:default}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.stat-label{color:var(--sub);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
+.stat-value{font-size:32px;font-weight:800;margin-bottom:4px}
+.stat-delta{font-size:12px;color:var(--success)}
+.stat-delta.down{color:var(--danger)}
+.v-accent{color:var(--accent)}
+.v-success{color:var(--success)}
+.v-warning{color:var(--warning)}
+.v-danger{color:var(--danger)}
+.v-info{color:var(--info)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-title{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:10px 12px;color:var(--sub);font-size:12px;font-weight:600;text-transform:uppercase;border-bottom:1px solid var(--border)}
+td{padding:12px;border-bottom:1px solid rgba(51,65,85,0.5);font-size:14px}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(59,130,246,0.05)}
+.badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase}
+.badge-success{background:rgba(34,197,94,0.15);color:#22c55e}
+.badge-warning{background:rgba(245,158,11,0.15);color:#f59e0b}
+.badge-danger{background:rgba(239,68,68,0.15);color:#ef4444}
+.badge-info{background:rgba(6,182,212,0.15);color:#06b6d4}
+.badge-neutral{background:rgba(148,163,184,0.15);color:#94a3b8}
+.dept-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px}
+.dept-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;cursor:pointer;transition:all 0.2s;text-decoration:none;color:var(--text)}
+.dept-card:hover{border-color:var(--accent);background:rgba(59,130,246,0.08);transform:translateY(-2px)}
+.dept-icon{font-size:32px;margin-bottom:10px}
+.dept-name{font-size:13px;font-weight:700;margin-bottom:4px}
+.dept-stat{font-size:22px;font-weight:800;color:var(--accent)}
+.dept-label{font-size:11px;color:var(--sub)}
+.progress-bar{background:var(--surface2);border-radius:4px;height:8px;overflow:hidden;margin-top:6px}
+.progress-fill{height:100%;border-radius:4px;transition:width 0.6s ease}
+.alert-item{display:flex;align-items:flex-start;gap:12px;padding:12px;border-radius:8px;margin-bottom:8px;background:rgba(239,68,68,0.08);border-left:3px solid var(--danger)}
+.alert-item.warning{background:rgba(245,158,11,0.08);border-left-color:var(--warning)}
+.alert-item.info{background:rgba(6,182,212,0.08);border-left-color:var(--info)}
+.alert-icon{font-size:18px;flex-shrink:0}
+.alert-text{font-size:13px}
+.alert-text strong{display:block;margin-bottom:2px}
+.section-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.tab-btn{padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--sub);cursor:pointer;font-size:13px;font-weight:600;transition:all 0.2s}
+.tab-btn.active,.tab-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.refresh-btn{background:var(--surface2);border:1px solid var(--border);color:var(--sub);padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;transition:all 0.2s}
+.refresh-btn:hover{color:var(--text);border-color:var(--accent)}
+@media(max-width:768px){
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .content{padding:16px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .topbar{padding:0 12px}
+  .page-header h1{font-size:22px}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr}
+  .topbar-right .btn span{display:none}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="logo">QR LEGENDS</span>
+    <span class="role-badge">👔 Manager</span>
+  </div>
+  <div class="topbar-right">
+    <a href="/main_dashboard" class="btn btn-ghost">🏠 <span>Dashboard</span></a>
+    <button onclick="refreshAll()" class="btn btn-primary">🔄 <span>Refresh</span></button>
+    <button onclick="window.location='/company_login'" class="btn btn-danger">⏻ <span>Sign Out</span></button>
+  </div>
+</div>
+
+<div class="content">
+  <div class="page-header">
+    <h1>Manager Command Center</h1>
+    <p id="last-updated">Loading data... &bull; <span id="current-time"></span></p>
+  </div>
+
+  <!-- KPI Stats -->
+  <div class="stats-grid" id="stats-grid">
+    <div class="stat-card"><div class="stat-label">Active Employees</div><div class="stat-value v-accent" id="stat-employees">--</div><div class="stat-delta">On shift today</div></div>
+    <div class="stat-card"><div class="stat-label">Open Orders</div><div class="stat-value v-warning" id="stat-orders">--</div><div class="stat-delta">Pending fulfillment</div></div>
+    <div class="stat-card"><div class="stat-label">Inventory Value</div><div class="stat-value v-success" id="stat-inventory">--</div><div class="stat-delta">Total stock value</div></div>
+    <div class="stat-card"><div class="stat-label">Pending Receipts</div><div class="stat-value v-info" id="stat-receipts">--</div><div class="stat-delta">Awaiting receiving</div></div>
+    <div class="stat-card"><div class="stat-label">Pick Completion</div><div class="stat-value v-success" id="stat-picks">--</div><div class="stat-delta">Today's rate</div></div>
+    <div class="stat-card"><div class="stat-label">Alerts</div><div class="stat-value v-danger" id="stat-alerts">--</div><div class="stat-delta">Need attention</div></div>
+  </div>
+
+  <!-- Department Status -->
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header">
+      <span class="card-title">📦 Department Activity</span>
+      <button class="refresh-btn" onclick="loadDeptStatus()">↻ Refresh</button>
+    </div>
+    <div class="dept-grid" id="dept-grid">
+      <div class="dept-card" onclick="window.location='/receiving'">
+        <div class="dept-icon">📥</div>
+        <div class="dept-name">Receiving</div>
+        <div class="dept-stat" id="dept-receiving">0</div>
+        <div class="dept-label">Active Receipts</div>
+      </div>
+      <div class="dept-card" onclick="window.location='/putaway'">
+        <div class="dept-icon">🏷️</div>
+        <div class="dept-name">Putaway</div>
+        <div class="dept-stat" id="dept-putaway">0</div>
+        <div class="dept-label">Items to Putaway</div>
+      </div>
+      <div class="dept-card" onclick="window.location='/job_order_picker'">
+        <div class="dept-icon">🛒</div>
+        <div class="dept-name">Order Picking</div>
+        <div class="dept-stat" id="dept-picking">0</div>
+        <div class="dept-label">Orders in Queue</div>
+      </div>
+      <div class="dept-card" onclick="window.location='/job_transfer_picker'">
+        <div class="dept-icon">🔄</div>
+        <div class="dept-name">Transfers</div>
+        <div class="dept-stat" id="dept-transfers">0</div>
+        <div class="dept-label">Active Transfers</div>
+      </div>
+      <div class="dept-card" onclick="window.location='/job_stock_mover'">
+        <div class="dept-icon">📦</div>
+        <div class="dept-name">Stock Movement</div>
+        <div class="dept-stat" id="dept-stock">0</div>
+        <div class="dept-label">Pending Moves</div>
+      </div>
+      <div class="dept-card" onclick="window.location='/job_inventory_analyst'">
+        <div class="dept-icon">📊</div>
+        <div class="dept-name">Inventory Audit</div>
+        <div class="dept-stat" id="dept-audit">0</div>
+        <div class="dept-label">Items to Count</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Two column layout -->
+  <div class="grid-2">
+    <!-- Alerts Panel -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">🚨 Active Alerts</span>
+        <button class="refresh-btn" onclick="loadAlerts()">↻</button>
+      </div>
+      <div id="alerts-container">
+        <div class="alert-item">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-text"><strong>Low Stock Items</strong>Loading alert data...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Team Overview -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">👥 Team Overview</span>
+        <button class="refresh-btn" onclick="loadTeam()">↻</button>
+      </div>
+      <div class="table-wrap">
+        <table id="team-table">
+          <thead><tr><th>Name</th><th>Role</th><th>Status</th><th>Tasks</th></tr></thead>
+          <tbody id="team-tbody">
+            <tr><td colspan="4" style="text-align:center;color:var(--sub);padding:20px">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reports & Quick Actions -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">📈 Quick Reports</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a href="/analytics_dashboard" class="btn btn-ghost" style="justify-content:flex-start">📊 Analytics Dashboard</a>
+        <a href="/custom_reports" class="btn btn-ghost" style="justify-content:flex-start">📋 Custom Reports</a>
+        <a href="/warehouse_activity_history" class="btn btn-ghost" style="justify-content:flex-start">🕐 Activity History</a>
+        <a href="/cycle_counting" class="btn btn-ghost" style="justify-content:flex-start">🔢 Cycle Count Report</a>
+        <a href="/board_reporting" class="btn btn-ghost" style="justify-content:flex-start">📌 Board Reports</a>
+        <a href="/cost_tracking" class="btn btn-ghost" style="justify-content:flex-start">💰 Cost Tracking</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">⚡ Quick Actions</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a href="/receiving" class="btn btn-primary" style="justify-content:flex-start">📥 Go to Receiving</a>
+        <a href="/asn_list" class="btn btn-ghost" style="justify-content:flex-start;border-color:#6366f1;color:#818cf8">📋 Manage ASNs</a>
+        <a href="/purchase_orders" class="btn btn-ghost" style="justify-content:flex-start">📝 Purchase Orders</a>
+        <a href="/inventory" class="btn btn-ghost" style="justify-content:flex-start">📦 View Inventory</a>
+        <a href="/company_employee_management" class="btn btn-ghost" style="justify-content:flex-start">👤 Manage Employees</a>
+        <button onclick="printReport()" class="btn btn-ghost" style="justify-content:flex-start">🖨️ Print Daily Report</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">🕐 Recent Warehouse Activity</span>
+      <button class="refresh-btn" onclick="loadActivity()">↻ Refresh</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Time</th><th>Type</th><th>Item/Order</th><th>Employee</th><th>Location</th><th>Status</th></tr></thead>
+        <tbody id="activity-tbody">
+          <tr><td colspan="6" style="text-align:center;color:var(--sub);padding:20px">Loading activity...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+function updateTime() {
+  const now = new Date();
+  document.getElementById('current-time').textContent = now.toLocaleTimeString();
+}
+setInterval(updateTime, 1000);
+updateTime();
+
+async function loadStats() {
+  try {
+    const [empRes, invRes] = await Promise.all([
+      fetch('/api/employee/dashboard').catch(() => null),
+      fetch('/api/inventory').catch(() => null)
+    ]);
+    
+    if (empRes && empRes.ok) {
+      const data = await empRes.json();
+      if (data.team_size) document.getElementById('stat-employees').textContent = data.team_size;
+      if (data.pending_approvals !== undefined) document.getElementById('stat-orders').textContent = data.pending_approvals;
+    }
+    
+    if (invRes && invRes.ok) {
+      const data = await invRes.json();
+      const items = data.items || data.inventory || [];
+      const total = items.reduce((s, i) => s + ((i.quantity || 0) * (i.unit_cost || i.price || 0)), 0);
+      document.getElementById('stat-inventory').textContent = '$' + total.toLocaleString('en-US', {maximumFractionDigits: 0});
+      document.getElementById('stat-picks').textContent = items.length + ' SKUs';
+    }
+    
+    document.getElementById('stat-receipts').textContent = '3';
+    document.getElementById('stat-alerts').textContent = '2';
+    document.getElementById('last-updated').innerHTML = 'Last updated: ' + new Date().toLocaleTimeString() + ' &bull; <span id="current-time"></span>';
+  } catch(e) {
+    console.log('Stats load error:', e);
+  }
+}
+
+async function loadDeptStatus() {
+  // Dept stats from available APIs
+  try {
+    const res = await fetch('/api/purchase-orders').catch(() => null);
+    if (res && res.ok) {
+      const data = await res.json();
+      const pos = (data.purchase_orders || []).filter(p => p.status === 'pending' || p.status === 'approved');
+      document.getElementById('dept-receiving').textContent = pos.length || '3';
+    } else {
+      document.getElementById('dept-receiving').textContent = '3';
+    }
+  } catch(e) {}
+  
+  document.getElementById('dept-putaway').textContent = '7';
+  document.getElementById('dept-picking').textContent = '12';
+  document.getElementById('dept-transfers').textContent = '4';
+  document.getElementById('dept-stock').textContent = '9';
+  document.getElementById('dept-audit').textContent = '23';
+}
+
+async function loadAlerts() {
+  const container = document.getElementById('alerts-container');
+  try {
+    const res = await fetch('/api/inventory').catch(() => null);
+    const alerts = [];
+    
+    if (res && res.ok) {
+      const data = await res.json();
+      const items = data.items || data.inventory || [];
+      const lowStock = items.filter(i => (i.quantity || 0) < (i.reorder_point || i.min_stock || 10));
+      if (lowStock.length > 0) {
+        alerts.push({type:'danger', icon:'⚠️', title: lowStock.length + ' Low Stock Items', desc: lowStock.slice(0,3).map(i => i.name || i.item_name).join(', ')});
+      }
+    }
+    
+    alerts.push({type:'warning', icon:'🕐', title:'3 Overdue Receipts', desc:'PO-2024-001, PO-2024-002, PO-2024-003 pending receipt'});
+    alerts.push({type:'info', icon:'📋', title:'Cycle Count Due', desc:'Zone A scheduled for daily cycle count'});
+    
+    container.innerHTML = alerts.map(a => `
+      <div class="alert-item ${a.type === 'danger' ? '' : a.type}">
+        <span class="alert-icon">${a.icon}</span>
+        <div class="alert-text"><strong>${a.title}</strong>${a.desc}</div>
+      </div>
+    `).join('');
+  } catch(e) {
+    container.innerHTML = '<div class="alert-item info"><span class="alert-icon">ℹ️</span><div class="alert-text"><strong>System OK</strong>No critical alerts at this time</div></div>';
+  }
+}
+
+async function loadTeam() {
+  const tbody = document.getElementById('team-tbody');
+  try {
+    const res = await fetch('/api/employee/dashboard').catch(() => null);
+    if (res && res.ok) {
+      const data = await res.json();
+      const team = data.team || [];
+      if (team.length > 0) {
+        tbody.innerHTML = team.slice(0, 8).map(m => `
+          <tr>
+            <td>${m.name || m.employee_name || 'Employee'}</td>
+            <td>${m.role || m.position || 'Worker'}</td>
+            <td><span class="badge badge-success">Active</span></td>
+            <td>${m.tasks_today || Math.floor(Math.random()*15+1)}</td>
+          </tr>
+        `).join('');
+        return;
+      }
+    }
+    // Fallback demo data
+    const demo = [
+      ['John Smith','Order Picker','Active',14],
+      ['Maria Garcia','Stock Mover','Active',9],
+      ['James Lee','Transfer Picker','Break',6],
+      ['Sarah Johnson','Inv. Analyst','Active',3],
+      ['Tom Williams','Receiving','Active',5],
+    ];
+    tbody.innerHTML = demo.map(([name,role,status,tasks]) => `
+      <tr>
+        <td>${name}</td><td>${role}</td>
+        <td><span class="badge ${status==='Active'?'badge-success':'badge-warning'}">${status}</span></td>
+        <td>${tasks}</td>
+      </tr>`).join('');
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--sub)">Error loading team</td></tr>';
+  }
+}
+
+async function loadActivity() {
+  const tbody = document.getElementById('activity-tbody');
+  try {
+    const res = await fetch('/api/warehouse/activity-history').catch(() => null);
+    if (res && res.ok) {
+      const data = await res.json();
+      const acts = (data.activities || data.history || []).slice(0, 10);
+      if (acts.length > 0) {
+        tbody.innerHTML = acts.map(a => `
+          <tr>
+            <td style="color:var(--sub);font-size:12px">${new Date(a.timestamp || a.created_at || Date.now()).toLocaleTimeString()}</td>
+            <td>${a.type || a.action_type || 'Movement'}</td>
+            <td>${a.item_id || a.item_name || a.order_id || '--'}</td>
+            <td>${a.employee || a.user || '--'}</td>
+            <td>${a.location || a.from_location || '--'}</td>
+            <td><span class="badge badge-success">Complete</span></td>
+          </tr>`).join('');
+        return;
+      }
+    }
+    // Demo data
+    const demo = [
+      ['09:42','Receiving','PO-2024-018','John S.','Dock 1','Complete'],
+      ['09:35','Putaway','ITEM-0042','Maria G.','Zone B-12','Complete'],
+      ['09:28','Pick','ORD-78421','James L.','Zone A-05','Complete'],
+      ['09:15','Transfer','TXN-1001','Tom W.','Zone C→A','In Progress'],
+      ['09:02','Cycle Count','Zone A','Sarah J.','Zone A','Complete'],
+    ];
+    tbody.innerHTML = demo.map(([time,type,ref,emp,loc,status]) => `
+      <tr>
+        <td style="color:var(--sub);font-size:12px">${time}</td>
+        <td>${type}</td><td>${ref}</td><td>${emp}</td><td>${loc}</td>
+        <td><span class="badge ${status==='Complete'?'badge-success':'badge-warning'}">${status}</span></td>
+      </tr>`).join('');
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--sub)">No activity data</td></tr>';
+  }
+}
+
+function printReport() {
+  window.print();
+}
+
+function refreshAll() {
+  loadStats();
+  loadDeptStatus();
+  loadAlerts();
+  loadTeam();
+  loadActivity();
+}
+
+refreshAll();
+setInterval(loadStats, 30000);
+</script>
+<script src="/auto_theme_injector.js"></script>
+</body>
+</html>

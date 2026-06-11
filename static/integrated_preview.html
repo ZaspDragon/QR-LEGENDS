@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Legends - Integrated Preview</title>
+    <link rel="icon" type="image/png" href="/static/qr_legends_logo.png">
+    <style>
+        * {margin: 0
+            padding: 0;
+            box-sizing: border-box;}
+
+        body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif
+            background: #0b1220;
+            color: #e2e8f0;
+            min-height: 100vh;}
+
+        .header {border-bottom: 1px solid rgba(100, 116, 139, 0.3)
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: rgba(11, 18, 32, 0.8);
+            backdrop-filter: blur(6px);}
+
+        .header-content {max-width: 1200px
+            margin: 0 auto;
+            padding: 0 16px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;}
+
+        .logo {display: flex
+            align-items: center;
+            gap: 10px;}
+
+        .logo-icon {width: 36px
+            height: 36px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: rgba(37, 99, 235, 0.2);
+            border: 1px solid rgba(37, 99, 235, 0.3);}
+
+        .logo-text {color: #fff
+            font-weight: 600;}
+
+        .nav {display: flex
+            gap: 8px;
+            flex-wrap: wrap;}
+
+        .nav-btn {padding: 8px 16px
+            border: 1px solid rgba(100, 116, 139, 0.3);
+            border-radius: 6px;
+            background: #0b1326;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;}
+
+        .nav-btn.active {background: rgba(100, 116, 139, 0.3)
+            color: #e2e8f0;}
+
+        .nav-btn:hover {background: rgba(100, 116, 139, 0.2)}
+
+        .role-selector {display: flex
+            align-items: center;
+            gap: 8px;}
+
+        .role-select {padding: 8px 12px
+            border: 1px solid rgba(100, 116, 139, 0.3);
+            border-radius: 6px;
+            background: #1e293b;
+            color: #e2e8f0;
+            font-size: 14px;}
+
+        .main-content {max-width: 1200px
+            margin: 0 auto;
+            padding: 24px;}
+
+        .page-header {display: flex
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;}
+
+        .page-title {font-size: 28px
+            font-weight: 600;
+            color: #fff;}
+
+        .step-tracker {display: flex
+            gap: 8px;}
+
+        .step {padding: 4px 12px
+            border-radius: 16px;
+            font-size: 12px;
+            background: rgba(100, 116, 139, 0.2);
+            color: #94a3b8;}
+
+        .step.active {background: #2563eb
+            color: #fff;}
+
+        .row {display: grid
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 24px;
+            margin-top: 24px;}
+
+        .card {background: #1e293b
+            border: 1px solid rgba(100, 116, 139, 0.3);
+            border-radius: 12px;
+            padding: 16px;}
+
+        .card-title {font-size: 16px
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #fff;}
+
+        .scan-bar {background: #0f172a
+            border: 2px dashed #2563eb;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 16px;}
+
+        .scan-bar.active {border-color: #10b981
+            background: rgba(16, 185, 129, 0.1);}
+
+        .queue-item {display: flex
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            margin: 4px 0;
+            background: rgba(100, 116, 139, 0.1);
+            border-radius: 6px;}
+
+        .progress-bar {width: 60px
+            height: 4px;
+            background: rgba(100, 116, 139, 0.3);
+            border-radius: 2px;
+            overflow: hidden;}
+
+        .progress-fill {height: 100%
+            background: #2563eb;
+            transition: width 0.3s;}
+
+        .entity-row {padding: 8px 0
+            border-bottom: 1px solid rgba(100, 116, 139, 0.2);
+            font-size: 14px;
+            font-family: monospace;}
+
+        .btn {padding: 8px 16px
+            border: 1px solid rgba(100, 116, 139, 0.3);
+            border-radius: 6px;
+            background: #374151;
+            color: #e2e8f0;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;}
+
+        .btn:hover {background: #4b5563}
+
+        .btn.primary {background: #2563eb
+            border-color: #2563eb;}
+
+        .btn.success {background: #10b981
+            border-color: #10b981;}
+
+        .label-card {background: #0f172a
+            border: 1px solid #2563eb;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;}
+
+        .label-payload {font-family: monospace
+            font-size: 12px;
+            color: #60a5fa;
+            margin-top: 8px;}
+
+        .widgets-section {display: grid
+            gap: 16px;}
+
+        .widget {background: #1e293b
+            border: 1px solid rgba(100, 116, 139, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 14px;}
+
+        .footer {border-top: 1px solid rgba(100, 116, 139, 0.3)
+            margin-top: 24px;}
+
+        .footer-content {max-width: 1200px
+            margin: 0 auto;
+            padding: 16px;
+            text-align: center;
+            font-size: 12px;
+            color: #94a3b8;}
+
+        @media (max-width: 768px) {.row {
+                grid-template-columns: 1fr}
+
+            .nav {flex-direction: column
+                width: 100%;}
+
+            .header-content {flex-direction: column
+                height: auto;
+                padding: 12px;
+                gap: 12px;}
+        }
+    </style>
+    <style>
+        /* === QRLegends Unified Theme (Dark/Light) === */
+        :root{
+          --ql-bg: #0b1724;
+          --ql-panel: #0f2340;
+          --ql-card: #102846;
+          --ql-text: #dbe8ff;
+          --ql-sub: #97a6c1;
+          --ql-primary: #3b82f6;
+          --ql-success: #22c55e;
+          --ql-warning: #f59e0b;
+          --ql-danger: #ef4444;
+          --ql-accent: #6366f1;
+          --ql-border: rgba(255,255,255,.12);
+          --ql-surface: rgba(255,255,255,.06);
+        }
+
+        html,body{height:100%;}
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+            line-height: 1.45;
+        }
+        body {
+          margin:0;
+          background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed;
+          color: var(--ql-text);
+        }
+
+        .ql-header{
+          position: sticky; top:0; z-index:1000;
+          background: rgba(8,27,46,.7);
+          backdrop-filter: blur(6px);
+          border-bottom: 1px solid var(--ql-border);
+        }
+        .ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
+        .ql-title{display:flex; align-items:center; gap:10px;}
+        .ql-h1{font-size:1.25rem; margin:0; letter-spacing:.2px;}
+        .ql-nav{display:flex; gap:8px; flex-wrap:wrap;}
+        .ql-btn{
+          display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
+          background: var(--ql-surface); border: 1px solid var(--ql-border);
+          box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+          transition: transform .08s ease, background .2s ease, border-color .2s ease;
+        }
+        .ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+        .ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
+
+        .ql-container{ max-width:1400px; margin:22px auto; padding:0 20px; }
+        .ql-card{
+          background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
+          border: 1px solid var(--ql-border);
+          box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+          border-radius:16px; padding:20px;
+          margin-bottom: 20px;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(59, 130, 246, 0.05));
+            border-radius: 16px;
+            border: 1px solid var(--ql-border);
+        }
+
+        .preview-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            min-height: 600px;
+        }
+
+        .preview-sidebar {
+            background: var(--ql-card);
+            border: 1px solid var(--ql-border);
+            border-radius: 12px;
+            padding: 20px;
+            height: fit-content;
+        }
+
+        .sidebar-section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-weight: 600;
+            color: var(--ql-text);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--ql-border);
+        }
+
+        .preview-option {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            margin: 4px 0;
+            background: var(--ql-surface);
+            border: 1px solid var(--ql-border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .preview-option:hover {
+            background: rgba(255,255,255,.12);
+            transform: translateX(4px);
+        }
+
+        .preview-option.active {
+            background: linear-gradient(135deg, var(--ql-primary), rgba(59,130,246,.8));
+            color: white;
+        }
+
+        .option-icon {
+            font-size: 1.1rem;
+            margin-right: 8px;
+        }
+
+        .option-label {
+            font-size: 0.9rem;
+            color: var(--ql-text);
+        }
+
+        .preview-option.active .option-label {
+            color: white;
+        }
+
+        .preview-main {
+            background: var(--ql-card);
+            border: 1px solid var(--ql-border);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--ql-border);
+        }
+
+        .preview-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--ql-text);
+            margin: 0;
+        }
+
+        .preview-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .control-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-live {
+            background: linear-gradient(135deg, var(--ql-success), rgba(34,197,94,.8));
+            color: white;
+        }
+
+        .btn-refresh {
+            background: var(--ql-surface);
+            color: var(--ql-text);
+            border: 1px solid var(--ql-border);
+        }
+
+        .btn-fullscreen {
+            background: linear-gradient(135deg, var(--ql-primary), rgba(59,130,246,.8));
+            color: white;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .preview-frame {
+            width: 100%;
+            height: 500px;
+            background: var(--ql-bg);
+            border: 1px solid var(--ql-border);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preview-content {
+            padding: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .integrated-dashboard {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            height: 100%;
+        }
+
+        .dashboard-widget {
+            background: var(--ql-surface);
+            border: 1px solid var(--ql-border);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-widget:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .widget-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .widget-title {
+            font-weight: 600;
+            color: var(--ql-text);
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+        }
+
+        .widget-value {
+            color: var(--ql-primary);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .widget-subtitle {
+            color: var(--ql-sub);
+            font-size: 0.75rem;
+        }
+
+        .preview-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(11, 23, 36, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--ql-text);
+            font-size: 1.1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .preview-loading.active {
+            opacity: 1;
+        }
+
+        .device-frame {
+            background: #1a1a1a;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px auto;
+            width: fit-content;
+            position: relative;
+        }
+
+        .device-frame.mobile {
+            width: 320px;
+            height: 568px;
+            padding: 40px 20px;
+        }
+
+        .device-frame.tablet {
+            width: 768px;
+            height: 500px;
+            padding: 30px;
+        }
+
+        .device-frame.desktop {
+            width: 100%;
+            height: 500px;
+            padding: 0;
+            background: transparent;
+            border-radius: 0;
+        }
+
+        @media (max-width: 1024px) {
+            .preview-container {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-sidebar {
+                order: 2;
+            }
+
+            .preview-main {
+                order: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .integrated-dashboard {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#60a5fa">
+                        <path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/>
+                    </svg>
+                </div>
+                <div class="logo-text">QRLegends — Integrated Preview</div>
+            </div>
+
+            <nav class="nav">
+                <button class="nav-btn active" data-page="receiving">Receiving & Putaway</button>
+                <button class="nav-btn" data-page="picking">Picking</button>
+                <button class="nav-btn" data-page="packing">Packing & Shipping</button>
+                <button class="nav-btn" data-page="cycle">Cycle Counting</button>
+                <button class="nav-btn" data-page="exceptions">Exceptions</button>
+            </nav>
+
+            <div class="role-selector">
+                <span style="font-size: 14px; color: #94a3b8;">Role</span>
+                <select class="role-select" id="roleSelect">
+                    <option value="admin">admin</option>
+                    <option value="supervisor">supervisor</option>
+                    <option value="picker">picker</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Receiving & Putaway Page -->
+        <div id="page-receiving" class="page-content">
+            <div class="page-header">
+                <h2 class="page-title">Receiving & Putaway</h2>
+                <div class="step-tracker">
+                    <span class="step active">Scan</span>
+                    <span class="step">Verify</span>
+                    <span class="step">Putaway</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="widgets-section">
+                    <div class="card">
+                        <div class="card-title">Inbound Queue</div>
+                        <div class="queue-item">
+                            <span>PO-2024-001</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 75%;"></div></div>
+                        </div>
+                        <div class="queue-item">
+                            <span>PO-2024-002</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                        </div>
+                        <div class="queue-item">
+                            <span>PO-2024-003</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; gap: 16px;">
+                    <div class="scan-bar active">
+                        📱 Scan Purchase Order QR (PO-2024-001)
+                    </div>
+                    <div class="scan-bar">
+                        📦 Scan Item UPC/QR
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">Expected vs Received</div>
+                        <div class="entity-row">SKU-BLUE-4 • Exp 10 • Rcv 10 (✓)</div>
+                        <div class="entity-row">SKU-RED-9 • Exp 4 • Rcv 4 (✓)</div>
+                        <div class="entity-row">SKU-GREEN-2 • Exp 6 • Rcv 5 (-1)</div>
+                    </div>
+
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn">Create Variance</button>
+                        <button class="btn success">Complete Receiving</button>
+                    </div>
+
+                    <div class="label-card">
+                        <div class="card-title">Generate & Print Location QR</div>
+                        <div class="label-payload">LOC: { bin: 'A-01-05' }</div>
+                    </div>
+                </div>
+
+                <div class="widgets-section" id="receiving-widgets">
+                    <!-- Personalized widgets will be inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Picking Page -->
+        <div id="page-picking" class="page-content" style="display: none;">
+            <div class="page-header">
+                <h2 class="page-title">Order Picking</h2>
+                <div class="step-tracker">
+                    <span class="step active">Pick</span>
+                    <span class="step">Verify</span>
+                    <span class="step">Stage</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="widgets-section">
+                    <div class="card">
+                        <div class="card-title">Pick Waves</div>
+                        <div class="queue-item">
+                            <span>Wave A (Zone 1-3)</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 40%;"></div></div>
+                        </div>
+                        <div class="queue-item">
+                            <span>Wave B (Zone 4-6)</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; gap: 16px;">
+                    <div class="scan-bar active">
+                        📱 Scan Pick Location (A-02-03)
+                    </div>
+                    <div class="scan-bar">
+                        📦 Scan Item to Pick
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">Current Pick Task</div>
+                        <div class="entity-row">SKU-BLUE-4 • Qty: 3 • Loc: A-02-03</div>
+                        <div class="entity-row">Order: ORD-001 • Customer: ACME Inc</div>
+                    </div>
+
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn">Skip Item</button>
+                        <button class="btn success">Confirm Pick</button>
+                    </div>
+
+                    <div class="label-card">
+                        <div class="card-title">Generate & Print Pick List QR</div>
+                        <div class="label-payload">PICK: { wave: 'A', zone: '1-3' }</div>
+                    </div>
+                </div>
+
+                <div class="widgets-section" id="picking-widgets">
+                    <!-- Personalized widgets will be inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Packing & Shipping Page -->
+        <div id="page-packing" class="page-content" style="display: none;">
+            <div class="page-header">
+                <h2 class="page-title">Packing & Shipping</h2>
+                <div class="step-tracker">
+                    <span class="step active">Pack</span>
+                    <span class="step">Label</span>
+                    <span class="step">Ship</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="widgets-section">
+                    <div class="card">
+                        <div class="card-title">Ship Methods</div>
+                        <div class="queue-item">
+                            <span>Ground (15 orders)</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 60%;"></div></div>
+                        </div>
+                        <div class="queue-item">
+                            <span>Express (8 orders)</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 80%;"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; gap: 16px;">
+                    <div class="scan-bar active">
+                        📱 Scan Order for Packing (ORD-001)
+                    </div>
+                    <div class="scan-bar">
+                        📦 Scan All Items to Verify
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">Packing List</div>
+                        <div class="entity-row">SKU-BLUE-4 • Qty: 3 • ✓ Scanned</div>
+                        <div class="entity-row">SKU-RED-9 • Qty: 1 • ⏳ Pending</div>
+                    </div>
+
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn">Print Label</button>
+                        <button class="btn success">Complete Pack</button>
+                    </div>
+
+                    <div class="label-card">
+                        <div class="card-title">Generate & Print Shipping QR</div>
+                        <div class="label-payload">SHIP: { carrier: 'UPS', tracking: '1Z123' }</div>
+                    </div>
+                </div>
+
+                <div class="widgets-section" id="packing-widgets">
+                    <!-- Personalized widgets will be inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Cycle Counting Page -->
+        <div id="page-cycle" class="page-content" style="display: none;">
+            <div class="page-header">
+                <h2 class="page-title">Cycle Counting</h2>
+                <div class="step-tracker">
+                    <span class="step active">Capture</span>
+                    <span class="step">Count</span>
+                    <span class="step">Verify</span>
+                    <span class="step">Adjust</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="widgets-section">
+                    <div class="card">
+                        <div class="card-title">Programs</div>
+                        <div class="queue-item">
+                            <span>Zone A • Daily</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 20%;"></div></div>
+                        </div>
+                        <div class="queue-item">
+                            <span>Zone B • Weekly</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                        </div>
+                        <div class="queue-item">
+                            <span>Zone C • On-Demand</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; gap: 16px;">
+                    <div class="scan-bar active">
+                        📱 Scan Location (B-01-02)
+                    </div>
+                    <div class="scan-bar">
+                        📦 Scan All LPNs present
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">Expected vs Counted</div>
+                        <div class="entity-row">SKU-BLUE-4 • Exp 10 • Cnt 9 (-1)</div>
+                        <div class="entity-row">SKU-RED-9 • Exp 4 • Cnt 4 (OK)</div>
+                    </div>
+
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn">Create Incident</button>
+                        <button class="btn success">Post Variance</button>
+                    </div>
+
+                    <div class="label-card">
+                        <div class="card-title">Generate & Print Location QR</div>
+                        <div class="label-payload">LOC: { bin: 'B-01-02' }</div>
+                    </div>
+                </div>
+
+                <div class="widgets-section" id="cycle-widgets">
+                    <!-- Personalized widgets will be inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Exceptions Page -->
+        <div id="page-exceptions" class="page-content" style="display: none;">
+            <div class="page-header">
+                <h2 class="page-title">Exceptions & Incidents</h2>
+                <div class="step-tracker">
+                    <span class="step active">Capture</span>
+                    <span class="step">Assign</span>
+                    <span class="step">Resolve</span>
+                    <span class="step">Close</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="widgets-section">
+                    <div class="card">
+                        <div class="card-title">Active Incidents</div>
+                        <div class="queue-item">
+                            <span>INC-001 • Damage</span>
+                            <div style="color: #ef4444; font-size: 12px;">CRITICAL</div>
+                        </div>
+                        <div class="queue-item">
+                            <span>INC-002 • Short Pick</span>
+                            <div style="color: #f59e0b; font-size: 12px;">HIGH</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; gap: 16px;">
+                    <div class="scan-bar active">
+                        📱 Scan Incident QR
+                    </div>
+
+                    <div class="label-card">
+                        <div class="card-title">Generate & Print Incident QR</div>
+                        <div class="label-payload">INCIDENT: { severity: 'CRITICAL' }</div>
+                    </div>
+                </div>
+
+                <div class="widgets-section" id="exceptions-widgets">
+                    <!-- Personalized widgets will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-content">
+            © 2025 QRLegends — Integrated Preview Demo
+        </div>
+    </div>
+
+    <script>
+        // Page Navigation
+        function switchPage(page) {// Hide all pages
+            document.querySelectorAll('.page-content').forEach(p => p.style.display = 'none')
+
+            // Show selected page
+            document.getElementById(`page-${page}`).style.display = 'block';
+
+            // Update nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-page="${page}"]`).classList.add('active');
+
+            // Load page-specific widgets
+            loadPageWidgets(page);
+        }
+
+        // Role-based widget permissions
+        const rolePermissions = {
+            admin: ['kpi', 'scanhealth', 'printer', 'exceptions', 'dockboard'],
+            supervisor: ['kpi', 'printer', 'exceptions'],
+            picker: ['kpi', 'scanhealth']
+        };
+
+        // Available widgets by type
+        const availableWidgets = {kpi: {
+                title: '📊 Performance KPIs',
+                content: `
+                    <div style="display: grid grid-template-columns: 1fr 1fr; gap: 8px; text-align: center;">
+                        <div><strong>98.7%</strong><br><small>Accuracy</small></div>
+                        <div><strong>142</strong><br><small>Items/hr</small></div>
+                        <div><strong>99.2%</strong><br><small>On-time</small></div>
+                        <div><strong>4.8</strong><br><small>Rating</small></div>
+                    </div>
+                `},
+            scanhealth: {title: '📱 Scan Health',
+                content: `
+                    <div style="font-size: 14px">
+                        <div style="margin: 4px 0;">✅ Scanner Connected</div>
+                        <div style="margin: 4px 0;">📶 Signal: Strong</div>
+                        <div style="margin: 4px 0;">🔋 Battery: 87%</div>
+                        <div style="margin: 4px 0;">📊 Last Scan: 2s ago</div>
+                    </div>
+                `},
+            printer: {title: '🖨️ Label Printer',
+                content: `
+                    <div style="font-size: 14px">
+                        <div style="margin: 4px 0;">✅ Printer Online</div>
+                        <div style="margin: 4px 0;">📄 Labels: 245 remaining</div>
+                        <div style="margin: 4px 0;">🖨️ Queue: 3 jobs</div>
+                        <button class="btn" style="margin-top: 8px; width: 100%;">Print Test Label</button>
+                    </div>
+                `},
+            exceptions: {title: '⚠️ Active Exceptions',
+                content: `
+                    <div style="font-size: 14px">
+                        <div style="margin: 4px 0; color: #ef4444;">🔴 Critical: 2</div>
+                        <div style="margin: 4px 0; color: #f59e0b;">🟡 High: 5</div>
+                        <div style="margin: 4px 0; color: #10b981;">🟢 Low: 12</div>
+                        <button class="btn" style="margin-top: 8px; width: 100%;">View All</button>
+                    </div>
+                `},
+            dockboard: {title: '🚚 Dock Board',
+                content: `
+                    <div style="font-size: 14px">
+                        <div style="margin: 4px 0;">Dock 1: Loading (75%)</div>
+                        <div style="margin: 4px 0;">Dock 2: Available</div>
+                        <div style="margin: 4px 0;">Dock 3: Unloading (90%)</div>
+                        <button class="btn" style="margin-top: 8px; width: 100%;">Manage Docks</button>
+                    </div>
+                `}
+        };
+
+        function loadPageWidgets(page) {const role = document.getElementById('roleSelect').value
+            const permissions = rolePermissions[role] || [];
+            const widgetContainer = document.getElementById(`${page}-widgets`);
+
+            widgetContainer.innerHTML = '';
+
+            permissions.forEach(permission => {const widget = availableWidgets[permission]
+                if (widget) {
+                    const widgetElement = document.createElement('div')
+                    widgetElement.className = 'widget';
+                    widgetElement.innerHTML = `
+                        <div class="card-title">${widget.title}</div>
+                        ${widget.content}
+                    `;
+                    widgetContainer.appendChild(widgetElement);
+                }
+            });
+        }
+
+        // Event Listeners
+        document.querySelectorAll('.nav-btn').forEach(btn => {btn.addEventListener('click', () => {
+                const page = btn.getAttribute('data-page')
+                switchPage(page);});
+        });
+
+        document.getElementById('roleSelect').addEventListener('change', () => {const currentPage = document.querySelector('.nav-btn.active').getAttribute('data-page')
+            loadPageWidgets(currentPage);});
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {switchPage('receiving')});
+
+        console.log('QR Legends Integrated Preview loaded successfully');
+    </script>
+
+    <script>
+        let currentDevice = 'desktop';
+        let currentDashboard = 'executive';
+        let currentTheme = 'dark';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Integrated Preview loaded');
+
+            // Add click handlers for preview options
+            document.querySelectorAll('.preview-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    handleOptionClick(this);
+                });
+            });
+
+            // Initialize preview
+            updatePreview();
+        });
+
+        function handleOptionClick(option) {
+            const section = option.closest('.sidebar-section');
+            const device = option.dataset.device;
+            const dashboard = option.dataset.dashboard;
+            const theme = option.dataset.theme;
+            const action = option.dataset.action;
+
+            // Handle actions
+            if (action) {
+                switch(action) {
+                    case 'export':
+                        exportLayout();
+                        break;
+                    case 'share':
+                        sharePreview();
+                        break;
+                }
+                return;
+            }
+
+            // Remove active class from siblings
+            section.querySelectorAll('.preview-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+
+            // Add active class to clicked option
+            option.classList.add('active');
+
+            // Update current state
+            if (device) currentDevice = device;
+            if (dashboard) currentDashboard = dashboard;
+            if (theme) currentTheme = theme;
+
+            // Update preview
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const title = document.getElementById('preview-title');
+            const frame = document.getElementById('device-frame');
+            const content = document.getElementById('dashboard-content');
+            const loading = document.getElementById('preview-loading');
+
+            // Show loading
+            loading.classList.add('active');
+
+            // Update title
+            title.textContent = `${capitalizeFirst(currentDashboard)} Dashboard - ${capitalizeFirst(currentDevice)} View`;
+
+            // Update device frame
+            frame.className = `device-frame ${currentDevice}`;
+
+            // Update content based on dashboard type
+            setTimeout(() => {
+                updateDashboardContent(content);
+                loading.classList.remove('active');
+            }, 800);
+        }
+
+        function updateDashboardContent(content) {
+            const dashboardTypes = {
+                executive: [
+                    { icon: '💰', title: 'Revenue', value: '$1.61M', subtitle: '+4.1% MoM' },
+                    { icon: '📈', title: 'Growth', value: '28.4%', subtitle: 'Gross Margin' },
+                    { icon: '📦', title: 'Orders', value: '825', subtitle: 'Today' },
+                    { icon: '🎯', title: 'Fill Rate', value: '97.2%', subtitle: 'All Branches' },
+                    { icon: '👥', title: 'Active Staff', value: '156', subtitle: 'On Duty' },
+                    { icon: '⚠️', title: 'Exceptions', value: '8', subtitle: 'Active' },
+                    { icon: '📊', title: 'Performance', value: '96.3%', subtitle: 'Overall' },
+                    { icon: '🚚', title: 'Shipments', value: '247', subtitle: 'Today' }
+                ],
+                operational: [
+                    { icon: '📦', title: 'Pick Rate', value: '142/hr', subtitle: '+8% vs yesterday' },
+                    { icon: '🎯', title: 'Accuracy', value: '99.7%', subtitle: 'Pick Accuracy' },
+                    { icon: '🚚', title: 'Dock Status', value: '8/12', subtitle: 'Docks Active' },
+                    { icon: '📋', title: 'Queue', value: '23', subtitle: 'Orders Pending' },
+                    { icon: '👷', title: 'Workers', value: '45', subtitle: 'On Floor' },
+                    { icon: '⚠️', title: 'Alerts', value: '3', subtitle: 'Active Issues' },
+                    { icon: '📊', title: 'Efficiency', value: '94.2%', subtitle: 'Today' },
+                    { icon: '🔄', title: 'Cycle Time', value: '18m', subtitle: 'Average' }
+                ],
+                analytics: [
+                    { icon: '📈', title: 'Trend', value: '↗️ +12%', subtitle: 'Weekly Growth' },
+                    { icon: '📊', title: 'Forecast', value: '$2.1M', subtitle: 'Next Month' },
+                    { icon: '🎯', title: 'KPIs', value: '8/10', subtitle: 'On Target' },
+                    { icon: '📉', title: 'Costs', value: '-5.2%', subtitle: 'Reduction' },
+                    { icon: '🔍', title: 'Insights', value: '12', subtitle: 'New Alerts' },
+                    { icon: '📋', title: 'Reports', value: '45', subtitle: 'Generated' },
+                    { icon: '⚡', title: 'Real-time', value: 'Live', subtitle: 'Data Stream' },
+                    { icon: '🎲', title: 'Predictions', value: '87%', subtitle: 'Accuracy' }
+                ],
+                mobile: [
+                    { icon: '📱', title: 'My Tasks', value: '12', subtitle: 'Pending' },
+                    { icon: '🎯', title: 'Progress', value: '75%', subtitle: 'Today' },
+                    { icon: '⏱️', title: 'Time', value: '4.2h', subtitle: 'Worked' },
+                    { icon: '📦', title: 'Picks', value: '156', subtitle: 'Completed' }
+                ]
+            };
+
+            const widgets = dashboardTypes[currentDashboard] || dashboardTypes.executive;
+
+            // Adjust grid for mobile dashboard
+            if (currentDashboard === 'mobile') {
+                content.style.gridTemplateColumns = 'repeat(2, 1fr)';
+            } else {
+                content.style.gridTemplateColumns = currentDevice === 'mobile' ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)';
+            }
+
+            content.innerHTML = widgets.map(widget => `
+                <div class="dashboard-widget">
+                    <div class="widget-icon">${widget.icon}</div>
+                    <div class="widget-title">${widget.title}</div>
+                    <div class="widget-value">${widget.value}</div>
+                    <div class="widget-subtitle">${widget.subtitle}</div>
+                </div>
+            `).join('');
+        }
+
+        function refreshPreview() {
+            const loading = document.getElementById('preview-loading');
+            loading.classList.add('active');
+
+            setTimeout(() => {
+                updatePreview();
+            }, 500);
+        }
+
+        function toggleFullscreen() {
+            const frame = document.getElementById('preview-frame');
+            if (frame.requestFullscreen) {
+                frame.requestFullscreen();
+            }
+        }
+
+        function exportLayout() {
+            const layoutData = {
+                device: currentDevice,
+                dashboard: currentDashboard,
+                theme: currentTheme,
+                timestamp: new Date().toISOString()
+            };
+
+            const blob = new Blob([JSON.stringify(layoutData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dashboard-layout-${currentDashboard}-${currentDevice}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function sharePreview() {
+            const shareUrl = `${window.location.origin}/integrated_preview?device=${currentDevice}&dashboard=${currentDashboard}&theme=${currentTheme}`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'QR Legends Dashboard Preview',
+                    text: `Check out this ${currentDashboard} dashboard preview`,
+                    url: shareUrl
+                });
+            } else {
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    alert('Preview URL copied to clipboard!');
+                });
+            }
+        }
+
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+    </script>
+</body>
+</html>

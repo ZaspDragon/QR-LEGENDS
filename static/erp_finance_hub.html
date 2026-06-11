@@ -1,0 +1,1144 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP Finance Hub - QR Legends</title>
+    <style>
+        * {box-sizing: border-box}
+
+        body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+            margin: 0
+            padding: 0
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333}
+
+        .container {max-width: 1400px
+            margin: 0 auto
+            padding: 20px}
+
+        .header {background: rgba(255, 255, 255, 0.95)
+            backdrop-filter: blur(10px)
+            border-radius: 15px
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center}
+
+        .header h1 {margin: 0 0 10px 0
+            color: #333
+            font-size: 2.5rem}
+
+        .header p {color: #666
+            font-size: 1.1rem
+            margin: 0}
+
+        .nav-bar {display: flex
+            gap: 15px
+            flex-wrap: wrap
+            justify-content: center;
+            margin-bottom: 30px}
+
+        .nav-btn {background: rgba(255, 255, 255, 0.9)
+            border: none
+            padding: 12px 24px
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);}
+
+        .nav-btn:hover, .nav-btn.active {background: #fff
+            transform: translateY(-2px)
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2)}
+
+        .dashboard-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
+            gap: 25px
+            margin-bottom: 30px}
+
+        .finance-card {background: rgba(255, 255, 255, 0.95)
+            backdrop-filter: blur(10px)
+            border-radius: 15px
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease}
+
+        .finance-card:hover {transform: translateY(-5px)
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2)}
+
+        .card-header {display: flex
+            justify-content: space-between
+            align-items: center
+            margin-bottom: 20px}
+
+        .card-title {font-size: 1.4rem
+            font-weight: 600
+            color: #333
+            display: flex;
+            align-items: center;
+            gap: 10px}
+
+        .card-icon {font-size: 1.8rem}
+
+        .stats-grid {display: grid
+            grid-template-columns: repeat(2, 1fr)
+            gap: 15px
+            margin-bottom: 20px}
+
+        .stat-item {text-align: center
+            padding: 15px
+            background: #f8f9fa
+            border-radius: 10px}
+
+        .stat-value {font-size: 1.8rem
+            font-weight: bold
+            color: #667eea
+            display: block}
+
+        .stat-label {font-size: 0.9rem
+            color: #666
+            margin-top: 5px}
+
+        .btn {background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            color: white
+            border: none
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 5px;
+            transition: all 0.3s;
+            font-size: 14px}
+
+        .btn:hover {transform: translateY(-2px)
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3)}
+
+        .btn-success {background: linear-gradient(135deg, #28a745, #20c997)}
+
+        .btn-warning {background: linear-gradient(135deg, #ffc107, #fd7e14)}
+
+        .btn-danger {background: linear-gradient(135deg, #dc3545, #c82333)}
+
+        .btn-secondary {background: linear-gradient(135deg, #6c757d, #5a6268)}
+
+        .quick-actions {display: flex
+            flex-wrap: wrap
+            gap: 10px
+            margin-top: 15px}
+
+        .table-container {max-height: 300px
+            overflow-y: auto
+            margin-top: 15px}
+
+        .finance-table {width: 100%
+            border-collapse: collapse
+            background: white
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+
+        .finance-table th,
+        .finance-table td {padding: 12px
+            text-align: left
+            border-bottom: 1px solid #e9ecef}
+
+        .finance-table th {background: #f8f9fa
+            font-weight: 600
+            color: #495057}
+
+        .finance-table tbody tr:hover {background: #f8f9fa}
+
+        .status-badge {padding: 4px 12px
+            border-radius: 20px
+            font-size: 0.8rem
+            font-weight: bold;
+            text-transform: uppercase}
+
+        .status-paid {background: #d1edff
+            color: #0066cc}
+
+        .status-pending {background: #fff3cd
+            color: #856404}
+
+        .status-overdue {background: #f8d7da
+            color: #721c24}
+
+        .modal {display: none
+            position: fixed
+            top: 0
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center}
+
+        .modal-content {background: white
+            border-radius: 15px
+            padding: 30px
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto}
+
+        .form-group {margin-bottom: 20px}
+
+        .form-label {display: block
+            margin-bottom: 8px
+            font-weight: 600
+            color: #333}
+
+        .form-input {width: 100%
+            padding: 12px
+            border: 2px solid #e9ecef
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s}
+
+        .form-input: focus {outline: none
+            border-color: #667eea}
+
+        .alert {padding: 15px
+            border-radius: 8px
+            margin: 15px 0}
+
+        .alert-info {background: #d1ecf1
+            color: #0c5460
+            border: 1px solid #bee5eb}
+
+        .alert-success {background: #d4edda
+            color: #155724
+            border: 1px solid #c3e6cb}
+
+        .alert-warning {background: #fff3cd
+            color: #856404
+            border: 1px solid #ffeaa7}
+
+        @media (max-width: 768px) {.dashboard-grid {
+                grid-template-columns: 1fr}
+
+            .stats-grid {grid-template-columns: 1fr}
+
+            .nav-bar {flex-direction: column
+                align-items: center}
+
+            .header h1 {font-size: 2rem}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 ERP Finance Hub</h1>
+            <p>Comprehensive Financial Management & Analysis System</p>
+        </div>
+
+        <div class="nav-bar">
+            <button class="nav-btn active" onclick="showSection('dashboard')">📊 Dashboard</button>
+            <button class="nav-btn" onclick="showSection('accounts')">📋 Accounts</button>
+            <button class="nav-btn" onclick="showSection('reports')">📈 Reports</button>
+            <button class="nav-btn" onclick="showSection('transactions')">💳 Transactions</button>
+            <button class="nav-btn" onclick="showSection('budgets')">🎯 Budgets</button>
+            <button class="nav-btn" onclick="showSection('analytics')">📊 Analytics</button>
+            <button class="nav-btn" onclick="window.location.href='/erp_hub'">← Back to ERP</button>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="section" style="display: block;">
+            <div class="dashboard-grid">
+                <!-- Financial Overview -->
+                <div class="finance-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-icon">💰</span>
+                            Financial Overview
+                        </h3>
+                        <button class="btn btn-secondary" onclick="refreshFinancials()">🔄 Refresh</button>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-value" id="totalRevenue">$1.42M</span>
+                            <div class="stat-label">Total Revenue (MTD)</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="totalExpenses">$896k</span>
+                            <div class="stat-label">Total Expenses</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="netProfit">$524k</span>
+                            <div class="stat-label">Net Profit</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="cashFlow">+$247k</span>
+                            <div class="stat-label">Cash Flow</div>
+                        </div>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="btn" onclick="openModal('newTransactionModal')">➕ New Transaction</button>
+                        <button class="btn btn-success" onclick="generatePLReport()">📊 P&L Report</button>
+                    </div>
+                </div>
+
+                <!-- Accounts Receivable -->
+                <div class="finance-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-icon">📈</span>
+                            Accounts Receivable
+                        </h3>
+                        <button class="btn btn-warning" onclick="sendARReminders()">📧 Send Reminders</button>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-value">$158k</span>
+                            <div class="stat-label">Total Outstanding</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">$42k</span>
+                            <div class="stat-label">Overdue (>30 days)</div>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="finance-table">
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Amount</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="arTableBody">
+                                <tr>
+                                    <td>ABC Corp</td>
+                                    <td>$24,500</td>
+                                    <td>2025-02-15</td>
+                                    <td><span class="status-badge status-pending">Pending</span></td>
+                                </tr>
+                                <tr>
+                                    <td>XYZ Industries</td>
+                                    <td>$18,750</td>
+                                    <td>2025-01-28</td>
+                                    <td><span class="status-badge status-overdue">Overdue</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Tech Solutions</td>
+                                    <td>$31,200</td>
+                                    <td>2025-02-20</td>
+                                    <td><span class="status-badge status-paid">Paid</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="btn" onclick="openModal('newInvoiceModal')">📄 New Invoice</button>
+                        <button class="btn btn-success" onclick="recordPayment()">💰 Record Payment</button>
+                    </div>
+                </div>
+
+                <!-- Accounts Payable -->
+                <div class="finance-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-icon">📉</span>
+                            Accounts Payable
+                        </h3>
+                        <button class="btn btn-success" onclick="processPayments()">💳 Process Payments</button>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-value">$89k</span>
+                            <div class="stat-label">Total Payable</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">$23k</span>
+                            <div class="stat-label">Due This Week</div>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="finance-table">
+                            <thead>
+                                <tr>
+                                    <th>Vendor</th>
+                                    <th>Amount</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="apTableBody">
+                                <tr>
+                                    <td>Office Supplies Co</td>
+                                    <td>$4,200</td>
+                                    <td>2025-02-10</td>
+                                    <td><span class="status-badge status-pending">Pending</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Equipment Rental</td>
+                                    <td>$8,500</td>
+                                    <td>2025-02-05</td>
+                                    <td><span class="status-badge status-overdue">Overdue</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Utilities Corp</td>
+                                    <td>$2,750</td>
+                                    <td>2025-02-15</td>
+                                    <td><span class="status-badge status-paid">Paid</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="btn" onclick="openModal('newBillModal')">📄 New Bill</button>
+                        <button class="btn btn-warning" onclick="schedulePayout()">⏰ Schedule Payment</button>
+                    </div>
+                </div>
+
+                <!-- Cash Management -->
+                <div class="finance-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-icon">💵</span>
+                            Cash Management
+                        </h3>
+                        <button class="btn" onclick="reconcileAccounts()">⚖️ Reconcile</button>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-value">$247k</span>
+                            <div class="stat-label">Cash on Hand</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">+12.4%</span>
+                            <div class="stat-label">Monthly Growth</div>
+                        </div>
+                    </div>
+                    <div class="alert alert-info">
+                        <strong>💡 Cash Flow Insight:</strong> Strong positive trend this month. Consider investment opportunities for excess cash.
+                    </div>
+                    <div class="quick-actions">
+                        <button class="btn" onclick="viewCashFlowForecast()">📈 Forecast</button>
+                        <button class="btn btn-secondary" onclick="exportCashReport()">📊 Export Report</button>
+                    </div>
+                </div>
+
+                <!-- Budget Tracking -->
+                <div class="finance-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-icon">🎯</span>
+                            Budget vs Actual
+                        </h3>
+                        <button class="btn" onclick="updateBudgets()">✏️ Update Budget</button>
+                    </div>
+                    <div class="table-container">
+                        <table class="finance-table">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Budget</th>
+                                    <th>Actual</th>
+                                    <th>Variance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Sales</td>
+                                    <td>$1.5M</td>
+                                    <td>$1.42M</td>
+                                    <td style="color: #dc3545;">-5.3%</td>
+                                </tr>
+                                <tr>
+                                    <td>Operating Expenses</td>
+                                    <td>$900k</td>
+                                    <td>$896k</td>
+                                    <td style="color: #28a745;">+0.4%</td>
+                                </tr>
+                                <tr>
+                                    <td>Marketing</td>
+                                    <td>$150k</td>
+                                    <td>$142k</td>
+                                    <td style="color: #28a745;">+5.3%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="btn" onclick="createBudgetReport()">📊 Budget Report</button>
+                        <button class="btn btn-warning" onclick="setBudgetAlerts()">🔔 Set Alerts</button>
+                    </div>
+                </div>
+
+                <!-- Financial KPIs -->
+                <div class="finance-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-icon">📊</span>
+                            Key Performance Indicators
+                        </h3>
+                        <button class="btn btn-secondary" onclick="customizeKPIs()">⚙️ Customize</button>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-value">28.4%</span>
+                            <div class="stat-label">Gross Margin</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">32.6</span>
+                            <div class="stat-label">Days Sales Outstanding</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">7.8x</span>
+                            <div class="stat-label">Inventory Turnover</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">2.4:1</span>
+                            <div class="stat-label">Current Ratio</div>
+                        </div>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="btn" onclick="viewKPITrends()">📈 View Trends</button>
+                        <button class="btn btn-success" onclick="exportKPIDashboard()">📊 Export Dashboard</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accounts Section -->
+        <div id="accounts-section" class="section" style="display: none;">
+            <div class="dashboard-grid">
+                <div class="finance-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-icon">📋</span>
+                            Chart of Accounts
+                        </h3>
+                        <button class="btn btn-success" onclick="addNewAccount()">➕ Add Account</button>
+                    </div>
+                    <div class="table-container">
+                        <table class="finance-table">
+                            <thead>
+                                <tr>
+                                    <th>Account Code</th>
+                                    <th>Account Name</th>
+                                    <th>Type</th>
+                                    <th>Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody id="accountsTableBody">
+                                <tr>
+                                    <td>1000</td>
+                                    <td>Cash - Operating</td>
+                                    <td>Asset</td>
+                                    <td>$247,000</td>
+                                </tr>
+                                <tr>
+                                    <td>1200</td>
+                                    <td>Accounts Receivable</td>
+                                    <td>Asset</td>
+                                    <td>$158,000</td>
+                                </tr>
+                                <tr>
+                                    <td>2000</td>
+                                    <td>Accounts Payable</td>
+                                    <td>Liability</td>
+                                    <td>$89,000</td>
+                                </tr>
+                                <tr>
+                                    <td>4000</td>
+                                    <td>Sales Revenue</td>
+                                    <td>Revenue</td>
+                                    <td>$1,420,000</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="finance-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-icon">⚖️</span>
+                            Account Reconciliation
+                        </h3>
+                        <button class="btn btn-primary" onclick="startReconciliation()">Start Reconciliation</button>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-value">3</span>
+                            <div class="stat-label">Unreconciled Accounts</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">$2,450</span>
+                            <div class="stat-label">Outstanding Differences</div>
+                        </div>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="btn btn-secondary" onclick="viewReconciliationHistory()">📊 History</button>
+                        <button class="btn btn-warning" onclick="generateReconciliationReport()">📄 Report</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Section -->
+        <div id="reports-section" class="section" style="display: none;">
+            <div class="dashboard-grid">
+                <div class="finance-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-icon">📊</span>
+                            Financial Statements
+                        </h3>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="btn btn-primary" onclick="generatePLStatement()">📈 P&L Statement</button>
+                        <button class="btn btn-primary" onclick="generateBalanceSheet()">⚖️ Balance Sheet</button>
+                        <button class="btn btn-primary" onclick="generateCashFlow()">💰 Cash Flow</button>
+                        <button class="btn btn-secondary" onclick="generateTrialBalance()">📋 Trial Balance</button>
+                    </div>
+                </div>
+
+                <div class="finance-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-icon">📈</span>
+                            Management Reports
+                        </h3>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="btn btn-success" onclick="generateAgeingReport()">📅 Aging Report</button>
+                        <button class="btn btn-success" onclick="generateVendorReport()">🏢 Vendor Report</button>
+                        <button class="btn btn-success" onclick="generateCustomerReport()">👥 Customer Report</button>
+                        <button class="btn btn-warning" onclick="generateBudgetVariance()">🎯 Budget Variance</button>
+                    </div>
+                </div>
+
+                <div class="finance-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-icon">📋</span>
+                            Recent Reports
+                        </h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="finance-table">
+                            <thead>
+                                <tr>
+                                    <th>Report Name</th>
+                                    <th>Generated</th>
+                                    <th>Period</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>P&L Statement</td>
+                                    <td>Today, 2:30 PM</td>
+                                    <td>January 2025</td>
+                                    <td><button class="btn btn-secondary" onclick="downloadReport('pl_jan2025')">📥 Download</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Balance Sheet</td>
+                                    <td>Yesterday, 5:15 PM</td>
+                                    <td>Q4 2024</td>
+                                    <td><button class="btn btn-secondary" onclick="downloadReport('bs_q4_2024')">📥 Download</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions Section -->
+        <div id="transactions-section" class="section" style="display: none;">
+            <div class="dashboard-grid">
+                <div class="finance-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-icon">📝</span>
+                            Journal Entries
+                        </h3>
+                        <button class="btn btn-success" onclick="createJournalEntry()">➕ New Entry</button>
+                    </div>
+                    <div class="table-container">
+                        <table class="finance-table">
+                            <thead>
+                                <tr>
+                                    <th>Entry #</th>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="journalEntriesBody">
+                                <tr>
+                                    <td>JE-2025-001</td>
+                                    <td>2025-01-23</td>
+                                    <td>Inventory Purchase - Equipment</td>
+                                    <td>$15,750</td>
+                                    <td><span class="status-badge status-paid">Posted</span></td>
+                                </tr>
+                                <tr>
+                                    <td>JE-2025-002</td>
+                                    <td>2025-01-23</td>
+                                    <td>Sales Revenue - Customer ABC</td>
+                                    <td>$24,500</td>
+                                    <td><span class="status-badge status-pending">Pending</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="finance-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-icon">🔄</span>
+                            Transaction Approval
+                        </h3>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-value">8</span>
+                            <div class="stat-label">Pending Approval</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">$127k</span>
+                            <div class="stat-label">Total Value</div>
+                        </div>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="btn btn-warning" onclick="reviewPendingTransactions()">👀 Review Queue</button>
+                        <button class="btn btn-success" onclick="bulkApprove()">✅ Bulk Approve</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Budgets Section -->
+        <div id="budgets-section" class="section" style="display: none;">
+            <div class="dashboard-grid">
+                <div class="finance-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-icon">🎯</span>
+                            Budget Overview
+                        </h3>
+                        <button class="btn btn-success" onclick="createNewBudget()">➕ New Budget</button>
+                    </div>
+                    <div class="table-container">
+                        <table class="finance-table">
+                            <thead>
+                                <tr>
+                                    <th>Budget Category</th>
+                                    <th>Budgeted</th>
+                                    <th>Actual</th>
+                                    <th>Variance</th>
+                                    <th>% Used</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Sales Revenue</td>
+                                    <td>$1,500,000</td>
+                                    <td>$1,420,000</td>
+                                    <td style="color: #dc3545;">-$80,000</td>
+                                    <td>94.7%</td>
+                                </tr>
+                                <tr>
+                                    <td>Operating Expenses</td>
+                                    <td>$900,000</td>
+                                    <td>$896,000</td>
+                                    <td style="color: #28a745;">+$4,000</td>
+                                    <td>99.6%</td>
+                                </tr>
+                                <tr>
+                                    <td>Marketing</td>
+                                    <td>$150,000</td>
+                                    <td>$142,000</td>
+                                    <td style="color: #28a745;">+$8,000</td>
+                                    <td>94.7%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="finance-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-icon">📊</span>
+                            Budget Performance
+                        </h3>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-value">89.2%</span>
+                            <div class="stat-label">Overall Budget Utilization</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">3</span>
+                            <div class="stat-label">Categories Over Budget</div>
+                        </div>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="btn btn-primary" onclick="setBudgetAlerts()">🔔 Set Alerts</button>
+                        <button class="btn btn-secondary" onclick="exportBudgetReport()">📊 Export Report</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Section -->
+        <div id="analytics-section" class="section" style="display: none;">
+            <div class="dashboard-grid">
+                <div class="finance-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-icon">📈</span>
+                            Financial Trends
+                        </h3>
+                        <button class="btn btn-secondary" onclick="customizeAnalytics()">⚙️ Customize</button>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-value">+12.4%</span>
+                            <div class="stat-label">Revenue Growth (YoY)</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">28.4%</span>
+                            <div class="stat-label">Gross Margin</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">2.4:1</span>
+                            <div class="stat-label">Current Ratio</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">32.6</span>
+                            <div class="stat-label">Days Sales Outstanding</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="finance-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-icon">🎯</span>
+                            Key Performance Indicators
+                        </h3>
+                    </div>
+                    <div class="alert alert-info">
+                        <strong>💡 Analytics Insight:</strong> Revenue growth is strong, but watch DSO - it's trending upward indicating slower collections.
+                    </div>
+                    <div class="quick-actions">
+                        <button class="btn btn-primary" onclick="viewDetailedAnalytics()">📊 Detailed View</button>
+                        <button class="btn btn-success" onclick="generateForecast()">🔮 Generate Forecast</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Transaction Modal -->
+    <div id="newTransactionModal" class="modal">
+        <div class="modal-content">
+            <h2>➕ New Financial Transaction</h2>
+            <form id="transactionForm">
+                <div class="form-group">
+                    <label class="form-label">Transaction Type</label>
+                    <select class="form-input" id="transactionType" required>
+                        <option value="">Select Type</option>
+                        <option value="income">Income</option>
+                        <option value="expense">Expense</option>
+                        <option value="transfer">Transfer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Amount</label>
+                    <input type="number" class="form-input" id="transactionAmount" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <input type="text" class="form-input" id="transactionDescription" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Account</label>
+                    <select class="form-input" id="transactionAccount" required>
+                        <option value="">Select Account</option>
+                        <option value="cash">Cash</option>
+                        <option value="checking">Checking Account</option>
+                        <option value="savings">Savings Account</option>
+                        <option value="ar">Accounts Receivable</option>
+                        <option value="ap">Accounts Payable</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date</label>
+                    <input type="date" class="form-input" id="transactionDate" required>
+                </div>
+                <div class="quick-actions">
+                    <button type="submit" class="btn btn-success">💾 Save Transaction</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('newTransactionModal')">❌ Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {console.log('ERP Finance Hub loaded successfully')
+            loadFinanceData()
+            setCurrentDate()});
+
+        // Navigation functions
+        function showSection(sectionName) {// Update active nav button
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'))
+            event.target.classList.add('active')
+            
+            console.log(`Switching to ${sectionName} section`);
+            
+            // Hide all sections first
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none'
+            });
+            
+            // Show the requested section or dashboard by default
+            const targetSection = document.getElementById(`${sectionName}-section`) || document.getElementById('dashboard-section');
+            if (targetSection) {targetSection.style.display = 'block'}
+            
+            // Load section-specific data
+            switch(sectionName) {case 'accounts':
+                    loadAccountsData()
+                    break
+                case 'reports':
+                    loadReportsData()
+                    break;
+                case 'transactions':
+                    loadTransactionsData();
+                    break;
+                case 'budgets':
+                    loadBudgetsData();
+                    break;
+                case 'analytics':
+                    loadAnalyticsData();
+                    break;
+                default: loadFinanceData()}
+        }
+
+        // Modal functions
+        function openModal(modalId) {document.getElementById(modalId).style.display = 'flex'}
+
+        function closeModal(modalId) {document.getElementById(modalId).style.display = 'none'}
+
+        // Data loading functions
+        function loadFinanceData() {console.log('Loading financial data...')
+            // Simulate loading real financial data
+            setTimeout(() => {
+                updateFinancialMetrics()
+                console.log('Financial data loaded')}, 500);
+        }
+
+        function updateFinancialMetrics() {// Update metrics with some variation to simulate real data
+            const revenue = 1420000 + Math.random() * 100000
+            const expenses = 896000 + Math.random() * 50000
+            const profit = revenue - expenses
+            const cashFlow = profit * 0.6 + Math.random() * 50000;
+
+            document.getElementById('totalRevenue').textContent = `$${(revenue / 1000).toFixed(0)}k`;
+            document.getElementById('totalExpenses').textContent = `$${(expenses / 1000).toFixed(0)}k`;
+            document.getElementById('netProfit').textContent = `$${(profit / 1000).toFixed(0)}k`;
+            document.getElementById('cashFlow').textContent = `+$${(cashFlow / 1000).toFixed(0)}k`;
+        }
+
+        function setCurrentDate() {const today = new Date().toISOString().split('T')[0]
+            document.getElementById('transactionDate').value = today}
+
+        // Transaction handling
+        document.getElementById('transactionForm').addEventListener('submit', function(e) {e.preventDefault()
+            
+            const formData = {
+                type: document.getElementById('transactionType').value,
+                amount: parseFloat(document.getElementById('transactionAmount').value),
+                description: document.getElementById('transactionDescription').value,
+                account: document.getElementById('transactionAccount').value,
+                date: document.getElementById('transactionDate').value};
+
+            console.log('Creating transaction:', formData);
+            
+            // Simulate API call
+            setTimeout(() => {
+                alert(`✅ Transaction created successfully!\n\nType: ${formData.type}\nAmount: $${formData.amount.toFixed(2)}\nDescription: ${formData.description}`);
+                closeModal('newTransactionModal');
+                document.getElementById('transactionForm').reset();
+                setCurrentDate();
+                refreshFinancials();
+            }, 1000);
+        });
+
+        // Finance operation functions
+        function refreshFinancials() {console.log('Refreshing financial data...')
+            updateFinancialMetrics()
+            alert('📊 Financial data refreshed successfully!')}
+
+        function generatePLReport() {console.log('Generating P&L report...')
+            alert('📊 Generating Profit & Loss Report...\n\n✅ Report will be available for download in a moment.')
+            
+            setTimeout(() => {
+                const reportData = `P&L Report - ${new Date().toLocaleDateString()}\n` +
+                    `Revenue: $1,420,000\n` +
+                    `Expenses: $896,000\n` +
+                    `Net Profit: $524,000\n` +
+                    `Gross Margin: 28.4%`;
+                
+                const blob = new Blob([reportData], { type: 'text/plain' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `PL_Report_${new Date().toISOString().split('T')[0]}.txt`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+            }, 2000);
+        }
+
+        function sendARReminders() {console.log('Sending AR reminders...')
+            alert('📧 Sending payment reminders to overdue accounts...\n\n✅ Reminders sent to 3 customers with overdue payments.')}
+
+        function recordPayment() {const customer = prompt('Enter customer name for payment:')
+            const amount = prompt('Enter payment amount:')
+            
+            if (customer && amount) {
+                alert(`✅ Payment recorded successfully!\n\nCustomer: ${customer}\nAmount: $${amount}\nDate: ${new Date().toLocaleDateString()}`);
+                console.log(`Payment recorded: ${customer} - $${amount}`);
+            }
+        }
+
+        function processPayments() {console.log('Processing AP payments...')
+            alert('💳 Processing scheduled payments...\n\n✅ 2 payments processed totaling $12,750\n⏰ 1 payment scheduled for next week')}
+
+        function schedulePayout() {const vendor = prompt('Enter vendor name:')
+            const date = prompt('Enter payment date (YYYY-MM-DD):')
+            
+            if (vendor && date) {
+                alert(`✅ Payment scheduled successfully!\n\nVendor: ${vendor}\nScheduled Date: ${date}`);
+                console.log(`Payment scheduled: ${vendor} - ${date}`);
+            }
+        }
+
+        function reconcileAccounts() {console.log('Starting account reconciliation...')
+            alert('⚖️ Account Reconciliation Started\n\n📊 Checking account balances...\n✅ All accounts balanced\n💰 Cash position verified')}
+
+        function viewCashFlowForecast() {console.log('Generating cash flow forecast...')
+            alert('📈 Cash Flow Forecast (Next 3 Months)\n\nJanuary: +$247k\nFebruary: +$289k (projected)\nMarch: +$312k (projected)\n\n💡 Strong positive trend expected')}
+
+        function exportCashReport() {console.log('Exporting cash management report...')
+            alert('📊 Exporting Cash Management Report...\n\n✅ Report exported successfully!')}
+
+        function updateBudgets() {console.log('Opening budget update interface...')
+            alert('🎯 Budget Management\n\n📝 Budget update interface would open here\n💡 Set monthly/quarterly targets by category')}
+
+        function createBudgetReport() {console.log('Creating budget variance report...')
+            alert('📊 Budget Variance Report Generated\n\nSales: 5.3% under budget\nExpenses: 0.4% under budget\nNet Result: 12.7% above profit target')}
+
+        function setBudgetAlerts() {console.log('Setting up budget alerts...')
+            alert('🔔 Budget Alert Settings\n\n✅ Alerts configured for: \n• 90% of budget reached\n• Budget exceeded\n• Variance > 10%')}
+
+        function customizeKPIs() {console.log('Opening KPI customization...')
+            alert('⚙️ KPI Customization\n\n📊 Available KPIs: \n• Financial Ratios\n• Performance Metrics\n• Industry Benchmarks\n\n💡 Drag & drop to rearrange')}
+
+        function viewKPITrends() {console.log('Displaying KPI trends...')
+            alert('📈 KPI Trend Analysis\n\nGross Margin: ↗️ +2.1% vs last month\nDSO: ↘️ -3.2 days improvement\nInventory Turnover: ↗️ +0.5x improvement')}
+
+        function exportKPIDashboard() {console.log('Exporting KPI dashboard...')
+            alert('📊 Exporting KPI Dashboard...\n\n✅ Dashboard exported to PDF\n📈 Includes 12-month trends')}
+
+        // Close modals when clicking outside
+        window.addEventListener('click', function(event) {if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none'}
+        });
+
+        // Section-specific data loading functions
+        function loadAccountsData() {console.log('Loading accounts data...')
+            // Simulate loading accounts data}
+
+        function loadReportsData() {console.log('Loading reports data...')
+            // Simulate loading reports data}
+
+        function loadTransactionsData() {console.log('Loading transactions data...')
+            // Simulate loading transactions data}
+
+        function loadBudgetsData() {console.log('Loading budgets data...')
+            // Simulate loading budgets data}
+
+        function loadAnalyticsData() {console.log('Loading analytics data...')
+            // Simulate loading analytics data}
+
+        // Section-specific action functions
+        function addNewAccount() {alert('Add New Account:\n\n• Account Code\n• Account Name\n• Account Type\n• Opening Balance')}
+
+        function startReconciliation() {alert('Starting Account Reconciliation:\n\n• Select account to reconcile\n• Import bank statement\n• Match transactions')}
+
+        function generatePLStatement() {alert('Generating Profit & Loss Statement:\n\n📊 Processing financial data...\n✅ Report will be ready for download shortly.')}
+
+        function generateBalanceSheet() {alert('Generating Balance Sheet:\n\n📊 Compiling assets and liabilities...\n✅ Report will be ready for download shortly.')}
+
+        function generateCashFlow() {alert('Generating Cash Flow Statement:\n\n💰 Analyzing cash movements...\n✅ Report will be ready for download shortly.')}
+
+        function createJournalEntry() {alert('Create Journal Entry:\n\n• Date\n• Account Debits/Credits\n• Description\n• Reference Number')}
+
+        function reviewPendingTransactions() {alert('Transaction Review Queue:\n\n📋 8 transactions pending approval\n💰 Total value: $127,000\n⏰ Oldest: 3 days')}
+
+        function createNewBudget() {alert('Create New Budget:\n\n• Budget Period\n• Department/Category\n• Budget Amount\n• Approval Workflow')}
+
+        function viewDetailedAnalytics() {alert('Detailed Financial Analytics:\n\n📈 Trend Analysis\n📊 Comparative Reports\n🎯 Performance Metrics\n🔮 Predictive Insights')}
+
+        // Additional utility functions
+        function viewReconciliationHistory() {alert('Reconciliation History loaded')}
+
+        function generateReconciliationReport() {alert('Generating reconciliation report...')}
+
+        function generateTrialBalance() {alert('Generating trial balance...')}
+
+        function generateAgeingReport() {alert('Generating aging report...')}
+
+        function generateVendorReport() {alert('Generating vendor report...')}
+
+        function generateCustomerReport() {alert('Generating customer report...')}
+
+        function generateBudgetVariance() {alert('Generating budget variance report...')}
+
+        function downloadReport(reportId) {
+            alert(`Downloading report: ${reportId}`);
+        }
+
+        function bulkApprove() {alert('Bulk approving selected transactions...')}
+
+        function setBudgetAlerts() {alert('Setting up budget alerts...')}
+
+        function exportBudgetReport() {alert('Exporting budget report...')}
+
+        function customizeAnalytics() {alert('Opening analytics customization...')}
+
+        function generateForecast() {alert('Generating financial forecast...')}
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {if (event.ctrlKey || event.metaKey) {
+                switch(event.key) {
+                    case 'n':
+                        event.preventDefault()
+                        openModal('newTransactionModal')
+                        break
+                    case 'r':
+                        event.preventDefault();
+                        refreshFinancials();
+                        break;}
+            }
+        });
+    </script>
+</body>
+</html>

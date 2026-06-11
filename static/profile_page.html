@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - QR LEGENDS</title>
+    <style>
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            margin: 0
+            padding: 0
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh}
+
+        .container {max-width: 800px
+            margin: 0 auto
+            padding: 20px}
+
+        .header {display: flex
+            justify-content: space-between
+            align-items: center
+            margin-bottom: 30px}
+
+        .back-btn {background: white
+            border: none
+            padding: 12px 24px
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-weight: 600;
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            transition: all 0.3s ease}
+
+        .back-btn:hover {transform: translateY(-2px)
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3)}
+
+        .profile-card {background: rgba(255, 255, 255, 0.95)
+            backdrop-filter: blur(10px)
+            border-radius: 20px
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            margin-bottom: 30px}
+
+        .profile-header {text-align: center
+            margin-bottom: 40px}
+
+        .profile-avatar {width: 120px
+            height: 120px
+            border-radius: 50%
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease}
+
+        .profile-avatar:hover {transform: scale(1.05)}
+
+        .profile-name {font-size: 2rem
+            color: #333
+            margin: 0 0 10px 0}
+
+        .profile-role {color: #667eea
+            font-size: 1.2rem
+            font-weight: 600}
+
+        .profile-section {margin-bottom: 30px}
+
+        .section-title {font-size: 1.3rem
+            color: #333
+            margin-bottom: 20px
+            display: flex;
+            align-items: center;
+            gap: 10px}
+
+        .form-group {margin-bottom: 20px}
+
+        .form-group label {display: block
+            margin-bottom: 8px
+            color: #333
+            font-weight: 600}
+
+        .form-group input {width: 100%
+            padding: 12px 16px
+            border: 2px solid #e0e0e0
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box}
+
+        .form-group input: focus {outline: none
+            border-color: #667eea}
+
+        .form-group input: disabled {background: #f5f5f5
+            color: #666}
+
+        .btn-group {display: flex
+            gap: 15px
+            justify-content: flex-end
+            margin-top: 30px}
+
+        .btn {padding: 12px 24px
+            border: none
+            border-radius: 10px
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease}
+
+        .btn-primary {background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            color: white}
+
+        .btn-primary:hover {transform: translateY(-2px)
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3)}
+
+        .btn-secondary {background: #6c757d
+            color: white}
+
+        .btn-secondary: hover {background: #5a6268
+            transform: translateY(-2px)}
+
+        .btn-danger {background: #dc3545
+            color: white}
+
+        .btn-danger: hover {background: #c82333
+            transform: translateY(-2px)}
+
+        .security-section {background: #fff3cd
+            border-radius: 15px
+            padding: 25px
+            border: 1px solid #ffeaa7}
+
+        .photo-upload-area {text-align: center
+            padding: 30px
+            border: 2px dashed #e0e0e0
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px}
+
+        .photo-upload-area: hover {border-color: #667eea
+            background: #f8f9fa}
+
+        .success-message, .error-message {padding: 15px
+            border-radius: 10px
+            margin-bottom: 20px
+            display: none}
+
+        .success-message {background: #d4edda
+            color: #155724
+            border: 1px solid #c3e6cb}
+
+        .error-message {background: #f8d7da
+            color: #721c24
+            border: 1px solid #f5c6cb}
+
+        .activity-summary {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
+            gap: 20px
+            margin-top: 20px}
+
+        .activity-item {background: #f8f9fa
+            padding: 20px
+            border-radius: 10px
+            text-align: center}
+
+        .activity-value {font-size: 2rem
+            font-weight: bold
+            color: #667eea}
+
+        .activity-label {color: #666
+            margin-top: 5px}
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <script src="qr_camera_scanner.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/main_dashboard" class="back-btn">← Back to Dashboard</a>
+        </div>
+
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-avatar" onclick="document.getElementById('photo-input').click()">
+                    <span id="profile-initials">U</span>
+                </div>
+                <h1 class="profile-name" id="profile-name">Loading...</h1>
+                <p class="profile-role" id="profile-role">Loading...</p>
+            </div>
+
+            <!-- Company Code Section (only shown for company users) -->
+            <div id="company-code-section" style="display: none; background: #e3f2fd; border-radius: 15px; padding: 25px; margin-bottom: 30px; text-align: center;">
+                <h2 style="margin: 0 0 15px 0; color: #1976d2;">🏢 Your Company Code</h2>
+                <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 15px;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #1976d2; font-family: monospace; letter-spacing: 3px;" id="employer-code-display">LOADING...</div>
+                </div>
+                <p style="margin: 10px 0; color: #555;"><strong>Share this code with new employees</strong> so they can create accounts under your company. This is your unique company identifier.</p>
+                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <button onclick="copyEmployerCode()" class="btn btn-primary" style="display: flex; align-items: center; gap: 8px;">
+                        📋 Copy Code
+                    </button>
+                    <a href="/employee_login" target="_blank" class="btn btn-secondary" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
+                        🔗 Employee Login Page
+                    </a>
+                </div>
+            </div>
+
+            <div id="success-message" class="success-message"></div>
+            <div id="error-message" class="error-message"></div>
+
+            <!-- Photo Upload Section -->
+            <div class="profile-section">
+                <h2 class="section-title">📷 Profile Photo</h2>
+                <div class="photo-upload-area" onclick="document.getElementById('photo-input').click()">
+                    <p>Click to upload a new profile photo</p>
+                    <small style="color: #666;">Recommended: Square image, max 2MB</small>
+                </div>
+                <input type="file" id="photo-input" accept="image/*" style="display: none;" onchange="handlePhotoUpload(event)">
+            </div>
+
+            <!-- Personal Information Section -->
+            <div class="profile-section">
+                <h2 class="section-title">👤 Personal Information</h2>
+                <form id="profile-form">
+                    <div class="form-group">
+                        <label for="user-name">Full Name</label>
+                        <input type="text" id="user-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-email">Email Address</label>
+                        <input type="email" id="user-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-phone">Phone Number (optional)</label>
+                        <input type="tel" id="user-phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="user-website">Website (optional)</label>
+                        <input type="url" id="user-website">
+                    </div>
+                    <div class="form-group" id="department-group" style="display: none;">
+                        <label for="user-department">Department</label>
+                        <input type="text" id="user-department" disabled>
+                    </div>
+                    <div class="form-group" id="employee-id-group" style="display: none;">
+                        <label for="user-employee-id">Employee ID</label>
+                        <input type="text" id="user-employee-id" disabled>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+                        <button 
+                            type="button" 
+                            onclick="window.location.href='/billing_dashboard'"
+                            class="btn btn-secondary"
+                            style="background: #007bff; color: white;"
+                        >
+                            💳 Billing Dashboard
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Security Section -->
+            <div class="profile-section">
+                <h2 class="section-title">🔒 Security</h2>
+                <div class="security-section">
+                    <form id="password-form">
+                        <div class="form-group">
+                            <label for="current-password">Current Password</label>
+                            <input type="password" id="current-password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="new-password">New Password</label>
+                            <input type="password" id="new-password" required minlength="8">
+                            <small style="color: #666;">Minimum 8 characters</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-password">Confirm New Password</label>
+                            <input type="password" id="confirm-password" required>
+                        </div>
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-danger">🔒 Update Password</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Activity Summary Section -->
+            <div class="profile-section">
+                <h2 class="section-title">📊 Activity Summary</h2>
+                <div class="activity-summary">
+                    <div class="activity-item">
+                        <div class="activity-value" id="total-scans">0</div>
+                        <div class="activity-label">Total Scans</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-value" id="accuracy-rate">100%</div>
+                        <div class="activity-label">Accuracy Rate</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-value" id="days-active">0</div>
+                        <div class="activity-label">Days Active</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-value" id="last-login">N/A</div>
+                        <div class="activity-label">Last Login</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentProfile = null;
+
+        // Load user profile on page load
+        document.addEventListener('DOMContentLoaded', loadProfile);
+
+        async function loadProfile() {try {
+                console.log('Loading profile data...')
+                const response = await fetch('/api/auth/profile', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Cache-Control': 'no-cache'}
+                });
+
+                if (response.ok) {const profileData = await response.json()
+                    console.log('Profile data received:', profileData)
+                    
+                    if (profileData.authenticated) {
+                        currentProfile = profileData
+                        displayProfile(currentProfile);} else {console.error('User not authenticated:', profileData)
+                        showError('Authentication required. Redirecting to login...')
+                        setTimeout(() => {
+                            window.location.href = '/company_login'}, 2000);
+                    }
+                } else {console.error('Failed to load profile, status:', response.status)
+                    if (response.status === 401) {
+                        showError('Session expired. Redirecting to login...')
+                        setTimeout(() => {
+                            window.location.href = '/company_login'}, 2000);
+                    } else {showError('Failed to load profile. Please refresh the page.')}
+                }
+            } catch (error) {console.error('Error loading profile:', error)
+                showError('Network error loading profile. Please check your connection.')}
+        }
+
+        function displayProfile(profile) {if (!profile || !profile.user) {
+                console.error('Invalid profile data received:', profile)
+                showError('Failed to load profile data. Please refresh the page.')
+                return}
+
+            console.log('Displaying profile data:', profile);
+
+            // Use the name field that was just updated, regardless of user type
+            const name = profile.user.name || profile.user.company_name || 'Unknown User';
+            const initials = name.split(' ').map(word => word.charAt(0)).join('').toUpperCase().substring(0, 2);
+
+            // Update profile header
+            document.getElementById('profile-initials').textContent = initials || 'U';
+            document.getElementById('profile-name').textContent = name;
+
+            // Set role information
+            if (profile.user_type === 'company') {document.getElementById('profile-role').textContent = '🏢 Company Administrator'
+
+                // Show company code section for company users
+                if (profile.company && profile.company.employer_code) {
+                    document.getElementById('company-code-section').style.display = 'block'
+                    document.getElementById('employer-code-display').textContent = profile.company.employer_code}
+            } else if (profile.user_type === 'employee') {const department = profile.user.department || 'N/A'
+                const employeeId = profile.user.employee_id || 'N/A'
+                document.getElementById('profile-role').textContent = `👤 ${department.charAt(0).toUpperCase() + department.slice(1)} Employee`;
+
+                // Show employee-specific fields
+                document.getElementById('department-group').style.display = 'block';
+                document.getElementById('employee-id-group').style.display = 'block';
+                document.getElementById('user-department').value = department;
+                document.getElementById('user-employee-id').value = employeeId;
+            }
+
+            // Populate form fields with current data
+            document.getElementById('user-name').value = name || '';
+            document.getElementById('user-email').value = profile.user.email || '';
+            document.getElementById('user-phone').value = profile.user.phone || '';
+            document.getElementById('user-website').value = profile.user.website || '';
+
+            // Store current profile globally for reference
+            currentProfile = profile;
+
+            // Load activity summary (mock data for now)
+            loadActivitySummary();
+
+            console.log('Profile display completed successfully');
+        }
+
+        async function loadActivitySummary() {// Mock activity data - in real app would fetch from server
+            document.getElementById('total-scans').textContent = Math.floor(Math.random() * 1000) + 100
+            document.getElementById('accuracy-rate').textContent = (95 + Math.random() * 5).toFixed(1) + '%'
+            document.getElementById('days-active').textContent = Math.floor(Math.random() * 30) + 1
+            document.getElementById('last-login').textContent = new Date().toLocaleDateString();}
+
+        // Profile form submission
+        document.getElementById('profile-form').addEventListener('submit', async function(e) {e.preventDefault()
+
+            // Get submit button and show loading state
+            const submitButton = this.querySelector('button[type="submit"]')
+            const originalText = submitButton.textContent
+            submitButton.textContent = '💾 Saving...';
+            submitButton.disabled = true;
+
+            const formData = {
+                name: document.getElementById('user-name').value.trim(),
+                email: document.getElementById('user-email').value.trim(),
+                phone: document.getElementById('user-phone').value.trim(),
+                website: document.getElementById('user-website').value.trim()};
+
+            // Basic validation
+            if (!formData.name || !formData.email) {showError('Name and email are required fields.')
+                submitButton.textContent = originalText
+                submitButton.disabled = false
+                return;}
+
+            try {
+                const response = await fetch('/api/auth/profile/update', {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {showSuccess('Profile updated successfully!')
+                    
+                    // Wait a moment then reload profile data
+                    setTimeout(async () => {
+                        await loadProfile()
+                        console.log('Profile data reloaded after save')}, 500);
+                } else {const errorMessage = result.error || result.message || 'Unknown error occurred'
+                    showError('Error updating profile: ' + errorMessage)
+                    console.error('Profile update error:', result)}
+            } catch (error) {console.error('Network error updating profile:', error)
+                showError('Network error. Please check your connection and try again.')} finally {// Reset button state
+                setTimeout(() => {
+                    submitButton.textContent = originalText
+                    submitButton.disabled = false}, 1000);
+            }
+        });
+
+        // Password form submission
+        document.getElementById('password-form').addEventListener('submit', async function(e) {e.preventDefault()
+
+            const currentPassword = document.getElementById('current-password').value
+            const newPassword = document.getElementById('new-password').value
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (newPassword !== confirmPassword) {
+                showError('New passwords do not match');
+                return;}
+
+            try {
+                const response = await fetch('/api/auth/password/change', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        current_password: currentPassword,
+                        new_password: newPassword
+                    })
+                });
+
+                if (response.ok) {showSuccess('Password updated successfully!')
+                    document.getElementById('password-form').reset()} else {const error = await response.json()
+                    showError('Error updating password: ' + (error.error || 'Unknown error'))}
+            } catch (error) {showError('Network error. Please try again.')}
+        });
+
+        function handlePhotoUpload(event) {const file = event.target.files[0]
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    showError('File too large. Please choose an image smaller than 2MB.')
+                    return}
+
+                const reader = new FileReader();
+                reader.onload = function(e) {// In a real app, you would upload this to the server
+                    showSuccess('Photo uploaded successfully! (Feature will be fully implemented in production)')};
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function showSuccess(message) {const successDiv = document.getElementById('success-message')
+            successDiv.textContent = message
+            successDiv.style.display = 'block'
+            document.getElementById('error-message').style.display = 'none';
+
+            setTimeout(() => {
+                successDiv.style.display = 'none';}, 5000);
+        }
+
+        function showError(message) {const errorDiv = document.getElementById('error-message')
+            errorDiv.textContent = message
+            errorDiv.style.display = 'block'
+            document.getElementById('success-message').style.display = 'none';
+
+            setTimeout(() => {
+                errorDiv.style.display = 'none';}, 5000);
+        }
+
+        function copyEmployerCode() {const employerCode = document.getElementById('employer-code-display').textContent
+
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(employerCode).then(() => {
+                    showSuccess('Company code copied to clipboard!')}).catch(() => {fallbackCopyEmployerCode(employerCode)});
+            } else {fallbackCopyEmployerCode(employerCode)}
+        }
+
+        function fallbackCopyEmployerCode(text) {const textArea = document.createElement('textarea')
+            textArea.value = text
+            textArea.style.position = 'fixed'
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                document.execCommand('copy');
+                showSuccess('Company code copied to clipboard!');} catch (err) {showError('Failed to copy code. Please copy manually: ' + text)}
+
+            document.body.removeChild(textArea);
+        }
+    </script>
+</body>
+</html>

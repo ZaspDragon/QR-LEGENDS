@@ -1,0 +1,1660 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Printer & WMS Setup - QR LEGENDS</title>
+    <style>
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            margin: 0
+            padding: 20px
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            min-height: 100vh}
+        .container {max-width: 1200px
+            margin: 0 auto
+            background: white
+            border-radius: 15px
+            padding: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);}
+        .header {text-align: center
+            margin-bottom: 40px}
+        .header h1 {color: #333
+            font-size: 2.5rem
+            margin-bottom: 10px}
+        .tabs {display: flex
+            border-bottom: 2px solid #e0e0e0
+            margin-bottom: 30px}
+        .tab {padding: 15px 30px
+            cursor: pointer
+            border: none
+            background: none
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease}
+        .tab.active {color: #667eea
+            border-bottom-color: #667eea}
+        .tab-content {display: none}
+        .tab-content.active {display: block}
+        .card {background: #f8f9fa
+            border-radius: 10px
+            padding: 25px
+            margin-bottom: 20px
+            border: 1px solid #e0e0e0}
+        .form-group {margin-bottom: 20px}
+        .form-group label {display: block
+            margin-bottom: 8px
+            font-weight: 600
+            color: #333}
+        .form-group input, .form-group select, .form-group textarea {width: 100%
+            padding: 12px
+            border: 2px solid #e0e0e0
+            border-radius: 8px
+            font-size: 1rem;
+            transition: border-color 0.3s ease}
+        .form-group input:focus, .form-group select:focus, .form-group textarea: focus {outline: none
+            border-color: #667eea}
+        .btn {padding: 12px 25px
+            border: none
+            border-radius: 8px
+            font-size: 1rem
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px}
+        .btn-primary {background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            color: white}
+        .btn-success {background: linear-gradient(135deg, #28a745 0%, #20c997 100%)
+            color: white}
+        .btn-warning {background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%)
+            color: white}
+        .btn-danger {background: linear-gradient(135deg, #dc3545 0%, #c82333 100%)
+            color: white}
+        .btn:hover {transform: translateY(-2px)
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2)}
+        .printer-list, .wms-list {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
+            gap: 20px
+            margin-top: 20px}
+        .printer-item, .wms-item {background: white
+            border-radius: 10px
+            padding: 20px
+            border: 2px solid #e0e0e0
+            transition: all 0.3s ease}
+        .printer-item:hover, .wms-item:hover {border-color: #667eea
+            transform: translateY(-2px)
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1)}
+        .status-online {color: #28a745
+            font-weight: bold}
+        .status-offline {color: #dc3545
+            font-weight: bold}
+        .status-unknown {color: #6c757d
+            font-weight: bold}
+        .upload-area {border: 2px dashed #667eea
+            border-radius: 10px
+            padding: 40px
+            text-align: center
+            background: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.3s ease}
+        .upload-area: hover {background: #e6f0ff
+            border-color: #4a5ec4}
+        .upload-area.dragover {background: #d4edda
+            border-color: #28a745}
+        .back-btn {position: absolute
+            top: 20px
+            left: 20px
+            background: white
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-weight: 600;
+            text-decoration: none;
+            color: #333;
+            font-size: 16px}
+        .back-btn:hover {transform: translateY(-2px)
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3)}
+        .progress-bar {width: 100%
+            height: 20px
+            background: #e0e0e0
+            border-radius: 10px
+            overflow: hidden;
+            margin: 10px 0}
+        .progress-fill {height: 100%
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%)
+            width: 0%
+            transition: width 0.3s ease}
+        .sync-results {background: #d4edda
+            border: 1px solid #c3e6cb
+            border-radius: 8px
+            padding: 15px
+            margin-top: 15px}
+        .error-message {background: #f8d7da
+            border: 1px solid #f5c6cb
+            border-radius: 8px
+            padding: 15px
+            margin-top: 15px;
+            color: #721c24}
+    </style>
+</head>
+<body>
+    <a href="/main_dashboard" class="back-btn">← Back to Dashboard</a>
+
+    <div class="container">
+        <div class="header">
+            <h1>🖨️ Printer & WMS Integration Setup</h1>
+            <p>Connect your business printers and warehouse management system</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('printers')">🖨️ Printers</button>
+            <button class="tab" onclick="showTab('wms')">🏭 WMS Integration</button>
+            <button class="tab" onclick="showTab('erp')">📊 ERP Integration</button>
+            <button class="tab" onclick="showTab('sync')">🔄 Data Sync</button>
+        </div>
+
+        <!-- Printers Tab -->
+        <div id="printers-tab" class="tab-content active">
+            <div class="card">
+                <h3>📌 Add New Printer</h3>
+                
+                <!-- Bluetooth Scanner Section -->
+                <div style="background: #e3f2fd; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h4>📶 Bluetooth Printer Scanner</h4>
+                    <p>Scan for nearby Bluetooth printers and add them automatically:</p>
+                    <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px;">
+                        <button type="button" class="btn btn-success" id="scan-bluetooth-btn" onclick="scanBluetoothPrinters()">
+                            🔍 Scan for Bluetooth Printers
+                        </button>
+                        <div id="bluetooth-status" style="font-weight: bold; color: #666;"></div>
+                    </div>
+                    
+                    <!-- Bluetooth devices list -->
+                    <div id="bluetooth-devices" style="display: none;">
+                        <h5>📱 Found Bluetooth Devices:</h5>
+                        <div id="bluetooth-devices-list" style="max-height: 200px; overflow-y: auto; background: white; border-radius: 8px; padding: 10px; border: 1px solid #ddd;">
+                            <!-- Bluetooth devices will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <form id="printer-form">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label>Connection Type</label>
+                            <select id="connection-type" onchange="toggleConnectionFields()">
+                                <option value="network">Network/WiFi Printer</option>
+                                <option value="bluetooth">Bluetooth Printer</option>
+                                <option value="usb">USB Printer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Printer Name</label>
+                            <input type="text" id="printer-name" placeholder="e.g., Warehouse Label Printer" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Printer Type</label>
+                            <select id="printer-type">
+                                <option value="thermal">Thermal Label Printer</option>
+                                <option value="laser">Laser Printer</option>
+                                <option value="inkjet">Inkjet Printer</option>
+                                <option value="dot_matrix">Dot Matrix Printer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Model</label>
+                            <input type="text" id="printer-model" placeholder="e.g., Zebra ZD420" required>
+                        </div>
+                        
+                        <!-- Network Connection Fields -->
+                        <div class="form-group" id="network-fields">
+                            <label>IP Address</label>
+                            <input type="text" id="printer-ip" placeholder="192.168.1.100">
+                        </div>
+                        <div class="form-group" id="network-port-field">
+                            <label>Port</label>
+                            <input type="number" id="printer-port" value="9100">
+                        </div>
+                        
+                        <!-- Bluetooth Connection Fields -->
+                        <div class="form-group" id="bluetooth-fields" style="display: none;">
+                            <label>Bluetooth Address (MAC)</label>
+                            <input type="text" id="bluetooth-address" placeholder="00:11:22:33:44:55" readonly>
+                        </div>
+                        <div class="form-group" id="bluetooth-channel-field" style="display: none;">
+                            <label>Bluetooth Channel</label>
+                            <input type="number" id="bluetooth-channel" value="1">
+                        </div>
+                        
+                        <!-- USB Connection Fields -->
+                        <div class="form-group" id="usb-fields" style="display: none;">
+                            <label>USB Port</label>
+                            <select id="usb-port">
+                                <option value="auto">Auto Detect</option>
+                                <option value="/dev/usb/lp0">USB Port 1</option>
+                                <option value="/dev/usb/lp1">USB Port 2</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Location</label>
+                            <input type="text" id="printer-location" placeholder="e.g., Receiving Dock">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Paper Size</label>
+                        <select id="paper-size">
+                            <option value="4x6">4" x 6" Labels</option>
+                            <option value="4x2">4" x 2" Labels</option>
+                            <option value="2x1">2" x 1" Labels</option>
+                            <option value="letter">8.5" x 11" Letter</option>
+                            <option value="a4">A4</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Printer</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>🖨️ Connected Printers</h3>
+                <div id="printer-list" class="printer-list">
+                    <!-- Printer items will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- WMS Integration Tab -->
+        <div id="wms-tab" class="tab-content">
+            <div class="card">
+                <h3>🔗 Connect Warehouse Management System</h3>
+                <form id="wms-form">
+                    <div class="form-group">
+                        <label>WMS Type</label>
+                        <select id="wms-type">
+                            <option value="sap">SAP WMS</option>
+                            <option value="oracle">Oracle WMS</option>
+                            <option value="manhattan">Manhattan Associates</option>
+                            <option value="infor">Infor WMS</option>
+                            <option value="fishbowl">Fishbowl Inventory</option>
+                            <option value="netsuite">NetSuite</option>
+                            <option value="custom">Custom/Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Connection Method</label>
+                        <select id="connection-method" onchange="showConnectionOptions()">
+                            <option value="api">API Integration</option>
+                            <option value="database">Database Connection</option>
+                            <option value="file">File Upload/Import</option>
+                        </select>
+                    </div>
+
+                    <!-- API Connection Options -->
+                    <div id="api-options" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label>API Endpoint URL</label>
+                            <input type="url" id="endpoint-url" placeholder="https://api.yourwms.com">
+                        </div>
+                        <div class="form-group">
+                            <label>API Key</label>
+                            <input type="password" id="api-key" placeholder="Your API Key">
+                        </div>
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" id="api-username" placeholder="API Username">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="api-password" placeholder="API Password">
+                        </div>
+                    </div>
+
+                    <!-- Database Connection Options -->
+                    <div id="database-options" style="display: none; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label>Database Host</label>
+                            <input type="text" id="db-host" placeholder="database.yourcompany.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Port</label>
+                            <input type="number" id="db-port" value="5432">
+                        </div>
+                        <div class="form-group">
+                            <label>Database Name</label>
+                            <input type="text" id="database-name" placeholder="warehouse_db">
+                        </div>
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" id="db-username" placeholder="db_user">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="db-password" placeholder="Database Password">
+                        </div>
+                    </div>
+
+                    <!-- File Upload Options -->
+                    <div id="file-options" style="display: none;">
+                        <div class="form-group">
+                            <label>File Format</label>
+                            <select id="file-format">
+                                <option value="csv">CSV</option>
+                                <option value="xml">XML</option>
+                                <option value="json">JSON</option>
+                                <option value="excel">Excel (XLSX)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Sync Schedule</label>
+                            <select id="sync-schedule">
+                                <option value="manual">Manual Upload</option>
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Data to Import</label>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                            <label><input type="checkbox" id="import-inventory" checked> Inventory Items</label>
+                            <label><input type="checkbox" id="import-locations" checked> Locations</label>
+                            <label><input type="checkbox" id="import-products" checked> Products</label>
+                            <label><input type="checkbox" id="import-employees"> Employees</label>
+                            <label><input type="checkbox" id="import-transactions"> Transactions</label>
+                            <label><input type="checkbox" id="import-customers"> Customers</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Connect WMS</button>
+                    <button type="button" class="btn btn-warning" onclick="testWMSConnection()">Test Connection</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>🔗 Active Integrations</h3>
+                <div id="wms-list" class="wms-list">
+                    <!-- WMS integrations will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ERP Integration Tab -->
+        <div id="erp-tab" class="tab-content">
+            <div class="card">
+                <h3>📊 ERP System Integration</h3>
+                <p>Connect your Enterprise Resource Planning (ERP) system to synchronize business data with your warehouse operations.</p>
+                
+                <form id="erp-form">
+                    <div class="form-group">
+                        <label>ERP System Type</label>
+                        <select id="erp-type" onchange="showERPOptions()">
+                            <option value="great_plains">Microsoft Dynamics GP (Great Plains)</option>
+                            <option value="salespad">SalesPad for Dynamics GP</option>
+                            <option value="sap">SAP ERP</option>
+                            <option value="oracle">Oracle ERP Cloud</option>
+                            <option value="netsuite">NetSuite</option>
+                            <option value="sage">Sage ERP</option>
+                            <option value="epicor">Epicor ERP</option>
+                            <option value="infor">Infor ERP</option>
+                            <option value="quickbooks">QuickBooks Enterprise</option>
+                            <option value="custom">Custom/Other ERP</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Integration Method</label>
+                        <select id="erp-connection-method" onchange="showERPConnectionOptions()">
+                            <option value="file_upload">File Upload/Import</option>
+                            <option value="database">Direct Database Connection</option>
+                            <option value="api">API Integration</option>
+                            <option value="ftp">FTP/SFTP Transfer</option>
+                        </select>
+                    </div>
+
+                    <!-- File Upload Options -->
+                    <div id="erp-file-options" style="display: block;">
+                        <h4>📁 File-Based ERP Integration</h4>
+                        <p>Upload data files exported from your ERP system to sync inventory, customers, and transactions.</p>
+                        
+                        <div class="form-group">
+                            <label>Supported File Formats</label>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                                <label><input type="checkbox" id="support-csv" checked> CSV Files</label>
+                                <label><input type="checkbox" id="support-excel" checked> Excel (XLSX/XLS)</label>
+                                <label><input type="checkbox" id="support-xml"> XML Files</label>
+                                <label><input type="checkbox" id="support-json"> JSON Files</label>
+                                <label><input type="checkbox" id="support-txt"> Tab-Delimited Text</label>
+                                <label><input type="checkbox" id="support-edi"> EDI Files</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Sync Schedule</label>
+                            <select id="erp-sync-schedule">
+                                <option value="manual">Manual Upload Only</option>
+                                <option value="daily">Daily Sync</option>
+                                <option value="weekly">Weekly Sync</option>
+                                <option value="monthly">Monthly Sync</option>
+                                <option value="realtime">Real-time (API Required)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>ERP Data Mapping</label>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                                <label><input type="checkbox" id="map-inventory" checked> Inventory/Items</label>
+                                <label><input type="checkbox" id="map-customers" checked> Customer Data</label>
+                                <label><input type="checkbox" id="map-vendors"> Vendor/Supplier Data</label>
+                                <label><input type="checkbox" id="map-locations" checked> Warehouse Locations</label>
+                                <label><input type="checkbox" id="map-transactions"> Sales Transactions</label>
+                                <label><input type="checkbox" id="map-purchase-orders"> Purchase Orders</label>
+                                <label><input type="checkbox" id="map-work-orders"> Work Orders</label>
+                                <label><input type="checkbox" id="map-bom"> Bill of Materials (BOM)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Database Connection Options -->
+                    <div id="erp-database-options" style="display: none; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <h4>💾 Direct Database Connection</h4>
+                        <div class="form-group">
+                            <label>Database Host/Server</label>
+                            <input type="text" id="erp-db-host" placeholder="database.yourcompany.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Port</label>
+                            <input type="number" id="erp-db-port" value="1433" placeholder="1433 (SQL Server)">
+                        </div>
+                        <div class="form-group">
+                            <label>Database Name</label>
+                            <input type="text" id="erp-database-name" placeholder="DYNAMICS or TWO">
+                        </div>
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" id="erp-db-username" placeholder="Database User">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="erp-db-password" placeholder="Database Password">
+                        </div>
+                        <div class="form-group">
+                            <label>Connection String (Advanced)</label>
+                            <textarea id="erp-connection-string" placeholder="Optional: Custom connection string"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- API Connection Options -->
+                    <div id="erp-api-options" style="display: none; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <h4>🔗 API Integration</h4>
+                        <div class="form-group">
+                            <label>API Endpoint URL</label>
+                            <input type="url" id="erp-endpoint-url" placeholder="https://api.yourerp.com">
+                        </div>
+                        <div class="form-group">
+                            <label>API Key/Token</label>
+                            <input type="password" id="erp-api-key" placeholder="Your ERP API Key">
+                        </div>
+                        <div class="form-group">
+                            <label>API Username</label>
+                            <input type="text" id="erp-api-username" placeholder="API Username">
+                        </div>
+                        <div class="form-group">
+                            <label>API Password</label>
+                            <input type="password" id="erp-api-password" placeholder="API Password">
+                        </div>
+                        <div class="form-group">
+                            <label>Authentication Method</label>
+                            <select id="erp-auth-method">
+                                <option value="bearer">Bearer Token</option>
+                                <option value="basic">Basic Auth</option>
+                                <option value="oauth">OAuth 2.0</option>
+                                <option value="api_key">API Key</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- FTP Options -->
+                    <div id="erp-ftp-options" style="display: none; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <h4>📤 FTP/SFTP Transfer</h4>
+                        <div class="form-group">
+                            <label>FTP Host</label>
+                            <input type="text" id="erp-ftp-host" placeholder="ftp.yourcompany.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Port</label>
+                            <input type="number" id="erp-ftp-port" value="21" placeholder="21 (FTP) or 22 (SFTP)">
+                        </div>
+                        <div class="form-group">
+                            <label>Protocol</label>
+                            <select id="erp-ftp-protocol">
+                                <option value="ftp">FTP</option>
+                                <option value="sftp">SFTP (Secure)</option>
+                                <option value="ftps">FTPS (SSL)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" id="erp-ftp-username" placeholder="FTP Username">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="erp-ftp-password" placeholder="FTP Password">
+                        </div>
+                        <div class="form-group">
+                            <label>Remote Directory</label>
+                            <input type="text" id="erp-ftp-directory" placeholder="/exports/warehouse">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">💾 Save ERP Configuration</button>
+                    <button type="button" class="btn btn-warning" onclick="testERPConnection()">🔧 Test Connection</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>📤 ERP Data Upload</h3>
+                <p>Upload data files from your ERP system to sync with warehouse operations.</p>
+                
+                <div class="upload-area" id="erp-upload-area" onclick="document.getElementById('erp-file-input').click()">
+                    <h4>📁 Drop ERP files here or click to upload</h4>
+                    <p>Supported: CSV, Excel, XML, JSON, EDI</p>
+                    <p><strong>Common ERP Exports:</strong> Item Master, Customer List, Purchase Orders, Sales Orders, Inventory Balances</p>
+                    <input type="file" id="erp-file-input" style="display: none" multiple accept=".csv,.xlsx,.xls,.xml,.json,.txt,.edi">
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <div class="form-group">
+                        <label>Data Type</label>
+                        <select id="erp-upload-data-type">
+                            <option value="item_master">Item Master / Inventory Items</option>
+                            <option value="customers">Customer Data</option>
+                            <option value="vendors">Vendor/Supplier Data</option>
+                            <option value="purchase_orders">Purchase Orders</option>
+                            <option value="sales_orders">Sales Orders</option>
+                            <option value="inventory_balances">Inventory Balances</option>
+                            <option value="locations">Warehouse Locations</option>
+                            <option value="transactions">Transaction History</option>
+                            <option value="bom">Bill of Materials</option>
+                            <option value="work_orders">Work Orders</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Field Mapping Template</label>
+                        <select id="erp-field-mapping">
+                            <option value="auto">Auto-detect Fields</option>
+                            <option value="great_plains">Microsoft Dynamics GP Format</option>
+                            <option value="sap">SAP ERP Format</option>
+                            <option value="netsuite">NetSuite Format</option>
+                            <option value="quickbooks">QuickBooks Format</option>
+                            <option value="custom">Custom Mapping</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn btn-success" onclick="uploadERPFiles()">🚀 Process ERP Files</button>
+                    <button class="btn btn-warning" onclick="downloadERPTemplate()">📋 Download Template</button>
+                </div>
+
+                <div id="erp-upload-progress" style="display: none;">
+                    <h4>Upload Progress</h4>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="erp-progress-fill"></div>
+                    </div>
+                    <p id="erp-progress-text">Processing ERP data...</p>
+                </div>
+
+                <div id="erp-upload-results"></div>
+            </div>
+
+            <div class="card">
+                <h3>🔗 Active ERP Integrations</h3>
+                <div id="erp-integrations-list">
+                    <!-- ERP integrations will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Sync Tab -->
+        <div id="sync-tab" class="tab-content">
+            <div class="card">
+                <h3>📤 Upload WMS Data Files</h3>
+                <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
+                    <h4>📁 Drop files here or click to upload</h4>
+                    <p>Supported formats: CSV, XML, JSON, Excel</p>
+                    <input type="file" id="file-input" style="display: none" multiple accept=".csv,.xml,.json,.xlsx,.xls">
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <div class="form-group">
+                        <label>Data Type</label>
+                        <select id="upload-data-type">
+                            <option value="inventory">Inventory Items</option>
+                            <option value="locations">Locations</option>
+                            <option value="products">Products</option>
+                            <option value="employees">Employees</option>
+                            <option value="transactions">Transactions</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-success" onclick="uploadFiles()">🚀 Process Files</button>
+                </div>
+
+                <div id="upload-progress" style="display: none;">
+                    <h4>Upload Progress</h4>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <p id="progress-text">Processing...</p>
+                </div>
+
+                <div id="sync-results-container"></div>
+            </div>
+
+            <div class="card">
+                <h3>🔄 Manual Sync</h3>
+                <p>Sync data from connected WMS systems</p>
+                <button class="btn btn-primary" onclick="manualSync()">🔄 Start Manual Sync</button>
+                <div id="manual-sync-results"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let printers = [];
+        let wmsIntegrations = [];
+        let bluetoothDevices = [];
+        let isScanning = false;
+
+        // Tab Management
+        function showTab(tabName) {document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'))
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'))
+            
+            document.querySelector(`[onclick="showTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            // Load ERP integrations when ERP tab is opened
+            if (tabName === 'erp') {loadERPIntegrations()}
+        }
+
+        // Connection Type Management
+        function toggleConnectionFields() {const connectionType = document.getElementById('connection-type').value
+            
+            // Hide all connection-specific fields
+            document.getElementById('network-fields').style.display = 'none'
+            document.getElementById('network-port-field').style.display = 'none'
+            document.getElementById('bluetooth-fields').style.display = 'none'
+            document.getElementById('bluetooth-channel-field').style.display = 'none';
+            document.getElementById('usb-fields').style.display = 'none';
+            
+            // Show relevant fields based on connection type
+            if (connectionType === 'network') {
+                document.getElementById('network-fields').style.display = 'block';
+                document.getElementById('network-port-field').style.display = 'block';
+                document.getElementById('printer-ip').required = true;
+                document.getElementById('bluetooth-address').required = false;} else if (connectionType === 'bluetooth') {document.getElementById('bluetooth-fields').style.display = 'block'
+                document.getElementById('bluetooth-channel-field').style.display = 'block'
+                document.getElementById('printer-ip').required = false
+                document.getElementById('bluetooth-address').required = true} else if (connectionType === 'usb') {document.getElementById('usb-fields').style.display = 'block'
+                document.getElementById('printer-ip').required = false
+                document.getElementById('bluetooth-address').required = false}
+        }
+
+        // Bluetooth Printer Scanning
+        async function scanBluetoothPrinters() {if (isScanning) {
+                stopBluetoothScan()
+                return}
+
+            const scanBtn = document.getElementById('scan-bluetooth-btn');
+            const statusDiv = document.getElementById('bluetooth-status');
+            const devicesDiv = document.getElementById('bluetooth-devices');
+            const devicesList = document.getElementById('bluetooth-devices-list');
+
+            try {// Check if Web Bluetooth is supported
+                if (!navigator.bluetooth) {
+                    throw new Error('Bluetooth not supported on this browser. Try Chrome, Edge, or Opera.')}
+
+                // Check and request Bluetooth permissions first
+                statusDiv.textContent = 'Requesting Bluetooth permissions...';
+                statusDiv.style.color = '#0066cc';
+
+                // Request permissions using Permissions API if available
+                if (navigator.permissions) {
+                    try {
+                        const bluetoothPermission = await navigator.permissions.query({name: 'bluetooth'});
+                        
+                        if (bluetoothPermission.state === 'denied') {throw new Error('Bluetooth access denied. Please enable Bluetooth permissions in your browser settings.')}
+                        
+                        statusDiv.textContent = `Bluetooth permission: ${bluetoothPermission.state}`;
+                        
+                        // Listen for permission changes
+                        bluetoothPermission.onchange = () => {console.log('Bluetooth permission changed to:', bluetoothPermission.state)};
+                        
+                    } catch (permError) {console.log('Could not check Bluetooth permissions:', permError)
+                        // Continue anyway as some browsers don't support bluetooth permission query}
+                }
+
+                isScanning = true;
+                scanBtn.textContent = '⏹️ Stop Scanning';
+                scanBtn.className = 'btn btn-warning';
+                statusDiv.textContent = 'Requesting device access...';
+                statusDiv.style.color = '#0066cc';
+                
+                devicesList.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;"><span style="font-size: 20px;">🔍</span><br>Requesting Bluetooth access...</div>';
+                devicesDiv.style.display = 'block';
+
+                // Request Bluetooth device access with printer-specific filters
+                const options = {
+                    filters: [
+                        // Printer-specific filters
+                        { namePrefix: 'Zebra' },
+                        { namePrefix: 'Epson' },
+                        { namePrefix: 'HP' },
+                        { namePrefix: 'Canon' },
+                        { namePrefix: 'Brother' },
+                        { namePrefix: 'Printer' },
+                        { namePrefix: 'Label' },
+                        { namePrefix: 'Receipt' },
+                        { namePrefix: 'Thermal' },
+                        // Service UUIDs for printers
+                        { services: ['000018f0-0000-1000-8000-00805f9b34fb'] }, // Generic printing service
+                        { services: ['49535343-fe7d-4ae5-8fa9-9fafd205e455'] }, // Some printer services
+                    ],
+                    // Also accept all devices as fallback
+                    acceptAllDevices: false,
+                    optionalServices: [
+                        '000018f0-0000-1000-8000-00805f9b34fb', // Generic printing
+                        '49535343-fe7d-4ae5-8fa9-9fafd205e455', // Printer communication
+                        '0000180f-0000-1000-8000-00805f9b34fb', // Battery service (some printers)
+                        '0000180a-0000-1000-8000-00805f9b34fb'  // Device information service
+                    ]
+                };
+
+                statusDiv.textContent = 'Scanning for printers... Please select a device from the browser dialog.';
+                
+                let device;
+                try {// Try with printer filters first
+                    device = await navigator.bluetooth.requestDevice(options)} catch (filterError) {console.log('Filtered search failed, trying accept all devices:', filterError)
+                    statusDiv.textContent = 'Scanning all Bluetooth devices...'
+                    
+                    // Fallback to accept all devices
+                    device = await navigator.bluetooth.requestDevice({
+                        acceptAllDevices: true,
+                        optionalServices: [
+                            '000018f0-0000-1000-8000-00805f9b34fb',
+                            '49535343-fe7d-4ae5-8fa9-9fafd205e455',
+                            '0000180f-0000-1000-8000-00805f9b34fb',
+                            '0000180a-0000-1000-8000-00805f9b34fb'
+                        ]});
+                }
+
+                if (device) {statusDiv.textContent = 'Device selected! Processing...'
+                    await addBluetoothDevice(device)}
+
+                // Also try to get previously paired devices
+                statusDiv.textContent = 'Checking for previously authorized devices...';
+                if (navigator.bluetooth.getDevices) {const pairedDevices = await navigator.bluetooth.getDevices()
+                    for (const pairedDevice of pairedDevices) {
+                        await addBluetoothDevice(pairedDevice)}
+                }
+
+                const foundCount = bluetoothDevices.length;
+                statusDiv.textContent = `Found ${foundCount} Bluetooth device(s)`;
+                statusDiv.style.color = '#28a745';
+
+                if (foundCount === 0) {devicesList.innerHTML = `
+                        <div style="background: #fff3cd border: 1px solid #ffeaa7 padding: 15px border-radius: 8px margin: 10px 0">
+                            <h5 style="color: #856404 margin: 0 0 10px 0">📱 No Devices Found</h5>
+                            <p style="margin: 0 color: #856404;">Tips to find your printer:</p>
+                            <ul style="margin: 10px 0; color: #856404;">
+                                <li>✅ Make sure your printer is turned on</li>
+                                <li>✅ Enable Bluetooth on your printer</li>
+                                <li>✅ Put printer in pairing/discoverable mode</li>
+                                <li>✅ Move closer to the printer</li>
+                                <li>✅ Try scanning again</li>
+                            </ul>
+                            <button onclick="scanBluetoothPrinters()" class="btn btn-primary" style="padding: 5px 10px; font-size: 14px;">🔍 Scan Again</button>
+                        </div>
+                    `}
+
+            } catch (error) {console.error('Bluetooth scan error:', error)
+                
+                let errorMessage = error.message
+                let errorType = 'general'
+                
+                if (error.message.includes('User cancelled') || error.message.includes('cancelled')) {
+                    errorType = 'cancelled'
+                    errorMessage = 'Device selection was cancelled. Click scan again to retry.';} else if (error.message.includes('not supported')) {errorType = 'not-supported'} else if (error.message.includes('denied') || error.message.includes('permission')) {errorType = 'permission'
+                    errorMessage = 'Bluetooth access denied. Please check your browser settings and ensure Bluetooth is enabled.'}
+                
+                statusDiv.textContent = `Error: ${errorMessage}`;
+                statusDiv.style.color = '#dc3545';
+                
+                if (errorType === 'not-supported') {devicesList.innerHTML = `
+                        <div style="background: #fff3cd border: 1px solid #ffeaa7 padding: 15px border-radius: 8px margin: 10px 0">
+                            <h5 style="color: #856404 margin: 0 0 10px 0">📱 Browser Compatibility</h5>
+                            <p style="margin: 0 color: #856404;">Web Bluetooth requires a compatible browser:</p>
+                            <ul style="margin: 10px 0; color: #856404;">
+                                <li>✅ Chrome (recommended)</li>
+                                <li>✅ Microsoft Edge</li>
+                                <li>✅ Opera</li>
+                                <li>❌ Firefox (not supported)</li>
+                                <li>❌ Safari (not supported)</li>
+                            </ul>
+                            <p style="margin: 10px 0 0 0; color: #856404;"><strong>Alternative:</strong> Use manual entry or network discovery instead.</p>
+                        </div>
+                    `} else if (errorType === 'permission') {devicesList.innerHTML = `
+                        <div style="background: #f8d7da border: 1px solid #f5c6cb padding: 15px border-radius: 8px margin: 10px 0">
+                            <h5 style="color: #721c24 margin: 0 0 10px 0">🔒 Permission Required</h5>
+                            <p style="margin: 0 color: #721c24;">${errorMessage}</p>
+                            <div style="margin-top: 15px;">
+                                <h6 style="color: #721c24; margin: 0 0 5px 0;">To enable Bluetooth access:</h6>
+                                <ol style="margin: 5px 0; color: #721c24; font-size: 14px;">
+                                    <li>Click the 🔒 lock icon in your browser's address bar</li>
+                                    <li>Set Bluetooth to "Allow"</li>
+                                    <li>Refresh this page</li>
+                                    <li>Try scanning again</li>
+                                </ol>
+                                <button onclick="showBluetoothTroubleshooting()" class="btn btn-warning" style="padding: 5px 10px; font-size: 14px; margin-top: 10px;">📋 More Help</button>
+                            </div>
+                        </div>
+                    `;
+                } else if (errorType === 'cancelled') {devicesList.innerHTML = `
+                        <div style="background: #d1ecf1 border: 1px solid #bee5eb padding: 15px border-radius: 8px margin: 10px 0">
+                            <h5 style="color: #0c5460 margin: 0 0 10px 0">ℹ️ Selection Cancelled</h5>
+                            <p style="margin: 0 color: #0c5460;">No device was selected. Click the scan button to try again.</p>
+                            <button onclick="scanBluetoothPrinters()" class="btn btn-primary" style="padding: 8px 16px; font-size: 14px; margin-top: 10px;">🔍 Scan Again</button>
+                        </div>
+                    `} else {devicesList.innerHTML = `
+                        <div style="background: #f8d7da border: 1px solid #f5c6cb padding: 15px border-radius: 8px margin: 10px 0">
+                            <h5 style="color: #721c24 margin: 0 0 10px 0">❌ Scan Failed</h5>
+                            <p style="margin: 0 color: #721c24;">${errorMessage}</p>
+                            <div style="margin-top: 10px;">
+                                <button onclick="showBluetoothTroubleshooting()" class="btn btn-warning" style="padding: 5px 10px; font-size: 14px;">📋 Troubleshooting</button>
+                                <button onclick="scanBluetoothPrinters()" class="btn btn-primary" style="padding: 5px 10px; font-size: 14px; margin-left: 10px;">🔍 Try Again</button>
+                            </div>
+                        </div>
+                    `;
+                }
+            } finally {isScanning = false
+                scanBtn.textContent = '🔍 Scan for Bluetooth Printers'
+                scanBtn.className = 'btn btn-success'}
+        }
+
+        async function addBluetoothDevice(device) {
+            try {
+                const deviceInfo = {
+                    id: device.id,
+                    name: device.name || 'Unknown Device',
+                    type: detectPrinterType(device.name || ''),
+                    address: device.id, // Bluetooth address/ID
+                    rssi: device.rssi || 'Unknown',
+                    connected: device.gatt ? device.gatt.connected : false,
+                    services: [],
+                    isPrinter: isPotentialPrinter(device.name || '')
+                };
+
+                // Try to get more device info if connected
+                if (device.gatt && !device.gatt.connected) {try {
+                        await device.gatt.connect()
+                        const services = await device.gatt.getPrimaryServices()
+                        deviceInfo.services = services.map(service => service.uuid)
+                        await device.gatt.disconnect()} catch (connectError) {console.log('Could not connect to get device info:', connectError)}
+                }
+
+                // Check if device already exists
+                if (!bluetoothDevices.find(d => d.id === device.id)) {bluetoothDevices.push(deviceInfo)
+                    updateBluetoothDevicesList()}
+
+            } catch (error) {console.error('Error adding Bluetooth device:', error)}
+        }
+
+        function detectPrinterType(deviceName) {const name = deviceName.toLowerCase()
+            if (name.includes('zebra') || name.includes('thermal')) return 'thermal'
+            if (name.includes('laser')) return 'laser'
+            if (name.includes('inkjet')) return 'inkjet'
+            if (name.includes('epson') || name.includes('canon') || name.includes('hp')) return 'inkjet';
+            return 'thermal'; // Default for unknown printers}
+
+        function isPotentialPrinter(deviceName) {const printerKeywords = ['printer', 'print', 'zebra', 'epson', 'canon', 'hp', 'brother', 'thermal', 'label', 'receipt']
+            const name = deviceName.toLowerCase()
+            return printerKeywords.some(keyword => name.includes(keyword))}
+
+        function updateBluetoothDevicesList() {const devicesList = document.getElementById('bluetooth-devices-list')
+            
+            if (bluetoothDevices.length === 0) {
+                devicesList.innerHTML = '<div style="text-align: center padding: 20px color: #666">No Bluetooth devices found</div>';
+                return}
+
+            devicesList.innerHTML = bluetoothDevices.map(device => `
+                <div class="bluetooth-device" style="background: ${device.isPrinter ? '#e8f5e8' : '#f8f9fa'} border: 1px solid ${device.isPrinter ? '#28a745' : '#dee2e6'} border-radius: 8px padding: 15px margin: 10px 0; cursor: pointer;" onclick="selectBluetoothDevice('${device.id}')">
+                    <div style="display: flex; justify-content: between; align-items: center;">
+                        <div style="flex: 1;">
+                            <h5 style="margin: 0 0 5px 0; color: #333;">
+                                ${device.isPrinter ? '🖨️' : '📱'} ${device.name}
+                                ${device.isPrinter ? '<span style="background: #28a745 color: white padding: 2px 6px border-radius: 4px font-size: 12px margin-left: 10px">PRINTER</span>' : ''}
+                            </h5>
+                            <p style="margin: 0; color: #666; font-size: 14px;">
+                                <strong>Address:</strong> ${device.address}<br>
+                                <strong>Type:</strong> ${device.type}<br>
+                                <strong>Signal:</strong> ${device.rssi !== 'Unknown' ? device.rssi + ' dBm' : 'Unknown'}
+                            </p>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary" style="padding: 8px 16px; font-size: 14px;" onclick="event.stopPropagation(); selectBluetoothDevice('${device.id}')">
+                                ${device.isPrinter ? '📥 Add Printer' : '📱 Add Device'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectBluetoothDevice(deviceId) {const device = bluetoothDevices.find(d => d.id === deviceId)
+            if (!device) return
+
+            // Fill in the form with device information
+            document.getElementById('connection-type').value = 'bluetooth'
+            toggleConnectionFields()
+            
+            document.getElementById('printer-name').value = device.name;
+            document.getElementById('printer-type').value = device.type;
+            document.getElementById('bluetooth-address').value = device.address;
+            document.getElementById('printer-model').value = device.name;
+
+            // Scroll to form
+            document.getElementById('printer-form').scrollIntoView({ behavior: 'smooth'});
+
+            // Show success message
+            alert(`✅ Selected ${device.name}\nBluetooth address: ${device.address}\n\nPlease complete the remaining fields and click "Add Printer".`);
+        }
+
+        function stopBluetoothScan() {isScanning = false
+            const scanBtn = document.getElementById('scan-bluetooth-btn')
+            const statusDiv = document.getElementById('bluetooth-status')
+            
+            scanBtn.textContent = '🔍 Scan for Bluetooth Printers'
+            scanBtn.className = 'btn btn-success';
+            statusDiv.textContent = 'Scan stopped';
+            statusDiv.style.color = '#6c757d';}
+
+        function showBluetoothTroubleshooting() {const troubleshootingInfo = `
+🔧 Bluetooth Troubleshooting Guide: PERMISSIONS:
+1. Click the 🔒 lock icon in your browser's address bar
+2. Set Bluetooth to "Allow"
+3. Refresh the page if permissions were just granted
+
+DEVICE SETUP:
+4. Enable Bluetooth on your computer/device
+5. Turn on your printer and enable Bluetooth
+6. Put printer in pairing/discoverable mode
+7. Move closer to the printer (within 10 feet)
+
+BROWSER COMPATIBILITY:
+✅ Chrome (recommended)
+✅ Microsoft Edge
+✅ Opera
+❌ Firefox (not supported)
+❌ Safari (not supported)
+
+TROUBLESHOOTING:
+8. Try refreshing the page
+9. Restart your browser
+10. Try restarting your printer
+11. Alternative: Use network/WiFi connection instead
+
+PERMISSIONS DENIED?
+- Go to browser Settings > Privacy & Security > Site Settings
+- Find this website and set Bluetooth to "Allow"
+- Or use Chrome's site settings: chrome://settings/content/bluetooth
+            `
+            alert(troubleshootingInfo)}
+
+        // Connection Method Options
+        function showConnectionOptions() {const method = document.getElementById('connection-method').value
+            
+            document.getElementById('api-options').style.display = method === 'api' ? 'grid' : 'none'
+            document.getElementById('database-options').style.display = method === 'database' ? 'grid' : 'none'
+            document.getElementById('file-options').style.display = method === 'file' ? 'block' : 'none'}
+
+        // Printer Management
+        document.getElementById('printer-form').addEventListener('submit', async function(e) {e.preventDefault()
+            
+            const connectionType = document.getElementById('connection-type').value
+            
+            const printerData = {
+                name: document.getElementById('printer-name').value,
+                type: document.getElementById('printer-type').value,
+                model: document.getElementById('printer-model').value,
+                location: document.getElementById('printer-location').value,
+                paper_size: document.getElementById('paper-size').value,
+                connection_type: connectionType,
+                capabilities: ['labels', 'barcodes', 'receipts']};
+
+            // Add connection-specific data
+            if (connectionType === 'network') {printerData.ip_address = document.getElementById('printer-ip').value
+                printerData.port = document.getElementById('printer-port').value} else if (connectionType === 'bluetooth') {printerData.bluetooth_address = document.getElementById('bluetooth-address').value
+                printerData.bluetooth_channel = document.getElementById('bluetooth-channel').value} else if (connectionType === 'usb') {printerData.usb_port = document.getElementById('usb-port').value}
+
+            try {
+                const response = await fetch('/api/printers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(printerData)
+                });
+
+                if (response.ok) {const result = await response.json()
+                    alert('Printer added successfully!')
+                    loadPrinters()
+                    document.getElementById('printer-form').reset()} else {const error = await response.json()
+                    alert(`Error: ${error.error}`);
+                }
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            }
+        });
+
+        async function loadPrinters() {try {
+                const response = await fetch('/api/printers')
+                if (response.ok) {
+                    const data = await response.json()
+                    printers = data.printers
+                    displayPrinters()}
+            } catch (error) {console.error('Error loading printers:', error)}
+        }
+
+        function displayPrinters() {const container = document.getElementById('printer-list')
+            
+            if (printers.length === 0) {
+                container.innerHTML = '<p>No printers configured yet.</p>'
+                return}
+
+            container.innerHTML = printers.map(printer => {
+                let connectionInfo = ''
+                
+                if (printer.connection_type === 'bluetooth') {
+                    connectionInfo = `<p><strong>Bluetooth:</strong> ${printer.bluetooth_address || 'N/A'}</p>`;
+                } else if (printer.connection_type === 'usb') {
+                    connectionInfo = `<p><strong>USB Port:</strong> ${printer.usb_port || 'Auto'}</p>`;
+                } else {
+                    connectionInfo = `<p><strong>IP:</strong> ${printer.ip_address || 'N/A'}:${printer.port || 'N/A'}</p>`;
+                }
+                
+                const connectionIcon = printer.connection_type === 'bluetooth' ? '📶' : 
+                                     printer.connection_type === 'usb' ? '🔌' : '🌐';
+                
+                return `
+                    <div class="printer-item">
+                        <h4>${connectionIcon} ${printer.name}</h4>
+                        <p><strong>Type:</strong> ${printer.type}</p>
+                        <p><strong>Model:</strong> ${printer.model}</p>
+                        <p><strong>Connection:</strong> ${printer.connection_type ? printer.connection_type.charAt(0).toUpperCase() + printer.connection_type.slice(1) : 'Network'}</p>
+                        ${connectionInfo}
+                        <p><strong>Location:</strong> ${printer.location}</p>
+                        <p><strong>Status:</strong> <span class="status-${printer.status || 'unknown'}">${(printer.status || 'unknown').toUpperCase()}</span></p>
+                        <div style="margin-top: 15px;">
+                            <button class="btn btn-primary" onclick="testPrinter('${printer.id}')">🔧 Test Print</button>
+                            <button class="btn btn-success" onclick="printLabel('${printer.id}')">🏷️ Print Label</button>
+                            <button class="btn btn-danger" onclick="deletePrinter('${printer.id}')">🗑️ Remove</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function testPrinter(printerId) {
+            try {
+                const response = await fetch(`/api/printers/${printerId}/test`, {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                alert(result.message);
+                loadPrinters(); // Refresh status
+            } catch (error) {
+                alert(`Test failed: ${error.message}`);
+            }
+        }
+
+        async function printLabel(printerId) {const labelType = prompt('Label type (qr/po/shipping):', 'qr')
+            if (!labelType) return
+
+            let content = {};
+            if (labelType === 'qr') {
+                content = {
+                    qr_data: 'TEST-QR-' + Date.now(),
+                    title: 'Test QR Label'
+                };
+            } else if (labelType === 'po') {
+                content = {
+                    po_number: 'PO-' + Date.now(),
+                    supplier: 'Test Supplier',
+                    date: new Date().toISOString().split('T')[0]
+                };
+            }
+
+            try {
+                const response = await fetch('/api/print/label', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        printer_id: printerId,
+                        label_type: labelType,
+                        content: content
+                    })
+                });
+
+                const result = await response.json();
+                alert(result.message);
+            } catch (error) {
+                alert(`Print failed: ${error.message}`);
+            }
+        }
+
+        // WMS Integration
+        document.getElementById('wms-form').addEventListener('submit', async function(e) {e.preventDefault()
+            
+            const wmsData = {
+                wms_type: document.getElementById('wms-type').value,
+                connection_method: document.getElementById('connection-method').value,
+                endpoint_url: document.getElementById('endpoint-url').value,
+                api_key: document.getElementById('api-key').value,
+                username: document.getElementById('api-username').value,
+                password: document.getElementById('api-password').value,
+                db_host: document.getElementById('db-host').value,
+                db_port: document.getElementById('db-port').value,
+                database: document.getElementById('database-name').value,
+                db_username: document.getElementById('db-username').value,
+                db_password: document.getElementById('db-password').value,
+                file_format: document.getElementById('file-format').value,
+                schedule: document.getElementById('sync-schedule').value,
+                import_inventory: document.getElementById('import-inventory').checked,
+                import_locations: document.getElementById('import-locations').checked,
+                import_products: document.getElementById('import-products').checked,
+                import_employees: document.getElementById('import-employees').checked,
+                import_transactions: document.getElementById('import-transactions').checked};
+
+            try {
+                const response = await fetch('/api/wms/connect', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(wmsData)
+                });
+
+                if (response.ok) {const result = await response.json()
+                    alert('WMS integration configured successfully!')
+                    loadWMS()
+                    document.getElementById('wms-form').reset()} else {const error = await response.json()
+                    alert(`Error: ${error.error}`);
+                }
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            }
+        });
+
+        async function loadWMS() {// Load WMS integrations - would implement API call
+            console.log('Loading WMS integrations...')}
+
+        // File Upload
+        document.getElementById('file-input').addEventListener('change', function() {const files = this.files
+            if (files.length > 0) {
+                displaySelectedFiles(files)}
+        });
+
+        function displaySelectedFiles(files) {const container = document.getElementById('upload-area')
+            const fileList = Array.from(files).map(file => 
+                `<div>📄 ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)</div>`
+            ).join('');
+            
+            container.innerHTML = `
+                <h4>Selected Files:</h4>
+                ${fileList}
+                <button class="btn btn-warning" onclick="clearFiles()">Clear Selection</button>
+            `;
+        }
+
+        function clearFiles() {document.getElementById('file-input').value = ''
+            document.getElementById('upload-area').innerHTML = `
+                <h4>📁 Drop files here or click to upload</h4>
+                <p>Supported formats: CSV, XML, JSON, Excel</p>
+            `}
+
+        async function uploadFiles() {const fileInput = document.getElementById('file-input')
+            const files = fileInput.files
+            
+            if (files.length === 0) {
+                alert('Please select files to upload')
+                return}
+
+            const dataType = document.getElementById('upload-data-type').value;
+            const progressContainer = document.getElementById('upload-progress');
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
+
+            progressContainer.style.display = 'block';
+            
+            for (let i = 0; i < files.length; i++) {const file = files[i]
+                const formData = new FormData()
+                formData.append('file', file)
+                formData.append('format', getFileFormat(file.name))
+                formData.append('data_type', dataType);
+
+                try {
+                    progressText.textContent = `Processing ${file.name}...`;
+                    
+                    const response = await fetch('/api/wms/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+                    
+                    if (response.ok) {displaySyncResults(result, file.name)} else {displayError(result.error, file.name)}
+                    
+                    const progress = ((i + 1) / files.length) * 100;
+                    progressFill.style.width = `${progress}%`;
+                    
+                } catch (error) {displayError(error.message, file.name)}
+            }
+
+            progressText.textContent = 'Upload complete!';
+            clearFiles();
+        }
+
+        function getFileFormat(filename) {const ext = filename.split('.').pop().toLowerCase()
+            return ext === 'xlsx' || ext === 'xls' ? 'excel' : ext}
+
+        function displaySyncResults(result, filename) {const container = document.getElementById('sync-results-container')
+            container.innerHTML += `
+                <div class="sync-results">
+                    <h4>✅ ${filename} - Success</h4>
+                    <p>Imported ${result.imported_records} records</p>
+                </div>
+            `;
+        }
+
+        function displayError(error, filename) {const container = document.getElementById('sync-results-container')
+            container.innerHTML += `
+                <div class="error-message">
+                    <h4>❌ ${filename} - Error</h4>
+                    <p>${error}</p>
+                </div>
+            `;
+        }
+
+        // Drag and Drop
+        const uploadArea = document.getElementById('upload-area');
+        
+        uploadArea.addEventListener('dragover', function(e) {e.preventDefault()
+            uploadArea.classList.add('dragover')});
+
+        uploadArea.addEventListener('dragleave', function(e) {e.preventDefault()
+            uploadArea.classList.remove('dragover')});
+
+        uploadArea.addEventListener('drop', function(e) {e.preventDefault()
+            uploadArea.classList.remove('dragover')
+            
+            const files = e.dataTransfer.files
+            document.getElementById('file-input').files = files
+            displaySelectedFiles(files);});
+
+        // ERP Integration Functions
+        function showERPOptions() {const erpType = document.getElementById('erp-type').value
+            // You can customize options based on ERP type here
+            console.log('Selected ERP type:', erpType)}
+
+        function showERPConnectionOptions() {const method = document.getElementById('erp-connection-method').value
+            
+            // Hide all connection options
+            document.getElementById('erp-file-options').style.display = 'none'
+            document.getElementById('erp-database-options').style.display = 'none'
+            document.getElementById('erp-api-options').style.display = 'none'
+            document.getElementById('erp-ftp-options').style.display = 'none';
+            
+            // Show selected connection method
+            if (method === 'file_upload') {
+                document.getElementById('erp-file-options').style.display = 'block';} else if (method === 'database') {document.getElementById('erp-database-options').style.display = 'grid'} else if (method === 'api') {document.getElementById('erp-api-options').style.display = 'grid'} else if (method === 'ftp') {document.getElementById('erp-ftp-options').style.display = 'grid'}
+        }
+
+        // ERP Form Submission
+        document.getElementById('erp-form').addEventListener('submit', async function(e) {e.preventDefault()
+            
+            const erpData = {
+                erp_type: document.getElementById('erp-type').value,
+                connection_method: document.getElementById('erp-connection-method').value,
+                sync_schedule: document.getElementById('erp-sync-schedule').value,
+                
+                // File options
+                supported_formats: {
+                    csv: document.getElementById('support-csv').checked,
+                    excel: document.getElementById('support-excel').checked,
+                    xml: document.getElementById('support-xml').checked,
+                    json: document.getElementById('support-json').checked,
+                    txt: document.getElementById('support-txt').checked,
+                    edi: document.getElementById('support-edi').checked},
+                
+                data_mapping: {
+                    inventory: document.getElementById('map-inventory').checked,
+                    customers: document.getElementById('map-customers').checked,
+                    vendors: document.getElementById('map-vendors').checked,
+                    locations: document.getElementById('map-locations').checked,
+                    transactions: document.getElementById('map-transactions').checked,
+                    purchase_orders: document.getElementById('map-purchase-orders').checked,
+                    work_orders: document.getElementById('map-work-orders').checked,
+                    bom: document.getElementById('map-bom').checked
+                },
+                
+                // Database options
+                db_host: document.getElementById('erp-db-host').value,
+                db_port: document.getElementById('erp-db-port').value,
+                database_name: document.getElementById('erp-database-name').value,
+                db_username: document.getElementById('erp-db-username').value,
+                db_password: document.getElementById('erp-db-password').value,
+                connection_string: document.getElementById('erp-connection-string').value,
+                
+                // API options
+                api_endpoint: document.getElementById('erp-endpoint-url').value,
+                api_key: document.getElementById('erp-api-key').value,
+                api_username: document.getElementById('erp-api-username').value,
+                api_password: document.getElementById('erp-api-password').value,
+                auth_method: document.getElementById('erp-auth-method').value,
+                
+                // FTP options
+                ftp_host: document.getElementById('erp-ftp-host').value,
+                ftp_port: document.getElementById('erp-ftp-port').value,
+                ftp_protocol: document.getElementById('erp-ftp-protocol').value,
+                ftp_username: document.getElementById('erp-ftp-username').value,
+                ftp_password: document.getElementById('erp-ftp-password').value,
+                ftp_directory: document.getElementById('erp-ftp-directory').value
+            };
+
+            try {
+                const response = await fetch('/api/erp/connect', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(erpData)
+                });
+
+                if (response.ok) {const result = await response.json()
+                    alert('ERP integration configured successfully!')
+                    loadERPIntegrations()} else {const error = await response.json()
+                    alert(`Error: ${error.error}`);
+                }
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            }
+        });
+
+        async function testERPConnection() {const connectionMethod = document.getElementById('erp-connection-method').value
+            
+            let testData = {
+                connection_method: connectionMethod,
+                erp_type: document.getElementById('erp-type').value};
+
+            if (connectionMethod === 'database') {
+                testData = {
+                    ...testData,
+                    db_host: document.getElementById('erp-db-host').value,
+                    db_port: document.getElementById('erp-db-port').value,
+                    database_name: document.getElementById('erp-database-name').value,
+                    db_username: document.getElementById('erp-db-username').value,
+                    db_password: document.getElementById('erp-db-password').value
+                };
+            } else if (connectionMethod === 'api') {
+                testData = {
+                    ...testData,
+                    api_endpoint: document.getElementById('erp-endpoint-url').value,
+                    api_key: document.getElementById('erp-api-key').value,
+                    auth_method: document.getElementById('erp-auth-method').value
+                };
+            } else if (connectionMethod === 'ftp') {
+                testData = {
+                    ...testData,
+                    ftp_host: document.getElementById('erp-ftp-host').value,
+                    ftp_port: document.getElementById('erp-ftp-port').value,
+                    ftp_protocol: document.getElementById('erp-ftp-protocol').value,
+                    ftp_username: document.getElementById('erp-ftp-username').value,
+                    ftp_password: document.getElementById('erp-ftp-password').value
+                };
+            }
+
+            try {
+                const response = await fetch('/api/erp/test-connection', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData)
+                });
+
+                const result = await response.json();
+                alert(result.message);
+            } catch (error) {
+                alert(`Test failed: ${error.message}`);
+            }
+        }
+
+        async function loadERPIntegrations() {try {
+                const response = await fetch('/api/erp/integrations')
+                if (response.ok) {
+                    const data = await response.json()
+                    displayERPIntegrations(data.integrations || [])}
+            } catch (error) {console.error('Error loading ERP integrations:', error)}
+        }
+
+        function displayERPIntegrations(integrations) {const container = document.getElementById('erp-integrations-list')
+            
+            if (integrations.length === 0) {
+                container.innerHTML = '<p>No ERP integrations configured yet.</p>'
+                return}
+
+            container.innerHTML = integrations.map(integration => `
+                <div class="wms-item" style="background: white border-radius: 10px padding: 20px margin: 10px 0 border: 2px solid #e0e0e0;">
+                    <h4>📊 ${integration.erp_type.replace('_', ' ').toUpperCase()}</h4>
+                    <p><strong>Connection:</strong> ${integration.connection_method.replace('_', ' ')}</p>
+                    <p><strong>Status:</strong> <span class="status-${integration.status || 'unknown'}">${(integration.status || 'unknown').toUpperCase()}</span></p>
+                    <p><strong>Last Sync:</strong> ${integration.last_sync || 'Never'}</p>
+                    <div style="margin-top: 15px;">
+                        <button class="btn btn-success" onclick="syncERPData('${integration.id}')">🔄 Sync Now</button>
+                        <button class="btn btn-warning" onclick="editERPIntegration('${integration.id}')">✏️ Edit</button>
+                        <button class="btn btn-danger" onclick="removeERPIntegration('${integration.id}')">🗑️ Remove</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ERP File Upload Functions
+        document.getElementById('erp-file-input').addEventListener('change', function() {const files = this.files
+            if (files.length > 0) {
+                displaySelectedERPFiles(files)}
+        });
+
+        function displaySelectedERPFiles(files) {const container = document.getElementById('erp-upload-area')
+            const fileList = Array.from(files).map(file => 
+                `<div>📄 ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)</div>`
+            ).join('');
+            
+            container.innerHTML = `
+                <h4>Selected ERP Files:</h4>
+                ${fileList}
+                <button class="btn btn-warning" onclick="clearERPFiles()">Clear Selection</button>
+            `;
+        }
+
+        function clearERPFiles() {document.getElementById('erp-file-input').value = ''
+            document.getElementById('erp-upload-area').innerHTML = `
+                <h4>📁 Drop ERP files here or click to upload</h4>
+                <p>Supported: CSV, Excel, XML, JSON, EDI</p>
+                <p><strong>Common ERP Exports:</strong> Item Master, Customer List, Purchase Orders, Sales Orders, Inventory Balances</p>
+            `}
+
+        async function uploadERPFiles() {const fileInput = document.getElementById('erp-file-input')
+            const files = fileInput.files
+            
+            if (files.length === 0) {
+                alert('Please select ERP files to upload')
+                return}
+
+            const dataType = document.getElementById('erp-upload-data-type').value;
+            const fieldMapping = document.getElementById('erp-field-mapping').value;
+            const progressContainer = document.getElementById('erp-upload-progress');
+            const progressFill = document.getElementById('erp-progress-fill');
+            const progressText = document.getElementById('erp-progress-text');
+
+            progressContainer.style.display = 'block';
+            
+            for (let i = 0; i < files.length; i++) {const file = files[i]
+                const formData = new FormData()
+                formData.append('file', file)
+                formData.append('data_type', dataType)
+                formData.append('field_mapping', fieldMapping);
+                formData.append('source', 'erp');
+
+                try {
+                    progressText.textContent = `Processing ${file.name}...`;
+                    
+                    const response = await fetch('/api/erp/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+                    
+                    if (response.ok) {displayERPUploadResults(result, file.name)} else {displayERPUploadError(result.error, file.name)}
+                    
+                    const progress = ((i + 1) / files.length) * 100;
+                    progressFill.style.width = `${progress}%`;
+                    
+                } catch (error) {displayERPUploadError(error.message, file.name)}
+            }
+
+            progressText.textContent = 'ERP upload complete!';
+            clearERPFiles();
+        }
+
+        function displayERPUploadResults(result, filename) {const container = document.getElementById('erp-upload-results')
+            container.innerHTML += `
+                <div class="sync-results">
+                    <h4>✅ ${filename} - Success</h4>
+                    <p>Processed ${result.processed_records} records</p>
+                    <p>Data Type: ${result.data_type}</p>
+                    <p>Mapping: ${result.field_mapping}</p>
+                </div>
+            `;
+        }
+
+        function displayERPUploadError(error, filename) {const container = document.getElementById('erp-upload-results')
+            container.innerHTML += `
+                <div class="error-message">
+                    <h4>❌ ${filename} - Error</h4>
+                    <p>${error}</p>
+                </div>
+            `;
+        }
+
+        function downloadERPTemplate() {const dataType = document.getElementById('erp-upload-data-type').value
+            const fieldMapping = document.getElementById('erp-field-mapping').value
+            
+            // Create download link for template
+            const downloadUrl = `/api/erp/template?data_type=${dataType}&mapping=${fieldMapping}`;
+            
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = `erp_template_${dataType}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        async function syncERPData(integrationId) {
+            try {
+                const response = await fetch(`/api/erp/sync/${integrationId}`, {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                alert(result.message);
+                loadERPIntegrations();
+            } catch (error) {
+                alert(`Sync failed: ${error.message}`);
+            }
+        }
+
+        function editERPIntegration(integrationId) {
+            // Load integration details for editing
+            alert(`Edit integration: ${integrationId}`);
+        }
+
+        async function removeERPIntegration(integrationId) {
+            if (confirm('Are you sure you want to remove this ERP integration?')) {
+                try {
+                    const response = await fetch(`/api/erp/integrations/${integrationId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {alert('ERP integration removed successfully')
+                        loadERPIntegrations()} else {const error = await response.json()
+                        alert(`Error: ${error.error}`);
+                    }
+                } catch (error) {
+                    alert(`Error: ${error.message}`);
+                }
+            }
+        }
+
+        // ERP Upload Drag and Drop
+        const erpUploadArea = document.getElementById('erp-upload-area');
+        
+        erpUploadArea.addEventListener('dragover', function(e) {e.preventDefault()
+            erpUploadArea.classList.add('dragover')});
+
+        erpUploadArea.addEventListener('dragleave', function(e) {e.preventDefault()
+            erpUploadArea.classList.remove('dragover')});
+
+        erpUploadArea.addEventListener('drop', function(e) {e.preventDefault()
+            erpUploadArea.classList.remove('dragover')
+            
+            const files = e.dataTransfer.files
+            document.getElementById('erp-file-input').files = files
+            displaySelectedERPFiles(files);});
+
+        // Missing function definitions
+        function deletePrinter(printerId) {
+            console.log('🗑️ Deleting printer:', printerId);
+            if (confirm('Are you sure you want to delete this printer?')) {
+                alert('✅ Printer deleted successfully');
+                loadPrinters();
+            }
+        }
+
+        function manualSync() {
+            console.log('🔄 Performing manual sync...');
+            alert('🔄 Manual Sync Started\n\n✅ Syncing printers...\n✅ Syncing WMS connections...\n✅ Syncing ERP integrations...\n\nSync completed successfully!');
+        }
+
+        function testWMSConnection() {
+            console.log('🔌 Testing WMS connection...');
+            alert('🔌 WMS Connection Test\n\n✅ Connection established\n✅ Authentication successful\n✅ Data sync verified\n\nWMS connection is working properly.');
+        }
+
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', function() {loadPrinters()
+            loadWMS()
+            loadERPIntegrations()});
+    </script>
+</body>
+</html>

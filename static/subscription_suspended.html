@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Suspended - QR LEGENDS</title>
+    <style>
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            margin: 0
+            padding: 0
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%)
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center}
+        .container {background: white
+            border-radius: 15px
+            padding: 40px
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3)
+            width: 100%;
+            max-width: 500px;
+            text-align: center}
+        .icon {font-size: 4rem
+            margin-bottom: 20px
+            color: #dc3545}
+        .title {color: #333
+            margin-bottom: 20px
+            font-size: 2rem}
+        .message {color: #666
+            margin-bottom: 30px
+            line-height: 1.6}
+        .reason {background: #f8d7da
+            color: #721c24
+            padding: 15px
+            border-radius: 8px
+            margin-bottom: 30px;
+            font-weight: 600}
+        .btn {padding: 14px 28px
+            border: none
+            border-radius: 8px
+            font-size: 16px
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+            transition: all 0.3s}
+        .btn-primary {background: #667eea
+            color: white}
+        .btn-secondary {background: #6c757d
+            color: white}
+        .btn:hover {transform: translateY(-2px)
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2)}
+        .contact-info {background: #e2e3e5
+            padding: 20px
+            border-radius: 8px
+            margin-top: 20px}
+        .contact-info h4 {margin-top: 0
+            color: #333}
+        .contact-info p {margin-bottom: 5px
+            color: #666}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🚫</div>
+        <h1 class="title">Access Suspended</h1>
+
+        <div class="message">
+            Your access to the QR LEGENDS Warehouse Management System has been temporarily suspended.
+        </div>
+
+        <div class="reason" id="suspension-reason">
+            Your subscription payment is overdue or your trial period has expired.
+        </div>
+
+        <div class="message">
+            <strong>What this means:</strong><br>
+            • You cannot access warehouse management features<br>
+            • Your employees cannot use the scanning system<br>
+            • All QR code generation is disabled<br>
+            • Your data is safely stored and will be restored upon reactivation
+        </div>
+
+        <div style="margin: 30px 0;">
+            <a href="/company_login" class="btn btn-primary">
+                💳 Update Billing & Reactivate
+            </a>
+            <a href="mailto:ilevanshine@gmail.com" class="btn btn-secondary">
+                📧 Contact Support
+            </a>
+        </div>
+
+        <div class="contact-info">
+            <h4>Need Help?</h4>
+            <p>📧 Email: ilevanshine@gmail.com</p>
+            <p>🏢 QR LEGENDS Support Team</p>
+            <p>💬 We're here to help resolve any billing issues</p>
+        </div>
+
+        <div style="margin-top: 20px; font-size: 0.9rem; color: #666;">
+            <p>To reactivate your account:</p>
+            <ol style="text-align: left; display: inline-block;">
+                <li>Update your payment method</li>
+                <li>Clear any outstanding payments</li>
+                <li>Contact support if you need assistance</li>
+                <li>Your account will be reactivated immediately</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // Check suspension reason from URL parameters or session
+        const urlParams = new URLSearchParams(window.location.search);
+        const reason = urlParams.get('reason');
+
+        if (reason === 'trial_expired') {document.getElementById('suspension-reason').textContent = 'Your 7-day free trial has expired. Please upgrade to continue using the service.'} else if (reason === 'payment_failed') {document.getElementById('suspension-reason').textContent = 'Your subscription payment has failed. Please update your payment method.'} else if (reason === 'cancelled') {document.getElementById('suspension-reason').textContent = 'Your subscription has been cancelled. Please contact support to reactivate.'}
+
+        // Auto-logout after 5 minutes
+        setTimeout(() => {
+            fetch('/api/auth/logout', { method: 'POST' })
+                .then(() => {window.location.href = '/company_login'})
+                .catch(() => {window.location.href = '/company_login'});
+        }, 300000); // 5 minutes
+    </script>
+</body>
+</html>

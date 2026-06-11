@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP Hub - QR LEGENDS</title>
+    <style>
+        * {margin: 0
+            padding: 0
+            box-sizing: border-box}
+
+        body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            min-height: 100vh
+            padding: 20px}
+
+        .container {max-width: 1400px
+            margin: 0 auto
+            padding: 20px}
+
+        .back-button {display: inline-block
+            margin-bottom: 20px
+            padding: 10px 20px
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease}
+
+        .back-button:hover {background: rgba(255, 255, 255, 0.3)
+            transform: translateY(-2px)}
+
+        h1 {color: white
+            text-align: center
+            margin-bottom: 30px
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);}
+
+        .modules-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
+            gap: 20px
+            margin-bottom: 30px}
+
+        .module-card {background: white
+            border-radius: 12px
+            padding: 20px
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer}
+
+        .module-card:hover {transform: translateY(-5px)
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2)}
+
+        .module-icon {font-size: 2.5rem
+            margin-bottom: 15px
+            text-align: center}
+
+        .module-title {font-size: 1.3rem
+            font-weight: 600
+            color: #333
+            margin-bottom: 10px;
+            text-align: center}
+
+        .module-description {color: #666
+            font-size: 0.9rem
+            margin-bottom: 20px
+            text-align: center;
+            line-height: 1.5}
+
+        .module-actions {display: flex
+            flex-wrap: wrap
+            gap: 8px
+            justify-content: center}
+
+        .btn {padding: 8px 16px
+            border: none
+            border-radius: 6px
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center}
+
+        .btn-primary {background: linear-gradient(135deg, #007bff, #0056b3)
+            color: white}
+
+        .btn-success {background: linear-gradient(135deg, #28a745, #1e7e34)
+            color: white}
+
+        .btn-info {background: linear-gradient(135deg, #17a2b8, #117a8b)
+            color: white}
+
+        .btn-warning {background: linear-gradient(135deg, #ffc107, #e0a800)
+            color: #333}
+
+        .btn:hover {transform: translateY(-2px)
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2)}
+
+        .sync-status {background: rgba(255, 255, 255, 0.1)
+            color: white
+            padding: 15px
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center}
+
+        .configure-btn {background: linear-gradient(135deg, #6f42c1, #491b7e)
+            color: white}
+
+        .sync-btn {background: linear-gradient(135deg, #17a2b8, #117a8b)
+            color: white}
+
+        .module-card .module-actions .configure-btn,
+        .module-card .module-actions .sync-btn {padding: 8px 16px
+            border: none
+            border-radius: 6px
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center}
+
+        .module-card .module-actions .configure-btn:hover,
+        .module-card .module-actions .sync-btn:hover {transform: translateY(-2px)
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2)}
+
+        .alert {position: fixed
+            top: 20px
+            right: 20px
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            z-index: 10000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);}
+        .alert-success {background: #28a745}
+        .alert-danger {background: #dc3545}
+
+        .modal-overlay {position: fixed
+            top: 0
+            left: 0
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000}
+
+
+        @media (max-width: 768px) {.modules-grid {
+                grid-template-columns: 1fr}
+
+            h1 {font-size: 2rem}
+        }
+    </style>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <a href="/main_dashboard" class="back-button">← Back to Dashboard</a>
+
+    <div class="container">
+        <h1>🏢 Enterprise Resource Planning Hub</h1>
+
+        <div class="sync-status">
+            <strong>System Status:</strong> <span id="syncStatus">Connected</span> |
+            <strong>Last Sync:</strong> <span id="lastSync">Just now</span> |
+            <strong>Active Users:</strong> <span id="activeUsers">3</span>
+        </div>
+
+        <div class="modules-grid">
+            <!-- Customer Database -->
+            <div class="module-card" onclick="window.location.href='/erp_customers'">
+                <div class="module-icon">👥</div>
+                <div class="module-title">Customer Database</div>
+                <div class="module-description">Manage customer information, contact details, credit terms, and order history</div>
+                <div class="module-actions">
+                    <a href="/erp_customers" class="btn btn-primary">Manage Customers</a>
+                    <button class="btn btn-success" onclick="event.stopPropagation(); addNewCustomer()">Add New</button>
+                </div>
+            </div>
+
+            <!-- Supplier Database -->
+            <div class="module-card" onclick="window.location.href='/erp_suppliers'">
+                <div class="module-icon">🏭</div>
+                <div class="module-title">Supplier Database</div>
+                <div class="module-description">Vendor information, product catalogs, payment terms, and performance metrics</div>
+                <div class="module-actions">
+                    <a href="/erp_suppliers" class="btn btn-primary">Manage Suppliers</a>
+                    <button class="btn btn-success" onclick="event.stopPropagation(); addNewSupplier()">Add New</button>
+                </div>
+            </div>
+
+            <!-- Item Master -->
+            <div class="module-card" onclick="window.location.href='/erp_items'">
+                <div class="module-icon">📦</div>
+                <div class="module-title">Item Master</div>
+                <div class="module-description">SKU management, barcodes/QR codes, dimensions, weight, cost, default suppliers</div>
+                <div class="module-actions">
+                    <a href="/erp_items" class="btn btn-primary">Manage Items</a>
+                    <button class="btn btn-success" onclick="event.stopPropagation(); syncWithWMS()">Sync from WMS</button>
+                </div>
+            </div>
+
+            <!-- Purchase Orders -->
+            <div class="module-card" onclick="window.location.href='/erp_purchase_orders'">
+                <div class="module-icon">📋</div>
+                <div class="module-title">Purchase Orders</div>
+                <div class="module-description">Create, approve, and track purchase orders with supplier integration</div>
+                <div class="module-actions">
+                    <a href="/erp_purchase_orders" class="btn btn-info">View POs</a>
+                    <button class="btn btn-success" onclick="event.stopPropagation(); createNewPO()">Create New</button>
+                </div>
+            </div>
+
+            <!-- Supplier Performance -->
+            <div class="module-card" onclick="window.location.href='/erp_supplier_performance'">
+                <div class="module-icon">📊</div>
+                <div class="module-title">Supplier Performance</div>
+                <div class="module-description">Track on-time delivery, defect rates, and supplier metrics</div>
+                <div class="module-actions">
+                    <a href="/erp_supplier_performance" class="btn btn-info">View Metrics</a>
+                    <button class="btn btn-warning" onclick="event.stopPropagation(); generateReport()">Generate Report</button>
+                </div>
+            </div>
+
+            <!-- Cost Tracking -->
+            <div class="module-card" onclick="window.location.href='/erp_cost_tracking'">
+                <div class="module-icon">💰</div>
+                <div class="module-title">Cost Tracking</div>
+                <div class="module-description">Landed cost calculation including freight, duties, and total cost analysis</div>
+                <div class="module-actions">
+                    <a href="/erp_cost_tracking" class="btn btn-info">Cost Analysis</a>
+                    <button class="btn btn-warning" onclick="event.stopPropagation(); updateCosts()">Update Costs</button>
+                </div>
+            </div>
+
+            <!-- Accounts Receivable -->
+            <div class="module-card" onclick="window.location.href='/erp_accounts_receivable'">
+                <div class="module-icon">💳</div>
+                <div class="module-title">Accounts Receivable</div>
+                <div class="module-description">Track customer payments, outstanding invoices, and payment scheduling</div>
+                <div class="module-actions">
+                    <a href="/erp_accounts_receivable" class="btn btn-info">View AR</a>
+                    <button class="btn btn-warning" onclick="event.stopPropagation(); processPayments()">Process Payments</button>
+                </div>
+            </div>
+
+            <!-- Accounts Payable -->
+            <div class="module-card" onclick="window.location.href='/erp_accounts_payable'">
+                <div class="module-icon">📄</div>
+                <div class="module-title">Accounts Payable</div>
+                <div class="module-description">Supplier invoices, payment approval, and payable scheduling</div>
+                <div class="module-actions">
+                    <a href="/erp_accounts_payable" class="btn btn-info">View AP</a>
+                    <button class="btn btn-warning" onclick="event.stopPropagation(); approvePayments()">Approve Payments</button>
+                </div>
+            </div>
+
+            <!-- Financial Reports -->
+            <div class="module-card" onclick="window.location.href='/erp_financial_reports'">
+                <div class="module-icon">📈</div>
+                <div class="module-title">Financial Reports</div>
+                <div class="module-description">P&L summaries, balance sheets, and export to accounting systems</div>
+                <div class="module-actions">
+                    <a href="/erp_financial_reports" class="btn btn-info">View Reports</a>
+                    <button class="btn btn-success" onclick="event.stopPropagation(); exportData()">Export Data</button>
+                </div>
+            </div>
+
+            <!-- Purchase Analytics -->
+            <div class="module-card" onclick="window.location.href='/erp_purchase_analytics'">
+                <div class="module-icon">📊</div>
+                <div class="module-title">Purchase Analytics</div>
+                <div class="module-description">Purchase vs. usage trends, supplier spend analysis, and department costs</div>
+                <div class="module-actions">
+                    <a href="/erp_purchase_analytics" class="btn btn-info">View Analytics</a>
+                    <button class="btn btn-warning" onclick="event.stopPropagation(); scheduleReport()">Schedule Report</button>
+                </div>
+            </div>
+
+            <!-- Inventory Valuation -->
+            <div class="module-card" onclick="window.location.href='/erp_inventory_valuation'">
+                <div class="module-icon">💎</div>
+                <div class="module-title">Inventory Valuation</div>
+                <div class="module-description">Real-time inventory value calculation and valuation method management</div>
+                <div class="module-actions">
+                    <a href="/erp_inventory_valuation" class="btn btn-info">View Valuation</a>
+                    <button class="btn btn-success" onclick="event.stopPropagation(); syncWithWMS()">Sync with WMS</button>
+                </div>
+            </div>
+
+            <!-- WMS Sync -->
+            <div class="module-card" onclick="window.location.href='/erp_wms_sync'">
+                <div class="module-icon">🔄</div>
+                <div class="module-title">WMS Sync</div>
+                <div class="module-description">Real-time synchronization with QR Legends WMS inventory and transactions</div>
+                <div class="module-actions">
+                    <a href="/erp_wms_sync" class="btn btn-success">Full Sync</a>
+                    <button class="btn btn-info" onclick="event.stopPropagation(); checkSyncStatus()">Sync Status</button>
+                </div>
+            </div>
+
+            <!-- Receiving Transactions -->
+            <div class="module-card" onclick="window.location.href='/erp_receiving_transactions'">
+                <div class="module-icon">📥</div>
+                <div class="module-title">Receiving Transactions</div>
+                <div class="module-description">Record receiving transactions, manage in-transit inventory, and track variance</div>
+                <div class="module-actions">
+                    <a href="/erp_receiving_transactions" class="btn btn-primary">Manage Receiving</a>
+                    <button class="btn btn-warning" onclick="event.stopPropagation(); viewInTransit()">In-Transit Items</button>
+                </div>
+            </div>
+
+            <!-- ERP System Config -->
+            <div class="module-card">
+                <div class="module-icon">⚙️</div>
+                <div class="module-title">ERP System Configuration</div>
+                <div class="module-description">Configure core ERP settings and integrations.</div>
+                <div class="module-actions">
+                    <button class="btn btn-primary configure-btn" onclick="configureERPSettings()">Configure Settings</button>
+                    <button class="btn btn-info sync-btn" onclick="syncERPData()">Sync Data</button>
+                </div>
+            </div>
+
+            <!-- SalesPad System Config -->
+            <div class="module-card">
+                <div class="module-icon">🛒</div>
+                <div class="module-title">SalesPad System Configuration</div>
+                <div class="module-description">Manage SalesPad settings, orders, and payment integrations.</div>
+                <div class="module-actions">
+                    <button class="btn btn-primary configure-btn" onclick="configureSalesPadSettings()">Configure Settings</button>
+                    <button class="btn btn-info sync-btn" onclick="syncSalesPadData()">Sync Data</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function addNewCustomer() {window.location.href = '/erp_customers?action=add'}
+
+        function addNewSupplier() {window.location.href = '/erp_suppliers?action=add'}
+
+        function syncWithWMS() {alert('🔄 Initiating WMS sync...\n- Pulling latest inventory data\n- Updating item costs\n- Synchronizing transactions')}
+
+        function createNewPO() {window.location.href = '/erp_purchase_orders?action=create'}
+
+        function generateReport() {alert('📊 Generating supplier performance report...\n- Analyzing delivery times\n- Calculating defect rates\n- Compiling metrics')}
+
+        function updateCosts() {alert('💰 Updating cost data...\n- Recalculating landed costs\n- Applying freight charges\n- Updating total costs')}
+
+        function processPayments() {alert('💳 Processing customer payments...\n- Updating payment records\n- Applying to outstanding invoices\n- Generating receipts')}
+
+        function approvePayments() {alert('📄 Payment approval workflow...\n- Reviewing pending payments\n- Applying approval rules\n- Scheduling payments')}
+
+        function exportData() {alert('📈 Exporting financial data...\n- Generating P&L summaries\n- Creating balance sheets\n- Preparing accounting export')}
+
+        function scheduleReport() {alert('📊 Scheduling analytics report...\n- Setting up automated reports\n- Configuring delivery schedule\n- Defining recipients')}
+
+        function checkSyncStatus() {alert('🔄 WMS Sync Status:\n- Last sync: 2 minutes ago\n- Items synchronized: 1,247\n- Status: Active\n- Next sync: In 8 minutes')}
+
+        function viewInTransit() {alert('📥 In-Transit Items:\n- 15 shipments currently in transit\n- 3 expected to arrive today\n- 2 overdue shipments\n- Total value: $45,230')}
+
+        function openERPDashboard() {window.location.href = '/erp_dashboard'}
+
+        function openSalesPadDashboard() {window.location.href = '/salespad_dashboard'}
+
+        function configureERPSettings() {// Create modal for ERP settings
+            const modal = document.createElement('div')
+            modal.style.cssText = `
+                position: fixed
+                top: 0
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+            `;
+
+            modal.innerHTML = `
+                <div style="background: white padding: 30px border-radius: 15px max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
+                    <h3 style="color: #333; margin-bottom: 20px;">⚙️ ERP Core System Configuration</h3>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Database Connection:</label>
+                        <select style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option>SQL Server (Current)</option>
+                            <option>PostgreSQL</option>
+                            <option>MySQL</option>
+                            <option>Oracle</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Sync Frequency:</label>
+                        <select style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option>Real-time (Current)</option>
+                            <option>Every 5 minutes</option>
+                            <option>Every 15 minutes</option>
+                            <option>Every hour</option>
+                            <option>Manual only</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Data Retention (days):</label>
+                        <input type="number" value="365" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Integration Features:</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <label><input type="checkbox" checked> Customer Management</label>
+                            <label><input type="checkbox" checked> Supplier Management</label>
+                            <label><input type="checkbox" checked> Purchase Orders</label>
+                            <label><input type="checkbox" checked> Financial Reporting</label>
+                            <label><input type="checkbox" checked> Cost Tracking</label>
+                            <label><input type="checkbox"> Advanced Analytics</label>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <button onclick="this.closest('.modal-overlay').remove()" style="padding: 10px 20px; border: 1px solid #ddd; background: white; border-radius: 5px; cursor: pointer;">Cancel</button>
+                        <button onclick="saveERPSettings(this)" style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">Save Configuration</button>
+                    </div>
+                </div>
+            `;
+
+            modal.className = 'modal-overlay';
+            document.body.appendChild(modal)}
+
+        function configureSalesPadSettings() {// Create modal for SalesPad settings
+            const modal = document.createElement('div')
+            modal.style.cssText = `
+                position: fixed
+                top: 0
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+            `;
+
+            modal.innerHTML = `
+                <div style="background: white padding: 30px border-radius: 15px max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
+                    <h3 style="color: #333; margin-bottom: 20px;">🛒 SalesPad System Configuration</h3>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Order Processing Mode:</label>
+                        <select style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option>Automatic (Current)</option>
+                            <option>Manual Approval</option>
+                            <option>Batch Processing</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Payment Integration:</label>
+                        <select style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option>Stripe (Current)</option>
+                            <option>PayPal</option>
+                            <option>Square</option>
+                            <option>Manual Processing</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Default Tax Rate (%):</label>
+                        <input type="number" value="8.25" step="0.01" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">SalesPad Features:</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <label><input type="checkbox" checked> Quote Management</label>
+                            <label><input type="checkbox" checked> Order Tracking</label>
+                            <label><input type="checkbox" checked> Customer Portal</label>
+                            <label><input type="checkbox" checked> Invoice Generation</label>
+                            <label><input type="checkbox" checked> Payment Processing</label>
+                            <label><input type="checkbox"> Advanced Pricing</label>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <button onclick="this.closest('.modal-overlay').remove()" style="padding: 10px 20px; border: 1px solid #ddd; background: white; border-radius: 5px; cursor: pointer;">Cancel</button>
+                        <button onclick="saveSalesPadSettings(this)" style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">Save Configuration</button>
+                    </div>
+                </div>
+            `;
+
+            modal.className = 'modal-overlay';
+            document.body.appendChild(modal)}
+
+        function saveERPSettings(button) {button.disabled = true
+            button.textContent = 'Saving...'
+
+            setTimeout(() => {
+                button.closest('.modal-overlay').remove()
+                showAlert('success', '✅ ERP configuration saved successfully');}, 1500);
+        }
+
+        function saveSalesPadSettings(button) {button.disabled = true
+            button.textContent = 'Saving...'
+
+            setTimeout(() => {
+                button.closest('.modal-overlay').remove()
+                showAlert('success', '✅ SalesPad configuration saved successfully');}, 1500);
+        }
+
+        function syncERPData() {showAlert('success', '🔄 ERP data sync initiated - this may take a few minutes...')
+
+            // Simulate sync process
+            setTimeout(() => {
+                showAlert('success', '✅ ERP data sync completed successfully')}, 3000);
+        }
+
+        function syncSalesPadData() {showAlert('success', '🔄 SalesPad data sync initiated - this may take a few minutes...')
+
+            // Simulate sync process
+            setTimeout(() => {
+                showAlert('success', '✅ SalesPad data sync completed successfully')}, 3000);
+        }
+
+        function showAlert(type, message) {// Create alert element
+            const alert = document.createElement('div')
+            alert.className = `alert alert-${type}`;
+            alert.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: bold;
+                z-index: 10000;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                background: ${type === 'success' ? '#28a745' : '#dc3545'};
+            `;
+            alert.textContent = message;
+
+            document.body.appendChild(alert);
+
+            // Remove after 5 seconds
+            setTimeout(() => {alert.remove()}, 5000);
+        }
+
+        // Update status indicators
+        function updateStatus() {document.getElementById('lastSync').textContent = new Date().toLocaleTimeString()}
+
+        setInterval(updateStatus, 30000); // Update every 30 seconds
+    </script>
+
+    <!-- Include Universal Dashboard Button -->
+    <script src="/universal_dashboard_button.js"></script>
+    <!-- Include Floating Chat Widget -->
+    <script src="/floating_chat_widget.js"></script>
+    <!-- Include Employee Messaging Widget -->
+    <script src="/employee_messaging_widget.js"></script>
+</body>
+</html>
