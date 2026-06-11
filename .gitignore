@@ -61,14 +61,20 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
-# Flask stuff:
+# Flask and local runtime files
 instance/
+flask_session/
 .webassets-cache
+.env
+.venv/
+.local/
+.agents/
+.cache/
 
 # QR Legends runtime and user-generated data
-data/
+data/*.json
+!data/example_*.json
 uploads/
-.local/
 attached_assets/
 
 # Generated archives and filing bundles

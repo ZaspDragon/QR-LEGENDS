@@ -1,0 +1,11 @@
+{
+  "example-item": {
+    "id": "example-item",
+    "company_id": "example-company",
+    "item_number": "EXAMPLE-SKU",
+    "name": "Example Inventory Item",
+    "quantity": 0,
+    "location": "EX-A01-01",
+    "status": "example"
+  }
+}
