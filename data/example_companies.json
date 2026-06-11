@@ -1,0 +1,8 @@
+{
+  "example-company": {
+    "id": "example-company",
+    "name": "Example Distribution Center",
+    "email": "owner@example.invalid",
+    "status": "example"
+  }
+}
