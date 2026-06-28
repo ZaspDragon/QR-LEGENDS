@@ -42,6 +42,11 @@ except ImportError as e:
     print("   pip install flask flask-cors qrcode[pil] requests werkzeug pillow")
     sys.exit(1)
 
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+if hasattr(sys.stderr, 'reconfigure'):
+    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+
 # Import modules with proper error handling
 backup_service = None
 auto_backup_trigger = None
@@ -74,14 +79,36 @@ except ImportError as e:
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
+DATA_DIR = os.environ.get('DATA_DIR', os.path.join(BASE_DIR, 'data'))
+SESSION_DIR = os.path.join(BASE_DIR, 'flask_session')
+
+# Legacy modules use relative paths. Anchoring the process here keeps those
+# paths stable under Gunicorn and when launched outside the repository folder.
+os.chdir(BASE_DIR)
+os.makedirs(DATA_DIR, exist_ok=True)
+os.makedirs(SESSION_DIR, exist_ok=True)
+
 # Initialize Flask app
-app = Flask(__name__, static_folder='static')
-app.secret_key = os.environ.get('SECRET_KEY', 'qr-legends-warehouse-management-secret-key-2025')
+app = Flask(__name__, static_folder=STATIC_DIR)
+is_production = os.environ.get('FLASK_ENV', '').lower() == 'production'
+configured_secret_key = os.environ.get('SECRET_KEY')
+if is_production and not configured_secret_key:
+    raise RuntimeError("SECRET_KEY must be set when FLASK_ENV=production")
+app.secret_key = configured_secret_key or secrets.token_hex(32)
+if not configured_secret_key:
+    logger.warning("SECRET_KEY is not set; generated an ephemeral local key")
 app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_FILE_DIR'] = SESSION_DIR
 app.config['SESSION_PERMANENT'] = True
 app.config['SESSION_USE_SIGNER'] = True
 app.config['SESSION_KEY_PREFIX'] = 'qr_legends:'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)
+app.config['SESSION_COOKIE_SECURE'] = is_production
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_REFRESH_EACH_REQUEST'] = False
 CORS(app, supports_credentials=True)
 
 # Global data storage
@@ -122,7 +149,6 @@ def is_demo_premium_account(email):
     return email in DEMO_PREMIUM_ACCOUNTS
 
 # Define file paths for data persistence
-DATA_DIR = 'data'
 COMPANIES_FILE = os.path.join(DATA_DIR, 'companies.json')
 EMPLOYEES_FILE = os.path.join(DATA_DIR, 'employees.json')
 INVENTORY_FILE = os.path.join(DATA_DIR, 'inventory_items.json')
@@ -4659,60 +4685,6 @@ def internal_error(error):
 load_data()
 ensure_demo_premium_account()
 
-if __name__ == '__main__':
-    print("🚀 Starting QR Legends Warehouse Management System...")
-    print("=" * 60)
-
-    try:
-        os.makedirs(DATA_DIR, exist_ok=True)
-
-        print("📊 Loading data...")
-        try:
-            load_data()
-        except Exception as load_error:
-            print(f"⚠️ Data loading error (continuing with empty data): {load_error}")
-            inventory_items.clear()
-            companies.clear()
-            employees.clear()
-
-        print("🔐 Verifying demo account...")
-        try:
-            ensure_demo_premium_account()
-        except Exception as demo_error:
-            print(f"⚠️ Demo account setup warning: {demo_error}")
-
-        print("✅ System initialization complete")
-        print("=" * 60)
-
-        port = int(os.environ.get('PORT', 5000)) # Default to 5000 for Cloud Run
-        host = '0.0.0.0'  # Required for Replit external access
-
-        print(f"🌐 Server starting on {host}:{port}")
-        print(f"📊 Demo account: qrlegends22@gmail.com")
-        print(f"🔐 Demo password: demo123")
-        print("=" * 60)
-
-        # Start Flask app with port detection
-        try:
-            # Set session cookie to be secure and HTTPOnly
-            app.config['SESSION_COOKIE_SECURE'] = False
-            app.config['SESSION_COOKIE_HTTPONLY'] = True
-            app.config['SESSION_COOKIE_SAMESITE'] = 'Lax' # Or 'Strict' if appropriate
-            app.config['SESSION_REFRESH_EACH_REQUEST'] = False # Ensure session persistence
-
-            app.run(host='0.0.0.0', port=port, debug=False, threaded=True, use_reloader=False)
-        except Exception as e:
-            print(f"❌ Error running Flask app: {e}")
-            sys.exit(1)
-
-    except KeyboardInterrupt:
-        print("\n👋 Shutting down gracefully...")
-        try:
-            save_data()
-        except Exception as save_error:
-            print(f"⚠️ Error saving data during shutdown: {save_error}")
-    except Exception as e:
-        print(f"❌ Critical startup error: {e}")
-        print("📋 Full error details:")
-        traceback.print_exc()
-        sys.exit(1)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)

@@ -1,0 +1,6 @@
+{
+  "warehouse_name": "Example Distribution Center",
+  "timezone": "America/New_York",
+  "inventory_accuracy_target": 99.0,
+  "pick_accuracy_target": 99.7
+}
