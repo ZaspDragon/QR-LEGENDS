@@ -82,7 +82,7 @@
             padding: 15px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
-            backdrop-filter: blur(10px);}
+            backdrop-filter: none;}
         .current-position {display: flex
             align-items: center;
             gap: 10px;
@@ -103,7 +103,7 @@
             padding: 15px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
-            backdrop-filter: blur(10px);
+            backdrop-filter: none;
             max-width: 300px;}
         .nav-step {display: flex
             align-items: center;
@@ -363,7 +363,7 @@
                 const context = canvas.getContext('2d');
                 context.fillStyle = '#1e293b';
                 context.fillRect(0, 0, 256, 64);
-                context.fillStyle = '#ffffff';
+                context.fillStyle = "#f7fbff";
                 context.font = 'bold 24px Arial';
                 context.textAlign = 'center';
                 context.fillText(locationId, 128, 40);

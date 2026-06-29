@@ -6,35 +6,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Driver Management Hub - QR Legends</title>
     <style>
-        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif 
-            margin: 0 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            margin: 0
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
             min-height: 100vh}
         .container {max-width: 1400px margin: 0 auto padding: 20px}
-        .header {background: rgba(255,255,255,0.1) 
-            backdrop-filter: blur(10px)
-            color: white 
-            padding: 30px; 
-            border-radius: 15px; 
-            margin-bottom: 30px; 
-            text-align: center; 
-            border: 1px solid rgba(255,255,255,0.2);}
+        .header {background: rgba(16,41,67,0.1)
+            backdrop-filter: none
+            color: white
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            border: 1px solid rgba(16,41,67,0.2);}
         .grid {display: grid grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)) gap: 25px}
-        .card {background: rgba(255,255,255,0.95) 
-            padding: 25px 
-            border-radius: 15px 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1); 
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.3);
+        .card {background: rgba(16,41,67,0.95)
+            padding: 25px
+            border-radius: 15px
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: none;
+            border: 1px solid rgba(16,41,67,0.3);
             transition: transform 0.3s ease, box-shadow 0.3s ease;}
-        .card:hover {transform: translateY(-5px) 
+        .card:hover {transform: translateY(-5px)
             box-shadow: 0 12px 40px rgba(0,0,0,0.15)}
-        .btn {padding: 12px 24px 
-            margin: 8px 
-            border: none 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-weight: 600; 
+        .btn {padding: 12px 24px
+            margin: 8px
+            border: none
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
             font-size: 14px;
             transition: all 0.3s ease;
             text-decoration: none;
@@ -42,68 +42,68 @@
         .btn-primary {background: linear-gradient(135deg, #667eea, #764ba2) color: white}
         .btn-success {background: linear-gradient(135deg, #4facfe, #00f2fe) color: white}
         .btn-warning {background: linear-gradient(135deg, #ffecd2, #fcb69f) color: #8b4513}
-        .btn-danger {background: linear-gradient(135deg, #ff9a9e, #fecfef) color: #dc3545}
+        .btn-danger {background: linear-gradient(135deg, #ff9a9e, #fecfef) color: #f7fbff}
         .btn:hover {transform: translateY(-2px) box-shadow: 0 4px 12px rgba(0,0,0,0.2)}
         .status-active {color: #28a745 font-weight: bold}
         .status-waiting {color: #ffc107 font-weight: bold}
-        .status-delayed {color: #dc3545 font-weight: bold}
+        .status-delayed {color: #f7fbff font-weight: bold}
         .stats-grid {display: grid grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) gap: 15px margin-bottom: 20px}
-        .stat-card {background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.2)) 
-            padding: 20px 
-            border-radius: 12px 
-            text-align: center; 
+        .stat-card {background: linear-gradient(135deg, rgba(16,41,67,0.1), rgba(16,41,67,0.2))
+            padding: 20px
+            border-radius: 12px
+            text-align: center;
             color: white;
-            border: 1px solid rgba(255,255,255,0.3);}
+            border: 1px solid rgba(16,41,67,0.3);}
         .stat-number {font-size: 2.5em font-weight: bold margin-bottom: 5px}
         .form-group {margin: 15px 0}
         .form-group label {display: block margin-bottom: 8px font-weight: 600 color: #333}
-        .form-group input, .form-group select, .form-group textarea {width: 100% 
-            padding: 12px 
-            border: 2px solid #e1e5e9 
-            border-radius: 8px; 
-            box-sizing: border-box; 
+        .form-group input, .form-group select, .form-group textarea {width: 100%
+            padding: 12px
+            border: 2px solid #e1e5e9
+            border-radius: 8px;
+            box-sizing: border-box;
             font-size: 14px;
             transition: border-color 0.3s ease}
         .form-group input:focus, .form-group select:focus, .form-group textarea: focus {border-color: #667eea
             outline: none}
-        .driver-card {background: #f8f9fa 
-            border: 1px solid #dee2e6 
-            border-radius: 10px 
-            padding: 15px; 
+        .driver-card {background: #f8f9fa
+            border: 1px solid #dee2e6
+            border-radius: 10px
+            padding: 15px;
             margin: 10px 0}
-        .dock-status {display: inline-block 
-            padding: 6px 12px 
-            border-radius: 20px 
-            font-size: 12px; 
-            font-weight: bold; 
+        .dock-status {display: inline-block
+            padding: 6px 12px
+            border-radius: 20px
+            font-size: 12px;
+            font-weight: bold;
             color: white}
         .dock-available {background: #28a745}
         .dock-occupied {background: #dc3545}
         .dock-maintenance {background: #6c757d}
         .route-optimization {background: linear-gradient(135deg, #ff9a9e, #fecfef) padding: 20px border-radius: 10px margin: 20px 0}
-        .notification {padding: 15px 
-            margin: 10px 0 
-            border-radius: 8px 
+        .notification {padding: 15px
+            margin: 10px 0
+            border-radius: 8px
             border-left: 4px solid}
         .notification-success {background: #d4edda border-color: #28a745 color: #155724}
         .notification-warning {background: #fff3cd border-color: #ffc107 color: #856404}
-        .notification-danger {background: #f8d7da border-color: #dc3545 color: #721c24}
-        .back-button {position: fixed 
-            top: 20px 
-            left: 20px 
-            background: rgba(255,255,255,0.9); 
-            color: #333; 
-            padding: 10px 20px; 
-            border-radius: 25px; 
-            text-decoration: none; 
+        .notification-danger {background: #f8d7da border-color: #f7fbff color: #721c24}
+        .back-button {position: fixed
+            top: 20px
+            left: 20px
+            background: rgba(16,41,67,0.9);
+            color: #333;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
             font-weight: 600;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             transition: all 0.3s ease}
-        .back-button: hover {background: white transform: translateY(-2px)}
-        .live-tracking {background: linear-gradient(135deg, #667eea, #764ba2) 
-            color: white 
-            padding: 20px 
-            border-radius: 10px; 
+        .back-button: hover {background: #102943 transform: translateY(-2px)}
+        .live-tracking {background: linear-gradient(135deg, #667eea, #764ba2)
+            color: white
+            padding: 20px
+            border-radius: 10px;
             margin: 20px 0}
         .eta-display {font-size: 1.5em font-weight: bold color: #4facfe}
         @media (max-width: 768px) {.grid { grid-template-columns: 1fr}
@@ -119,7 +119,7 @@
         <div class="header">
             <h1>🚛 Driver Management Hub</h1>
             <p>Comprehensive driver portal with automated check-in/out, dock management, and real-time tracking</p>
-            
+
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-number" id="activeDrivers">12</div>
@@ -145,16 +145,16 @@
             <div class="card">
                 <h3>📱 Driver Mobile Portal</h3>
                 <p>QR/Barcode scanning for pickup and drop-off confirmation with digital proof of delivery</p>
-                
+
                 <div class="form-group">
                     <label>Driver Login/Check-in</label>
                     <input type="text" id="driverCode" placeholder="Scan driver QR code or enter driver ID">
                 </div>
-                
+
                 <button class="btn btn-primary" onclick="driverCheckIn()">📱 Driver Check-In</button>
                 <button class="btn btn-success" onclick="openDriverPortal()">🚚 Open Driver Portal</button>
                 <button class="btn btn-warning" onclick="generateDriverQR()">🔗 Generate Driver QR</button>
-                
+
                 <div id="driverStatus" style="margin-top: 15px;"></div>
             </div>
 
@@ -162,7 +162,7 @@
             <div class="card">
                 <h3>🚪 Automated Gate Management</h3>
                 <p>QR code, RFID, or license plate scanning for automated check-in/out</p>
-                
+
                 <div class="form-group">
                     <label>Vehicle Check-In Method</label>
                     <select id="checkInMethod">
@@ -172,15 +172,15 @@
                         <option value="manual">Manual Entry</option>
                     </select>
                 </div>
-                
+
                 <div class="form-group">
                     <label>Vehicle Identifier</label>
                     <input type="text" id="vehicleId" placeholder="Scan or enter vehicle ID">
                 </div>
-                
+
                 <button class="btn btn-success" onclick="automatedCheckIn()">✅ Check-In Vehicle</button>
                 <button class="btn btn-warning" onclick="automatedCheckOut()">🚪 Check-Out Vehicle</button>
-                
+
                 <div class="notification notification-success" style="display: none;" id="gateNotification">
                     Vehicle successfully processed through gate
                 </div>
@@ -190,7 +190,7 @@
             <div class="card">
                 <h3>🏭 Dock & Yard Management</h3>
                 <p>Appointment scheduling, dock assignment, and real-time yard inventory</p>
-                
+
                 <div class="form-group">
                     <label>Available Dock Doors</label>
                     <div id="dockStatus">
@@ -201,7 +201,7 @@
                         <span class="dock-status dock-occupied">Dock 5: Occupied</span>
                     </div>
                 </div>
-                
+
                 <button class="btn btn-primary" onclick="scheduleDockAppointment()">📅 Schedule Appointment</button>
                 <button class="btn btn-success" onclick="assignDock()">🎯 Auto-Assign Dock</button>
                 <button class="btn btn-warning" onclick="viewYardInventory()">📦 View Yard Inventory</button>
@@ -211,14 +211,14 @@
             <div class="card">
                 <h3>🗺️ AI Route Optimization</h3>
                 <p>Turn-by-turn navigation with cost optimization and real-time traffic updates</p>
-                
+
                 <div class="route-optimization">
                     <h4>🎯 Smart Route Planning</h4>
                     <p><strong>Next Stop:</strong> <span id="nextStop">ABC Distribution Center</span></p>
                     <p><strong>Optimized Route:</strong> <span id="routeInfo">3 stops, 47 miles, $23.50 total cost</span></p>
                     <p><strong>ETA:</strong> <span class="eta-display" id="routeETA">2:45 PM</span></p>
                 </div>
-                
+
                 <button class="btn btn-primary" onclick="optimizeRoute()">🚀 Optimize Route</button>
                 <button class="btn btn-success" onclick="startNavigation()">🧭 Start Navigation</button>
                 <button class="btn btn-warning" onclick="reportTrafficIssue()">⚠️ Report Issue</button>
@@ -228,7 +228,7 @@
             <div class="card">
                 <h3>📍 Real-Time Tracking</h3>
                 <p>GPS tracking, telematics integration, and automated customer notifications</p>
-                
+
                 <div class="live-tracking">
                     <h4>📡 Live Driver Tracking</h4>
                     <div id="activeDriversList">
@@ -246,7 +246,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <button class="btn btn-primary" onclick="refreshTracking()">🔄 Refresh Tracking</button>
                 <button class="btn btn-success" onclick="sendCustomerUpdates()">📧 Send Customer Updates</button>
             </div>
@@ -255,7 +255,7 @@
             <div class="card">
                 <h3>⚠️ Exception Management</h3>
                 <p>Instant logging for damaged freight, partial deliveries, and returns</p>
-                
+
                 <div class="form-group">
                     <label>Exception Type</label>
                     <select id="exceptionType">
@@ -266,12 +266,12 @@
                         <option value="refused">Delivery Refused</option>
                     </select>
                 </div>
-                
+
                 <div class="form-group">
                     <label>Exception Details</label>
                     <textarea id="exceptionDetails" rows="3" placeholder="Describe the exception..."></textarea>
                 </div>
-                
+
                 <button class="btn btn-warning" onclick="logException()">📝 Log Exception</button>
                 <button class="btn btn-danger" onclick="escalateException()">🚨 Escalate to Manager</button>
                 <button class="btn btn-success" onclick="resolveException()">✅ Mark Resolved</button>
@@ -281,7 +281,7 @@
             <div class="card">
                 <h3>📋 Digital Proof of Delivery</h3>
                 <p>Signature capture, photo evidence, and GPS timestamping</p>
-                
+
                 <div class="form-group">
                     <label>Delivery Confirmation Method</label>
                     <select id="confirmationMethod">
@@ -291,11 +291,11 @@
                         <option value="pin">PIN Verification</option>
                     </select>
                 </div>
-                
+
                 <button class="btn btn-success" onclick="captureSignature()">✍️ Capture Signature</button>
                 <button class="btn btn-primary" onclick="takeDeliveryPhoto()">📸 Take Photo</button>
                 <button class="btn btn-warning" onclick="getGPSLocation()">📍 GPS Timestamp</button>
-                
+
                 <div id="proofOfDelivery" style="margin-top: 15px;"></div>
             </div>
 
@@ -303,17 +303,17 @@
             <div class="card">
                 <h3>🔗 ERP/WMS Integration</h3>
                 <p>Seamless integration with order management and accounting systems</p>
-                
+
                 <div class="notification notification-success">
                     <strong>Integration Status:</strong> All systems connected
                 </div>
-                
+
                 <div style="margin: 15px 0;">
                     <p><strong>Orders in Queue:</strong> <span id="ordersQueue">15</span></p>
                     <p><strong>Ready for Invoicing:</strong> <span id="readyInvoicing">8</span></p>
                     <p><strong>AR Updates:</strong> <span id="arUpdates">12</span></p>
                 </div>
-                
+
                 <button class="btn btn-primary" onclick="syncOrders()">🔄 Sync Orders</button>
                 <button class="btn btn-success" onclick="processInvoicing()">💰 Process Invoicing</button>
                 <button class="btn btn-warning" onclick="updateAR()">📊 Update A/R</button>
@@ -323,7 +323,7 @@
             <div class="card">
                 <h3>📞 Customer Communication</h3>
                 <p>Automated notifications and real-time delivery updates</p>
-                
+
                 <div class="form-group">
                     <label>Notification Type</label>
                     <select id="notificationType">
@@ -334,12 +334,12 @@
                         <option value="exception">Delivery Exception</option>
                     </select>
                 </div>
-                
+
                 <div class="form-group">
                     <label>Customer Contact</label>
                     <input type="text" id="customerContact" placeholder="Phone or email">
                 </div>
-                
+
                 <button class="btn btn-success" onclick="sendSMSUpdate()">💬 Send SMS</button>
                 <button class="btn btn-primary" onclick="sendEmailUpdate()">📧 Send Email</button>
                 <button class="btn btn-warning" onclick="callCustomer()">📞 Call Customer</button>
@@ -444,7 +444,7 @@
         function optimizeRoute() {document.getElementById('nextStop').textContent = 'XYZ Manufacturing'
             document.getElementById('routeInfo').textContent = '4 stops, 52 miles, $26.75 total cost'
             document.getElementById('routeETA').textContent = '3: 10 PM'
-            
+
             alert('🚀 Route Optimized!\n• 15% cost reduction\n• 23 minutes saved\n• 3 traffic delays avoided\n• Customer notifications sent')}
 
         function startNavigation() {alert('🧭 Navigation Started\n• Turn-by-turn directions active\n• Real-time traffic monitoring\n• Customer ETA updates enabled')}
@@ -514,7 +514,7 @@ Reference: EXC-${Date.now()}
 
         function sendSMSUpdate() {const contact = document.getElementById('customerContact').value
             const type = document.getElementById('notificationType').value
-            
+
             if (!contact) {
                 alert('Please enter customer contact')
                 return;}
@@ -542,13 +542,13 @@ Reference: EXC-${Date.now()}
             setInterval(() => {
                 const dockStatuses = ['available', 'occupied', 'maintenance']
                 const dockElements = document.querySelectorAll('.dock-status')
-                
+
                 dockElements.forEach((element, index) => {
                     if (Math.random() > 0.8) { // 20% chance of status change
                         const newStatus = dockStatuses[Math.floor(Math.random() * dockStatuses.length)]
                         element.className = `dock-status dock-${newStatus}`;
                         element.textContent = `Dock ${index + 1}: ${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}`;
-            
+
             // Update dock status in the interface
             updateDockStatus(index, newStatus);
         }

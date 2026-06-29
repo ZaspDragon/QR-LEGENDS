@@ -10,22 +10,22 @@
     <script src="/static/employee_messaging_widget.js"></script>
     <style>
         * {margin: 0 padding: 0 box-sizing: border-box}
-        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif 
-            background: #f5f7fa 
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+            background: #f5f7fa
             padding: 20px}
-        .container {max-width: 1400px 
-            margin: 0 auto 
-            background: white
+        .container {max-width: 1400px
+            margin: 0 auto
+            background: #102943
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             overflow: hidden}
-        .back-button {display: inline-block 
-            margin: 20px 
-            padding: 10px 20px 
-            background: #6c757d; 
-            color: white; 
-            text-decoration: none; 
-            border-radius: 5px; 
+        .back-button {display: inline-block
+            margin: 20px
+            padding: 10px 20px
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
             transition: background 0.3s}
         .back-button:hover {background: #5a6268}
 
@@ -33,44 +33,44 @@
             color: white
             padding: 30px
             text-align: center}
-        .header h1 {color: white 
-            margin: 0 0 10px 0 
-            display: flex 
-            align-items: center; 
+        .header h1 {color: white
+            margin: 0 0 10px 0
+            display: flex
+            align-items: center;
             justify-content: center;
-            gap: 15px; 
+            gap: 15px;
             font-size: 2.5rem}
         .header p {margin: 0 opacity: 0.9 font-size: 1.1rem}
 
-        .alert-grid {display: grid 
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) 
-            gap: 20px 
+        .alert-grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
+            gap: 20px
             padding: 30px}
-        .alert-card {background: white 
-            padding: 25px 
-            border-radius: 12px 
+        .alert-card {background: #102943
+            padding: 25px
+            border-radius: 12px
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             transition: transform 0.3s, box-shadow 0.3s;}
         .alert-card:hover {transform: translateY(-2px)
             box-shadow: 0 8px 20px rgba(0,0,0,0.15)}
 
-        .critical-alert {border-left: 6px solid #e74c3c background: linear-gradient(135deg, #fdf2f2, #fff)}
-        .warning-alert {border-left: 6px solid #f39c12 background: linear-gradient(135deg, #fef9e7, #fff)}
-        .info-alert {border-left: 6px solid #3498db background: linear-gradient(135deg, #ebf3ff, #fff)}
-        .success-alert {border-left: 6px solid #27ae60 background: linear-gradient(135deg, #d5f4e6, #fff)}
+        .critical-alert {border-left: 6px solid #e74c3c background: linear-gradient(135deg, #fdf2f2, #2f5f89)}
+        .warning-alert {border-left: 6px solid #f39c12 background: linear-gradient(135deg, #fef9e7, #2f5f89)}
+        .info-alert {border-left: 6px solid #3498db background: linear-gradient(135deg, #ebf3ff, #2f5f89)}
+        .success-alert {border-left: 6px solid #27ae60 background: linear-gradient(135deg, #d5f4e6, #2f5f89)}
 
         .alert-card h3 {margin-bottom: 15px font-size: 1.3rem}
-        .alert-number {font-size: 3rem 
-            font-weight: bold 
+        .alert-number {font-size: 3rem
+            font-weight: bold
             margin-bottom: 15px
             text-align: center}
-        .critical-alert .alert-number {color: #e74c3c}
+        .critical-alert .alert-number {color: #f7fbff}
         .warning-alert .alert-number {color: #f39c12}
         .info-alert .alert-number {color: #3498db}
         .success-alert .alert-number {color: #27ae60}
 
         .alert-list {margin-bottom: 20px}
-        .alert-list div {padding: 8px 0 
+        .alert-list div {padding: 8px 0
             border-bottom: 1px solid rgba(0,0,0,0.1)
             font-size: 0.95rem}
         .alert-list div:last-child {border-bottom: none}
@@ -83,40 +83,40 @@
             cursor: pointer;
             transition: all 0.3s;
             font-size: 0.95rem}
-        .critical-alert .alert-button {background: #e74c3c 
+        .critical-alert .alert-button {background: #e74c3c
             color: white}
-        .critical-alert .alert-button: hover {background: #c0392b 
+        .critical-alert .alert-button: hover {background: #c0392b
             transform: translateY(-1px)}
-        .warning-alert .alert-button {background: #f39c12 
+        .warning-alert .alert-button {background: #f39c12
             color: white}
-        .warning-alert .alert-button: hover {background: #d68910 
+        .warning-alert .alert-button: hover {background: #d68910
             transform: translateY(-1px)}
-        .info-alert .alert-button {background: #3498db 
+        .info-alert .alert-button {background: #3498db
             color: white}
-        .info-alert .alert-button: hover {background: #2980b9 
+        .info-alert .alert-button: hover {background: #2980b9
             transform: translateY(-1px)}
 
         .exception-table-section {padding: 30px
             background: #f8f9fa}
-        .exception-table {width: 100% 
+        .exception-table {width: 100%
             border-collapse: collapse
-            background: white
+            background: #102943
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);}
         .exception-table th,
-        .exception-table td {padding: 15px 
-            text-align: left 
+        .exception-table td {padding: 15px
+            text-align: left
             border-bottom: 1px solid #eee}
-        .exception-table th {background: linear-gradient(135deg, #667eea, #764ba2) 
+        .exception-table th {background: linear-gradient(135deg, #667eea, #764ba2)
             color: white
-            font-weight: 600 
+            font-weight: 600
             font-size: 0.95rem;
             text-transform: uppercase;
             letter-spacing: 0.5px}
         .exception-table tbody tr:hover {background: #f8f9fa}
 
-        .severity-critical {color: #e74c3c font-weight: bold}
+        .severity-critical {color: #f7fbff font-weight: bold}
         .severity-warning {color: #f39c12 font-weight: bold}
         .severity-info {color: #3498db font-weight: bold}
 
@@ -146,7 +146,7 @@
         .btn-review: hover {background: #1e7e34 transform: translateY(-1px)}
 
         .stats-section {padding: 30px
-            background: white}
+            background: #102943}
         .stats-grid {display: grid
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr))
             gap: 20px}
@@ -159,7 +159,7 @@
         .stat-card:hover {transform: translateY(-2px)}
         .stat-number {font-size: 2.5rem
             font-weight: bold
-            color: #dc3545
+            color: #f7fbff
             margin-bottom: 5px}
         .stat-label {color: #666
             font-size: 0.9rem
@@ -214,7 +214,7 @@
                 <div style="text-align: left; margin-top: 20px;">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                         <span>Today vs Yesterday:</span>
-                        <span style="color: #e74c3c; font-weight: bold;">+8 exceptions</span>
+                        <span style="color: #f7fbff; font-weight: bold;">+8 exceptions</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                         <span>This Week:</span>

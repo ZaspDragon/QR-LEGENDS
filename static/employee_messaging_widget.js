@@ -59,7 +59,7 @@ class EmployeeMessagingWidget {constructor() {
                     right: 0;
                     width: 320px;
                     height: 400px;
-                    background: white;
+                    background: #102943;
                     border-radius: 15px;
                     box-shadow: 0 10px 40px rgba(0,0,0,0.3);
                     display: none;
@@ -102,7 +102,7 @@ class EmployeeMessagingWidget {constructor() {
                     <div style="
                         padding: 15px;
                         border-top: 1px solid #e0e0e0;
-                        background: white;
+                        background: #102943;
                     ">
                         <div style="display: flex; gap: 10px;">
                             <input type="text" id="message-input" placeholder="Type a message..." style="
@@ -215,15 +215,15 @@ class EmployeeMessagingWidget {constructor() {
                     max-width: 80%;
                     padding: 10px 15px;
                     border-radius: 18px;
-                    ${message.isOwn ? 'background: #667eea; color: white;' : 'background: white; color: #1a1a1a; border: 1px solid #e0e0e0;'}
+                    ${message.isOwn ? 'background: #667eea; color: white;' : 'background: #102943; color: #1a1a1a; border: 1px solid #e0e0e0;'}
                     font-size: 14px;
                     line-height: 1.4;
                 ">
-                    <div style="font-weight: bold; margin-bottom: 5px; font-size: 12px; ${message.isOwn ? 'color: #ffffff;' : 'color: #2c3e50;'}">
+                    <div style="font-weight: bold; margin-bottom: 5px; font-size: 12px; ${message.isOwn ? 'color: white;' : 'color: #2c3e50;'}">
                         ${message.sender}
                     </div>
-                    <div style="${message.isOwn ? 'color: #ffffff;' : 'color: #1a1a1a;'}">${message.text}</div>
-                    <div style="font-size: 11px; margin-top: 5px; ${message.isOwn ? 'color: #e0e9ff;' : 'color: #555555;'}">
+                    <div style="${message.isOwn ? 'color: white;' : 'color: #1a1a1a;'}">${message.text}</div>
+                    <div style="font-size: 11px; margin-top: 5px; ${message.isOwn ? 'color: #f7fbff;' : 'color: #555555;'}">
                         ${this.formatTime(message.timestamp)}
                     </div>
                 </div>

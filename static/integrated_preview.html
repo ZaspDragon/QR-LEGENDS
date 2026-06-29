@@ -12,7 +12,7 @@
 
         body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif
             background: #0b1220;
-            color: #e2e8f0;
+            color: #f7fbff;
             min-height: 100vh;}
 
         .header {border-bottom: 1px solid rgba(100, 116, 139, 0.3)
@@ -20,7 +20,7 @@
             top: 0;
             z-index: 10;
             background: rgba(11, 18, 32, 0.8);
-            backdrop-filter: blur(6px);}
+            backdrop-filter: none;}
 
         .header-content {max-width: 1200px
             margin: 0 auto;
@@ -42,7 +42,7 @@
             background: rgba(37, 99, 235, 0.2);
             border: 1px solid rgba(37, 99, 235, 0.3);}
 
-        .logo-text {color: #fff
+        .logo-text {color: white
             font-weight: 600;}
 
         .nav {display: flex
@@ -59,7 +59,7 @@
             transition: all 0.2s;}
 
         .nav-btn.active {background: rgba(100, 116, 139, 0.3)
-            color: #e2e8f0;}
+            color: #f7fbff;}
 
         .nav-btn:hover {background: rgba(100, 116, 139, 0.2)}
 
@@ -71,7 +71,7 @@
             border: 1px solid rgba(100, 116, 139, 0.3);
             border-radius: 6px;
             background: #1e293b;
-            color: #e2e8f0;
+            color: #f7fbff;
             font-size: 14px;}
 
         .main-content {max-width: 1200px
@@ -85,7 +85,7 @@
 
         .page-title {font-size: 28px
             font-weight: 600;
-            color: #fff;}
+            color: white;}
 
         .step-tracker {display: flex
             gap: 8px;}
@@ -97,7 +97,7 @@
             color: #94a3b8;}
 
         .step.active {background: #2563eb
-            color: #fff;}
+            color: white;}
 
         .row {display: grid
             grid-template-columns: 1fr 2fr 1fr;
@@ -112,7 +112,7 @@
         .card-title {font-size: 16px
             font-weight: 600;
             margin-bottom: 12px;
-            color: #fff;}
+            color: white;}
 
         .scan-bar {background: #0f172a
             border: 2px dashed #2563eb;
@@ -152,7 +152,7 @@
             border: 1px solid rgba(100, 116, 139, 0.3);
             border-radius: 6px;
             background: #374151;
-            color: #e2e8f0;
+            color: #f7fbff;
             cursor: pointer;
             font-size: 14px;
             transition: all 0.2s;}
@@ -220,8 +220,8 @@
           --ql-warning: #f59e0b;
           --ql-danger: #ef4444;
           --ql-accent: #6366f1;
-          --ql-border: rgba(255,255,255,.12);
-          --ql-surface: rgba(255,255,255,.06);
+          --ql-border: rgba(16,41,67,.12);
+          --ql-surface: rgba(16,41,67,.06);
         }
 
         html,body{height:100%;}
@@ -238,7 +238,7 @@
         .ql-header{
           position: sticky; top:0; z-index:1000;
           background: rgba(8,27,46,.7);
-          backdrop-filter: blur(6px);
+          backdrop-filter: none;
           border-bottom: 1px solid var(--ql-border);
         }
         .ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
@@ -248,17 +248,17 @@
         .ql-btn{
           display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
           background: var(--ql-surface); border: 1px solid var(--ql-border);
-          box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+          box-shadow: 0 1px 0 rgba(16,41,67,.05) inset, 0 4px 14px rgba(0,0,0,.2);
           transition: transform .08s ease, background .2s ease, border-color .2s ease;
         }
-        .ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+        .ql-btn:hover{ transform: translateY(-1px); background: rgba(16,41,67,.12); }
         .ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
 
         .ql-container{ max-width:1400px; margin:22px auto; padding:0 20px; }
         .ql-card{
           background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
           border: 1px solid var(--ql-border);
-          box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+          box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(16,41,67,.06) inset;
           border-radius:16px; padding:20px;
           margin-bottom: 20px;
         }
@@ -312,7 +312,7 @@
         }
 
         .preview-option:hover {
-            background: rgba(255,255,255,.12);
+            background: rgba(16,41,67,.12);
             transform: translateX(4px);
         }
 
@@ -819,7 +819,7 @@
                         <div class="card-title">Active Incidents</div>
                         <div class="queue-item">
                             <span>INC-001 • Damage</span>
-                            <div style="color: #ef4444; font-size: 12px;">CRITICAL</div>
+                            <div style="color: #f7fbff; font-size: 12px;">CRITICAL</div>
                         </div>
                         <div class="queue-item">
                             <span>INC-002 • Short Pick</span>
@@ -907,7 +907,7 @@
             exceptions: {title: '⚠️ Active Exceptions',
                 content: `
                     <div style="font-size: 14px">
-                        <div style="margin: 4px 0; color: #ef4444;">🔴 Critical: 2</div>
+                        <div style="margin: 4px 0; color: #f7fbff;">🔴 Critical: 2</div>
                         <div style="margin: 4px 0; color: #f59e0b;">🟡 High: 5</div>
                         <div style="margin: 4px 0; color: #10b981;">🟢 Low: 12</div>
                         <button class="btn" style="margin-top: 8px; width: 100%;">View All</button>

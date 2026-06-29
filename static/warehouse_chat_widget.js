@@ -17,7 +17,7 @@
                 <div class="warehouse-chat-header">
                     <span>🏭 Team Chat</span>
                     <div style="display: flex; gap: 8px; align-items: center;">
-                        <button onclick="window.open('/warehouse_chat', '_blank')" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px;">📱 Full Chat</button>
+                        <button onclick="window.open('/warehouse_chat', '_blank')" style="background: rgba(16,41,67,0.2); border: none; color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px;">📱 Full Chat</button>
                         <button class="warehouse-chat-close" id="warehouse-chat-close">×</button>
                     </div>
                 </div>
@@ -71,7 +71,7 @@
                 right: 0;
                 width: 320px;
                 height: 450px;
-                background: white;
+                background: #102943;
                 border-radius: 12px;
                 box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
                 overflow: hidden;
@@ -100,7 +100,7 @@
                 border-radius: 50%;
                 transition: background 0.3s ease}
 
-            .warehouse-chat-close:hover {background: rgba(255, 255, 255, 0.2)}
+            .warehouse-chat-close:hover {background: rgba(16,41,67,0.2)}
 
             .warehouse-chat-tabs {display: flex
                 background: #f8f9fa
@@ -141,7 +141,7 @@
                 margin-left: auto;
                 text-align: right}
 
-            .warehouse-message.received {background: white
+            .warehouse-message.received {background: #102943
                 border: 1px solid #e5e7eb}
 
             .warehouse-message.urgent {border-left: 4px solid #dc2626
@@ -150,7 +150,7 @@
             .warehouse-chat-input-area {display: flex
                 padding: 12px
                 border-top: 1px solid #e5e7eb;
-                background: white;
+                background: #102943;
                 gap: 8px}
 
             .urgent-toggle {background: #f3f4f6
@@ -163,7 +163,7 @@
 
             .urgent-toggle.active {background: #dc2626
                 color: white
-                border-color: #dc2626}
+                border-color: #f7fbff}
 
             .warehouse-chat-input-area input {flex: 1
                 padding: 8px 12px
@@ -298,7 +298,7 @@
                             <span style="float: right; font-weight: normal;">${new Date(msg.timestamp).toLocaleTimeString()}</span>
                         </div>
                         <div>${content}</div>
-                        ${msg.urgent ? '<div style="color: #dc2626 font-weight: bold font-size: 10px margin-top: 3px">⚠️ URGENT</div>' : ''}
+                        ${msg.urgent ? '<div style="color: #f7fbff font-weight: bold font-size: 10px margin-top: 3px">⚠️ URGENT</div>' : ''}
                     </div>
                 `;
             }).join('');
@@ -340,7 +340,7 @@
                 <div class="warehouse-chat-header">
                     <span>🏭 Team Chat</span>
                     <div style="display: flex; gap: 8px; align-items: center;">
-                        <button onclick="window.open('/warehouse_chat', '_blank')" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px;">📱 Full Chat</button>
+                        <button onclick="window.open('/warehouse_chat', '_blank')" style="background: rgba(16,41,67,0.2); border: none; color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px;">📱 Full Chat</button>
                         <button class="warehouse-chat-close" id="warehouse-chat-close">×</button>
                     </div>
                 </div>
@@ -394,7 +394,7 @@
                 right: 0;
                 width: 320px;
                 height: 450px;
-                background: white;
+                background: #102943;
                 border-radius: 12px;
                 box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
                 overflow: hidden;
@@ -423,7 +423,7 @@
                 border-radius: 50%;
                 transition: background 0.3s ease}
 
-            .warehouse-chat-close:hover {background: rgba(255, 255, 255, 0.2)}
+            .warehouse-chat-close:hover {background: rgba(16,41,67,0.2)}
 
             .warehouse-chat-tabs {display: flex
                 background: #f8f9fa
@@ -464,7 +464,7 @@
                 margin-left: auto;
                 text-align: right}
 
-            .warehouse-message.received {background: white
+            .warehouse-message.received {background: #102943
                 border: 1px solid #e5e7eb}
 
             .warehouse-message.urgent {border-left: 4px solid #dc2626
@@ -473,7 +473,7 @@
             .warehouse-chat-input-area {display: flex
                 padding: 12px
                 border-top: 1px solid #e5e7eb;
-                background: white;
+                background: #102943;
                 gap: 8px}
 
             .urgent-toggle {background: #f3f4f6
@@ -486,7 +486,7 @@
 
             .urgent-toggle.active {background: #dc2626
                 color: white
-                border-color: #dc2626}
+                border-color: #f7fbff}
 
             .warehouse-chat-input-area input {flex: 1
                 padding: 8px 12px
@@ -621,7 +621,7 @@
                             <span style="float: right; font-weight: normal;">${new Date(msg.timestamp).toLocaleTimeString()}</span>
                         </div>
                         <div>${content}</div>
-                        ${msg.urgent ? '<div style="color: #dc2626 font-weight: bold font-size: 10px margin-top: 3px">⚠️ URGENT</div>' : ''}
+                        ${msg.urgent ? '<div style="color: #f7fbff font-weight: bold font-size: 10px margin-top: 3px">⚠️ URGENT</div>' : ''}
                     </div>
                 `;
             }).join('');

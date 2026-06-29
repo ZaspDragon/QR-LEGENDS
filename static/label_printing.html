@@ -7,10 +7,10 @@
     <title>Label Printing - QR Legends</title>
     <script src="/static/copyright_notice.js"></script>
     <style>
-        body {font-family: Arial, sans-serif margin: 0 padding: 20px background-color: #f5f5f5}
+        body {font-family: Arial, sans-serif margin: 0 padding: 20px background-color: #0b1d33}
         .container {max-width: 1200px margin: 0 auto}
         .page-header {background: linear-gradient(135deg, #6c757d, #495057) color: white padding: 20px border-radius: 10px; text-align: center; margin-bottom: 30px}
-        .card {background: white padding: 20px margin: 15px 0 border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+        .card {background: #102943 padding: 20px margin: 15px 0 border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
         .btn {padding: 10px 20px margin: 5px border: none border-radius: 5px; cursor: pointer; font-weight: bold}
         .btn-primary {background: #007bff color: white}
         .btn-success {background: #28a745 color: white}
@@ -235,7 +235,7 @@
                     const itemNumber = document.getElementById('itemNumber').value || 'ABC-123';
                     const itemName = document.getElementById('itemName').value || 'Sample Item';
                     previewContent = `
-                        <div style="border: 2px solid #333; padding: 15px; background: white; margin: 10px;">
+                        <div style="border: 2px solid #333; padding: 15px; background: #102943; margin: 10px;">
                             <div style="text-align: center; border-bottom: 1px solid #ccc; padding-bottom: 10px; margin-bottom: 10px;">
                                 <strong>${itemName}</strong>
                             </div>
@@ -257,7 +257,7 @@
                     const locationCode = document.getElementById('locationCode').value || 'A-15-3';
                     const zone = document.getElementById('locationZone').value || 'A';
                     previewContent = `
-                        <div style="border: 2px solid #333; padding: 15px; background: white; margin: 10px;">
+                        <div style="border: 2px solid #333; padding: 15px; background: #102943; margin: 10px;">
                             <div style="text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 10px;">
                                 ZONE ${zone}
                             </div>
@@ -276,7 +276,7 @@
                     const trackingNumber = document.getElementById('trackingNumber').value || '1Z999AA1234567890';
                     const carrier = document.getElementById('carrier').value || 'ups';
                     previewContent = `
-                        <div style="border: 2px solid #333; padding: 15px; background: white; margin: 10px;">
+                        <div style="border: 2px solid #333; padding: 15px; background: #102943; margin: 10px;">
                             <div style="text-align: center; font-weight: bold; margin-bottom: 10px;">
                                 ${carrier.toUpperCase()} SHIPPING LABEL
                             </div>
@@ -299,11 +299,11 @@
                     const containerId = document.getElementById('containerId').value || 'CNT-001';
                     const containerType = document.getElementById('containerType').value || 'pallet';
                     previewContent = `
-                        <div style="border: 2px solid #333; padding: 15px; background: white; margin: 10px;">
+                        <div style="border: 2px solid #333; padding: 15px; background: #102943; margin: 10px;">
                             <div style="text-align: center; font-weight: bold; margin-bottom: 10px;">
                                 ${containerType.toUpperCase()}
                             </div>
-                            <div style="text-align: center; font-size: 20px; font-weight: bold; color: #dc3545;">
+                            <div style="text-align: center; font-size: 20px; font-weight: bold; color: #f7fbff;">
                                 ${containerId}
                             </div>
                             <div style="text-align: center; margin: 10px 0;">
@@ -374,11 +374,11 @@
     <title>Label Printing - QR Legends</title>
     <style>
         * {margin: 0 padding: 0 box-sizing: border-box}
-        body {font-family: Arial, sans-serif background: #f5f5f5}
+        body {font-family: Arial, sans-serif background: #0b1d33}
         .container {max-width: 1200px margin: 0 auto padding: 20px}
         .header {background: #34495e color: white padding: 20px border-radius: 10px; margin-bottom: 20px}
         .grid {display: grid grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) gap: 20px}
-        .card {background: white padding: 20px border-radius: 10px box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+        .card {background: #102943 padding: 20px border-radius: 10px box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
         .btn {background: #34495e color: white border: none padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px}
         .btn:hover {background: #2c3e50}
         .btn-success {background: #27ae60}

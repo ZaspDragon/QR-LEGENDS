@@ -13,7 +13,7 @@
             min-height: 100vh}
         .container {max-width: 1200px
             margin: 0 auto}
-        .header {background: white
+        .header {background: #102943
             border-radius: 15px
             padding: 20px
             box-shadow: 0 10px 30px rgba(0,0,0,0.2)
@@ -27,7 +27,7 @@
             font-weight: bold;
             display: inline-block;
             margin-left: 10px}
-        .card {background: white
+        .card {background: #102943
             border-radius: 15px
             padding: 30px
             box-shadow: 0 10px 30px rgba(0,0,0,0.2)
@@ -110,9 +110,9 @@
             margin: 0 10px
             padding: 8px 16px
             border-radius: 5px;
-            background: rgba(255,255,255,0.2);
+            background: rgba(16,41,67,0.2);
             transition: all 0.3s}
-        .nav-link:hover {background: rgba(255,255,255,0.3)}
+        .nav-link:hover {background: rgba(16,41,67,0.3)}
         .measurement-help {background: #e3f2fd
             border-left: 4px solid #2196f3
             padding: 15px
@@ -186,7 +186,7 @@
                     <p style="margin: 5px 0 0 0; font-size: 14px;" id="width-status">Click 2 points</p>
                 </div>
                 <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
-                    <h4 style="margin: 0; color: #dc3545;">Height Dots</h4>
+                    <h4 style="margin: 0; color: #f7fbff;">Height Dots</h4>
                     <p style="margin: 5px 0 0 0; font-size: 14px;" id="height-status">Click 2 points</p>
                 </div>
             </div>
@@ -398,16 +398,16 @@
             
             const displayHtml = `
                 <div style="display: grid grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) gap: 15px; margin-bottom: 20px;">
-                    <div style="text-align: center; padding: 15px; background: white; border-radius: 8px; border: 2px solid #667eea;">
+                    <div style="text-align: center; padding: 15px; background: #102943; border-radius: 8px; border: 2px solid #667eea;">
                         <h4 style="margin: 0; color: #667eea;">📏 Length</h4>
                         <p style="margin: 5px 0 0 0; font-size: 24px; font-weight: bold;">${dimensions.length}"</p>
                     </div>
-                    <div style="text-align: center; padding: 15px; background: white; border-radius: 8px; border: 2px solid #28a745;">
+                    <div style="text-align: center; padding: 15px; background: #102943; border-radius: 8px; border: 2px solid #28a745;">
                         <h4 style="margin: 0; color: #28a745;">📐 Width</h4>
                         <p style="margin: 5px 0 0 0; font-size: 24px; font-weight: bold;">${dimensions.width}"</p>
                     </div>
-                    <div style="text-align: center; padding: 15px; background: white; border-radius: 8px; border: 2px solid #dc3545;">
-                        <h4 style="margin: 0; color: #dc3545;">📊 Height</h4>
+                    <div style="text-align: center; padding: 15px; background: #102943; border-radius: 8px; border: 2px solid #dc3545;">
+                        <h4 style="margin: 0; color: #f7fbff;">📊 Height</h4>
                         <p style="margin: 5px 0 0 0; font-size: 24px; font-weight: bold;">${dimensions.height}"</p>
                     </div>
                 </div>

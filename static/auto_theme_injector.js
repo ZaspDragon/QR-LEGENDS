@@ -3,16 +3,28 @@
     'use strict';
 
     // Skip injection on login pages
-    if (window.location.pathname.includes('login') || window.skipNavigationInjection) {
+    const authPathPattern = /(login|signup|forgot_password|reset_password|two_factor|subscription_suspended)/i;
+    if (authPathPattern.test(window.location.pathname) || window.skipNavigationInjection) {
         return;
     }
+
+    function ensureForceDarkTheme() {
+        if (document.head && !document.querySelector('link[href*="force_dark_theme.css"]')) {
+            const forceLink = document.createElement('link');
+            forceLink.rel = 'stylesheet';
+            forceLink.href = '/static/force_dark_theme.css';
+            document.head.appendChild(forceLink);
+        }
+    }
+
+    ensureForceDarkTheme();
 
     // Inject immediately to prevent white flash
     const style = document.createElement('style');
     style.innerHTML = `
         body {
             background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed !important;
-            color: #dbe8ff !important;
+            color: #f7fbff !important;
             font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif !important;
             min-height: 100vh;
         }
@@ -22,15 +34,22 @@
         }
 
         .container, .main-content {
-            background: rgba(45, 55, 72, 0.8) !important;
-            backdrop-filter: blur(10px);
+            background: #102943 !important;
+            background-color: #102943 !important;
+            backdrop-filter: none !important;
             border-radius: 16px;
             padding: 24px;
             margin: 20px auto;
             max-width: 1200px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
             border: 1px solid rgba(99, 102, 241, 0.2);
-            color: #dbe8ff !important;
+            color: #f7fbff !important;
+        }
+
+        .loading, [class*="loading"] {
+            opacity: 1 !important;
+            animation: none !important;
+            filter: none !important;
         }
     `;
     document.head.insertBefore(style, document.head.firstChild);
@@ -44,6 +63,7 @@
     const responsiveScript = document.createElement('script');
     responsiveScript.src = '/static/responsive_design.js';
     document.head.appendChild(responsiveScript);
+    ensureForceDarkTheme();
 
     // Force dark theme for all pages
     const currentTheme = 'dark';
@@ -74,4 +94,6 @@
             setTimeout(applyTheme, 100);
         }
     }
+
+    document.addEventListener('DOMContentLoaded', ensureForceDarkTheme);
 })();

@@ -353,7 +353,7 @@ class WarehouseUserTracker {
             .nearby-user {
                 margin: 8px 0;
                 padding: 8px;
-                background: rgba(255, 255, 255, 0.1);
+                background: rgba(16,41,67,0.1);
                 border-radius: 4px;
             }
 
@@ -379,8 +379,8 @@ class WarehouseUserTracker {
             }
 
             @keyframes warningPulse {
-                0% { backdrop-filter: blur(2px); }
-                100% { backdrop-filter: blur(8px); }
+                0% { backdrop-filter: none; }
+                100% { backdrop-filter: none; }
             }
 
             .zone-selector-modal {
@@ -433,7 +433,7 @@ class WarehouseUserTracker {
                 border-radius: 8px;
                 padding: 12px;
                 margin: 16px 0;
-                color: #dbeafe;
+                color: #f7fbff;
             }
 
             .location-details {

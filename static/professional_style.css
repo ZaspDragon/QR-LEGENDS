@@ -17,7 +17,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: radial-gradient(1200px 600px at 60% -100px, #123a86 0%, #0e2242 45%, #081b2e 100%) fixed !important;
     min-height: 100vh;
-    color: #e2e8f0;
+    color: #f7fbff;
     padding-top: 70px;
     padding-bottom: 120px;
     line-height: 1.6;
@@ -29,7 +29,7 @@ body {
     margin: 0 auto;
     padding: 24px;
     background: rgba(45, 55, 72, 0.8);
-    backdrop-filter: blur(10px);
+    backdrop-filter: none;
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.3);
     border: 1px solid rgba(99, 102, 241, 0.2);
@@ -64,7 +64,7 @@ body {
 /* Navigation Styles */
 .top-nav, .nav-header {
     background: rgba(45, 55, 72, 0.95);
-    backdrop-filter: blur(10px);
+    backdrop-filter: none;
     padding: 16px 24px;
     display: flex;
     align-items: center;
@@ -201,7 +201,7 @@ body {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: #e2e8f0;
+    color: #f7fbff;
     font-size: 14px;
 }
 
@@ -213,13 +213,13 @@ body {
     font-size: 16px;
     transition: all 0.3s ease;
     background: rgba(26, 35, 50, 0.7);
-    color: #e2e8f0;
+    color: #f7fbff;
 }
 
 /* Dropdown Options Visibility Fix */
 select option {
     background: #1a2332;
-    color: #e8f0ff;
+    color: #f7fbff;
     padding: 8px;
     font-weight: 500;
 }
@@ -227,7 +227,7 @@ select option {
 select option:hover,
 select option:checked {
     background: #2563eb;
-    color: #ffffff;
+    color: white;
 }
 
 .form-control:focus, input:focus, select:focus, textarea:focus {
@@ -258,7 +258,7 @@ select option:checked {
 .table td, table td {
     padding: 16px;
     border-bottom: 1px solid rgba(99, 102, 241, 0.2);
-    color: #e2e8f0;
+    color: #f7fbff;
 }
 
 .table tbody tr:hover, table tbody tr:hover {
@@ -302,7 +302,7 @@ select option:checked {
 /* Loading States */
 .loading {
     position: relative;
-    opacity: 0.7;
+    opacity: 1 !important;
     pointer-events: none;
 }
 
@@ -337,7 +337,7 @@ select option:checked {
 .quick-action-btn {
     padding: 12px 20px;
     background: rgba(45, 55, 72, 0.9);
-    color: #e2e8f0;
+    color: #f7fbff;
     border: 1px solid rgba(99, 102, 241, 0.3);
     border-radius: 8px;
     font-size: 14px;
@@ -395,7 +395,7 @@ select option:checked {
     top: 80px;
     left: 20px;
     background: rgba(45, 55, 72, 0.95);
-    color: #e2e8f0;
+    color: #f7fbff;
     text-decoration: none;
     padding: 12px 20px;
     border-radius: 8px;
@@ -464,7 +464,7 @@ select option:checked {
 
 /* Text Styles */
 h1, h2, h3, h4, h5, h6 {
-    color: #e2e8f0;
+    color: #f7fbff;
     margin-bottom: 16px;
     font-weight: 600;
 }
@@ -500,7 +500,7 @@ a:hover {
     gap: 12px;
     font-size: 18px;
     font-weight: 600;
-    color: #e2e8f0;
+    color: #f7fbff;
 }
 
 /* Icon Styling */
@@ -513,7 +513,7 @@ a:hover {
 .feature-button {
     background: rgba(26, 35, 50, 0.9);
     border: 1px solid rgba(99, 102, 241, 0.3);
-    color: #e2e8f0;
+    color: #f7fbff;
     padding: 24px;
     text-align: center;
     border-radius: 12px;
@@ -540,7 +540,7 @@ a:hover {
     font-size: 1.2rem;
     margin-bottom: 8px;
     font-weight: bold;
-    color: #e2e8f0;
+    color: #f7fbff;
 }
 
 .feature-button .description {

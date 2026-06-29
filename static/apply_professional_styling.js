@@ -4,10 +4,27 @@
 (function() {
     'use strict';
 
+    const authPathPattern = /(login|signup|forgot_password|reset_password|two_factor|subscription_suspended)/i;
+    if (authPathPattern.test(window.location.pathname) || window.skipNavigationInjection) {
+        return;
+    }
+
+    function ensureForceDarkTheme() {
+        if (document.head && !document.querySelector('link[href*="force_dark_theme.css"]')) {
+            const forceLink = document.createElement('link');
+            forceLink.rel = 'stylesheet';
+            forceLink.href = '/static/force_dark_theme.css';
+            document.head.appendChild(forceLink);
+        }
+    }
+
+    ensureForceDarkTheme();
+
     // Check if professional styling is already loaded
     if (document.querySelector('link[href*="professional_style.css"]') ||
         document.querySelector('.ql-header') ||
         (document.body && document.body.classList.contains('professional-styled'))) {
+        ensureForceDarkTheme();
         return; // Already has professional styling
     }
 
@@ -37,8 +54,8 @@
           --ql-warning: #f59e0b;
           --ql-danger: #ef4444;
           --ql-accent: #6366f1;
-          --ql-border: rgba(255,255,255,.2);
-          --ql-surface: rgba(255,255,255,.1);
+          --ql-border: rgba(47,95,137,.32);
+          --ql-surface: rgba(16,41,67,.78);
         }
 
         html,body{height:100%;}
@@ -54,7 +71,7 @@
         .ql-header{
           position: sticky; top:0; z-index:1000;
           background: rgba(8,27,46,.7);
-          backdrop-filter: blur(6px);
+          backdrop-filter: none;
           border-bottom: 1px solid var(--ql-border);
         }
 
@@ -70,13 +87,13 @@
         .ql-btn{
           display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none;
           color:var(--ql-text); background: var(--ql-surface); border: 1px solid var(--ql-border);
-          box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+          box-shadow: 0 1px 0 rgba(47,95,137,.15) inset, 0 4px 14px rgba(0,0,0,.2);
           transition: transform .08s ease, background .2s ease, border-color .2s ease;
         }
 
         .ql-btn:hover{
           transform: translateY(-1px);
-          background: rgba(255,255,255,.12);
+          background: #163554;
           color: var(--ql-text);
           text-decoration: none;
         }
@@ -91,27 +108,28 @@
         .ql-card{
           background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
           border: 1px solid var(--ql-border);
-          box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+          box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(47,95,137,.18) inset;
           border-radius:16px; padding:16px;
           margin-bottom: 20px;
         }
 
         .ql-card h2{
-          font-size:1.05rem; margin:0 0 10px 0; color: #e8f0ff; letter-spacing:.2px; font-weight: 600;
+          font-size:1.05rem; margin:0 0 10px 0; color: #f7fbff; letter-spacing:.2px; font-weight: 600;
         }
         
         .ql-card h3, .ql-card h4{
-          color: #dce6ff; font-weight: 600;
+          color: #f7fbff; font-weight: 600;
         }
         
         .ql-card p, .ql-card label, .ql-card span{
-          color: #e0e9ff;
+          color: #f7fbff;
         }
 
         /* Override any white backgrounds */
         .container, .main-content, .page-content {
-          background: rgba(45, 55, 72, 0.8) !important;
-          backdrop-filter: blur(10px);
+          background: #102943 !important;
+          background-color: #102943 !important;
+          backdrop-filter: none !important;
           border-radius: 16px;
           padding: 24px;
           margin: 20px auto;
@@ -121,6 +139,12 @@
         }
 
         .professional-styled { background: var(--ql-bg) !important; }
+
+        .loading, [class*="loading"] {
+          opacity: 1 !important;
+          animation: none !important;
+          filter: none !important;
+        }
     `;
     if (document.head) {
         document.head.appendChild(unifiedTheme);
@@ -153,8 +177,9 @@
         whiteElements.forEach(el => {
             if (el) {
                 const bgColor = window.getComputedStyle(el).backgroundColor;
-                if (bgColor === 'rgb(255, 255, 255)' || bgColor === 'white' || bgColor === '#ffffff') {
-                    el.style.background = 'rgba(45, 55, 72, 0.8)';
+                if (bgColor === 'rgb(255, 255, 255)' || bgColor === 'white' || bgColor === '#f7fbff') {
+                    el.style.background = '#102943';
+                    el.style.backgroundColor = '#102943';
                     el.style.color = '#f0f4ff';
                 }
             }
@@ -186,6 +211,8 @@
         // Enhance text visibility
         enhanceTextVisibility();
 
+        ensureForceDarkTheme();
+        enforceReadableDarkSurfaces();
         console.log('✅ Professional styling enhancements applied');
     }
 
@@ -222,8 +249,9 @@
         containers.forEach(container => {
             if (container && !container.classList.contains('ql-container')) {
                 container.classList.add('qr-legends-enhanced'); // Changed class for clarity as per original thought, original code had .ql-container.
-                container.style.background = 'rgba(45, 55, 72, 0.8)';
-                container.style.backdropFilter = 'blur(10px)';
+                container.style.background = '#102943';
+                container.style.backgroundColor = '#102943';
+                container.style.backdropFilter = 'none';
                 container.style.borderRadius = '16px';
                 container.style.padding = '24px';
                 container.style.margin = '20px auto';
@@ -274,8 +302,9 @@
         const inputs = document.querySelectorAll('input, select, textarea');
         inputs.forEach(input => {
             if (input) {
-                input.style.background = 'rgba(255,255,255,.12)';
-                input.style.border = '1px solid rgba(255,255,255,.25)';
+                input.style.background = '#081827';
+                input.style.backgroundColor = '#081827';
+                input.style.border = '1px solid rgba(47,95,137,.45)';
                 input.style.color = '#f0f4ff';
                 input.style.padding = '10px 12px';
                 input.style.borderRadius = '8px';
@@ -306,7 +335,7 @@
         cards.forEach(card => {
             if (card) {
                 card.style.background = 'linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92))';
-                card.style.border = '1px solid rgba(255,255,255,.12)';
+                card.style.border = '1px solid rgba(47,95,137,.32)';
                 card.style.borderRadius = '16px';
                 card.style.padding = '16px';
                 card.style.marginBottom = '20px';
@@ -319,7 +348,8 @@
         const tables = document.querySelectorAll('table');
         tables.forEach(table => {
             if (table) {
-                table.style.background = 'rgba(45, 55, 72, 0.8)';
+                table.style.background = '#102943';
+                table.style.backgroundColor = '#102943';
                 table.style.color = '#dbe8ff';
                 table.style.borderRadius = '8px';
                 table.style.overflow = 'hidden';
@@ -337,7 +367,7 @@
                 tds.forEach(td => {
                     if (td) {
                         td.style.padding = '10px 12px';
-                        td.style.borderBottom = '1px solid rgba(255,255,255,.12)';
+                        td.style.borderBottom = '1px solid rgba(47,95,137,.32)';
                         td.style.color = '#e8f0ff';
                     }
                 });
@@ -358,6 +388,26 @@
             }
         });
     }
+
+    function enforceReadableDarkSurfaces() {
+        const surfaceSelector = '.container,.main-content,.page-content,.card,.panel,.feature-card,.dashboard-card,.stat-card,.metric-card,.modal-content,form,table,section,article,[class*="card"],[class*="panel"],[class*="container"]';
+        document.querySelectorAll(surfaceSelector).forEach(el => {
+            el.style.setProperty('background', '#102943', 'important');
+            el.style.setProperty('background-color', '#102943', 'important');
+            el.style.setProperty('color', '#f7fbff', 'important');
+            el.style.setProperty('opacity', '1', 'important');
+            el.style.setProperty('filter', 'none', 'important');
+        });
+
+        document.querySelectorAll('.loading,[class*="loading"]').forEach(el => {
+            el.style.setProperty('opacity', '1', 'important');
+            el.style.setProperty('animation', 'none', 'important');
+            el.style.setProperty('filter', 'none', 'important');
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', enforceReadableDarkSurfaces);
+    setInterval(enforceReadableDarkSurfaces, 1500);
 })();
 
 // Auto-apply on DOM ready
