@@ -23,7 +23,7 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
+            background: #102943;
             border-radius: 15px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             overflow: hidden;
@@ -108,7 +108,7 @@
         }
 
         .conversation-item.active .conversation-preview {
-            color: rgba(255,255,255,0.8);
+            color: rgba(16,41,67,0.8);
         }
 
         .chat-area {
@@ -120,7 +120,7 @@
         .chat-header {
             padding: 20px;
             border-bottom: 1px solid #e0e0e0;
-            background: white;
+            background: #102943;
         }
 
         .chat-title {
@@ -160,7 +160,7 @@
         }
 
         .message-bubble.received {
-            background: white;
+            background: #102943;
             border-bottom-left-radius: 4px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
@@ -179,7 +179,7 @@
 
         .message-input-area {
             padding: 20px;
-            background: white;
+            background: #102943;
             border-top: 1px solid #e0e0e0;
         }
 
@@ -248,14 +248,14 @@
   --ql-warning: #f59e0b;
   --ql-danger: #ef4444;
   --ql-accent: #6366f1;
-  --ql-border: rgba(255,255,255,.12);
-  --ql-surface: rgba(255,255,255,.06);
+  --ql-border: rgba(16,41,67,.12);
+  --ql-surface: rgba(16,41,67,.06);
 }
 /* Light mode overrides */
 body.light{
   --ql-bg: #f2f6fb;
-  --ql-panel: #ffffff;
-  --ql-card: #ffffff;
+  --ql-panel: #102943;
+  --ql-card: #102943;
   --ql-text: #1d2840;
   --ql-sub: #51607c;
   --ql-primary: #2563eb;
@@ -282,11 +282,11 @@ body.light{
 .ql-header{
   position: sticky; top:0; z-index:1000;
   background: rgba(8,27,46,.7);
-  backdrop-filter: blur(6px);
+  backdrop-filter: none;
   border-bottom: 1px solid var(--ql-border);
 }
 body.light .ql-header{
-  background: rgba(255,255,255,.75);
+  background: rgba(16,41,67,.75);
 }
 .ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
 .ql-title{display:flex; align-items:center; gap:10px;}
@@ -295,10 +295,10 @@ body.light .ql-header{
 .ql-btn{
   display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
   background: var(--ql-surface); border: 1px solid var(--ql-border);
-  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+  box-shadow: 0 1px 0 rgba(16,41,67,.05) inset, 0 4px 14px rgba(0,0,0,.2);
   transition: transform .08s ease, background .2s ease, border-color .2s ease;
 }
-.ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+.ql-btn:hover{ transform: translateY(-1px); background: rgba(16,41,67,.12); }
 body.light .ql-btn:hover{ background: rgba(15,23,42,.08); }
 .ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
 

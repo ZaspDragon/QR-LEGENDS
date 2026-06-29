@@ -16,8 +16,8 @@
             margin: 0 auto
             padding: 20px}
 
-        .header {background: rgba(255, 255, 255, 0.95)
-            backdrop-filter: blur(10px)
+        .header {background: rgba(16,41,67,0.95)
+            backdrop-filter: none
             border-radius: 15px
             padding: 30px
             margin-bottom: 30px;
@@ -26,8 +26,8 @@
             justify-content: space-between;
             align-items: center}
 
-        .card {background: rgba(255, 255, 255, 0.95)
-            backdrop-filter: blur(10px)
+        .card {background: rgba(16,41,67,0.95)
+            backdrop-filter: none
             border-radius: 15px
             padding: 30px
             margin-bottom: 30px;
@@ -154,7 +154,7 @@
                     <h4>${notification.subject}</h4>
                     <details>
                         <summary>View Details</summary>
-                        <pre style="background: white; padding: 10px; border-radius: 5px; margin-top: 10px; white-space: pre-wrap;">${notification.body}</pre>
+                        <pre style="background: #102943; padding: 10px; border-radius: 5px; margin-top: 10px; white-space: pre-wrap;">${notification.body}</pre>
                     </details>
                 </div>
             `).join('');

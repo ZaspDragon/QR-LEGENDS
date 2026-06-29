@@ -5,42 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Slot QR Code Generator - QR LEGENDS</title>
     <style>
-        body {font-family: Arial, sans-serif 
-            margin: 20px 
-            background-color: #f5f5f5}
-        .container {max-width: 800px 
+        body {font-family: Arial, sans-serif
+            margin: 20px
+            background-color: #0b1d33}
+        .container {max-width: 800px
             margin: 0 auto}
-        .card {background: white 
-            padding: 20px 
-            margin: 10px 0 
-            border-radius: 8px; 
+        .card {background: #102943
+            padding: 20px
+            margin: 10px 0
+            border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
-        .btn {padding: 10px 20px 
-            margin: 5px 
-            border: none 
-            border-radius: 5px; 
+        .btn {padding: 10px 20px
+            margin: 5px
+            border: none
+            border-radius: 5px;
             cursor: pointer}
-        .btn-primary {background: #007bff 
+        .btn-primary {background: #007bff
             color: white}
-        .btn-success {background: #28a745 
+        .btn-success {background: #28a745
             color: white}
-        .btn-danger {background: #dc3545 
+        .btn-danger {background: #dc3545
             color: white}
         .form-group {margin: 15px 0}
-        .form-group label {display: block 
-            margin-bottom: 5px 
+        .form-group label {display: block
+            margin-bottom: 5px
             font-weight: bold}
-        .form-group input, .form-group select {width: 100% 
-            padding: 8px 
-            border: 1px solid #ddd 
-            border-radius: 4px; 
+        .form-group input, .form-group select {width: 100%
+            padding: 8px
+            border: 1px solid #ddd
+            border-radius: 4px;
             box-sizing: border-box}
-        .qr-display {text-align: center 
-            padding: 20px 
-            background: #f8f9fa 
-            border-radius: 8px; 
+        .qr-display {text-align: center
+            padding: 20px
+            background: #f8f9fa
+            border-radius: 8px;
             margin: 20px 0}
-        .qr-display img {max-width: 300px 
+        .qr-display img {max-width: 300px
             margin: 20px 0}
         .slot-grid {display: grid
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr))
@@ -49,7 +49,7 @@
         .slot-card {border: 1px solid #ddd
             padding: 15px
             border-radius: 8px
-            background: #fff;
+            background: #102943;
             text-align: center}
         .slot-card img {max-width: 150px
             margin: 10px 0}
@@ -76,22 +76,22 @@
             body { margin: 0; }
             .label { margin: 5px; }
         }
-        .label { 
-            border: 2px solid #000; 
-            padding: 15px; 
-            margin: 10px auto; 
-            display: inline-block; 
+        .label {
+            border: 2px solid #000;
+            padding: 15px;
+            margin: 10px auto;
+            display: inline-block;
             width: 300px;
-            background: white;
+            background: #102943;
             text-align: center;
             font-family: Arial, sans-serif;
         }
         .label h3 { margin-top: 0; }
-        .slot-id { 
-            font-family: monospace; 
-            font-size: 16px; 
+        .slot-id {
+            font-family: monospace;
+            font-size: 16px;
             font-weight: bold;
-            margin: 5px 0; 
+            margin: 5px 0;
         }
         .details {
             font-size: 11px;
@@ -433,16 +433,16 @@
                 <head>
                     <title>Print Slot Label - ${slotId}</title>
                     <style>
-                        body {text-align: center 
-                            font-family: Arial, sans-serif 
+                        body {text-align: center
+                            font-family: Arial, sans-serif
                             margin: 20px}
-                        .label {border: 2px solid #000 
-                            padding: 20px 
-                            margin: 20px auto 
-                            display: inline-block 
+                        .label {border: 2px solid #000
+                            padding: 20px
+                            margin: 20px auto
+                            display: inline-block
                             page-break-after: always}
-                        .slot-id {font-family: monospace 
-                            font-size: 18px 
+                        .slot-id {font-family: monospace
+                            font-size: 18px
                             font-weight: bold
                             margin: 10px 0}
                         @media print {.label { margin: 0}
@@ -483,17 +483,17 @@
                 <head>
                     <title>Print All Slot Labels</title>
                     <style>
-                        body {text-align: center 
-                            font-family: Arial, sans-serif 
+                        body {text-align: center
+                            font-family: Arial, sans-serif
                             margin: 20px}
-                        .label {border: 2px solid #000 
-                            padding: 20px 
-                            margin: 20px auto 
-                            display: inline-block 
+                        .label {border: 2px solid #000
+                            padding: 20px
+                            margin: 20px auto
+                            display: inline-block
                             page-break-after: always;
                             width: 300px}
-                        .slot-id {font-family: monospace 
-                            font-size: 18px 
+                        .slot-id {font-family: monospace
+                            font-size: 18px
                             font-weight: bold
                             margin: 10px 0}
                         @media print {.label { margin: 10px}

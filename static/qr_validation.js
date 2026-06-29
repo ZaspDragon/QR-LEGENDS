@@ -111,7 +111,7 @@ class QRValidator {
             top: 20px
             left: 50%;
             transform: translateX(-50%);
-            background-color: #d4edda;
+            background-color: #f7fbff;
             border: 2px solid #28a745;
             color: #155724;
             padding: 15px 20px;

@@ -131,7 +131,7 @@
         
         var displayArea = document.getElementById('po-qr-display');
         displayArea.style.display = 'block';
-        displayArea.innerHTML = '<div style="background: white; border: 2px solid #3b82f6; border-radius: 12px; padding: 20px; text-align: center; margin-top: 15px;">' +
+        displayArea.innerHTML = '<div style="background: #102943; border: 2px solid #3b82f6; border-radius: 12px; padding: 20px; text-align: center; margin-top: 15px;">' +
             '<h4 style="margin: 0 0 15px 0; color: #1f2937;">Purchase Order: ' + poNumber + '</h4>' +
             '<div id="po-qr-container" style="display: flex; justify-content: center; padding: 15px; background: #f9fafb; border-radius: 8px;">' +
             '<div style="padding: 20px;">Generating QR Code...</div></div>' +
@@ -169,7 +169,7 @@
         
         var displayArea = document.getElementById('spo-qr-display');
         displayArea.style.display = 'block';
-        displayArea.innerHTML = '<div style="background: white; border: 2px solid #f59e0b; border-radius: 12px; padding: 20px; text-align: center; margin-top: 15px;">' +
+        displayArea.innerHTML = '<div style="background: #102943; border: 2px solid #f59e0b; border-radius: 12px; padding: 20px; text-align: center; margin-top: 15px;">' +
             '<h4 style="margin: 0 0 15px 0; color: #1f2937;">Special Purchase Order: ' + spoNumber + '</h4>' +
             '<div id="spo-qr-container" style="display: flex; justify-content: center; padding: 15px; background: #f9fafb; border-radius: 8px;">' +
             '<div style="padding: 20px;">Generating QR Code...</div></div>' +
@@ -204,7 +204,7 @@
         
         var displayArea = document.getElementById('transfer-qr-display');
         displayArea.style.display = 'block';
-        displayArea.innerHTML = '<div style="background: white; border: 2px solid #6366f1; border-radius: 12px; padding: 20px; text-align: center; margin-top: 15px;">' +
+        displayArea.innerHTML = '<div style="background: #102943; border: 2px solid #6366f1; border-radius: 12px; padding: 20px; text-align: center; margin-top: 15px;">' +
             '<h4 style="margin: 0 0 15px 0; color: #1f2937;">Transfer: ' + transferNumber + '</h4>' +
             '<div id="transfer-qr-container" style="display: flex; justify-content: center; padding: 15px; background: #f9fafb; border-radius: 8px;">' +
             '<div style="padding: 20px;">Generating QR Code...</div></div>' +

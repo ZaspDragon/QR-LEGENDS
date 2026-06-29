@@ -8,7 +8,7 @@
         body {font-family: Arial, sans-serif margin: 20px background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) min-height: 100vh}
         .container {max-width: 1200px margin: 0 auto}
         .header {text-align: center color: white margin-bottom: 30px}
-        .card {background: white padding: 20px margin: 10px 0 border-radius: 15px box-shadow: 0 10px 30px rgba(0,0,0,0.2);}
+        .card {background: #102943 padding: 20px margin: 10px 0 border-radius: 15px box-shadow: 0 10px 30px rgba(0,0,0,0.2);}
         .grid {display: grid grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)) gap: 20px}
         .btn {padding: 12px 24px margin: 5px border: none border-radius: 8px cursor: pointer; font-weight: bold; transition: all 0.3s}
         .btn-primary {background: #667eea color: white}
@@ -26,8 +26,8 @@
         .item-actions {display: flex gap: 10px}
         .qr-display {text-align: center margin: 15px 0}
         .qr-display img {max-width: 150px border: 2px solid #ddd border-radius: 8px}
-        .nav-link {color: white text-decoration: none margin: 0 10px padding: 8px 16px border-radius: 5px; background: rgba(255,255,255,0.2);}
-        .nav-link:hover {background: rgba(255,255,255,0.3)}
+        .nav-link {color: white text-decoration: none margin: 0 10px padding: 8px 16px border-radius: 5px; background: rgba(16,41,67,0.2);}
+        .nav-link:hover {background: rgba(16,41,67,0.3)}
         .loading {text-align: center
             color: #666
             font-style: italic
@@ -42,7 +42,7 @@
             height: 100%;
             background-color: rgba(0,0,0,0.5);}
 
-        .modal-content {background-color: white
+        .modal-content {background-color: #102943
             margin: 5% auto
             padding: 0
             border-radius: 15px
@@ -94,7 +94,7 @@
             border: 1px solid #e0e0e0;
             border-radius: 8px;
             margin-bottom: 10px;
-            background: white}
+            background: #102943}
 
         /* Navigation Tabs */
         .nav-tab {background: none
@@ -155,7 +155,7 @@
         </div>
 
         <!-- Inventory Navigation Tabs -->
-        <div style="background: rgba(255, 255, 255, 0.95); border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
+        <div style="background: rgba(16,41,67,0.95); border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
             <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
                 <button class="nav-tab active" onclick="showInventorySection('main')">📦 Items</button>
                 <button class="nav-tab" onclick="showInventorySection('branches')">🏢 Multi-Branch</button>
@@ -850,10 +850,10 @@
                 </div>
             `;
 
-            if (Object.keys(branchStats).length > 1) {statsHtml += '<div style="background: #f5f5f5 padding: 15px border-radius: 8px"><h4>Branch Breakdown:</h4><div style="display: grid grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">';
+            if (Object.keys(branchStats).length > 1) {statsHtml += '<div style="background: #0b1d33 padding: 15px border-radius: 8px"><h4>Branch Breakdown:</h4><div style="display: grid grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">';
                 Object.entries(branchStats).forEach(([branch, stats]) => {
                     statsHtml += `
-                        <div style="background: white; padding: 10px; border-radius: 5px; border-left: 4px solid #667eea;">
+                        <div style="background: #102943; padding: 10px; border-radius: 5px; border-left: 4px solid #667eea;">
                             <strong>${branch}</strong><br>
                             ${stats.count} items | $${stats.value.toFixed(2)}
                         </div>
@@ -919,7 +919,7 @@
                         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px;">
                             <h3 style="margin: 0; display: flex; justify-content: space-between; align-items: center;">
                                 🏢 ${branchName}
-                                <span style="font-size: 14px; background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 15px;">
+                                <span style="font-size: 14px; background: rgba(16,41,67,0.2); padding: 5px 10px; border-radius: 15px;">
                                     ${items.length} items | $${branchValue.toFixed(2)}
                                 </span>
                             </h3>
@@ -1313,7 +1313,7 @@
             countSpan.textContent = `${generatedSlotQRs.length} QRs generated`;
 
             gridDiv.innerHTML = generatedSlotQRs.map((slot, index) => `
-                <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; background: #fff; text-align: center;">
+                <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; background: #102943; text-align: center;">
                     <h5 style="margin: 0 0 10px 0; color: #333;">${slot.slotId}</h5>
                     <img src="${slot.qrImage}" style="max-width: 150px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px;">
                     <p style="font-size: 12px; color: #666; margin: 5px 0;">

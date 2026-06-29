@@ -17,14 +17,14 @@
   --ql-warning: #f59e0b;
   --ql-danger: #ef4444;
   --ql-accent: #6366f1;
-  --ql-border: rgba(255,255,255,.12);
-  --ql-surface: rgba(255,255,255,.06);
+  --ql-border: rgba(16,41,67,.12);
+  --ql-surface: rgba(16,41,67,.06);
 }
 /* Light mode overrides */
 body.light{
   --ql-bg: #f2f6fb;
-  --ql-panel: #ffffff;
-  --ql-card: #ffffff;
+  --ql-panel: #102943;
+  --ql-card: #102943;
   --ql-text: #1d2840;
   --ql-sub: #51607c;
   --ql-primary: #2563eb;
@@ -51,11 +51,11 @@ body.light{
 .ql-header{
   position: sticky; top:0; z-index:1000;
   background: rgba(8,27,46,.7);
-  backdrop-filter: blur(6px);
+  backdrop-filter: none;
   border-bottom: 1px solid var(--ql-border);
 }
 body.light .ql-header{
-  background: rgba(255,255,255,.75);
+  background: rgba(16,41,67,.75);
 }
 .ql-header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:14px 20px;}
 .ql-title{display:flex; align-items:center; gap:10px;}
@@ -64,11 +64,11 @@ body.light .ql-header{
 .ql-btn{
   display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
   background: var(--ql-surface); border: 1px solid var(--ql-border);
-  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+  box-shadow: 0 1px 0 rgba(16,41,67,.05) inset, 0 4px 14px rgba(0,0,0,.2);
   transition: transform .08s ease, background .2s ease, border-color .2s ease;
   cursor: pointer;
 }
-.ql-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+.ql-btn:hover{ transform: translateY(-1px); background: rgba(16,41,67,.12); }
 body.light .ql-btn:hover{ background: rgba(15,23,42,.08); }
 .ql-secondary{ background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); border-color: rgba(59,130,246,.35);}
 
@@ -84,7 +84,7 @@ body.light .ql-btn:hover{ background: rgba(15,23,42,.08); }
   grid-column: span 12;
   background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
   border: 1px solid var(--ql-border);
-  box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+  box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(16,41,67,.06) inset;
   border-radius:16px; padding:20px;
 }
 body.light .ql-card{
@@ -596,7 +596,7 @@ function generateContainerQR() {
         const displayArea = document.getElementById('container-qr-display');
         displayArea.style.display = 'block';
         displayArea.innerHTML = `
-            <div style="background: white; border: 2px solid #22c55e; border-radius: 12px; padding: 20px; text-align: center; margin-top: 15px;">
+            <div style="background: #102943; border: 2px solid #22c55e; border-radius: 12px; padding: 20px; text-align: center; margin-top: 15px;">
                 <h4 style="margin: 0 0 15px 0; color: #15803d;">📦 Container: ${containerId}</h4>
                 <div style="background: #f0fdf4; padding: 15px; border-radius: 8px; margin: 15px 0;">
                     <div id="container-qr-container" style="display: flex; justify-content: center;">
@@ -633,7 +633,7 @@ function generateContainerQR() {
             .catch(error => {
                 console.error('Container QR Generation error:', error);
                 const container = document.getElementById('container-qr-container');
-                container.innerHTML = `<div style="color: #ef4444; padding: 20px;">❌ Failed to generate QR code: ${error.message}</div>`;
+                container.innerHTML = `<div style="color: #f7fbff; padding: 20px;">❌ Failed to generate QR code: ${error.message}</div>`;
             });
 
     } catch (error) {
@@ -938,7 +938,7 @@ function displayPOLineItems(po) {
     `;
     
     po.items.forEach((item, index) => {
-        const rowStyle = index % 2 === 0 ? '' : 'background: rgba(255,255,255,0.02);';
+        const rowStyle = index % 2 === 0 ? '' : 'background: rgba(16,41,67,0.02);';
         html += `
             <tr style="${rowStyle}">
                 <td style="padding: 12px;">${item.line_number}</td>

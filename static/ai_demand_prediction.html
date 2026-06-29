@@ -7,20 +7,20 @@
     <title>AI Demand Prediction - QR Legends</title>
     <link rel="icon" type="image/png" href="/static/qr_legends_logo.png">
     <style>
-        body {font-family: Arial, sans-serif 
-            margin: 0 
-            padding: 20px 
+        body {font-family: Arial, sans-serif
+            margin: 0
+            padding: 20px
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh}
-        .container {max-width: 1400px 
-            margin: 0 auto 
-            background: white 
-            border-radius: 15px; 
+        .container {max-width: 1400px
+            margin: 0 auto
+            background: #102943
+            border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             overflow: hidden}
-        .header {background: linear-gradient(135deg, #ff6b6b, #ee5a24) 
-            color: white 
-            padding: 30px 
+        .header {background: linear-gradient(135deg, #ff6b6b, #ee5a24)
+            color: white
+            padding: 30px
             text-align: center}
         .content {padding: 30px}
         .prediction-grid {display: grid
@@ -70,7 +70,7 @@
             <h1>🔮 AI Demand Prediction</h1>
             <p>Prevent stockouts and forecast busy SKUs with machine learning</p>
         </div>
-        
+
         <div class="content">
             <div class="alert-card">
                 <h3>🚨 Immediate Actions Required</h3>
@@ -281,14 +281,14 @@
 
         // Simulate real-time updates
         function updatePredictions() {console.log('🔮 Updating demand predictions with latest data...')
-            
+
             // Simulate data updates
             const dataQuality = {
                 inventory: Math.random() * 2 + 97, // 97-99%
                 sales: Math.random() * 2 + 96, // 96-98%
                 purchases: Math.random() * 3 + 94, // 94-97%
                 market: Math.random() * 10 + 85 // 85-95%};
-            
+
             // Update UI elements if they exist
             updateDataQualityDisplay(dataQuality);
         }

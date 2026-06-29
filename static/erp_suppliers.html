@@ -17,7 +17,7 @@
         }
         body.light {
             --ql-bg: #f8fafc;
-            --ql-surface: #ffffff;
+            --ql-surface: #102943;
             --ql-text: #1e293b;
             --ql-sub: #64748b;
             --ql-border: #e2e8f0;
@@ -202,7 +202,7 @@
                 display: flex;
                 justify-content: space-between;
                 padding: 10px 0;
-                border-bottom: 1px solid rgba(255,255,255,.05);
+                border-bottom: 1px solid rgba(16,41,67,.05);
             }
 
             td:last-child {
@@ -245,7 +245,7 @@
     <div style="max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
         <h1 style="font-size: 1.5rem; font-weight: 600;">🏭 Supplier Management</h1>
         <div>
-            <a class="ql-btn" href="/erp_hub" style="text-decoration: none; background: rgba(255,255,255,0.2);">← ERP Hub</a>
+            <a class="ql-btn" href="/erp_hub" style="text-decoration: none; background: rgba(16,41,67,0.2);">← ERP Hub</a>
             <button class="ql-btn ql-btn-success" onclick="openAddSupplierModal()">+ Add Supplier</button>
         </div>
     </div>
@@ -355,7 +355,7 @@ async function loadSuppliers() {
         
     } catch (error) {
         console.error('Error loading suppliers:', error);
-        document.getElementById('loading').innerHTML = '<div style="color: #ef4444;">❌ Failed to load suppliers</div>';
+        document.getElementById('loading').innerHTML = '<div style="color: #f7fbff;">❌ Failed to load suppliers</div>';
     }
 }
 

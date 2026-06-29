@@ -11,9 +11,9 @@
         '%cUNAUTHORIZED USE PROHIBITED\n' +
         'This software and all QR code generation algorithms are protected by copyright.\n\n' +
         '%c⚠️ WARNING: Reverse engineering, copying, or unauthorized distribution is prohibited.',
-        'color: #dc3545 font-size: 16px font-weight: bold',
+        'color: #f7fbff font-size: 16px font-weight: bold',
         'color: #667eea font-size: 14px font-weight: bold;',
-        'color: #dc3545; font-size: 12px;',
+        'color: #f7fbff; font-size: 12px;',
         'color: #856404; font-size: 12px; font-weight: bold;'
     );
     

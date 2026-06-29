@@ -383,7 +383,7 @@
             }
 
             body {
-                background: white !important;
+                background: #102943 !important;
                 color: black !important;
             }
         }

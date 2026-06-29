@@ -1,0 +1,176 @@
+/*
+  Emergency WarehouseOS dark override.
+  Loaded last on non-login pages to defeat old inline/page-level light styles.
+*/
+:root {
+  --force-bg: #07111f;
+  --force-bg-2: #0b1d33;
+  --force-panel: #102943;
+  --force-panel-2: #163554;
+  --force-border: #2f5f89;
+  --force-text: #f7fbff;
+  --force-muted: #b8d7ef;
+  --force-blue: #2f8cff;
+  --force-green: #148f67;
+  --force-orange: #c47a10;
+  --force-red: #b83232;
+}
+
+html,
+html body:not(.login-page):not(.auth-page) {
+  color-scheme: dark !important;
+  background: radial-gradient(circle at top left, rgba(47, 140, 255, 0.14), transparent 34%), var(--force-bg) !important;
+  color: var(--force-text) !important;
+}
+
+html body:not(.login-page):not(.auth-page) *,
+html body:not(.login-page):not(.auth-page) *::before,
+html body:not(.login-page):not(.auth-page) *::after {
+  border-color: rgba(184, 215, 239, 0.25) !important;
+}
+
+html body:not(.login-page):not(.auth-page) :is(
+  .container,
+  .main-content,
+  .page-content,
+  .content,
+  main,
+  section,
+  article,
+  aside,
+  form,
+  fieldset,
+  table,
+  thead,
+  tbody,
+  tr,
+  td,
+  th,
+  .card,
+  .panel,
+  .box,
+  .tile,
+  .widget,
+  .modal,
+  .modal-content,
+  .dialog,
+  .popup,
+  .header,
+  .toolbar,
+  .section,
+  .feature-card,
+  .dashboard-card,
+  .stat-card,
+  .metric-card,
+  .pricing-tier,
+  .billing-card,
+  .download-card,
+  .action-card,
+  .role-card,
+  .setup-card,
+  .yard-card,
+  .stock-alert,
+  .item-card,
+  .employee-item,
+  .chat-container,
+  .message-content,
+  .warehouse-message,
+  .dm-picker,
+  .tab-container,
+  .notification,
+  .alert,
+  .ql-card,
+  .ql-container,
+  [class*="card"],
+  [class*="panel"],
+  [class*="container"],
+  [class*="modal"],
+  [class*="section"],
+  [class*="widget"],
+  [class*="feature"],
+  [class*="dashboard"],
+  [class*="table"],
+  [class*="form"]
+) {
+  background: linear-gradient(180deg, rgba(22, 53, 84, 0.98), rgba(13, 31, 51, 0.98)) !important;
+  background-color: var(--force-panel) !important;
+  color: var(--force-text) !important;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28) !important;
+}
+
+html body:not(.login-page):not(.auth-page) :is(
+  h1, h2, h3, h4, h5, h6,
+  p, span, div, small, strong, b, em, i,
+  label, li, dt, dd, td, th, summary, legend,
+  .title, .subtitle, .description, .value, .label,
+  [class*="title"], [class*="label"], [class*="text"], [class*="description"]
+) {
+  color: inherit !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+html body:not(.login-page):not(.auth-page) :is(p, small, li, .muted, .subtitle, .description, [class*="meta"], [class*="hint"]) {
+  color: var(--force-muted) !important;
+}
+
+html body:not(.login-page):not(.auth-page) :is(h1, h2, h3, h4, h5, h6, strong, b, th, label, summary) {
+  color: var(--force-text) !important;
+}
+
+html body:not(.login-page):not(.auth-page) :is(input, select, textarea, pre, code, .form-control) {
+  background: #081827 !important;
+  background-color: #081827 !important;
+  color: var(--force-text) !important;
+  border: 1px solid var(--force-border) !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+html body:not(.login-page):not(.auth-page) :is(input, textarea)::placeholder {
+  color: #8fb8d8 !important;
+  opacity: 1 !important;
+}
+
+html body:not(.login-page):not(.auth-page) :is(button, .btn, .button, input[type="submit"], input[type="button"], a.btn, [role="button"]) {
+  background: linear-gradient(135deg, var(--force-blue), #1769d6) !important;
+  background-color: var(--force-blue) !important;
+  color: white !important;
+  border: 1px solid rgba(16,41,67,0.18) !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+html body:not(.login-page):not(.auth-page) :is(.btn-success, .success, [class*="success"]) {
+  background: var(--force-green) !important;
+  color: white !important;
+}
+
+html body:not(.login-page):not(.auth-page) :is(.btn-warning, .warning, [class*="warning"]) {
+  background: var(--force-orange) !important;
+  color: white !important;
+}
+
+html body:not(.login-page):not(.auth-page) :is(.btn-danger, .danger, [class*="danger"], [class*="error"]) {
+  background: var(--force-red) !important;
+  color: white !important;
+}
+
+html body:not(.login-page):not(.auth-page) a:not(.btn):not(.button) {
+  color: #79c7ff !important;
+  opacity: 1 !important;
+}
+
+html body:not(.login-page):not(.auth-page) :is(.loading, [class*="loading"], .skeleton, [class*="skeleton"]) {
+  opacity: 1 !important;
+  animation: none !important;
+  filter: none !important;
+}
+
+html body:not(.login-page):not(.auth-page) [style*="background"]:not(button):not(.btn):not(.button):not([role="button"]):not(input[type="submit"]):not(input[type="button"]),
+html body:not(.login-page):not(.auth-page) [style*="background-color"]:not(button):not(.btn):not(.button):not([role="button"]):not(input[type="submit"]):not(input[type="button"]),
+html body:not(.login-page):not(.auth-page) [style*="box-shadow"]:not(button):not(.btn):not(.button):not([role="button"]):not(input[type="submit"]):not(input[type="button"]) {
+  background: linear-gradient(180deg, rgba(22, 53, 84, 0.98), rgba(13, 31, 51, 0.98)) !important;
+  background-color: var(--force-panel) !important;
+  color: var(--force-text) !important;
+}

@@ -21,9 +21,9 @@
     <style>
         body {background: linear-gradient(135deg, #0b1220 0%, #1e293b 100%)
             min-height: 100vh;}
-        .glass-effect {background: rgba(255, 255, 255, 0.05)
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);}
+        .glass-effect {background: rgba(16,41,67,0.05)
+            backdrop-filter: none;
+            border: 1px solid rgba(16,41,67,0.1);}
         .gradient-border {background: linear-gradient(45deg, #059669, #10b981)
             padding: 2px;
             border-radius: 12px;}
@@ -60,8 +60,8 @@
             border-radius: 8px;
             font-weight: 600;
             transition: all 0.3s ease;}
-        .form-input {background: rgba(255, 255, 255, 0.05)
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .form-input {background: rgba(16,41,67,0.05)
+            border: 1px solid rgba(16,41,67,0.1);
             border-radius: 8px;
             padding: 0.75rem;
             color: white;
@@ -69,20 +69,20 @@
         .form-input:focus {outline: none
             border-color: #10b981;
             box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);}
-        .card {background: rgba(255, 255, 255, 0.05)
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .card {background: rgba(16,41,67,0.05)
+            backdrop-filter: none;
+            border: 1px solid rgba(16,41,67,0.1);
             border-radius: 12px;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
             transition: all 0.3s ease;}
         .card:hover {transform: translateY(-2px)
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);}
-        .nav-tab {background: rgba(255, 255, 255, 0.05)
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .nav-tab {background: rgba(16,41,67,0.05)
+            border: 1px solid rgba(16,41,67,0.1);
             border-radius: 8px;
             padding: 0.75rem 1.5rem;
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(16,41,67,0.7);
             cursor: pointer;
             transition: all 0.3s ease;}
         .nav-tab.active {background: linear-gradient(45deg, #059669, #10b981)
@@ -108,16 +108,16 @@
             transition: all 0.3s ease;}
         .floating-dashboard-btn:hover {transform: translateY(-3px)
             box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);}
-        .quality-item {background: rgba(255, 255, 255, 0.05)
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .quality-item {background: rgba(16,41,67,0.05)
+            border: 1px solid rgba(16,41,67,0.1);
             border-radius: 8px;
             padding: 1rem;
             margin: 0.5rem 0;
             transition: all 0.3s ease;}
-        .quality-item:hover {background: rgba(255, 255, 255, 0.1)}
+        .quality-item:hover {background: rgba(16,41,67,0.1)}
         .quality-passed {border-color: #10b981
             background: rgba(16, 185, 129, 0.1);}
-        .quality-failed {border-color: #ef4444
+        .quality-failed {border-color: #f7fbff
             background: rgba(239, 68, 68, 0.1);}
         .quality-pending {border-color: #f59e0b
             background: rgba(245, 158, 11, 0.1);}
@@ -128,7 +128,7 @@
         .status-passed {background: #d1fae5
             color: #047857;}
         .status-failed {background: #fee2e2
-            color: #dc2626;}
+            color: #f7fbff;}
         .status-pending {background: #fef3c7
             color: #92400e;}
         .checklist-item {display: flex
@@ -137,7 +137,7 @@
             margin: 0.5rem 0;
             padding: 0.5rem;
             border-radius: 4px;
-            background: rgba(255, 255, 255, 0.02);}
+            background: rgba(16,41,67,0.02);}
         .checklist-item input[type="checkbox"] {width: 1.2rem
             height: 1.2rem;}
     </style>

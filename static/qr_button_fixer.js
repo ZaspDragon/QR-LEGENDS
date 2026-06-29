@@ -289,7 +289,7 @@ function displayGeneratedQR(qrImage, label) {
     displayArea.className = 'qr-display generated-qr-display';
     displayArea.id = 'current-qr-display';
     displayArea.style.cssText = `
-        background: white;
+        background: #102943;
         padding: 25px;
         border-radius: 16px;
         text-align: center;
@@ -386,7 +386,7 @@ function displayQRCode(qrData, qrImage, containerId = 'qr-display') {
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: white;
+            background: #102943;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
@@ -494,7 +494,7 @@ function printQR(qrImage, label) {
                         text-align: center; 
                         padding: 20px; 
                         font-family: Arial, sans-serif;
-                        background: white;
+                        background: #102943;
                         color: black;
                     }
                     h2 { 
@@ -518,7 +518,7 @@ function printQR(qrImage, label) {
                         padding: 20px;
                         margin: 20px auto;
                         max-width: 400px;
-                        background: white;
+                        background: #102943;
                     }
                     @media print {
                         body { margin: 0; }
@@ -597,7 +597,7 @@ function printQRCode(qrImage, label) {
                     }
                     body {
                         font-family: 'Arial', sans-serif;
-                        background: white;
+                        background: #102943;
                         color: black;
                         margin: 0;
                         padding: 20px;
@@ -608,7 +608,7 @@ function printQRCode(qrImage, label) {
                         padding: 30px;
                         margin: 20px auto;
                         max-width: 500px;
-                        background: white;
+                        background: #102943;
                         page-break-inside: avoid;
                     }
                     .qr-title {
@@ -626,7 +626,7 @@ function printQRCode(qrImage, label) {
                         margin: 20px 0;
                         border: 2px solid #ccc;
                         padding: 15px;
-                        background: white;
+                        background: #102943;
                     }
                     .qr-info {
                         font-size: 14px;

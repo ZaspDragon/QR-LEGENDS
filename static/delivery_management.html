@@ -18,15 +18,15 @@
           --ql-warning: #f59e0b;
           --ql-danger: #ef4444;
           --ql-accent: #6366f1;
-          --ql-border: rgba(255,255,255,.12);
-          --ql-surface: rgba(255,255,255,.06);
+          --ql-border: rgba(16,41,67,.12);
+          --ql-surface: rgba(16,41,67,.06);
         }
 
         /* Light mode overrides */
         body.light{
           --ql-bg: #f2f6fb;
-          --ql-panel: #ffffff;
-          --ql-card: #ffffff;
+          --ql-panel: #102943;
+          --ql-card: #102943;
           --ql-text: #1d2840;
           --ql-sub: #51607c;
           --ql-primary: #2563eb;
@@ -53,38 +53,38 @@
         .ql-header{
           position: sticky; top:0; z-index:1000;
           background: rgba(8,27,46,.7);
-          backdrop-filter: blur(6px);
+          backdrop-filter: none;
           border-bottom: 1px solid var(--ql-border);
         }
         body.light .ql-header{
-          background: rgba(255,255,255,.75);
+          background: rgba(16,41,67,.75);
         }
-        
+
         .ql-header-inner{
-          display:flex; align-items:center; justify-content:space-between; 
+          display:flex; align-items:center; justify-content:space-between;
           max-width:1200px; margin:0 auto; padding:14px 20px;
         }
-        
+
         .ql-title{display:flex; align-items:center; gap:10px;}
         .ql-h1{font-size:1.25rem; margin:0; letter-spacing:.2px;}
         .ql-nav{display:flex; gap:8px; flex-wrap:wrap;}
-        
+
         .ql-btn{
           display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; color:var(--ql-text);
           background: var(--ql-surface); border: 1px solid var(--ql-border);
-          box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.2);
+          box-shadow: 0 1px 0 rgba(16,41,67,.05) inset, 0 4px 14px rgba(0,0,0,.2);
           transition: transform .08s ease, background .2s ease, border-color .2s ease;
         }
-        
-        .ql-btn:hover{ 
-          transform: translateY(-1px); 
-          background: rgba(255,255,255,.12); 
+
+        .ql-btn:hover{
+          transform: translateY(-1px);
+          background: rgba(16,41,67,.12);
           text-decoration: none;
         }
         body.light .ql-btn:hover{ background: rgba(15,23,42,.08); }
-        
-        .ql-secondary{ 
-          background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12)); 
+
+        .ql-secondary{
+          background: linear-gradient(180deg, rgba(59,130,246,.25), rgba(59,130,246,.12));
           border-color: rgba(59,130,246,.35);
         }
 
@@ -96,12 +96,12 @@
 
         .ql-container{ max-width:1200px; margin:22px auto; padding:0 20px; }
         .ql-grid{ display:grid; gap:16px; grid-template-columns: repeat(12, 1fr);}
-        
+
         .ql-card{
           grid-column: span 12;
           background: linear-gradient(180deg, rgba(22,41,78,.9), rgba(14,30,59,.92));
           border: 1px solid var(--ql-border);
-          box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(255,255,255,.06) inset;
+          box-shadow: 0 10px 30px rgba(2,8,23,.45), 0 1px 0 rgba(16,41,67,.06) inset;
           border-radius:16px; padding:16px;
           margin-bottom: 20px;
         }
@@ -119,7 +119,7 @@
         body.light .ql-card h2{ color:#234073; }
 
         .ql-actions{ display:flex; gap:10px; flex-wrap:wrap; }
-        
+
         .ql-input, .ql-select, input[type="text"], input[type="date"], textarea, select {
           width:100%; background: var(--ql-surface); color: var(--ql-text); border: 1px solid var(--ql-border);
           padding:10px 12px; border-radius:10px; outline:none;
@@ -128,19 +128,19 @@
         body.light .ql-input::placeholder{ color: #6b7b92; }
 
         /* Dashboard specific styles */
-        .stats-grid { 
-          display: grid; 
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-          gap: 16px; 
-          margin-bottom: 24px; 
+        .stats-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 16px;
+          margin-bottom: 24px;
         }
-        
+
         .stat-card {
           background: linear-gradient(135deg, rgba(34,197,94,.15), rgba(34,197,94,.05));
           border: 1px solid rgba(34,197,94,.2);
-          color: var(--ql-text); 
-          padding: 20px; 
-          border-radius: 16px; 
+          color: var(--ql-text);
+          padding: 20px;
+          border-radius: 16px;
           text-align: center;
         }
 
@@ -160,58 +160,58 @@
         }
 
         .delivery-list { margin-top: 20px; }
-        
+
         .delivery-item {
-          border: 1px solid var(--ql-border); 
-          padding: 20px; 
-          margin: 16px 0; 
-          border-radius: 16px; 
+          border: 1px solid var(--ql-border);
+          padding: 20px;
+          margin: 16px 0;
+          border-radius: 16px;
           background: var(--ql-surface);
-          backdrop-filter: blur(10px);
+          backdrop-filter: none;
         }
-        
+
         .status-pending { border-left: 5px solid var(--ql-warning); }
         .status-in-transit { border-left: 5px solid var(--ql-primary); }
         .status-completed { border-left: 5px solid var(--ql-success); }
 
         .btn {
-          padding: 10px 16px; 
-          margin: 4px; 
-          border: none; 
-          border-radius: 10px; 
-          cursor: pointer; 
+          padding: 10px 16px;
+          margin: 4px;
+          border: none;
+          border-radius: 10px;
+          cursor: pointer;
           font-size: 12px;
           background: var(--ql-surface);
           color: var(--ql-text);
           border: 1px solid var(--ql-border);
           transition: all 0.2s ease;
         }
-        
+
         .btn:hover {
           transform: translateY(-1px);
-          background: rgba(255,255,255,.12);
+          background: rgba(16,41,67,.12);
         }
 
-        .btn-primary { 
-          background: linear-gradient(135deg, var(--ql-primary), rgba(59,130,246,.8)); 
+        .btn-primary {
+          background: linear-gradient(135deg, var(--ql-primary), rgba(59,130,246,.8));
           color: white;
           border: 1px solid var(--ql-primary);
         }
-        
-        .btn-success { 
-          background: linear-gradient(135deg, var(--ql-success), rgba(34,197,94,.8)); 
+
+        .btn-success {
+          background: linear-gradient(135deg, var(--ql-success), rgba(34,197,94,.8));
           color: white;
           border: 1px solid var(--ql-success);
         }
-        
-        .btn-info { 
-          background: linear-gradient(135deg, var(--ql-accent), rgba(99,102,241,.8)); 
+
+        .btn-info {
+          background: linear-gradient(135deg, var(--ql-accent), rgba(99,102,241,.8));
           color: white;
           border: 1px solid var(--ql-accent);
         }
 
-        .btn-warning { 
-          background: linear-gradient(135deg, var(--ql-warning), rgba(245,158,11,.8)); 
+        .btn-warning {
+          background: linear-gradient(135deg, var(--ql-warning), rgba(245,158,11,.8));
           color: white;
           border: 1px solid var(--ql-warning);
         }
@@ -240,16 +240,16 @@
         }
 
         /* FAB Dashboard button */
-        .ql-fab{ 
-          position: fixed; 
-          right: 18px; 
-          bottom: 18px; 
-          background: var(--ql-accent); 
-          color:white; 
+        .ql-fab{
+          position: fixed;
+          right: 18px;
+          bottom: 18px;
+          background: var(--ql-accent);
+          color:white;
           border:none;
-          border-radius:999px; 
-          padding:10px 14px; 
-          font-weight:600; 
+          border-radius:999px;
+          padding:10px 14px;
+          font-weight:600;
           box-shadow: 0 14px 30px rgba(0,0,0,.35);
           text-decoration: none;
           cursor: pointer;
@@ -262,25 +262,25 @@
             gap: 12px;
             padding: 12px 20px;
           }
-          
+
           .ql-nav {
             justify-content: center;
           }
-          
+
           .stats-grid {
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 12px;
           }
-          
+
           .delivery-item {
             padding: 16px;
           }
-          
+
           .delivery-item > div {
             grid-template-columns: 1fr !important;
             gap: 12px !important;
           }
-          
+
           .qr-scanner-btn {
             bottom: 90px;
             right: 15px;
@@ -454,7 +454,7 @@
 
     function displayDeliveries() {
         const container = document.getElementById('deliveriesContainer');
-        
+
         if (deliveries.length === 0) {
             container.innerHTML = '<p style="text-align: center; color: var(--ql-sub);">No active deliveries found</p>';
             return;
@@ -472,7 +472,7 @@
                             <h4 style="margin: 0 0 10px 0; color: var(--ql-text);">${delivery.po_number} - ${delivery.receiver}</h4>
                             <p style="margin: 5px 0; color: var(--ql-text);"><strong>Delivery ID:</strong> ${delivery.id}</p>
                             <p style="margin: 5px 0; color: var(--ql-text);"><strong>Carrier:</strong> ${delivery.carrier}</p>
-                            <p style="margin: 5px 0; color: var(--ql-text);"><strong>Status:</strong> 
+                            <p style="margin: 5px 0; color: var(--ql-text);"><strong>Status:</strong>
                                 <span style="background: ${getStatusColor(delivery.status)}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px;">
                                     ${statusText}
                                 </span>
@@ -485,8 +485,8 @@
                         <div style="text-align: right;">
                             <button class="btn btn-info" onclick="viewDeliveryDetails('${delivery.id}')">📄 View Details</button>
                             <button class="btn btn-primary" onclick="printDeliveryQR('${delivery.id}')">🖨️ Print QR</button>
-                            ${delivery.status === 'pending_delivery' ? 
-                                `<button class="btn btn-success" onclick="markInTransit('${delivery.id}')">🚛 Mark In Transit</button>` : 
+                            ${delivery.status === 'pending_delivery' ?
+                                `<button class="btn btn-success" onclick="markInTransit('${delivery.id}')">🚛 Mark In Transit</button>` :
                                 ''
                             }
                         </div>
@@ -539,7 +539,7 @@
     function viewDeliveryDetails(deliveryId) {
         const delivery = deliveries.find(d => d.id === deliveryId);
         if (delivery) {
-            const itemsDetails = delivery.expected_items.map(item => 
+            const itemsDetails = delivery.expected_items.map(item =>
                 `• ${item.name} - Qty: ${item.quantity} (${item.weight})`
             ).join('\n');
 
@@ -603,7 +603,7 @@
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
         loadDeliveries();
-        
+
         // Auto-refresh every 30 seconds
         setInterval(loadDeliveries, 30000);
 

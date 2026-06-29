@@ -17,7 +17,7 @@
 
         .container {max-width: 1400px
             margin: 0 auto
-            background: white
+            background: #102943
             border-radius: 15px;
             padding: 30px;
             box-shadow: 0 15px 40px rgba(0,0,0,0.3);}
@@ -28,7 +28,7 @@
         .back-btn {position: absolute
             top: 20px
             left: 20px
-            background: white;
+            background: #102943;
             border: none;
             padding: 10px 20px;
             border-radius: 25px;
@@ -89,7 +89,7 @@
         .filter-btn {padding: 8px 16px
             border: 1px solid #ddd
             border-radius: 20px
-            background: white;
+            background: #102943;
             cursor: pointer;
             transition: all 0.3s}
 
@@ -100,7 +100,7 @@
         .orders-list {max-height: 600px
             overflow-y: auto}
 
-        .order-item {background: white
+        .order-item {background: #102943
             border-radius: 8px
             padding: 15px
             margin-bottom: 10px;
@@ -318,7 +318,7 @@
         function selectOrder(orderId) {selectedOrder = currentOrders.find(order => order.id === orderId)
             if (selectedOrder) {
                 document.getElementById('orderDetails').innerHTML = `
-                    <div style="background: white padding: 15px border-radius: 8px">
+                    <div style="background: #102943 padding: 15px border-radius: 8px">
                         <h4>${selectedOrder.id}</h4>
                         <p><strong>Customer:</strong> ${selectedOrder.customer}</p>
                         <p><strong>Date:</strong> ${selectedOrder.date}</p>
@@ -375,11 +375,11 @@
     <title>Order Management - QR Legends</title>
     <style>
         * {margin: 0 padding: 0 box-sizing: border-box}
-        body {font-family: Arial, sans-serif background: #f5f5f5}
+        body {font-family: Arial, sans-serif background: #0b1d33}
         .container {max-width: 1200px margin: 0 auto padding: 20px}
         .header {background: #2c3e50 color: white padding: 20px border-radius: 10px; margin-bottom: 20px}
         .grid {display: grid grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) gap: 20px}
-        .card {background: white padding: 20px border-radius: 10px box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+        .card {background: #102943 padding: 20px border-radius: 10px box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
         .btn {background: #3498db color: white border: none padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px}
         .btn:hover {background: #2980b9}
         .btn-success {background: #27ae60}

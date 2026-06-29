@@ -65,7 +65,7 @@
                 bottom: 70px;
                 right: 0;
                 width: 280px;
-                background: white;
+                background: #102943;
                 border-radius: 12px;
                 box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
                 overflow: hidden;}
@@ -92,7 +92,7 @@
                 border-radius: 50%;
                 transition: background 0.3s ease;}
 
-            .chat-close:hover {background: rgba(255, 255, 255, 0.2)}
+            .chat-close:hover {background: rgba(16,41,67,0.2)}
 
             .chat-content {padding: 20px}
 

@@ -17,7 +17,7 @@
 
         .container {max-width: 1400px
             margin: 0 auto
-            background: white
+            background: #102943
             border-radius: 15px;
             padding: 30px;
             box-shadow: 0 15px 40px rgba(0,0,0,0.3);}
@@ -28,7 +28,7 @@
         .back-btn {position: absolute
             top: 20px
             left: 20px
-            background: white;
+            background: #102943;
             border: none;
             padding: 10px 20px;
             border-radius: 25px;
@@ -108,7 +108,7 @@
         .form-group input:focus, .form-group select:focus, .form-group textarea: focus {outline: none
             border-color: #667eea}
 
-        .quote-item {background: white
+        .quote-item {background: #102943
             border-radius: 8px
             padding: 15px
             margin-bottom: 10px;
@@ -137,7 +137,7 @@
         .status-accepted {background: #d4edda color: #155724}
         .status-expired {background: #d1ecf1 color: #0c5460}
 
-        .pricing-rules {background: white
+        .pricing-rules {background: #102943
             border-radius: 8px
             padding: 15px
             margin-bottom: 15px}
@@ -276,7 +276,7 @@
             <div class="content-grid">
                 <div class="main-content">
                     <h3>🧮 Price Calculator</h3>
-                    <div style="background: white; padding: 20px; border-radius: 8px;">
+                    <div style="background: #102943; padding: 20px; border-radius: 8px;">
                         <div class="form-group">
                             <label>Customer</label>
                             <select id="calcCustomer">
@@ -381,7 +381,7 @@
         function selectQuote(quoteId) {selectedQuote = quotes.find(quote => quote.id === quoteId)
             if (selectedQuote) {
                 document.getElementById('quoteDetails').innerHTML = `
-                    <div style="background: white padding: 15px border-radius: 8px">
+                    <div style="background: #102943 padding: 15px border-radius: 8px">
                         <h4>${selectedQuote.id}</h4>
                         <p><strong>Customer:</strong> ${selectedQuote.customer}</p>
                         <p><strong>Date:</strong> ${selectedQuote.date}</p>
@@ -448,17 +448,17 @@
 
         function loadDiscounts() {const container = document.getElementById('discountsList')
             container.innerHTML = `
-                <div style="background: white border-radius: 8px padding: 15px margin-bottom: 10px">
+                <div style="background: #102943 border-radius: 8px padding: 15px margin-bottom: 10px">
                     <h4>🎯 NEWYEAR2025</h4>
                     <p>15% off all orders • Valid until Jan 31, 2025</p>
                     <small>Used 45 times • $12,500 total discount given</small>
                 </div>
-                <div style="background: white border-radius: 8px; padding: 15px; margin-bottom: 10px;">
+                <div style="background: #102943 border-radius: 8px; padding: 15px; margin-bottom: 10px;">
                     <h4>💎 LOYALTY10</h4>
                     <p>10% off for returning customers • No expiry</p>
                     <small>Used 123 times • $8,900 total discount given</small>
                 </div>
-                <div style="background: white; border-radius: 8px; padding: 15px; margin-bottom: 10px;">
+                <div style="background: #102943; border-radius: 8px; padding: 15px; margin-bottom: 10px;">
                     <h4>📦 BULK25</h4>
                     <p>25% off orders over $5,000 • Valid all year</p>
                     <small>Used 18 times • $25,600 total discount given</small>
@@ -500,7 +500,7 @@
                 `;
 
                 document.getElementById('pricingBreakdown').innerHTML = `
-                    <div style="background: white padding: 15px border-radius: 8px">
+                    <div style="background: #102943 padding: 15px border-radius: 8px">
                         <h4>📊 Breakdown</h4>
                         <div style="margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 5px;">
                             <div>Base Price: $${basePrice.toFixed(2)}</div>
@@ -618,11 +618,11 @@
     <title>Quotes & Pricing - QR Legends</title>
     <style>
         * {margin: 0 padding: 0 box-sizing: border-box}
-        body {font-family: Arial, sans-serif background: #f5f5f5}
+        body {font-family: Arial, sans-serif background: #0b1d33}
         .container {max-width: 1200px margin: 0 auto padding: 20px}
         .header {background: #e67e22 color: white padding: 20px border-radius: 10px; margin-bottom: 20px}
         .grid {display: grid grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) gap: 20px}
-        .card {background: white padding: 20px border-radius: 10px box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+        .card {background: #102943 padding: 20px border-radius: 10px box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
         .btn {background: #e67e22 color: white border: none padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px}
         .btn:hover {background: #d35400}
         .btn-success {background: #27ae60}

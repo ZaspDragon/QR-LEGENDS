@@ -15,8 +15,8 @@
             margin: 0 auto
             padding: 20px}
 
-        .header {background: rgba(255, 255, 255, 0.95)
-            backdrop-filter: blur(10px)
+        .header {background: rgba(16,41,67,0.95)
+            backdrop-filter: none
             border-radius: 15px
             padding: 30px;
             margin-bottom: 30px;
@@ -52,8 +52,8 @@
             gap: 30px
             margin-bottom: 30px}
 
-        .billing-card {background: rgba(255, 255, 255, 0.95)
-            backdrop-filter: blur(10px)
+        .billing-card {background: rgba(16,41,67,0.95)
+            backdrop-filter: none
             border-radius: 15px
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);}
@@ -95,7 +95,7 @@
             gap: 20px
             margin: 20px 0}
 
-        .pricing-tier {background: white
+        .pricing-tier {background: #102943
             border-radius: 15px
             padding: 25px
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
@@ -213,7 +213,7 @@
             border: 1px solid #e0e0e0;
             border-radius: 8px;
             margin-bottom: 10px;
-            background: white;
+            background: #102943;
             transition: all 0.3s}
 
         .user-item:hover {transform: translateY(-2px)
@@ -362,15 +362,15 @@
                     <h3>Competitive Pricing Comparison</h3>
                     <div class="competitor-item">
                         <span><strong>Most Cloud WMS Systems:</strong></span>
-                        <span style="color: #dc3545; font-weight: bold;">$100-300 per user/month + setup fees</span>
+                        <span style="color: #f7fbff; font-weight: bold;">$100-300 per user/month + setup fees</span>
                     </div>
                     <div class="competitor-item">
                         <span><strong>Enterprise WMS (50+ users):</strong></span>
-                        <span style="color: #dc3545; font-weight: bold;">$15,000-$50,000+ per month</span>
+                        <span style="color: #f7fbff; font-weight: bold;">$15,000-$50,000+ per month</span>
                     </div>
                     <div class="competitor-item">
                         <span><strong>Traditional WMS Implementation:</strong></span>
-                        <span style="color: #dc3545; font-weight: bold;">$100,000+ setup + $10,000+ monthly</span>
+                        <span style="color: #f7fbff; font-weight: bold;">$100,000+ setup + $10,000+ monthly</span>
                     </div>
                     <div class="competitor-item">
                         <span><strong>QR LEGENDS Small Warehouse (10 users):</strong></span>
@@ -550,39 +550,39 @@
 
                             <div style="text-align: center; margin: 20px 0; color: #666; position: relative;">
                                 <hr style="margin: 0;">
-                                <span style="background: white; padding: 0 15px; position: absolute; top: -10px; left: 50%; transform: translateX(-50%);">or pay with card</span>
+                                <span style="background: #102943; padding: 0 15px; position: absolute; top: -10px; left: 50%; transform: translateX(-50%);">or pay with card</span>
                             </div>
 
                             <div class="stripe-payment-form">
                                 <div class="form-group">
-                                    <label for="cardholder-name">Cardholder Name <span style="color: #dc3545;">*</span>:</label>
+                                    <label for="cardholder-name">Cardholder Name <span style="color: #f7fbff;">*</span>:</label>
                                     <input type="text" id="cardholder-name" placeholder="Full name as shown on card" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 15px;" required>
                                 </div>
 
                                 <div class="form-group">
-                                    <label>Card Number <span style="color: #dc3545;">*</span>:</label>
-                                    <div id="card-number-element" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; margin-bottom: 15px; background: white;">
+                                    <label>Card Number <span style="color: #f7fbff;">*</span>:</label>
+                                    <div id="card-number-element" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; margin-bottom: 15px; background: #102943;">
                                         <!-- Stripe Elements will create form elements here -->
                                     </div>
                                 </div>
 
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                                     <div class="form-group">
-                                        <label>Expiry Date <span style="color: #dc3545;">*</span>:</label>
-                                        <div id="card-expiry-element" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; background: white;">
+                                        <label>Expiry Date <span style="color: #f7fbff;">*</span>:</label>
+                                        <div id="card-expiry-element" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; background: #102943;">
                                             <!-- Stripe Elements will create form elements here -->
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label>CVV <span style="color: #dc3545;">*</span>:</label>
-                                        <div id="card-cvc-element" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; background: white;">
+                                        <label>CVV <span style="color: #f7fbff;">*</span>:</label>
+                                        <div id="card-cvc-element" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; background: #102943;">
                                             <!-- Stripe Elements will create form elements here -->
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="billing-address-section" style="border-top: 1px solid #e0e0e0; padding-top: 20px; margin-top: 20px;">
-                                    <h4 style="margin: 0 0 15px 0; color: #333;">Billing Address <span style="color: #dc3545;">*</span></h4>
+                                    <h4 style="margin: 0 0 15px 0; color: #333;">Billing Address <span style="color: #f7fbff;">*</span></h4>
 
                                     <div class="form-group">
                                         <label for="billing-address-line1">Address Line 1:</label>
@@ -642,7 +642,7 @@
                                     </div>
                                 </div>
 
-                                <div id="card-errors" role="alert" style="color: #dc3545; font-size: 0.9rem; margin: 10px 0;"></div>
+                                <div id="card-errors" role="alert" style="color: #f7fbff; font-size: 0.9rem; margin: 10px 0;"></div>
 
                                 <button id="submit-payment-method" class="btn btn-success" style="width: 100%; margin-bottom: 15px;">
                                     💳 Add Payment Method
@@ -716,7 +716,7 @@
                 <!-- Add User Instructions -->
                 <div id="add-user-info" style="display: none;" class="alert alert-info">
                     <h3>➕ How to Add Users</h3>
-                    <p><strong>Your Employer Code:</strong> <span id="employer-code-display" style="font-family: monospace; background: #f5f5f5; padding: 5px; border-radius: 3px;"></span></p>
+                    <p><strong>Your Employer Code:</strong> <span id="employer-code-display" style="font-family: monospace; background: #0b1d33; padding: 5px; border-radius: 3px;"></span></p>
                     <p>To add new users to your account:</p>
                     <ol>
                         <li>Share your <strong>Employer Code</strong> with new employees</li>
@@ -738,7 +738,7 @@
                             <h3 style="color: #ff6f00; margin: 0 0 10px 0; display: flex; align-items: center; gap: 10px;">
                                 🤖 Premium AI Freight Optimization
                             </h3>
-                            <p style="color: #e65100; font-size: 1.2rem; font-weight: bold; margin: 0;">$1,000/month</p>
+                            <p style="color: #f7fbff; font-size: 1.2rem; font-weight: bold; margin: 0;">$1,000/month</p>
                         </div>
                         <div id="ai-addon-status" style="text-align: right;">
                             <!-- Status will be loaded here -->
@@ -747,7 +747,7 @@
 
                     <div style="margin-bottom: 20px;">
                         <h4 style="color: #ff6f00; margin: 0 0 15px 0;">🎯 Advanced Features Included:</h4>
-                        <ul style="color: #e65100; margin: 0; padding-left: 20px;">
+                        <ul style="color: #f7fbff; margin: 0; padding-left: 20px;">
                             <li><strong>🤖 Advanced 3D Bin Packing AI</strong> - Optimal space utilization algorithms</li>
                             <li><strong>📷 Computer Vision Dimension Detection</strong> - Automatic measurement from photos</li>
                             <li><strong>🎯 Intelligent Placement Optimization</strong> - AI-driven storage recommendations</li>
@@ -761,7 +761,7 @@
                         </ul>
                     </div>
 
-                    <div style="background: #fff; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <div style="background: #102943; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
                         <h4 style="color: #ff6f00; margin: 0 0 15px 0;">💰 Expected ROI Benefits:</h4>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                             <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
@@ -810,8 +810,8 @@
 
     <!-- Cancellation Modal -->
     <div id="cancel-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
-        <div style="background: white; border-radius: 15px; padding: 40px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
-            <h2 style="margin-top: 0; color: #dc3545;">❌ Cancel Subscription</h2>
+        <div style="background: #102943; border-radius: 15px; padding: 40px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
+            <h2 style="margin-top: 0; color: #f7fbff;">❌ Cancel Subscription</h2>
             <p style="color: #666; margin-bottom: 20px;">We're sorry to see you go! Please help us improve by letting us know why you're cancelling.</p>
 
             <div style="margin-bottom: 20px;">
@@ -844,7 +844,7 @@
             </div>
 
             <div style="display: flex; gap: 15px; justify-content: flex-end;">
-                <button onclick="closeCancelModal()" style="padding: 12px 24px; border: 1px solid #ddd; background: white; border-radius: 8px; cursor: pointer;">
+                <button onclick="closeCancelModal()" style="padding: 12px 24px; border: 1px solid #ddd; background: #102943; border-radius: 8px; cursor: pointer;">
                     Keep Subscription
                 </button>
                 <button onclick="confirmCancellation()" style="padding: 12px 24px; border: none; background: #dc3545; color: white; border-radius: 8px; cursor: pointer; font-weight: bold;">
@@ -924,7 +924,7 @@
                     <div style="background: #e3f2fd padding: 20px border-radius: 10px text-align: center border: 2px solid #2196f3">
                         <h3 style="color: #1976d2; margin: 0 0 15px 0;">💳 Demo Mode - Payment Processing</h3>
                         <p style="color: #1565c0; margin-bottom: 15px;">This is a demonstration environment. Payment processing is simulated for demo purposes.</p>
-                        <div style="background: white; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                        <div style="background: #102943; padding: 15px; border-radius: 8px; margin: 15px 0;">
                             <h4 style="color: #1976d2; margin: 0 0 10px 0;">Demo Credit Card Information:</h4>
                             <p style="margin: 5px 0; font-family: monospace;"><strong>Card Number:</strong> 4242 4242 4242 4242</p>
                             <p style="margin: 5px 0; font-family: monospace;"><strong>Expiry:</strong> 12/25</p>
@@ -1303,7 +1303,7 @@
                     </div>
                     <div class="billing-stat">
                         <span>Traditional WMS Cost:</span>
-                        <span class="billing-value" style="color: #dc3545">$25,000+</span>
+                        <span class="billing-value" style="color: #f7fbff">$25,000+</span>
                     </div>
                     <div class="billing-stat">
                         <span><strong>Monthly Savings:</strong></span>
@@ -1350,7 +1350,7 @@
                 `;
             } else {statusDiv.innerHTML = `
                     <span class="status-badge" style="background: #f8d7da color: #721c24">🚫 Not Active</span>
-                    <p style="margin: 5px 0 color: #dc3545 font-weight: bold">AI Optimization Disabled</p>
+                    <p style="margin: 5px 0 color: #f7fbff font-weight: bold">AI Optimization Disabled</p>
                     <p style="margin: 0 color: #666; font-size: 0.9rem;">Upgrade to unlock advanced AI features</p>
                 `;
 
@@ -1541,7 +1541,7 @@
                 </div>
                 <div class="billing-stat">
                     <span>Traditional WMS Cost:</span>
-                    <span class="billing-value" style="color: #dc3545">$${estimatedSavings.traditional}</span>
+                    <span class="billing-value" style="color: #f7fbff">$${estimatedSavings.traditional}</span>
                 </div>
                 <div class="billing-stat">
                     <span><strong>Monthly Savings:</strong></span>

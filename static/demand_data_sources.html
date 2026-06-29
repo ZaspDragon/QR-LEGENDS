@@ -8,20 +8,20 @@
     <link rel="icon" type="image/png" href="/static/qr_legends_logo.png">
     <script src="universal_dashboard_button.js"></script>
     <style>
-        body {font-family: Arial, sans-serif 
-            margin: 0 
-            padding: 20px 
+        body {font-family: Arial, sans-serif
+            margin: 0
+            padding: 20px
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh}
-        .container {max-width: 1400px 
-            margin: 0 auto 
-            background: white 
-            border-radius: 15px; 
+        .container {max-width: 1400px
+            margin: 0 auto
+            background: #102943
+            border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             overflow: hidden}
-        .header {background: linear-gradient(135deg, #667eea, #764ba2) 
-            color: white 
-            padding: 30px 
+        .header {background: linear-gradient(135deg, #667eea, #764ba2)
+            color: white
+            padding: 30px
             text-align: center}
         .content {padding: 30px}
         .data-source-grid {display: grid
@@ -35,7 +35,7 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
         .status-active {border-left-color: #28a745}
         .status-warning {border-left-color: #ffc107}
-        .status-error {border-left-color: #dc3545}
+        .status-error {border-left-color: #f7fbff}
         .btn {background: #667eea
             color: white
             border: none
@@ -49,7 +49,7 @@
         .data-table {width: 100%
             border-collapse: collapse
             margin: 15px 0
-            background: white}
+            background: #102943}
         .data-table th,
         .data-table td {padding: 12px
             text-align: left
@@ -68,7 +68,7 @@
             <h1>📊 AI Demand Prediction Data Sources</h1>
             <p>Data integration and prediction accuracy monitoring</p>
         </div>
-        
+
         <div class="content">
             <div class="data-source-grid">
                 <div class="data-source-card status-active">

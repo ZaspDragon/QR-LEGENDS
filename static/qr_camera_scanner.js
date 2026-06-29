@@ -54,7 +54,7 @@ if (typeof window.QRCameraScanner !== 'undefined') {
                     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
                 ">
                     <div style="
-                        background: white;
+                        background: #102943;
                         border-radius: 15px;
                         padding: 30px;
                         max-width: 400px;

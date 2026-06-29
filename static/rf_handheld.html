@@ -12,10 +12,10 @@
     <style>
         * {box-sizing: border-box}
 
-        body {font-family: Arial, sans-serif 
-            margin: 0 
-            padding: 10px 
-            background-color: #f5f5f5;
+        body {font-family: Arial, sans-serif
+            margin: 0
+            padding: 10px
+            background-color: #0b1d33;
             padding-top: 70px;
             padding-bottom: 120px}
 
@@ -30,26 +30,26 @@
             font-size: 1.8rem
             font-weight: 600}
 
-        .container {max-width: 1200px 
-            margin: 0 auto 
+        .container {max-width: 1200px
+            margin: 0 auto
             width: 100%}
 
-        .card {background: white 
-            padding: 15px 
-            margin: 8px 0 
-            border-radius: 8px; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+        .card {background: #102943
+            padding: 15px
+            margin: 8px 0
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             width: 100%}
 
-        .grid {display: grid 
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) 
+        .grid {display: grid
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr))
             gap: 15px}
 
-        .btn {padding: 10px 15px 
-            margin: 3px 
-            border: none 
-            border-radius: 5px; 
-            cursor: pointer; 
+        .btn {padding: 10px 15px
+            margin: 3px
+            border: none
+            border-radius: 5px;
+            cursor: pointer;
             font-size: 14px;
             min-height: 40px;
             white-space: nowrap}
@@ -62,15 +62,15 @@
 
         .form-group {margin: 12px 0}
 
-        .form-group label {display: block 
-            margin-bottom: 5px 
-            font-weight: bold 
+        .form-group label {display: block
+            margin-bottom: 5px
+            font-weight: bold
             font-size: 14px}
 
-        .form-group input, .form-group select, .form-group textarea {width: 100% 
-            padding: 10px 
-            border: 1px solid #ddd 
-            border-radius: 4px; 
+        .form-group input, .form-group select, .form-group textarea {width: 100%
+            padding: 10px
+            border: 1px solid #ddd
+            border-radius: 4px;
             font-size: 16px}
 
         .action-buttons {display: flex
@@ -90,17 +90,17 @@
             gap: 15px
             margin: 20px 0}
 
-        .status-card {background: white
+        .status-card {background: #102943
             padding: 20px
             border-radius: 10px
             border-left: 4px solid #17a2b8;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);}
 
         .status-card.online {border-left-color: #28a745}
-        .status-card.offline {border-left-color: #dc3545}
+        .status-card.offline {border-left-color: #f7fbff}
         .status-card.maintenance {border-left-color: #ffc107}
 
-        .terminal-list {background: white
+        .terminal-list {background: #102943
             border-radius: 8px
             overflow: hidden
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
@@ -164,7 +164,7 @@
             align-items: center;
             justify-content: center}
 
-        .modal-content {background: white
+        .modal-content {background: #102943
             padding: 30px
             border-radius: 15px
             max-width: 500px;
@@ -200,7 +200,7 @@
                     <small>Active and responsive</small>
                 </div>
                 <div class="status-card offline">
-                    <h4 style="margin: 0 0 10px 0; color: #dc3545;">🔴 Offline Terminals</h4>
+                    <h4 style="margin: 0 0 10px 0; color: #f7fbff;">🔴 Offline Terminals</h4>
                     <div style="font-size: 24px; font-weight: bold;" id="offlineCount">2</div>
                     <small>Need attention</small>
                 </div>
@@ -317,7 +317,7 @@
         <div class="card">
             <h3>📋 Active RF Terminals</h3>
             <div class="sync-status">
-                <strong>📡 Last Sync:</strong> <span id="lastSyncTime">2 minutes ago</span> | 
+                <strong>📡 Last Sync:</strong> <span id="lastSyncTime">2 minutes ago</span> |
                 <strong>🔄 Auto Sync:</strong> <span style="color: #28a745;">Enabled</span> |
                 <button class="btn btn-sm btn-primary" onclick="forceSyncAll()">Force Sync All</button>
             </div>
@@ -357,7 +357,7 @@
                     <p style="margin: 5px 0; color: #666;">3 devices need charging</p>
                 </div>
                 <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #dc3545;">
-                    <h4 style="margin: 0; color: #dc3545;">🚨 Alerts</h4>
+                    <h4 style="margin: 0; color: #f7fbff;">🚨 Alerts</h4>
                     <p style="margin: 5px 0; color: #666;">2 devices offline</p>
                     <p style="margin: 5px 0; color: #666;">1 battery critical</p>
                 </div>
@@ -447,7 +447,7 @@
                         </div>
                         <div class="battery-level">
                             🔋 <div class="battery-bar">
-                                <div class="battery-fill ${getBatteryClass(terminal.battery)}" 
+                                <div class="battery-fill ${getBatteryClass(terminal.battery)}"
                                      style="width: ${terminal.battery}%;"></div>
                             </div>
                             ${terminal.battery}%
@@ -547,7 +547,7 @@
                             <div style="font-size: 12px; color: #666;">Avg Scan Time</div>
                         </div>
                         <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; text-align: center;">
-                            <div style="font-size: 18px; font-weight: bold; color: #dc3545;">2</div>
+                            <div style="font-size: 18px; font-weight: bold; color: #f7fbff;">2</div>
                             <div style="font-size: 12px; color: #666;">Errors Today</div>
                         </div>
                     </div>

@@ -560,7 +560,7 @@ def main_dashboard():
             try:
                 with open(os.path.join('static', 'main_dashboard.html'), 'r', encoding='utf-8') as f:
                     html_content = f.read()
-                    return html_content
+                    return inject_dark_theme(html_content)
             except FileNotFoundError:
                 return "<h1>Dashboard - File Not Found</h1>", 404
 
@@ -569,7 +569,7 @@ def main_dashboard():
             try:
                 with open(os.path.join('static', 'main_dashboard.html'), 'r', encoding='utf-8') as f:
                     html_content = f.read()
-                    return html_content
+                    return inject_dark_theme(html_content)
             except FileNotFoundError:
                 return "<h1>Dashboard - File Not Found</h1>", 404
 
@@ -591,7 +591,7 @@ def main_dashboard():
                 try:
                     with open(os.path.join('static', 'main_dashboard.html'), 'r', encoding='utf-8') as f:
                         html_content = f.read()
-                        return html_content
+                        return inject_dark_theme(html_content)
                 except FileNotFoundError:
                     return "<h1>Dashboard - File Not Found</h1>", 404
 
@@ -608,10 +608,18 @@ def warehouse_os():
     """WarehouseOS aliases use the authenticated Control Center."""
     return main_dashboard()
 
+def serve_themed_html(filename, not_found_label='Page'):
+    """Serve an HTML file after applying non-auth app theme injection."""
+    try:
+        with open(os.path.join('static', filename), 'r', encoding='utf-8') as f:
+            return inject_dark_theme(f.read())
+    except FileNotFoundError:
+        return f"<h1>{not_found_label} - File Not Found</h1>", 404
+
 @app.route('/mobile_dashboard')
 def mobile_dashboard():
     """Mobile-optimized dashboard"""
-    return send_from_directory('static', 'mobile_dashboard.html')
+    return serve_themed_html('mobile_dashboard.html', 'Mobile Dashboard')
 
 @app.route('/company_login')
 def company_login_page():
@@ -805,30 +813,30 @@ def employee_benefits_portal():
 # Warehouse/Inventory Routes
 @app.route('/cycle_counting')
 def cycle_counting():
-    return send_from_directory('static', 'cycle_counting.html')
+    return serve_themed_html('cycle_counting.html', 'Cycle Counting')
 
 @app.route('/inventory_adjustments')
 def inventory_adjustments():
-    return send_from_directory('static', 'inventory_adjustments.html')
+    return serve_themed_html('inventory_adjustments.html', 'Inventory Adjustments')
 
 @app.route('/custom_reports')
 def custom_reports():
-    return send_from_directory('static', 'custom_reports.html')
+    return serve_themed_html('custom_reports.html', 'Custom Reports')
 
 @app.route('/warehouse_chat')
 def warehouse_chat():
-    return send_from_directory('static', 'warehouse_chat.html')
+    return serve_themed_html('warehouse_chat.html', 'Warehouse Chat')
 
 @app.route('/qr_camera_scanner')
 @app.route('/qr_scanner')
 def qr_camera_scanner():
-    return send_from_directory('static', 'qr_scanner_test.html')
+    return serve_themed_html('qr_scanner_test.html', 'QR Scanner')
 
 # Order Picking Routes
 @app.route('/order_picking')
 def order_picking_page():
     """Order picking department page"""
-    return send_from_directory('static', 'order_picking.html')
+    return serve_themed_html('order_picking.html', 'Order Picking')
 
 @app.route('/picking')
 def picking_redirect():
@@ -840,14 +848,14 @@ def picking_redirect():
 @app.route('/reports_hub')
 def reports_page():
     """Reports and analytics hub"""
-    return send_from_directory('static', 'reports_hub.html')
+    return serve_themed_html('reports_hub.html', 'Reports')
 
 # Admin Routes
 @app.route('/admin')
 @app.route('/admin_hub')
 def admin_page():
     """Admin control panel"""
-    return send_from_directory('static', 'admin_hub.html')
+    return serve_themed_html('admin_hub.html', 'Admin')
 
 # Logout Route
 @app.route('/logout')
@@ -1928,6 +1936,59 @@ def get_inventory_items():
     except Exception as e:
         logger.error(f"Error retrieving inventory items: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/inventory/stats', methods=['GET'])
+def get_inventory_stats():
+    """Return safe inventory summary stats for dashboard cards."""
+    try:
+        session_data = get_current_session()
+        company_id = session_data.get('company_id', 'demo_company') if session_data else 'demo_company'
+        is_demo = bool(session_data.get('is_demo')) if session_data else True
+        company_items = _company_records(inventory_items, company_id, is_demo)
+
+        if not company_items:
+            company_items = [
+                {'quantity': 150, 'reorder_point': 30, 'unit_cost': 0.85, 'location': 'A-01-B'},
+                {'quantity': 420, 'reorder_point': 100, 'unit_cost': 0.25, 'location': 'A-01-C'},
+                {'quantity': 8, 'reorder_point': 15, 'unit_cost': 45.00, 'location': 'B-03-A'},
+                {'quantity': 0, 'reorder_point': 50, 'unit_cost': 1.20, 'location': 'C-02-B'},
+                {'quantity': 6, 'reorder_point': 10, 'unit_cost': 22.50, 'location': 'D-01-A'},
+            ]
+
+        total_items = len(company_items)
+        low_stock_alerts = 0
+        total_value = 0.0
+        locations = set()
+
+        for item in company_items:
+            quantity = float(item.get('quantity') or item.get('qty') or 0)
+            reorder_point = float(item.get('reorder_point') or item.get('minimum_stock') or 0)
+            unit_value = float(item.get('unit_price') or item.get('unit_cost') or item.get('cost') or 0)
+            if reorder_point and quantity <= reorder_point:
+                low_stock_alerts += 1
+            total_value += quantity * unit_value
+            location = item.get('location') or item.get('bin_location') or item.get('storage_location')
+            if location:
+                locations.add(str(location))
+
+        return jsonify({
+            'success': True,
+            'total_items': total_items,
+            'low_stock_alerts': low_stock_alerts,
+            'total_value': round(total_value, 2),
+            'storage_locations': len(locations),
+            'data': []
+        })
+    except Exception as e:
+        logger.error(f"Error retrieving inventory stats: {e}")
+        return jsonify({
+            'success': True,
+            'total_items': 0,
+            'low_stock_alerts': 0,
+            'total_value': 0,
+            'storage_locations': 0,
+            'data': []
+        })
 
 # ==== LIFT DRIVER MANAGEMENT ENDPOINTS ====
 
@@ -4107,8 +4168,25 @@ def inject_demo_banner(html_content):
 
 def inject_dark_theme(html_content):
     """Inject dark theme CSS and JS into HTML content"""
+    try:
+        current_path = request.path.lower()
+    except RuntimeError:
+        current_path = ''
+
+    auth_paths = (
+        'login',
+        'signup',
+        'forgot_password',
+        'reset_password',
+        'two_factor',
+        'subscription_suspended',
+    )
+    if any(auth_path in current_path for auth_path in auth_paths):
+        return html_content
+
     if '<head>' in html_content and 'auto_theme_injector.js' not in html_content:
         theme_injection = '''
+<link rel="stylesheet" href="/static/force_dark_theme.css">
 <script src="/static/auto_theme_injector.js"></script>
 <script src="/static/apply_professional_styling.js"></script>
 <style>
@@ -4123,8 +4201,8 @@ def inject_dark_theme(html_content):
   --ql-warning: #f59e0b;
   --ql-danger: #ef4444;
   --ql-accent: #6366f1;
-  --ql-border: rgba(255,255,255,.12);
-  --ql-surface: rgba(255,255,255,.06);
+  --ql-border: rgba(47,95,137,.32);
+  --ql-surface: rgba(16,41,67,.78);
 }
 
 body {
@@ -4135,8 +4213,9 @@ body {
 }
 
 .container, .main-content, .page-content {
-  background: rgba(45, 55, 72, 0.8) !important;
-  backdrop-filter: blur(10px);
+  background: #102943 !important;
+  background-color: #102943 !important;
+  backdrop-filter: none !important;
   border-radius: 16px;
   padding: 24px;
   margin: 20px auto;
@@ -4145,9 +4224,16 @@ body {
   border: 1px solid rgba(99, 102, 241, 0.2);
   color: var(--ql-text) !important;
 }
+.loading, [class*="loading"] {
+  opacity: 1 !important;
+  animation: none !important;
+  filter: none !important;
+}
 </style>
 '''
         html_content = html_content.replace('<head>', '<head>' + theme_injection, 1)
+    elif '<head>' in html_content and 'force_dark_theme.css' not in html_content:
+        html_content = html_content.replace('<head>', '<head><link rel="stylesheet" href="/static/force_dark_theme.css">', 1)
     return html_content
 
 @app.route('/widget_customization')
@@ -4659,7 +4745,7 @@ def internal_error(error):
                     html_content = f.read()
                     html_content = html_content.replace(
                         '</body>',
-                        f'<div style="position:fixed;bottom:10px;right:10px;background:#333;color:#fff;padding:5px;font-size:11px;border-radius:3px;">Request ID: {request_id}</div></body>'
+                        f'<div style="position:fixed;bottom:10px;right:10px;background:#333;color: white;padding:5px;font-size:11px;border-radius:3px;">Request ID: {request_id}</div></body>'
                     )
                 response = make_response(html_content, 500)
                 response.headers['X-Request-ID'] = request_id
@@ -4671,7 +4757,7 @@ def internal_error(error):
                 <body>
                 <h1>Internal Server Error</h1>
                 <p>An unexpected error occurred. Please try again later.</p>
-                <div style="position:fixed;bottom:10px;right:10px;background:#333;color:#fff;padding:5px;font-size:11px;border-radius:3px;">Request ID: {request_id}</div>
+                <div style="position:fixed;bottom:10px;right:10px;background:#333;color: white;padding:5px;font-size:11px;border-radius:3px;">Request ID: {request_id}</div>
                 </body>
                 </html>
                 """, 500)
